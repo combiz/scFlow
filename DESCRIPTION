@@ -7,7 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "c.khozoie@imperial.ac.uk",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: A toolkit to build a single-cell/nuclei RNA-seq analysis workflow.
+Description: Single-cell/nuclei RNA-seq analysis tools in R for a complete workflow.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
