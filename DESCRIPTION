@@ -1,13 +1,13 @@
 Package: scflow
-Title: What the Package Does (One Line, Title Case)
+Title: A Single-Cell/Nuclei Analysis Toolkit
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Combiz",
+           family = "Khozoie",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
+           email = "c.khozoie@imperial.ac.uk",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+Description: A toolkit to build a single-cell/nuclei RNA-seq analysis workflow.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -17,3 +17,4 @@ Suggests:
     testthat,
     spelling
 Language: en-US
+RoxygenNote: 6.1.1
