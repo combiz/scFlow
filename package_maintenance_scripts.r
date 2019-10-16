@@ -5,6 +5,9 @@ library(usethis)
 library(spelling)
 
 
+
+# package setup following approx Emil Hvitfeldt
+
 ## Initial package creation steps
 #create_package("~/Documents/scflow")
 #options(usethis.full_name = "Combiz Khozoie")
@@ -13,6 +16,9 @@ library(spelling)
 #use_mit_license()
 #use_readme_rmd()
 #use_travis()
+#use_data_raw()
+#use_appveyor()
+#use_coverage(type = c("codecov"))
 #use_testthat()
 #use_spell_check()
 #use_news_md()
@@ -20,9 +26,14 @@ library(spelling)
 
 ## Ongoing package dev
 use_r("function_name")
+
+use_r("read_feature_barcode_matrix")
+use_r("map_ensembl_gene_id")
+
 use_test("function_name")
 
 use_package("dplyr") # add to DESCRIPTION
+
 #use_vignette("How to do this cool analysis") # later
 
 ### BEFORE EVERY COMMIT
@@ -32,5 +43,13 @@ use_package("dplyr") # add to DESCRIPTION
 
 ## before every release
 # knit the readme.Rmd
+
 use_version()
-pkgdown::build_site()
+
+#########################
+use_package("purrr")
+use_package("cli")
+use_package("Matrix")
+use_package("utils")
+use_package("biomaRt")
+use_package("stringr")

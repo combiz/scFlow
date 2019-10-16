@@ -7,6 +7,10 @@
 
 [![Travis build
 status](https://travis-ci.org/combiz/scflow.svg?branch=master)](https://travis-ci.org/combiz/scflow)
+[![Codecov test
+coverage](https://codecov.io/gh/combiz/scflow/branch/master/graph/badge.svg)](https://codecov.io/gh/combiz/scflow?branch=master)
+[![AppVeyor build
+status](https://ci.appveyor.com/api/projects/status/github/combiz/scflow?branch=master&svg=true)](https://ci.appveyor.com/project/combiz/scflow)
 <!-- badges: end -->
 
 The goal of scflow is to provide tools in R to build a complete analysis

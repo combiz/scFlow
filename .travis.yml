@@ -1,4 +1,55 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
-language: R
+language: r
+warnings_are_errors: false
 cache: packages
+
+env:
+  global:
+    - R_CHECK_ARGS="--no-manual --as-cran"
+
+matrix:
+  include:
+    - os: linux
+      r: oldrel
+    - os: linux
+      r: release
+      before_deploy:
+        - Rscript -e 'remotes::install_github("combiz/scflow")'
+        - Rscript -e 'install.packages("pkgdown")'
+      deploy:
+        provider: script
+        script: Rscript -e 'pkgdown::deploy_site_github(verbose = TRUE)'
+        skip_cleanup: true
+    - os: linux
+      r: devel
+    - os: osx
+      r: release
+      fortran: false
+
+
+addons:
+  apt:
+    packages:
+      - libssl1.0.0
+r_packages:
+  - covr
+  - lintr
+after_script:
+  - R CMD INSTALL $PKG_TARBALL
+  - Rscript -e 'lintr::lint_package()'
+after_success:
+  - Rscript -e 'covr::coveralls()'
+
+stages:
+  - name: deploy
+    # require the branch name to be master (note for PRs this is the base branch name)
+    if: branch = master
+
+notifications:
+  webhooks:
+    on_success: always
+    on_failure: never
+    on_start: never
+    on_cancel: never
+    on_error: never

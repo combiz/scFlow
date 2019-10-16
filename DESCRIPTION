@@ -15,6 +15,16 @@ URL: https://github.com/combiz/scflow
 BugReports: https://github.com/combiz/scflow/issues
 Suggests: 
     testthat,
-    spelling
+    spelling,
+    covr
 Language: en-US
 RoxygenNote: 6.1.1
+Imports: 
+    purrr,
+    Matrix,
+    utils,
+    biomaRt,
+    stringr,
+    cli
+Remotes:
+    r-lib/cli
