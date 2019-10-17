@@ -7,14 +7,15 @@ Authors@R:
            role = c("aut", "cre"),
            email = "c.khozoie@imperial.ac.uk",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: Single-cell/nuclei RNA-seq analysis tools in R for a complete workflow.
+Description: Single-cell/nuclei RNA-seq analysis tools in R to build a complete analysis workflow.
+Roxygen: list(markdown = TRUE)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/combiz/scflow
 BugReports: https://github.com/combiz/scflow/issues
 Suggests: 
-    testthat,
+    testthat (>= 2.1.0),
     spelling,
     covr
 Language: en-US
@@ -24,7 +25,11 @@ Imports:
     Matrix,
     utils,
     biomaRt,
+    SingleCellExperiment,
     stringr,
-    cli
+    cli,
+    dplyr
 Remotes:
-    r-lib/cli
+    r-lib/cli,
+    bioc::release/biomaRt,
+    bioc::release/SingleCellExperiment

@@ -26,9 +26,11 @@ library(spelling)
 
 ## Ongoing package dev
 use_r("function_name")
+use_r("retrieve_sample_metadata")
 
 use_r("read_feature_barcode_matrix")
 use_r("map_ensembl_gene_id")
+use_r("generate_sce_from_mat_and_meta")
 
 use_test("function_name")
 
@@ -43,6 +45,8 @@ use_package("dplyr") # add to DESCRIPTION
 
 ## before every release
 # knit the readme.Rmd
+# update the site
+pkgdown::build_site()
 
 use_version()
 

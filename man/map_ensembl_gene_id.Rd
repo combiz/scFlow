@@ -2,7 +2,7 @@
 % Please edit documentation in R/map_ensembl_gene_id.R
 \name{map_ensembl_gene_id}
 \alias{map_ensembl_gene_id}
-\title{Return mappings for an ensembl gene id}
+\title{Return mappings for Ensembl Gene IDs}
 \usage{
 map_ensembl_gene_id(ensembl_ids, mappings = c("ensembl_gene_id",
   "gene_biotype", "external_gene_name"), mappings_filepath = NULL)
@@ -12,7 +12,8 @@ map_ensembl_gene_id(ensembl_ids, mappings = c("ensembl_gene_id",
 stripped.}
 
 \item{mappings}{the biomaRt attributes to be mapped or mappings file column
-names.  This should always include ensembl_gene_id.}
+names.  This should always include ensembl_gene_id, e.g.
+\code{c("ensembl_gene_id", "external_gene_name")}}
 
 \item{mappings_filepath}{path to the mappings tsv file}
 }
@@ -28,5 +29,9 @@ retrieved by querying biomaRt.
 \examples{
 map_ensembl_gene_id("ENSG00000130707")
 
+}
+\seealso{
+Other annotation functions: \code{\link{generate_sce_from_mat_and_meta}},
+  \code{\link{retrieve_sample_metadata}}
 }
 \concept{annotation functions}

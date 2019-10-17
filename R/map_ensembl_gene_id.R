@@ -1,5 +1,5 @@
 ################################################################################
-#' Return mappings for an ensembl gene id
+#' Return mappings for Ensembl Gene IDs
 #'
 #' Returns a data frame with the provided ensembl gene ids and requested
 #' mappings from biomaRt or a local file.  If the mappings are absent from the
@@ -9,7 +9,8 @@
 #' @param ensembl_ids vector of ensembl_ids, if versioned the version will be
 #'   stripped.
 #' @param mappings the biomaRt attributes to be mapped or mappings file column
-#'   names.  This should always include ensembl_gene_id.
+#'   names.  This should always include ensembl_gene_id, e.g.
+#'   `c("ensembl_gene_id", "external_gene_name")`
 #' @param mappings_filepath path to the mappings tsv file
 #'
 #' @return mapped_df a data.frame of the provided ensembl_id's with mappings.

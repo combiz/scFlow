@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • scflow</title>
+<title>Retrieve the metadata for a sample from a samplesheet — retrieve_sample_metadata • scflow</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -32,7 +32,12 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Retrieve the metadata for a sample from a samplesheet — retrieve_sample_metadata" />
+
+<meta property="og:description" content="Retrieves a single row from a samplesheet table where the provided
+unique_id parameter is matched in the id_colname column of the
+samplesheet." />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -50,7 +55,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -98,69 +103,61 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Retrieve the metadata for a sample from a samplesheet</h1>
+    <small class="dont-index">Source: <a href='https://github.com/combiz/scflow/blob/master/R/retrieve_sample_metadata.R'><code>R/retrieve_sample_metadata.R</code></a></small>
+    <div class="hidden name"><code>retrieve_sample_metadata.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    
+    <p>Retrieves a single row from a samplesheet table where the provided
+<code>unique_id</code> parameter is matched in the <code>id_colname</code> column of the
+samplesheet.</p>
+    
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
-
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-import-and-export" class="hasAnchor"><a href="#section-import-and-export" class="anchor"></a>Import and Export</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="read_feature_barcode_matrix.html">read_feature_barcode_matrix()</a></code> </p>
-        </td>
-        <td><p>Read a feature-barcode matrix</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-pre-processing-and-annotation" class="hasAnchor"><a href="#section-pre-processing-and-annotation" class="anchor"></a>Pre-Processing and Annotation</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="generate_sce_from_mat_and_meta.html">generate_sce_from_mat_and_meta()</a></code> </p>
-        </td>
-        <td><p>Generate a SingleCellExperiment object from a matrix and metadata</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="map_ensembl_gene_id.html">map_ensembl_gene_id()</a></code> </p>
-        </td>
-        <td><p>Return mappings for Ensembl Gene IDs</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="retrieve_sample_metadata.html">retrieve_sample_metadata()</a></code> </p>
-        </td>
-        <td><p>Retrieve the metadata for a sample from a samplesheet</p></td>
-      </tr>
-    </tbody>
+    <pre class="usage"><span class='fu'>retrieve_sample_metadata</span>(<span class='no'>unique_id</span>, <span class='no'>id_colname</span>, <span class='no'>samplesheet_path</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>unique_id</th>
+      <td><p>unique value for this sample in the <code>id_colname</code> column</p></td>
+    </tr>
+    <tr>
+      <th>id_colname</th>
+      <td><p>the column name containing the <code>unique_id</code></p></td>
+    </tr>
+    <tr>
+      <th>samplesheet_path</th>
+      <td><p>path to a tsv file containing a samplesheet</p></td>
+    </tr>
     </table>
-  </div>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
+    <p>metadata the metadata for the specified sample</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Other annotation functions: <code><a href='generate_sce_from_mat_and_meta.html'>generate_sce_from_mat_and_meta</a></code>,
+  <code><a href='map_ensembl_gene_id.html'>map_ensembl_gene_id</a></code></p></div>
+    
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-import-and-export">Import and Export</a></li>
-      <li><a href="#section-pre-processing-and-annotation">Pre-Processing and Annotation</a></li>
-    </ul>
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+          </ul>
+
   </div>
 </div>
 
