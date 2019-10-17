@@ -22,7 +22,9 @@ Retrieves a single row from a samplesheet table where the provided
 samplesheet.
 }
 \seealso{
-Other annotation functions: \code{\link{generate_sce_from_mat_and_meta}},
+Other annotation functions: \code{\link{annotate_sce_cells}},
+  \code{\link{annotate_sce_genes}},
+  \code{\link{generate_sce}},
   \code{\link{map_ensembl_gene_id}}
 }
 \concept{annotation functions}

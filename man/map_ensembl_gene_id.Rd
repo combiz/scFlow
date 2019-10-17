@@ -31,7 +31,9 @@ map_ensembl_gene_id("ENSG00000130707")
 
 }
 \seealso{
-Other annotation functions: \code{\link{generate_sce_from_mat_and_meta}},
+Other annotation functions: \code{\link{annotate_sce_cells}},
+  \code{\link{annotate_sce_genes}},
+  \code{\link{generate_sce}},
   \code{\link{retrieve_sample_metadata}}
 }
 \concept{annotation functions}

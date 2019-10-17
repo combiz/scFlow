@@ -20,7 +20,8 @@
 #'
 #' @family annotation functions
 #'
-#' @import cli purrr biomaRt stringr
+#' @import cli purrr stringr
+#' @importFrom biomaRt useEnsembl getBM
 #' @importFrom utils read.delim read.csv
 #'
 #' @export
@@ -42,28 +43,22 @@ map_ensembl_gene_id <- function(ensembl_ids,
         "File not found.  Specify a valid path.")
       )
     } else { # file provided and is found
-      ensembl_mappings <- utils::read.delim(mappings_filepath)
-      check_mappings_are_present <- purrr::map_lgl(
-        mappings,
-        function(x) x %in% colnames(ensembl_mappings)
-      )
-      if (!(Reduce("&", check_mappings_are_present))) {
-        stop(cli::cli_alert_danger(
-          "Mappings file is missing the requested mappings.")
+        cat("Reading", cli::col_green(c(mappings_filepath, " \r\n")))
+        ensembl_mappings <- utils::read.delim(mappings_filepath)
+        check_mappings_are_present <- purrr::map_lgl(
+          mappings,
+          function(x) x %in% colnames(ensembl_mappings)
         )
-      } else { # mappings requested are present in the file
-        if (!(Reduce("&", ensembl_ids %in% ensembl_mappings$ensembl_gene_id))) {
+
+        if (!(Reduce("&", check_mappings_are_present))) {
           stop(cli::cli_alert_danger(
-            "The requested ensembl_gene_ids are absent from the mappings file.")
+            "Mappings file is missing the requested mappings.")
           )
-        } else { # all ok -- mappings and genes are present
-          #colnames(ensembl_mappings) <- c("ensembl_gene_id",
-          #"gene_biotype", "external_gene_name")
+        } else { # mappings requested are present in the file
           mapped_df <- ensembl_mappings[
-            ensembl_mappings$ensembl_gene_id %in% ensembl_ids]
+            ensembl_mappings$ensembl_gene_id %in% ensembl_ids, ]
         }
       }
-    }
   } else { # mappings file not provided, use biomaRt
 
     cli::cli_alert_info("Mappings file not provided, using biomaRt (slower).")
@@ -84,8 +79,10 @@ map_ensembl_gene_id <- function(ensembl_ids,
   }
 
   if (dim(mapped_df)[[1]] != length(ensembl_ids)) {
-    warning("Warning")
-    cli::cli_alert_warning("Not all ensembl_ids were found.")
+    cli::cli_alert_info(c(
+      "Note: not all ensembl_ids were found (",
+      dim(mapped_df)[[1]], "/", length(ensembl_ids), " found).")
+    )
   }
 
   return(mapped_df)

@@ -23,6 +23,7 @@ retrieve_sample_metadata <- function(unique_id,
     stop(cli::cli_alert_danger("Samplesheet not found.\
                                 Check that the path is correct."))
   } else {
+    cat("Reading", cli::col_green(c(samplesheet_path, " \r\n")))
     samplesheet <- read.delim(samplesheet_path)
   }
 

@@ -12,8 +12,7 @@
 #' @family annotation functions
 #' @import cli Matrix SingleCellExperiment
 #' @export
-generate_sce_from_mat_and_meta <- function(mat,
-                                           metadata) {
+generate_sce <- function(mat, metadata) {
 
   if (typeof(mat) != "S4") {
     stop(cli::cli_alert_danger("A sparse Matrix::dgTMatrix is required."))
@@ -50,6 +49,8 @@ generate_sce_from_mat_and_meta <- function(mat,
     rowData = data.frame(ensembl_gene_id = rownames(mat))
   )
 
+  sce <- sce[order(rownames(sce)),]
+
   cli::cli_alert_success("SingleCellExperiment object generated")
   cli::cli_text(c(
     dim(sce)[[1]]," gene x ", dim(sce)[[2]],
@@ -57,8 +58,6 @@ generate_sce_from_mat_and_meta <- function(mat,
     dim(colData(sce))[[2]], " metadata variables.")
   )
 
-
   return(sce)
-
 
 }

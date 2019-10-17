@@ -31,6 +31,11 @@ use_r("retrieve_sample_metadata")
 use_r("read_feature_barcode_matrix")
 use_r("map_ensembl_gene_id")
 use_r("generate_sce_from_mat_and_meta")
+use_r("annotate_sce_genes")
+
+use_r("generate_sce")
+use_r("annotate_sce_cells")
+
 
 use_test("function_name")
 
