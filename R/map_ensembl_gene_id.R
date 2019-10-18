@@ -34,7 +34,7 @@ map_ensembl_gene_id <- function(ensembl_ids,
                                 mappings_filepath = NULL) {
 
   # include the id for biomart
-  mappings <- unique(c("ensembl_gene_id"), mappings)
+  mappings <- unique(c("ensembl_gene_id", mappings))
 
   # strip the . number suffix with version number
   ensembl_ids <- stringr::str_replace(ensembl_ids,
