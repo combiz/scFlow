@@ -14,10 +14,14 @@
 #'
 #' @family annotation functions
 #' @import cli
+#' @importFrom tools toTitleCase
+#' @importFrom english words
 #' @export
 retrieve_sample_metadata <- function(unique_id,
                                      id_colname,
                                      samplesheet_path) {
+
+  cat(cli::rule("Retrieving sample metadata", line = 1), "\r\n")
 
   if (!file.exists(samplesheet_path)) {
     stop(cli::cli_alert_danger("Samplesheet not found.\
@@ -48,13 +52,20 @@ retrieve_sample_metadata <- function(unique_id,
   metadata <- samplesheet[samplesheet[[id_colname]] == unique_id, ]
 
   if (dim(metadata)[[1]] != 1) {
-    stop(cli::cli_alert_danger("Something went wrong, more than one row."))
+    stop(cli::cli_alert_danger("Something went wrong, more than one match."))
   } else {
-    cli::cli_alert_success(sprintf("%s metadata variables loaded for %s",
-                           dim(metadata)[[2]],
-                           unique_id))
-    cli::cli_text(paste(colnames(metadata), collapse = ", "))
+    cli::cli_alert_success(sprintf("%s metadata variables loaded for %s='%s'",
+                           tools::toTitleCase(
+                             english::words(dim(metadata)[[2]])),
+                           id_colname,
+                           unique_id)
+    )
+    #cli::cli_text(paste(colnames(metadata), collapse = ", "))
+    for (var in names(metadata)){
+      cli::cli_text("{.strong {var}}: {.var {metadata[[var]][[1]]}}")
+    }
   }
+
 
   return(metadata)
 

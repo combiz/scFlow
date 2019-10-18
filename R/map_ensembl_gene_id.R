@@ -20,8 +20,9 @@
 #'
 #' @family annotation functions
 #'
-#' @import cli purrr stringr
+#' @import cli stringr
 #' @importFrom biomaRt useEnsembl getBM
+#' @importFrom purrr map_lgl
 #' @importFrom utils read.delim read.csv
 #'
 #' @export
@@ -31,6 +32,9 @@ map_ensembl_gene_id <- function(ensembl_ids,
                                              "gene_biotype",
                                              "external_gene_name"),
                                 mappings_filepath = NULL) {
+
+  # include the id for biomart
+  mappings <- unique(c("ensembl_gene_id"), mappings)
 
   # strip the . number suffix with version number
   ensembl_ids <- stringr::str_replace(ensembl_ids,
@@ -45,12 +49,13 @@ map_ensembl_gene_id <- function(ensembl_ids,
     } else { # file provided and is found
         cat("Reading", cli::col_green(c(mappings_filepath, " \r\n")))
         ensembl_mappings <- utils::read.delim(mappings_filepath)
+
         check_mappings_are_present <- purrr::map_lgl(
           mappings,
           function(x) x %in% colnames(ensembl_mappings)
         )
 
-        if (!(Reduce("&", check_mappings_are_present))) {
+        if (!all(check_mappings_are_present)) {
           stop(cli::cli_alert_danger(
             "Mappings file is missing the requested mappings.")
           )
@@ -81,8 +86,14 @@ map_ensembl_gene_id <- function(ensembl_ids,
   if (dim(mapped_df)[[1]] != length(ensembl_ids)) {
     cli::cli_alert_info(c(
       "Note: not all ensembl_ids were found (",
-      dim(mapped_df)[[1]], "/", length(ensembl_ids), " found).")
+      (length(ensembl_ids) - dim(mapped_df)[[1]]), "/",
+      length(ensembl_ids), " not found).")
     )
+  }
+
+  if (dim(mapped_df)[[2]] != length(mappings)) {
+    cli::cli_alert_info(c("Some of the mappings attributes were not found.",
+                          " See biomaRt::listAttributes for valid names."))
   }
 
   return(mapped_df)

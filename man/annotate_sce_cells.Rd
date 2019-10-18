@@ -4,14 +4,22 @@
 \alias{annotate_sce_cells}
 \title{Add basic cell-wise annotations for a SingleCellExperiment}
 \usage{
-annotate_sce_cells(sce, ls_threshold = 300, tf_threshold = 100,
-  mt_threshold = 0.1)
+annotate_sce_cells(sce, min_library_size = 300, min_features = 100,
+  max_mitochdonrial = 0.1, max_ribosomal = 1)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}
+
+\item{min_library_size}{the minimum number of counts per cell}
+
+\item{min_features}{the minimum number of features per cell (i.e. the minimum
+number of genes with >0 counts)}
+
+\item{max_mitochondrial}{the maximum proportion of counts mapping to
+mitochondrial genes}
 }
 \value{
-sce a SingleCellExperiment object annotated with cell data
+sce a SingleCellExperiment object annotated with cell QC metrics
 }
 \description{
 Calculates the following QC metrics:

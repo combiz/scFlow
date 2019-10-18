@@ -18,6 +18,7 @@ following QC metrics:
 \itemize{
 \item qc_metric_ensembl_mapped - was the ensembl_gene_id found in biomaRt
 \item qc_metric_is_mito - is the gene mitochondrial
+\item qc_metric_is_ribosomal - is the gene ribosomal
 }
 }
 \seealso{

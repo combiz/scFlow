@@ -10,9 +10,11 @@
 #' @return sce a SingleCellExperiment object annotated with sample metadata
 #'
 #' @family annotation functions
-#' @import cli Matrix SingleCellExperiment
+#' @import cli Matrix SingleCellExperiment dplyr
 #' @export
 generate_sce <- function(mat, metadata) {
+
+  cat(cli::rule("Generating SingleCellExperiment", line = 1), "\r\n")
 
   if (typeof(mat) != "S4") {
     stop(cli::cli_alert_danger("A sparse Matrix::dgTMatrix is required."))
@@ -57,6 +59,7 @@ generate_sce <- function(mat, metadata) {
     " cells, annotated with ",
     dim(colData(sce))[[2]], " metadata variables.")
   )
+
 
   return(sce)
 

@@ -16,7 +16,7 @@
 #' @export
 read_feature_barcode_matrix <- function(folder_path) {
 
-  cli::rule("Reading feature-barcode matrix", line = 1)
+  cat(cli::rule("Reading feature-barcode matrix", line = 1), "\r\n")
 
   paths_l <- list()
   paths_l[["barcodes_path"]] <-  file.path(folder_path, "barcodes.tsv.gz")
@@ -24,18 +24,18 @@ read_feature_barcode_matrix <- function(folder_path) {
   paths_l[["matrix_path"]] <-  file.path(folder_path, "matrix.mtx.gz")
 
   # check all files exist or throw error
-  if (!(Reduce("&", purrr::map_lgl(paths_l, file.exists)))) {
+  if (!all(purrr::map_lgl(paths_l, file.exists))) {
     stop(cli::cli_alert_danger("Files not found.  \
                                Specify a valid folder path."))
   }
 
-  cat("Reading", cli::col_green(sprintf("'%s' \r\n", paths_l$barcodes_path)))
+  cli::cli_text("Reading: {.path {paths_l$barcodes_path}}")
   col_data <- read.csv(gzfile(paths_l$barcodes_path), sep = "", header = FALSE)
 
-  cat("Reading", cli::col_green(sprintf("'%s' \r\n", paths_l$features_path)))
+  cli::cli_text("Reading: {.path {paths_l$features_path}}")
   row_data <- read.delim(gzfile(paths_l$features_path), header = FALSE)
 
-  cat("Reading", cli::col_green(sprintf("'%s' \r\n", paths_l$matrix_path)))
+  cli::cli_text("Reading: {.path {paths_l$matrix_path}}")
   mat <- Matrix::readMM(gzfile(paths_l$matrix_path))
 
   cli::cli_alert_success(sprintf("Imported sparse matrix: %s cols x %s rows.",
@@ -45,8 +45,6 @@ read_feature_barcode_matrix <- function(folder_path) {
 
   rownames(mat) <- as.character(row_data[, 1]) # ensembl ids
   colnames(mat) <- as.character(col_data[, 1]) # barcodes
-
-  cli::rule("DONE", line = 2)
 
   return(mat)
 

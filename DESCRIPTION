@@ -28,8 +28,15 @@ Imports:
     SingleCellExperiment,
     stringr,
     cli,
-    dplyr
+    dplyr,
+    english,
+    magrittr,
+    data.table,
+    SummarizedExperiment,
+    vroom,
+    english
 Remotes:
     r-lib/cli,
     bioc::release/biomaRt,
-    bioc::release/SingleCellExperiment
+    bioc::release/SingleCellExperiment,
+    bioc::release/SummarizedExperiment
