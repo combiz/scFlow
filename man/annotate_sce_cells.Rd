@@ -5,7 +5,7 @@
 \title{Add basic cell-wise annotations for a SingleCellExperiment}
 \usage{
 annotate_sce_cells(sce, min_library_size = 300, min_features = 100,
-  max_mitochdonrial = 0.1, max_ribosomal = 1)
+  max_mito = 0.1, max_ribo = 1)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}
@@ -15,8 +15,11 @@ annotate_sce_cells(sce, min_library_size = 300, min_features = 100,
 \item{min_features}{the minimum number of features per cell (i.e. the minimum
 number of genes with >0 counts)}
 
-\item{max_mitochondrial}{the maximum proportion of counts mapping to
-mitochondrial genes}
+\item{max_mito}{the maximum proportion of counts mapping to
+mitochondrial genes (0 - 1)}
+
+\item{max_ribo}{the maximum proportion of counts mapping to
+ribosomal genes (0 - 1)}
 }
 \value{
 sce a SingleCellExperiment object annotated with cell QC metrics

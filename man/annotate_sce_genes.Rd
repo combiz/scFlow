@@ -8,6 +8,10 @@ annotate_sce_genes(sce, ensembl_mapping_file = NULL)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object with ensembl_gene_id rowData}
+
+\item{ensembl_mapping_file}{a local tsv file with ensembl_gene_id and
+additional columns for mapping ensembl_gene_id to gene info.  If
+not provided, the biomaRt db is queried (slower).}
 }
 \value{
 sce a SingleCellExperiment object annotated with gene data

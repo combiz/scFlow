@@ -91,11 +91,6 @@ map_ensembl_gene_id <- function(ensembl_ids,
     )
   }
 
-  if (dim(mapped_df)[[2]] != length(mappings)) {
-    cli::cli_alert_info(c("Some of the mappings attributes were not found.",
-                          " See biomaRt::listAttributes for valid names."))
-  }
-
   return(mapped_df)
 
 }

@@ -10,11 +10,6 @@ metadata <- retrieve_sample_metadata(unique_id = "MS542",
                                      id_colname = "individual",
                                      samplesheet_path = "~/Documents/ms-sc/refs/sample_metadata.tsv")
 
-metadata <- retrieve_sample_metadata(unique_id = "MS542",
-                                     id_colname = "individual",
-
-                                     samplesheet_path = "~/Documents/ms-sc/refs/sample_metadata.tsv")
-
 sce <- generate_sce(mat, metadata)
 
 sce <- annotate_sce_genes(sce, "~/Documents/ms-sc/src/ensembl-ids/ensembl_mappings.tsv")
@@ -23,4 +18,3 @@ sce <- annotate_sce_cells(sce)
 
 
 
-x <- annotate_sce_cells(sce)
