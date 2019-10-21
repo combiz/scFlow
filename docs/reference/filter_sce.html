@@ -6,7 +6,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Return mappings for Ensembl Gene IDs — map_ensembl_gene_id • scflow</title>
+<title>Filter SingleCellExperiment according to QC metrics
+Quality control metrics previously calculated are used to subset the
+SingleCellExperiment for both cells and genes passing QC criteria previously
+specified in the <code>annotate_sce_genes</code> and <code>annotate_sce_cells</code> functions — filter_sce • scflow</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -32,12 +35,15 @@
 
 
 
-<meta property="og:title" content="Return mappings for Ensembl Gene IDs — map_ensembl_gene_id" />
+<meta property="og:title" content="Filter SingleCellExperiment according to QC metrics
+Quality control metrics previously calculated are used to subset the
+SingleCellExperiment for both cells and genes passing QC criteria previously
+specified in the <code>annotate_sce_genes</code> and <code>annotate_sce_cells</code> functions — filter_sce" />
 
-<meta property="og:description" content="Returns a data frame with the provided ensembl gene ids and requested
-mappings from biomaRt or a local file.  If the mappings are absent from the
-local file, or the local file is not provided or missing, the mappings are
-retrieved by querying biomaRt." />
+<meta property="og:description" content="Filter SingleCellExperiment according to QC metrics
+Quality control metrics previously calculated are used to subset the
+SingleCellExperiment for both cells and genes passing QC criteria previously
+specified in the annotate_sce_genes and annotate_sce_cells functions" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -106,60 +112,65 @@ retrieved by querying biomaRt." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Return mappings for Ensembl Gene IDs</h1>
-    <small class="dont-index">Source: <a href='https://github.com/combiz/scflow/blob/master/R/map_ensembl_gene_id.R'><code>R/map_ensembl_gene_id.R</code></a></small>
-    <div class="hidden name"><code>map_ensembl_gene_id.Rd</code></div>
+    <h1>Filter SingleCellExperiment according to QC metrics
+Quality control metrics previously calculated are used to subset the
+SingleCellExperiment for both cells and genes passing QC criteria previously
+specified in the <code>annotate_sce_genes</code> and <code>annotate_sce_cells</code> functions</h1>
+    <small class="dont-index">Source: <a href='https://github.com/combiz/scflow/blob/master/R/filter_sce.R'><code>R/filter_sce.R</code></a></small>
+    <div class="hidden name"><code>filter_sce.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Returns a data frame with the provided ensembl gene ids and requested
-mappings from biomaRt or a local file.  If the mappings are absent from the
-local file, or the local file is not provided or missing, the mappings are
-retrieved by querying biomaRt.</p>
+    <p>Filter SingleCellExperiment according to QC metrics
+Quality control metrics previously calculated are used to subset the
+SingleCellExperiment for both cells and genes passing QC criteria previously
+specified in the <code>annotate_sce_genes</code> and <code>annotate_sce_cells</code> functions</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>map_ensembl_gene_id</span>(<span class='no'>ensembl_ids</span>, <span class='kw'>mappings</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ensembl_gene_id"</span>,
-  <span class='st'>"gene_biotype"</span>, <span class='st'>"external_gene_name"</span>), <span class='kw'>mappings_filepath</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>filter_sce</span>(<span class='no'>sce</span>, <span class='kw'>filter_genes</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>filter_cells</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>keep_mito</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>keep_ribo</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>ensembl_ids</th>
-      <td><p>vector of ensembl_ids, if versioned the version will be
-stripped.</p></td>
+      <th>sce</th>
+      <td><p>a SingleCellExperiment object</p></td>
     </tr>
     <tr>
-      <th>mappings</th>
-      <td><p>the biomaRt attributes to be mapped or mappings file column
-names.  This should always include ensembl_gene_id, e.g.
-<code><a href='https://rdrr.io/r/base/c.html'>c("ensembl_gene_id", "external_gene_name")</a></code></p></td>
+      <th>filter_genes</th>
+      <td><p>if set <code>FALSE</code>, genes will not be filtered</p></td>
     </tr>
     <tr>
-      <th>mappings_filepath</th>
-      <td><p>path to the mappings tsv file</p></td>
+      <th>filter_cells</th>
+      <td><p>if set <code>FALSE</code>, cells will not be filtered</p></td>
+    </tr>
+    <tr>
+      <th>keep_mito</th>
+      <td><p>set <code>FALSE</code> to remove mitochondrial genes</p></td>
+    </tr>
+    <tr>
+      <th>keep_ribo</th>
+      <td><p>set <code>FALSE</code> to remove ribosomal genes</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>mapped_df a data.frame of the provided ensembl_id's with mappings.</p>
+    <p>sce a SingleCellExperiment object filtered for QC passed cells and
+genes, with QC metrics annotations removed</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other annotation functions: <code><a href='annotate_sce_cells.html'>annotate_sce_cells</a></code>,
   <code><a href='annotate_sce_genes.html'>annotate_sce_genes</a></code>,
-  <code><a href='filter_sce.html'>filter_sce</a></code>, <code><a href='generate_sce.html'>generate_sce</a></code>,
+  <code><a href='generate_sce.html'>generate_sce</a></code>,
+  <code><a href='map_ensembl_gene_id.html'>map_ensembl_gene_id</a></code>,
   <code><a href='retrieve_sample_metadata.html'>retrieve_sample_metadata</a></code></p></div>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>map_ensembl_gene_id</span>(<span class='st'>"ENSG00000130707"</span>)</div><div class='output co'>#&gt; Error : Cannot write to fd (system error 9, Bad file descriptor) @client.c:149</div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span><span> Mappings file not provided, using biomaRt (slower).</span>
-#&gt; <span class='message'></span></div><div class='output co'>#&gt;   ensembl_gene_id   gene_biotype external_gene_name
-#&gt; 1 ENSG00000130707 protein_coding               ASS1</div><div class='input'>
-</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -169,9 +180,7 @@ names.  This should always include ensembl_gene_id, e.g.
       <li><a href="#value">Value</a></li>
 
       <li><a href="#see-also">See also</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+          </ul>
 
   </div>
 </div>

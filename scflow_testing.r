@@ -16,5 +16,10 @@ sce <- annotate_sce_genes(sce, "~/Documents/ms-sc/src/ensembl-ids/ensembl_mappin
 
 sce <- annotate_sce_cells(sce)
 
+ss <- sce[rowData(sce)$qc_metric_is_expressive == TRUE, sce$passed_qc == TRUE]
+
+
+
+ssqc <- calculateQCmetrics(ss)
 
 

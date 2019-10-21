@@ -24,7 +24,7 @@ samplesheet.
 \seealso{
 Other annotation functions: \code{\link{annotate_sce_cells}},
   \code{\link{annotate_sce_genes}},
-  \code{\link{generate_sce}},
+  \code{\link{filter_sce}}, \code{\link{generate_sce}},
   \code{\link{map_ensembl_gene_id}}
 }
 \concept{annotation functions}

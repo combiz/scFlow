@@ -38,6 +38,7 @@
 following QC metrics:
 qc_metric_ensembl_mapped - was the ensembl_gene_id found in biomaRt
 qc_metric_is_mito - is the gene mitochondrial
+qc_metric_is_ribosomal - is the gene ribosomal
 
 " />
 <meta name="twitter:card" content="summary" />
@@ -119,6 +120,7 @@ qc_metric_is_mito - is the gene mitochondrial
 following QC metrics:</p><ul>
 <li><p>qc_metric_ensembl_mapped - was the ensembl_gene_id found in biomaRt</p></li>
 <li><p>qc_metric_is_mito - is the gene mitochondrial</p></li>
+<li><p>qc_metric_is_ribosomal - is the gene ribosomal</p></li>
 </ul>
 
     
@@ -133,6 +135,12 @@ following QC metrics:</p><ul>
       <th>sce</th>
       <td><p>a SingleCellExperiment object with ensembl_gene_id rowData</p></td>
     </tr>
+    <tr>
+      <th>ensembl_mapping_file</th>
+      <td><p>a local tsv file with ensembl_gene_id and
+additional columns for mapping ensembl_gene_id to gene info.  If
+not provided, the biomaRt db is queried (slower).</p></td>
+    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -142,7 +150,7 @@ following QC metrics:</p><ul>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other annotation functions: <code><a href='annotate_sce_cells.html'>annotate_sce_cells</a></code>,
-  <code><a href='generate_sce.html'>generate_sce</a></code>,
+  <code><a href='filter_sce.html'>filter_sce</a></code>, <code><a href='generate_sce.html'>generate_sce</a></code>,
   <code><a href='map_ensembl_gene_id.html'>map_ensembl_gene_id</a></code>,
   <code><a href='retrieve_sample_metadata.html'>retrieve_sample_metadata</a></code></p></div>
     

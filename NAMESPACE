@@ -2,6 +2,7 @@
 
 export(annotate_sce_cells)
 export(annotate_sce_genes)
+export(filter_sce)
 export(generate_sce)
 export(map_ensembl_gene_id)
 export(read_feature_barcode_matrix)

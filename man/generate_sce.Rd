@@ -21,6 +21,7 @@ containing metadata for the sample.
 \seealso{
 Other annotation functions: \code{\link{annotate_sce_cells}},
   \code{\link{annotate_sce_genes}},
+  \code{\link{filter_sce}},
   \code{\link{map_ensembl_gene_id}},
   \code{\link{retrieve_sample_metadata}}
 }

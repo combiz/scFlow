@@ -35,6 +35,7 @@ use_r("annotate_sce_genes")
 
 use_r("generate_sce")
 use_r("annotate_sce_cells")
+use_r("filter_sce")
 
 
 use_test("function_name")
@@ -49,7 +50,7 @@ use_package("dplyr") # add to DESCRIPTION
 #Check Package Cmd+Shift+E (Ctrl+Shift+E for Windows)
 
 ## before every release
-# knit the readme.Rmd
+# knit the readme.Rmd <<--
 # update the site
 pkgdown::build_site()
 

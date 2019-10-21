@@ -122,8 +122,8 @@ qc_metric_total_features_by_counts - is the gene mitochondrial
     
     </div>
 
-    <pre class="usage"><span class='fu'>annotate_sce_cells</span>(<span class='no'>sce</span>, <span class='kw'>ls_threshold</span> <span class='kw'>=</span> <span class='fl'>300</span>, <span class='kw'>tf_threshold</span> <span class='kw'>=</span> <span class='fl'>100</span>,
-  <span class='kw'>mt_threshold</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)</pre>
+    <pre class="usage"><span class='fu'>annotate_sce_cells</span>(<span class='no'>sce</span>, <span class='kw'>min_library_size</span> <span class='kw'>=</span> <span class='fl'>300</span>, <span class='kw'>min_features</span> <span class='kw'>=</span> <span class='fl'>100</span>,
+  <span class='kw'>max_mito</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='kw'>max_ribo</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>min_counts</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>min_cells</span> <span class='kw'>=</span> <span class='fl'>2</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -132,16 +132,43 @@ qc_metric_total_features_by_counts - is the gene mitochondrial
       <th>sce</th>
       <td><p>a SingleCellExperiment object</p></td>
     </tr>
+    <tr>
+      <th>min_library_size</th>
+      <td><p>the minimum number of counts per cell</p></td>
+    </tr>
+    <tr>
+      <th>min_features</th>
+      <td><p>the minimum number of features per cell (i.e. the minimum
+number of genes with &gt;0 counts)</p></td>
+    </tr>
+    <tr>
+      <th>max_mito</th>
+      <td><p>the maximum proportion of counts mapping to
+mitochondrial genes (0 - 1)</p></td>
+    </tr>
+    <tr>
+      <th>max_ribo</th>
+      <td><p>the maximum proportion of counts mapping to
+ribosomal genes (0 - 1)</p></td>
+    </tr>
+    <tr>
+      <th>min_counts</th>
+      <td><p>the minimum number of counts per cell in min_cells</p></td>
+    </tr>
+    <tr>
+      <th>min_cells</th>
+      <td><p>the minimum number of cells with min_counts</p></td>
+    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>sce a SingleCellExperiment object annotated with cell data</p>
+    <p>sce a SingleCellExperiment object annotated with cell QC metrics</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other annotation functions: <code><a href='annotate_sce_genes.html'>annotate_sce_genes</a></code>,
-  <code><a href='generate_sce.html'>generate_sce</a></code>,
+  <code><a href='filter_sce.html'>filter_sce</a></code>, <code><a href='generate_sce.html'>generate_sce</a></code>,
   <code><a href='map_ensembl_gene_id.html'>map_ensembl_gene_id</a></code>,
   <code><a href='retrieve_sample_metadata.html'>retrieve_sample_metadata</a></code></p></div>
     
