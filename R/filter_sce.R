@@ -40,16 +40,19 @@ filter_sce <- function(sce,
         "{.emph {n_mito}} mitochondrial genes were dropped. \r\n")
     }
 
+    n_ribo <- sum(rowData(sce)$qc_metric_is_ribo)
     if (keep_ribo == FALSE) {
-      n_ribo <- sum(rowData(sce)$qc_metric_is_ribo)
       sce <- sce[
         SummarizedExperiment::rowData(sce)$qc_metric_is_ribo == FALSE, ]
       cli::cli_alert_success(
         "{.emph {n_ribo}} ribosomal genes were dropped. \r\n")
+    } else {
+      cli::cli_alert_info(
+        "{.emph {n_ribo}} ribosomal genes were retained. \r\n")
     }
 
-    n_genes <- length(rowData(sce)$qc_metric_is_expressive)
-    sce <- sce[SummarizedExperiment::rowData(sce)$qc_metric_is_ribo == FALSE, ]
+    n_non_expressive <- sum(!rowData(sce)$qc_metric_is_expressive)
+    sce <- sce[SummarizedExperiment::rowData(sce)$qc_metric_is_expressive == TRUE, ]
     cli::cli_alert_success(
       "{.emph {n_non_expressive}} non-expressive genes were dropped. \r\n")
 
@@ -58,10 +61,37 @@ filter_sce <- function(sce,
   if (filter_cells == TRUE) {
 
     n_qc_failed <- sum(!sce$passed_qc)
-    sce <- sce[, sce$passed_qc == TRUE]
+
     cli::cli_alert_success(
-      "{.emph {n_qc_failed}} cells failed QC and were dropped. \r\n"
+      "{.emph {n_qc_failed}} cells failed QC and were dropped: - \r\n"
     )
+
+    cli_div(theme = list(
+      span.pass = list(color = "green"),
+      span.fail = list(color = "red")
+    ))
+
+    cli::cli_dl(c(
+      "Library size QC" =
+        paste0("{.pass PASS: {sum(sce$qc_metric_min_library_size, na.rm=T)}} / ",
+          "{.fail FAIL: {sum(!sce$qc_metric_min_library_size, na.rm=T)}}"),
+      "Number of genes QC" =
+        paste0("{.pass PASS: {sum(sce$qc_metric_min_features, na.rm=T)}} / ",
+               "{.fail FAIL: {sum(!sce$qc_metric_min_features, na.rm=T)}}"),
+      "Mitochondria counts proportion QC" =
+        paste0("{.pass PASS: {sum(sce$qc_metric_pc_mito_ok, na.rm=T)}} / ",
+               "{.fail FAIL: {sum(!sce$qc_metric_pc_mito_ok, na.rm=T)}}"),
+      "Ribosomal counts proportion QC" =
+        paste0("{.pass PASS: {sum(sce$qc_metric_pc_ribo_ok, na.rm=T)}} / ",
+               "{.fail FAIL: {sum(!sce$qc_metric_pc_ribo_ok, na.rm=T)}}"),
+      "{.strong Overall cell QC}" =
+        paste0("{.pass PASS: {sum(sce$passed_qc, na.rm=T)}} / ",
+               "{.fail FAIL: {sum(!sce$passed_qc, na.rm=T)}}")
+      )
+    )
+
+    # subset
+    sce <- sce[, sce$passed_qc == TRUE]
 
   } else {
 

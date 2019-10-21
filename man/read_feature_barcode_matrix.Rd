@@ -17,4 +17,8 @@ Reads a feature-barcode matrix folder into a sparse matrix.  This folder is
 output by cellranger and must contain a 'barcodes.tsv.gz', 'features.tsv.gz',
 and 'matrix.mtx.gz' file.
 }
+\seealso{
+Other import and export functions: \code{\link{write_feature_barcode_matrix}},
+  \code{\link{write_sce}}
+}
 \concept{import and export functions}

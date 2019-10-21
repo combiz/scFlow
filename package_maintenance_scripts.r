@@ -36,7 +36,9 @@ use_r("annotate_sce_genes")
 use_r("generate_sce")
 use_r("annotate_sce_cells")
 use_r("filter_sce")
+use_r("write_sce")
 
+use_r("write_feature_barcode_matrix")
 
 use_test("function_name")
 

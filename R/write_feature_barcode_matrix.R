@@ -1,0 +1,75 @@
+################################################################################
+#' Write a feature-barcode matrix
+#'
+#' Write a feature-barcode matrix into a folder with .gz compressed files.  This
+#' folder contains 'barcodes.tsv.gz', 'features.tsv.gz',and 'matrix.mtx.gz'.
+#'
+#' @param mat a matrix
+#' @param folder_path path to save the feature barcode matrix files
+#'
+#' @family import and export functions
+#'
+#' @import Matrix
+#' @import cli
+#' @importFrom R.utils gzip
+#'
+#' @export
+write_feature_barcode_matrix <- function(mat,
+                                         folder_path,
+                                         overwrite_files = TRUE) {
+
+  cat(cli::rule("Writing feature-barcode matrix", line = 1), "\r\n")
+
+  if (class(mat) != "dgTMatrix") {
+    stop(cli::cli_alert_danger("Expected dgTMatrix, received {{class(mat)}}."))
+  }
+
+  if (!dir.exists(file.path(folder_path))) {
+    cli::cli_text("Creating dir: {.path {folder_path}} \r\n")
+    dir.create(file.path(folder_path))
+  }
+
+  paths_l <- list()
+  paths_l[["barcodes_path"]] <-  file.path(folder_path, "barcodes.tsv.gz")
+  paths_l[["features_path"]] <-  file.path(folder_path, "features.tsv.gz")
+  paths_l[["matrix_path"]] <-  file.path(folder_path, "matrix.mtx")
+
+  # check files dont exist or throw error
+  if (overwrite_files == FALSE) {
+    if (!any(purrr::map_lgl(paths_l, file.exists))) {
+      stop(cli::cli_alert_danger(c(
+        "Files already exist.",
+        "Pass overwrite_files=TRUE to overwrite."
+      )))
+    }
+  }
+
+  cli::cli_text("Writing: {.path {paths_l$barcodes_path}}")
+  utils::write.table(
+    as.character(colnames(mat)),
+    quote = FALSE,
+    row.names = FALSE,
+    col.names = FALSE,
+    file = gzfile(paths_l$barcodes_path))
+
+  cli::cli_text("Writing: {.path {paths_l$features_path}}")
+  utils::write.table(
+    as.character(rownames(mat)),
+    quote = FALSE,
+    row.names = FALSE,
+    col.names = FALSE,
+    file = gzfile(paths_l$features_path))
+
+  cli::cli_text("Writing: {.path {paths_l$matrix_path}}")
+  Matrix::writeMM(
+    obj = mat,
+    file = paths_l$matrix_path)
+
+  cli::cli_text("Compressing: {.path {paths_l$matrix_path}}")
+  gzip(
+    paths_l$matrix_path,
+    overwrite = overwrite_files)
+
+  cli::cli_alert_success("Saved sparse matrix to {.file {folder_path}}")
+
+}

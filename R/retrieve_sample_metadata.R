@@ -19,7 +19,12 @@
 #' @export
 retrieve_sample_metadata <- function(unique_id,
                                      id_colname,
-                                     samplesheet_path) {
+                                     samplesheet_path,
+                                     ...) {
+
+  args_l <- list(colClasses = NA)
+  inargs <- list(...)
+  args_l[names(inargs)] <- inargs
 
   cat(cli::rule("Retrieving sample metadata", line = 1), "\r\n")
 
@@ -28,7 +33,9 @@ retrieve_sample_metadata <- function(unique_id,
                                 Check that the path is correct."))
   } else {
     cat("Reading", cli::col_green(c(samplesheet_path, " \r\n")))
-    samplesheet <- read.delim(samplesheet_path)
+    samplesheet <- read.delim(
+      samplesheet_path,
+      colClasses = args_l$colClasses)
   }
 
   if (!(id_colname %in% colnames(samplesheet))) {
@@ -62,10 +69,11 @@ retrieve_sample_metadata <- function(unique_id,
     )
     #cli::cli_text(paste(colnames(metadata), collapse = ", "))
     for (var in names(metadata)){
-      cli::cli_text("{.strong {var}}: {.var {metadata[[var]][[1]]}}")
+      cli::cli_text(c("{.strong {var}}: {.var {metadata[[var]][[1]]}} ",
+        "{.emph ({class(metadata[[var]][[1]])}})")
+      )
     }
   }
-
 
   return(metadata)
 

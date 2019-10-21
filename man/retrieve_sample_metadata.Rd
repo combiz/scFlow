@@ -4,7 +4,7 @@
 \alias{retrieve_sample_metadata}
 \title{Retrieve the metadata for a sample from a samplesheet}
 \usage{
-retrieve_sample_metadata(unique_id, id_colname, samplesheet_path)
+retrieve_sample_metadata(unique_id, id_colname, samplesheet_path, ...)
 }
 \arguments{
 \item{unique_id}{unique value for this sample in the \code{id_colname} column}
