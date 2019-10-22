@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • scflow</title>
+<title>Write a feature-barcode matrix — write_feature_barcode_matrix • scflow</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -32,7 +32,11 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Write a feature-barcode matrix — write_feature_barcode_matrix" />
+
+<meta property="og:description" content="Write a feature-barcode matrix into a folder with .gz compressed files.  This
+folder contains 'barcodes.tsv.gz', 'features.tsv.gz',and 'matrix.mtx.gz'." />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -50,7 +54,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -98,127 +102,55 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Write a feature-barcode matrix</h1>
+    <small class="dont-index">Source: <a href='https://github.com/combiz/scflow/blob/master/R/write_feature_barcode_matrix.R'><code>R/write_feature_barcode_matrix.R</code></a></small>
+    <div class="hidden name"><code>write_feature_barcode_matrix.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    
+    <p>Write a feature-barcode matrix into a folder with .gz compressed files.  This
+folder contains 'barcodes.tsv.gz', 'features.tsv.gz',and 'matrix.mtx.gz'.</p>
+    
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
-
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-import-and-export" class="hasAnchor"><a href="#section-import-and-export" class="anchor"></a>Import and Export</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="read_feature_barcode_matrix.html">read_feature_barcode_matrix()</a></code> </p>
-        </td>
-        <td><p>Read a feature-barcode matrix</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="read_sce.html">read_sce()</a></code> </p>
-        </td>
-        <td><p>Read a SingleCellExperiment from a folder</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="write_feature_barcode_matrix.html">write_feature_barcode_matrix()</a></code> </p>
-        </td>
-        <td><p>Write a feature-barcode matrix</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="write_sce.html">write_sce()</a></code> </p>
-        </td>
-        <td><p>Write a SingleCellExperiment to a folder</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-pre-processing-and-annotation" class="hasAnchor"><a href="#section-pre-processing-and-annotation" class="anchor"></a>Pre-Processing and Annotation</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="annotate_sce.html">annotate_sce()</a></code> </p>
-        </td>
-        <td><p>Add basic annotations and qc metrics for a SingleCellExperiment</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="annotate_sce_cells.html">annotate_sce_cells()</a></code> </p>
-        </td>
-        <td><p>Add basic cell-wise annotations for a SingleCellExperiment</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="annotate_sce_genes.html">annotate_sce_genes()</a></code> </p>
-        </td>
-        <td><p>Add basic gene-wise annotations for a SingleCellExperiment</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="filter_sce.html">filter_sce()</a></code> </p>
-        </td>
-        <td><p>Filter SingleCellExperiment according to QC metrics
-Quality control metrics previously calculated are used to subset the
-SingleCellExperiment for both cells and genes passing QC criteria previously
-specified in the <code>annotate_sce_genes</code> and <code>annotate_sce_cells</code> functions</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="find_singlets.html">find_singlets()</a></code> </p>
-        </td>
-        <td><p>Find singlets in a SingleCellExperiment</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="generate_sce.html">generate_sce()</a></code> </p>
-        </td>
-        <td><p>Generate a SingleCellExperiment object from a matrix and metadata</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="map_ensembl_gene_id.html">map_ensembl_gene_id()</a></code> </p>
-        </td>
-        <td><p>Return mappings for Ensembl Gene IDs</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="retrieve_sample_metadata.html">retrieve_sample_metadata()</a></code> </p>
-        </td>
-        <td><p>Retrieve the metadata for a sample from a samplesheet</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="run_doubletfinder.html">run_doubletfinder()</a></code> </p>
-        </td>
-        <td><p>Find singlets in a SingleCellExperiment with DoubletFinder by McGinnis CS
-et al</p></td>
-      </tr>
-    </tbody>
+    <pre class="usage"><span class='fu'>write_feature_barcode_matrix</span>(<span class='no'>mat</span>, <span class='no'>folder_path</span>, <span class='kw'>overwrite_files</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>mat</th>
+      <td><p>a matrix</p></td>
+    </tr>
+    <tr>
+      <th>folder_path</th>
+      <td><p>path to save the feature barcode matrix files</p></td>
+    </tr>
+    <tr>
+      <th>overwrite_files</th>
+      <td><p>set to <code>TRUE</code> to overwrite files if they already
+exist.</p></td>
+    </tr>
     </table>
-  </div>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
+    <div class='dont-index'><p>Other import and export functions: <code><a href='read_feature_barcode_matrix.html'>read_feature_barcode_matrix</a></code>,
+  <code><a href='read_sce.html'>read_sce</a></code>, <code><a href='write_sce.html'>write_sce</a></code></p></div>
+    
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-import-and-export">Import and Export</a></li>
-      <li><a href="#section-pre-processing-and-annotation">Pre-Processing and Annotation</a></li>
-    </ul>
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#see-also">See also</a></li>
+          </ul>
+
   </div>
 </div>
 

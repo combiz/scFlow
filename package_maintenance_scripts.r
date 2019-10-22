@@ -33,10 +33,14 @@ use_r("map_ensembl_gene_id")
 use_r("generate_sce_from_mat_and_meta")
 use_r("annotate_sce_genes")
 
+use_r("annotate_sce")
 use_r("generate_sce")
 use_r("annotate_sce_cells")
 use_r("filter_sce")
 use_r("write_sce")
+use_r("read_sce")
+
+use_r("find_singlets_with_doubletfinder")
 
 use_r("write_feature_barcode_matrix")
 
@@ -71,3 +75,5 @@ use_package("SingleCellExperiment")
 use_package("vroom")
 use_package("magrittr")
 use_package("english")
+use_package("Seurat")
+use_package("DoubletFinder")

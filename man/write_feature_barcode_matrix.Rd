@@ -10,6 +10,9 @@ write_feature_barcode_matrix(mat, folder_path, overwrite_files = TRUE)
 \item{mat}{a matrix}
 
 \item{folder_path}{path to save the feature barcode matrix files}
+
+\item{overwrite_files}{set to \code{TRUE} to overwrite files if they already
+exist.}
 }
 \description{
 Write a feature-barcode matrix into a folder with .gz compressed files.  This
@@ -17,6 +20,6 @@ folder contains 'barcodes.tsv.gz', 'features.tsv.gz',and 'matrix.mtx.gz'.
 }
 \seealso{
 Other import and export functions: \code{\link{read_feature_barcode_matrix}},
-  \code{\link{write_sce}}
+  \code{\link{read_sce}}, \code{\link{write_sce}}
 }
 \concept{import and export functions}

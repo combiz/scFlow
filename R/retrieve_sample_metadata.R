@@ -8,6 +8,7 @@
 #' @param unique_id unique value for this sample in the `id_colname` column
 #' @param id_colname the column name containing the `unique_id`
 #' @param samplesheet_path path to a tsv file containing a samplesheet
+#' @param ... for colClasses (may be extended later - fix)
 #'
 #' @return metadata the metadata for the specified sample
 #'
@@ -22,9 +23,9 @@ retrieve_sample_metadata <- function(unique_id,
                                      samplesheet_path,
                                      ...) {
 
-  args_l <- list(colClasses = NA)
+  args <- list(colClasses = NA)
   inargs <- list(...)
-  args_l[names(inargs)] <- inargs
+  args[names(inargs)] <- inargs
 
   cat(cli::rule("Retrieving sample metadata", line = 1), "\r\n")
 
@@ -35,7 +36,7 @@ retrieve_sample_metadata <- function(unique_id,
     cat("Reading", cli::col_green(c(samplesheet_path, " \r\n")))
     samplesheet <- read.delim(
       samplesheet_path,
-      colClasses = args_l$colClasses)
+      colClasses = args$colClasses)
   }
 
   if (!(id_colname %in% colnames(samplesheet))) {

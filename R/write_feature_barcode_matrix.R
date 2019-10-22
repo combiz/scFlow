@@ -6,11 +6,14 @@
 #'
 #' @param mat a matrix
 #' @param folder_path path to save the feature barcode matrix files
+#' @param overwrite_files set to `TRUE` to overwrite files if they already
+#' exist.
 #'
 #' @family import and export functions
 #'
-#' @import Matrix
 #' @import cli
+#' @importFrom utils write.table
+#' @importFrom Matrix writeMM
 #' @importFrom R.utils gzip
 #'
 #' @export
@@ -66,7 +69,7 @@ write_feature_barcode_matrix <- function(mat,
     file = paths_l$matrix_path)
 
   cli::cli_text("Compressing: {.path {paths_l$matrix_path}}")
-  gzip(
+  R.utils::gzip(
     paths_l$matrix_path,
     overwrite = overwrite_files)
 

@@ -25,7 +25,7 @@ annotate_sce_genes <- function(sce,
 
   cat(cli::rule("Annotating SingleCellExperiment genes", line = 1), "\r\n")
 
-  if (typeof(sce) != "S4") {
+  if (class(sce) != "SingleCellExperiment") {
     stop(cli::cli_alert_danger("A SingleCellExperiment is required."))
   }
 
@@ -33,8 +33,6 @@ annotate_sce_genes <- function(sce,
         colnames(SummarizedExperiment::rowData(sce)))) {
     stop(cli::cli_alert_danger("The rowData is missing ensembl_gene_id."))
   }
-
-  before_rowdata_colnames <- colnames(SummarizedExperiment::rowData(sce))
 
   # annotate rowdata with biomart data
   mapped_ensembl_ids <- map_ensembl_gene_id(
@@ -63,7 +61,7 @@ annotate_sce_genes <- function(sce,
 
   # annotate rowdata with qc_metric_ensembl_mapped
   SummarizedExperiment::rowData(sce)$qc_metric_ensembl_mapped <-
-    is.na(SummarizedExperiment::rowData(sce)$gene) + 0
+    !(is.na(SummarizedExperiment::rowData(sce)$gene)) + 0
 
   # annotate rowdata with qc_metric_mitochondrial
   qc_metric_is_mito <- startsWith(
@@ -77,13 +75,6 @@ annotate_sce_genes <- function(sce,
   qc_metric_is_ribo[is.na(qc_metric_is_ribo)] <- 0
   SummarizedExperiment::rowData(sce)$qc_metric_is_ribo <-
     qc_metric_is_ribo
-
-  cli::cli_alert_success(
-    "SingleCellExperiment genes were successfully annotated with: \r\n")
-
-  cli::cli_ul(setdiff(colnames(SummarizedExperiment::rowData(sce)),
-                      before_rowdata_colnames))
-
 
   return(sce)
 

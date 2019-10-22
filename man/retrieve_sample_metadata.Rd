@@ -12,6 +12,8 @@ retrieve_sample_metadata(unique_id, id_colname, samplesheet_path, ...)
 \item{id_colname}{the column name containing the \code{unique_id}}
 
 \item{samplesheet_path}{path to a tsv file containing a samplesheet}
+
+\item{...}{for colClasses (may be extended later - fix)}
 }
 \value{
 metadata the metadata for the specified sample
@@ -24,7 +26,9 @@ samplesheet.
 \seealso{
 Other annotation functions: \code{\link{annotate_sce_cells}},
   \code{\link{annotate_sce_genes}},
-  \code{\link{filter_sce}}, \code{\link{generate_sce}},
-  \code{\link{map_ensembl_gene_id}}
+  \code{\link{annotate_sce}}, \code{\link{filter_sce}},
+  \code{\link{find_singlets}}, \code{\link{generate_sce}},
+  \code{\link{map_ensembl_gene_id}},
+  \code{\link{run_doubletfinder}}
 }
 \concept{annotation functions}

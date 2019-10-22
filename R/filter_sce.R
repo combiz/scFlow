@@ -8,8 +8,9 @@
 #' @param sce a SingleCellExperiment object
 #' @param filter_genes if set `FALSE`, genes will not be filtered
 #' @param filter_cells if set `FALSE`, cells will not be filtered
-#' @param keep_mito set `FALSE` to remove mitochondrial genes
-#' @param keep_ribo set `FALSE` to remove ribosomal genes
+#' @param drop_unmapped set `TRUE` to remove unmapped ensembl_gene_id
+#' @param drop_mito set `TRUE` to remove mitochondrial genes
+#' @param drop_ribo set `TRUE` to remove ribosomal genes
 #'
 #' @return sce a SingleCellExperiment object filtered for QC passed cells and
 #'   genes, with QC metrics annotations removed
@@ -20,8 +21,9 @@
 filter_sce <- function(sce,
                        filter_genes = FALSE,
                        filter_cells = TRUE,
-                       keep_mito = FALSE,
-                       keep_ribo = TRUE) {
+                       drop_unmapped = TRUE,
+                       drop_mito = TRUE,
+                       drop_ribo = FALSE) {
 
   cat(cli::rule("Filtering SingleCellExperiment", line = 1), "\r\n")
 
@@ -32,18 +34,21 @@ filter_sce <- function(sce,
 
   if (filter_genes == TRUE) {
 
-    if (keep_mito == FALSE) {
-      n_mito <- sum(rowData(sce)$qc_metric_is_mito)
-      sce <- sce[
-        SummarizedExperiment::rowData(sce)$qc_metric_is_mito == FALSE, ]
+    n_mito <- sum(SummarizedExperiment::rowData(sce)$qc_metric_is_mito)
+    if (drop_mito == TRUE) {
+      sce <-
+        sce[SummarizedExperiment::rowData(sce)$qc_metric_is_mito == FALSE, ]
       cli::cli_alert_success(
         "{.emph {n_mito}} mitochondrial genes were dropped. \r\n")
+    } else {
+      cli::cli_alert_info(
+        "{.emph {n_mito}} mitochondrial genes were retained. \r\n")
     }
 
-    n_ribo <- sum(rowData(sce)$qc_metric_is_ribo)
-    if (keep_ribo == FALSE) {
-      sce <- sce[
-        SummarizedExperiment::rowData(sce)$qc_metric_is_ribo == FALSE, ]
+    n_ribo <- sum(SummarizedExperiment::rowData(sce)$qc_metric_is_ribo)
+    if (drop_ribo == TRUE) {
+      sce <-
+        sce[SummarizedExperiment::rowData(sce)$qc_metric_is_ribo == FALSE, ]
       cli::cli_alert_success(
         "{.emph {n_ribo}} ribosomal genes were dropped. \r\n")
     } else {
@@ -51,8 +56,23 @@ filter_sce <- function(sce,
         "{.emph {n_ribo}} ribosomal genes were retained. \r\n")
     }
 
-    n_non_expressive <- sum(!rowData(sce)$qc_metric_is_expressive)
-    sce <- sce[SummarizedExperiment::rowData(sce)$qc_metric_is_expressive == TRUE, ]
+    n_unmapped <-
+      sum(!SummarizedExperiment::rowData(sce)$qc_metric_ensembl_mapped)
+    if (drop_unmapped == TRUE) {
+      sce <-
+        sce[SummarizedExperiment::rowData(sce)$qc_metric_ensembl_mapped == TRUE, ]
+      cli::cli_alert_success(
+        "{.emph {n_unmapped}} unmapped genes were dropped. \r\n")
+    } else {
+      cli::cli_alert_info(
+        "{.emph {n_unmapped}} unmapped genes were retained. \r\n")
+    }
+
+    n_non_expressive <- sum(
+      !(SummarizedExperiment::rowData(sce)$qc_metric_is_expressive)
+    )
+    sce <-
+      sce[SummarizedExperiment::rowData(sce)$qc_metric_is_expressive == TRUE, ]
     cli::cli_alert_success(
       "{.emph {n_non_expressive}} non-expressive genes were dropped. \r\n")
 
@@ -66,7 +86,7 @@ filter_sce <- function(sce,
       "{.emph {n_qc_failed}} cells failed QC and were dropped: - \r\n"
     )
 
-    cli_div(theme = list(
+    cli::cli_div(theme = list(
       span.pass = list(color = "green"),
       span.fail = list(color = "red")
     ))
@@ -108,4 +128,5 @@ filter_sce <- function(sce,
   )
 
   return(sce)
+
 }

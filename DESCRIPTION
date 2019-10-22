@@ -33,10 +33,15 @@ Imports:
     magrittr,
     data.table,
     SummarizedExperiment,
+    R.utils,
     vroom,
-    english
+    english,
+    Seurat,
+    DoubletFinder
 Remotes:
     r-lib/cli,
+    chris-mcginnis-ucsf/DoubletFinder/,
+    satijalab/seurat,
     bioc::release/biomaRt,
     bioc::release/SingleCellExperiment,
     bioc::release/SummarizedExperiment

@@ -130,7 +130,7 @@ specified in the <code>annotate_sce_genes</code> and <code>annotate_sce_cells</c
     </div>
 
     <pre class="usage"><span class='fu'>filter_sce</span>(<span class='no'>sce</span>, <span class='kw'>filter_genes</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>filter_cells</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>keep_mito</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>keep_ribo</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+  <span class='kw'>drop_unmapped</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>drop_mito</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>drop_ribo</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -148,12 +148,16 @@ specified in the <code>annotate_sce_genes</code> and <code>annotate_sce_cells</c
       <td><p>if set <code>FALSE</code>, cells will not be filtered</p></td>
     </tr>
     <tr>
-      <th>keep_mito</th>
-      <td><p>set <code>FALSE</code> to remove mitochondrial genes</p></td>
+      <th>drop_unmapped</th>
+      <td><p>set <code>TRUE</code> to remove unmapped ensembl_gene_id</p></td>
     </tr>
     <tr>
-      <th>keep_ribo</th>
-      <td><p>set <code>FALSE</code> to remove ribosomal genes</p></td>
+      <th>drop_mito</th>
+      <td><p>set <code>TRUE</code> to remove mitochondrial genes</p></td>
+    </tr>
+    <tr>
+      <th>drop_ribo</th>
+      <td><p>set <code>TRUE</code> to remove ribosomal genes</p></td>
     </tr>
     </table>
     
@@ -166,9 +170,11 @@ genes, with QC metrics annotations removed</p>
 
     <div class='dont-index'><p>Other annotation functions: <code><a href='annotate_sce_cells.html'>annotate_sce_cells</a></code>,
   <code><a href='annotate_sce_genes.html'>annotate_sce_genes</a></code>,
+  <code><a href='annotate_sce.html'>annotate_sce</a></code>, <code><a href='find_singlets.html'>find_singlets</a></code>,
   <code><a href='generate_sce.html'>generate_sce</a></code>,
   <code><a href='map_ensembl_gene_id.html'>map_ensembl_gene_id</a></code>,
-  <code><a href='retrieve_sample_metadata.html'>retrieve_sample_metadata</a></code></p></div>
+  <code><a href='retrieve_sample_metadata.html'>retrieve_sample_metadata</a></code>,
+  <code><a href='run_doubletfinder.html'>run_doubletfinder</a></code></p></div>
     
 
   </div>

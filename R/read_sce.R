@@ -1,0 +1,92 @@
+################################################################################
+#' Read a SingleCellExperiment from a folder
+#'
+#' Read a \linkS4class{SingleCellExperiment} from a folder: -
+#' * Feature-barcode-matrix files: -
+#'   - 'barcodes.tsv.gz'
+#'   - 'features.tsv.gz'
+#'   - 'matrix.mtx.gz'
+#' * Metadata: -
+#'   - 'sce_rowdata.tsv'
+#'   - 'sce_coldata.tsv'
+#'   - 'scecoldata_classes.tsv'
+#' * reducedDim(sce, x) (if present): -
+#'   - 'ReducedDim_x.tsv'
+#'
+#' @param folder_path path to save the SingleCellExperiment
+#'
+#' @return sce a SingleCellExperiment object
+#'
+#' @family import and export functions
+#'
+#' @import cli Matrix SummarizedExperiment dplyr SingleCellExperiment
+#' @importFrom R.utils gzip
+#' @importFrom tools file_path_sans_ext
+#'
+#' @export
+read_sce <- function(folder_path) {
+
+  cat(cli::rule("Reading SingleCellExperiment", line = 1), "\r\n")
+
+  ## Check core files are present
+  paths_l <- list()
+  paths_l[["all_coldata"]] <-  file.path(folder_path, "sce-coldata.tsv")
+  paths_l[["all_rowdata"]] <-  file.path(folder_path, "sce-rowdata.tsv")
+  paths_l[["col_classes"]] <-  file.path(folder_path, "scecoldata_classes.tsv")
+  paths_l[["barcodes_path"]] <-  file.path(folder_path, "barcodes.tsv.gz")
+  paths_l[["features_path"]] <-  file.path(folder_path, "features.tsv.gz")
+  paths_l[["matrix_path"]] <-  file.path(folder_path, "matrix.mtx.gz")
+
+  # check all files exist or throw error
+  if(!(all(purrr::map_lgl(paths_l, file.exists)))){
+    stop("Files not found.  Specify a valid folder path.")
+  }
+
+  all_counts <- read_feature_barcode_matrix(folder_path)
+
+  cli::cli_text("Reading: {.path {paths_l$all_rowdata}}")
+  all_rowdata <- read.delim(
+    file = paths_l$all_rowdata
+  )
+
+  cli::cli_text("Reading: {.path {paths_l$col_classes}}")
+  col_classes <- read.delim(
+    paths_l$col_classes,
+    header=FALSE
+  )
+  cc <- as.character(col_classes[, 2])
+  names(cc) <- as.character(col_classes[, 1])
+
+  cli::cli_text("Reading: {.path {paths_l$all_coldata}}")
+  all_coldata <- read.delim(
+    file = paths_l$all_coldata,
+    colClasses = cc
+  )
+
+  cli::cli_text("Generating SingleCellExperiment")
+  sce <- SingleCellExperiment::SingleCellExperiment(
+    assays = list(counts = all_counts),
+    rowData = all_rowdata,
+    colData = all_coldata
+  )
+
+  rm(all_coldata, all_counts, all_rowdata)
+  rd_files_l <- list.files(
+    folder_path)[startsWith(list.files(folder_path), prefix = "ReducedDim_")]
+
+  # if there are reduced dimension data, import them
+  if (length(rd_files_l) > 0){
+    for(rd_file in rd_files_l){
+      rdname <- tools::file_path_sans_ext(gsub("ReducedDim_", "", rd_file))
+      cli::cli_text("Reading: {.path {rd_file}}")
+      SingleCellExperiment::reducedDim(sce, rdname) <- read.delim(
+        file = file.path(folder_path, rd_file))
+    }
+  }
+
+  cli::cli_alert_success("Imported SingleCellExperiment.")
+
+
+  return(sce)
+
+}

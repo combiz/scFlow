@@ -21,8 +21,10 @@ containing metadata for the sample.
 \seealso{
 Other annotation functions: \code{\link{annotate_sce_cells}},
   \code{\link{annotate_sce_genes}},
-  \code{\link{filter_sce}},
+  \code{\link{annotate_sce}}, \code{\link{filter_sce}},
+  \code{\link{find_singlets}},
   \code{\link{map_ensembl_gene_id}},
-  \code{\link{retrieve_sample_metadata}}
+  \code{\link{retrieve_sample_metadata}},
+  \code{\link{run_doubletfinder}}
 }
 \concept{annotation functions}

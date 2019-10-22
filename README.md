@@ -70,10 +70,14 @@ devtools::install_github("combiz/scflow")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+Remove this. This is a basic example which shows you how to solve a
+common problem:
 
 ``` r
 library(scflow)
+#> Registered S3 method overwritten by 'R.oo':
+#>   method        from       
+#>   throw.default R.methodsS3
 ## basic example code
 ```
 

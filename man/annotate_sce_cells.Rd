@@ -4,26 +4,22 @@
 \alias{annotate_sce_cells}
 \title{Add basic cell-wise annotations for a SingleCellExperiment}
 \usage{
-annotate_sce_cells(sce, min_library_size = 300, min_features = 100,
-  max_mito = 0.1, max_ribo = 1, min_counts = 2, min_cells = 2)
+annotate_sce_cells(sce, ...)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}
 
-\item{min_library_size}{the minimum number of counts per cell}
+\item{...}{See \code{\link{annotate_sce}}
 
-\item{min_features}{the minimum number of features per cell (i.e. the minimum
-number of genes with >0 counts)}
-
-\item{max_mito}{the maximum proportion of counts mapping to
-mitochondrial genes (0 - 1)}
-
-\item{max_ribo}{the maximum proportion of counts mapping to
-ribosomal genes (0 - 1)}
-
-\item{min_counts}{the minimum number of counts per cell in min_cells}
-
-\item{min_cells}{the minimum number of cells with min_counts}
+min_library_size the minimum number of counts per cell
+min_features the minimum number of features per cell (i.e. the minimum
+number of genes with >0 counts)
+max_mito the maximum proportion of counts mapping to
+mitochondrial genes (0 - 1)
+max_ribo the maximum proportion of counts mapping to
+ribosomal genes (0 - 1)
+min_counts the minimum number of counts per cell in min_cells
+min_cells the minimum number of cells with min_counts}
 }
 \value{
 sce a SingleCellExperiment object annotated with cell QC metrics
@@ -37,8 +33,10 @@ Calculates the following QC metrics:
 }
 \seealso{
 Other annotation functions: \code{\link{annotate_sce_genes}},
-  \code{\link{filter_sce}}, \code{\link{generate_sce}},
+  \code{\link{annotate_sce}}, \code{\link{filter_sce}},
+  \code{\link{find_singlets}}, \code{\link{generate_sce}},
   \code{\link{map_ensembl_gene_id}},
-  \code{\link{retrieve_sample_metadata}}
+  \code{\link{retrieve_sample_metadata}},
+  \code{\link{run_doubletfinder}}
 }
 \concept{annotation functions}

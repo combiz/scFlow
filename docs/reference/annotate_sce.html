@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Add basic cell-wise annotations for a SingleCellExperiment — annotate_sce_cells • scflow</title>
+<title>Add basic annotations and qc metrics for a SingleCellExperiment — annotate_sce • scflow</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -32,13 +32,9 @@
 
 
 
-<meta property="og:title" content="Add basic cell-wise annotations for a SingleCellExperiment — annotate_sce_cells" />
+<meta property="og:title" content="Add basic annotations and qc metrics for a SingleCellExperiment — annotate_sce" />
 
-<meta property="og:description" content="Calculates the following QC metrics:
-qc_metric_total_counts - was the ensembl_gene_id found in biomaRt
-qc_metric_total_features_by_counts - is the gene mitochondrial
-
-" />
+<meta property="og:description" content="Adds biomaRt annotations (e.g. gene, gene_biotype) and QC metric annotations." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -107,22 +103,20 @@ qc_metric_total_features_by_counts - is the gene mitochondrial
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Add basic cell-wise annotations for a SingleCellExperiment</h1>
-    <small class="dont-index">Source: <a href='https://github.com/combiz/scflow/blob/master/R/annotate_sce_cells.R'><code>R/annotate_sce_cells.R</code></a></small>
-    <div class="hidden name"><code>annotate_sce_cells.Rd</code></div>
+    <h1>Add basic annotations and qc metrics for a SingleCellExperiment</h1>
+    <small class="dont-index">Source: <a href='https://github.com/combiz/scflow/blob/master/R/annotate_sce.R'><code>R/annotate_sce.R</code></a></small>
+    <div class="hidden name"><code>annotate_sce.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Calculates the following QC metrics:</p><ul>
-<li><p>qc_metric_total_counts - was the ensembl_gene_id found in biomaRt</p></li>
-<li><p>qc_metric_total_features_by_counts - is the gene mitochondrial</p></li>
-</ul>
-
+    <p>Adds biomaRt annotations (e.g. gene, gene_biotype) and QC metric annotations.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>annotate_sce_cells</span>(<span class='no'>sce</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>annotate_sce</span>(<span class='no'>sce</span>, <span class='kw'>min_library_size</span> <span class='kw'>=</span> <span class='fl'>300</span>, <span class='kw'>min_features</span> <span class='kw'>=</span> <span class='fl'>100</span>,
+  <span class='kw'>max_mito</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='kw'>max_ribo</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>min_counts</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>min_cells</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='kw'>ensembl_mapping_file</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -132,29 +126,77 @@ qc_metric_total_features_by_counts - is the gene mitochondrial
       <td><p>a SingleCellExperiment object</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>See <code><a href='annotate_sce.html'>annotate_sce</a></code></p>
-<p>min_library_size the minimum number of counts per cell
-min_features the minimum number of features per cell (i.e. the minimum
-number of genes with &gt;0 counts)
-max_mito the maximum proportion of counts mapping to
-mitochondrial genes (0 - 1)
-max_ribo the maximum proportion of counts mapping to
-ribosomal genes (0 - 1)
-min_counts the minimum number of counts per cell in min_cells
-min_cells the minimum number of cells with min_counts</p></td>
+      <th>min_library_size</th>
+      <td><p>the minimum number of counts per cell</p></td>
+    </tr>
+    <tr>
+      <th>min_features</th>
+      <td><p>the minimum number of features per cell (i.e. the minimum
+number of genes with &gt;0 counts)</p></td>
+    </tr>
+    <tr>
+      <th>max_mito</th>
+      <td><p>the maximum proportion of counts mapping to
+mitochondrial genes (0 - 1)</p></td>
+    </tr>
+    <tr>
+      <th>max_ribo</th>
+      <td><p>the maximum proportion of counts mapping to
+ribosomal genes (0 - 1)</p></td>
+    </tr>
+    <tr>
+      <th>min_counts</th>
+      <td><p>the minimum number of counts per cell in min_cells</p></td>
+    </tr>
+    <tr>
+      <th>min_cells</th>
+      <td><p>the minimum number of cells with min_counts</p></td>
+    </tr>
+    <tr>
+      <th>ensembl_mapping_file</th>
+      <td><p>a local tsv file with ensembl_gene_id and
+additional columns for mapping ensembl_gene_id to gene info.  If
+not provided, the biomaRt db is queried (slower).</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>sce a SingleCellExperiment object annotated with cell QC metrics</p>
+    <p>sce a annotated SingleCellExperiment object</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Cell-level annotations</p><ul>
+<li><p>total_counts - sum of counts across all genes</p></li>
+<li><p>total_features_by_counts - total number of unique genes with expression &gt;0</p></li>
+<li><p>qc_metric_min_library_size - did the cell have at least min_library_size
+counts</p></li>
+<li><p>qc_metric_min_features - did the cell have counts &gt;0 in at least
+min_features number of cells?</p></li>
+<li><p>pc_mito - percentage of counts mapping to mitochondrial genes in this cell</p></li>
+<li><p>qc_metric_pc_mito_ok was pc_mito &lt;= the max_mito cutoff?</p></li>
+<li><p>pc_ribo - percentage of counts mapping to ribosomal genes in this cell</p></li>
+<li><p>qc_metric_pc_ribo_ok was pc_ribo &lt;= the max_ribo cutoff?</p></li>
+<li><p>passed_qc - did the cell pass all of the cell QC tests</p></li>
+</ul>
+
+<p>Gene-level annotations</p><ul>
+<li><p>gene - official gene name</p></li>
+<li><p>gene_biotype - protein_coding, lncRNA, pseudogene, etc.</p></li>
+<li><p>qc_metric_ensembl_mapped - was the ensembl_gene_id found in biomaRt</p></li>
+<li><p>qc_metric_is_mito - is the gene mitochondrial</p></li>
+<li><p>qc_metric_is_ribo - is the gene ribosomal</p></li>
+<li><p>qc_metric_n_cells_expressing - number of cells with at least min_counts</p></li>
+<li><p>qc_metric_is_expressive - did at least min_cells have min_counts?</p></li>
+</ul>
+
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other annotation functions: <code><a href='annotate_sce_genes.html'>annotate_sce_genes</a></code>,
-  <code><a href='annotate_sce.html'>annotate_sce</a></code>, <code><a href='filter_sce.html'>filter_sce</a></code>,
-  <code><a href='find_singlets.html'>find_singlets</a></code>, <code><a href='generate_sce.html'>generate_sce</a></code>,
+    <div class='dont-index'><p>Other annotation functions: <code><a href='annotate_sce_cells.html'>annotate_sce_cells</a></code>,
+  <code><a href='annotate_sce_genes.html'>annotate_sce_genes</a></code>,
+  <code><a href='filter_sce.html'>filter_sce</a></code>, <code><a href='find_singlets.html'>find_singlets</a></code>,
+  <code><a href='generate_sce.html'>generate_sce</a></code>,
   <code><a href='map_ensembl_gene_id.html'>map_ensembl_gene_id</a></code>,
   <code><a href='retrieve_sample_metadata.html'>retrieve_sample_metadata</a></code>,
   <code><a href='run_doubletfinder.html'>run_doubletfinder</a></code></p></div>
@@ -167,6 +209,8 @@ min_cells the minimum number of cells with min_counts</p></td>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
 
       <li><a href="#see-also">See also</a></li>
           </ul>

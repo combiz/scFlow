@@ -18,7 +18,8 @@ output by cellranger and must contain a 'barcodes.tsv.gz', 'features.tsv.gz',
 and 'matrix.mtx.gz' file.
 }
 \seealso{
-Other import and export functions: \code{\link{write_feature_barcode_matrix}},
+Other import and export functions: \code{\link{read_sce}},
+  \code{\link{write_feature_barcode_matrix}},
   \code{\link{write_sce}}
 }
 \concept{import and export functions}

@@ -118,7 +118,7 @@ samplesheet.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>retrieve_sample_metadata</span>(<span class='no'>unique_id</span>, <span class='no'>id_colname</span>, <span class='no'>samplesheet_path</span>)</pre>
+    <pre class="usage"><span class='fu'>retrieve_sample_metadata</span>(<span class='no'>unique_id</span>, <span class='no'>id_colname</span>, <span class='no'>samplesheet_path</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -135,6 +135,10 @@ samplesheet.</p>
       <th>samplesheet_path</th>
       <td><p>path to a tsv file containing a samplesheet</p></td>
     </tr>
+    <tr>
+      <th>...</th>
+      <td><p>for colClasses (may be extended later - fix)</p></td>
+    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -145,8 +149,10 @@ samplesheet.</p>
 
     <div class='dont-index'><p>Other annotation functions: <code><a href='annotate_sce_cells.html'>annotate_sce_cells</a></code>,
   <code><a href='annotate_sce_genes.html'>annotate_sce_genes</a></code>,
-  <code><a href='filter_sce.html'>filter_sce</a></code>, <code><a href='generate_sce.html'>generate_sce</a></code>,
-  <code><a href='map_ensembl_gene_id.html'>map_ensembl_gene_id</a></code></p></div>
+  <code><a href='annotate_sce.html'>annotate_sce</a></code>, <code><a href='filter_sce.html'>filter_sce</a></code>,
+  <code><a href='find_singlets.html'>find_singlets</a></code>, <code><a href='generate_sce.html'>generate_sce</a></code>,
+  <code><a href='map_ensembl_gene_id.html'>map_ensembl_gene_id</a></code>,
+  <code><a href='run_doubletfinder.html'>run_doubletfinder</a></code></p></div>
     
 
   </div>

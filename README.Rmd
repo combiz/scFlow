@@ -63,7 +63,7 @@ devtools::install_github("combiz/scflow")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+Remove this.  This is a basic example which shows you how to solve a common problem:
 
 ```{r example}
 library(scflow)
