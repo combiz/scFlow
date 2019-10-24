@@ -42,7 +42,7 @@
 #' @return sce a annotated SingleCellExperiment object
 #'
 #' @family annotation functions
-#' @import cli Matrix SummarizedExperiment dplyr SingleCellExperiment
+#' @import cli Matrix SummarizedExperiment dplyr SingleCellExperiment purrr
 #' @export
 annotate_sce <- function(sce,
                          min_library_size = 300,
@@ -51,6 +51,8 @@ annotate_sce <- function(sce,
                          max_ribo = 1.00,
                          min_counts = 2,
                          min_cells = 2,
+                         annotate_genes = TRUE,
+                         annotate_cells = TRUE,
                          ensembl_mapping_file = NULL) {
 
   if (class(sce) != "SingleCellExperiment") {
@@ -60,35 +62,55 @@ annotate_sce <- function(sce,
   before_coldata_colnames <- colnames(SummarizedExperiment::colData(sce))
   before_rowdata_colnames <- colnames(SummarizedExperiment::rowData(sce))
 
-  sce <- annotate_sce_genes(sce, ensembl_mapping_file)
+  # add the qc parameters to the metadata
+  qc_params <- setdiff(names(formals(annotate_sce)),
+                       c("sce", "ensembl_mapping_file",
+                         "annotate_genes", "annotate_cells")) #not these args
 
-  sce <- annotate_sce_cells(sce,
-    min_library_size = min_library_size,
-    min_features = min_features,
-    max_mito = max_mito,
-    max_ribo = max_ribo,
-    min_counts = min_counts,
-    min_cells = min_cells
-  )
+  metadata(sce)[["qc_params"]] <- purrr::map(qc_params, ~ get(.)) %>%
+    purrr::set_names(qc_params)
 
-  cli::cli_alert_success(
-    "SingleCellExperiment cells were successfully annotated with: \r\n"
-  )
+  if (annotate_genes) {
+    sce <- annotate_sce_genes(sce, ensembl_mapping_file)
+  }
+  if (annotate_cells) {
+    sce <- annotate_sce_cells(sce,
+                              min_library_size = min_library_size,
+                              min_features = min_features,
+                              max_mito = max_mito,
+                              max_ribo = max_ribo,
+                              min_counts = min_counts,
+                              min_cells = min_cells
+    )
+  } else {
+    if(!annotate_genes){
+      stop(cli::cli_alert_danger("Nothing to do. Specify gene/cell/both."))
+    }
+  }
 
-  cli::cli_ul(setdiff(
-    colnames(SummarizedExperiment::colData(sce)),
-    before_coldata_colnames
-  ))
+  if(annotate_cells){
+    cli::cli_alert_success(
+      "SingleCellExperiment cells were successfully annotated with: \r\n"
+    )
 
-  cli::cli_alert_success(
-    "SingleCellExperiment genes were successfully annotated with: \r\n"
-  )
+    cli::cli_ul(setdiff(
+      colnames(SummarizedExperiment::colData(sce)),
+      before_coldata_colnames
+    ))
+  }
 
-  cli::cli_ul(setdiff(
-    colnames(SummarizedExperiment::rowData(sce)),
-    before_rowdata_colnames
-  ))
+  if(annotate_genes) {
+    cli::cli_alert_success(
+      "SingleCellExperiment genes were successfully annotated with: \r\n"
+    )
+
+    cli::cli_ul(setdiff(
+      colnames(SummarizedExperiment::rowData(sce)),
+      before_rowdata_colnames
+    ))
+  }
 
   return(sce)
 
 }
+

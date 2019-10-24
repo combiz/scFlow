@@ -4,7 +4,7 @@
 \alias{find_singlets}
 \title{Find singlets in a SingleCellExperiment}
 \usage{
-find_singlets(sce, singlet_find_method)
+find_singlets(sce, singlet_find_method, ...)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}

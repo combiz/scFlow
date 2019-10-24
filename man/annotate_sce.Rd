@@ -6,6 +6,7 @@
 \usage{
 annotate_sce(sce, min_library_size = 300, min_features = 100,
   max_mito = 0.1, max_ribo = 1, min_counts = 2, min_cells = 2,
+  annotate_genes = TRUE, annotate_cells = TRUE,
   ensembl_mapping_file = NULL)
 }
 \arguments{

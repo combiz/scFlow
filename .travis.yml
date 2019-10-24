@@ -27,7 +27,6 @@ matrix:
       r: release
       fortran: false
 
-
 addons:
   apt:
     packages:

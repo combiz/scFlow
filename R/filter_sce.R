@@ -31,6 +31,11 @@ filter_sce <- function(sce,
     stop(cli::cli_alert_danger("A SingleCellExperiment is required."))
   }
 
+  cli::cli_text(c(
+    "Pre-filtered SingleCellExperiment contains ",
+    "{.emph {dim(sce)[[1]]}} genes and ",
+    "{.emph {dim(sce)[[2]]}} cells.")
+  )
 
   if (filter_genes == TRUE) {
 

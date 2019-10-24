@@ -78,9 +78,13 @@ run_doubletfinder <- function(sce, ...) {
     bcmvn <- DoubletFinder::find.pK(sweep_stats)
     bcmvn$pK <- as.numeric(as.character(bcmvn$pK)) # oddly, pK are factors
     args$pK <- bcmvn[bcmvn$BCmetric == max(bcmvn$BCmetric), ]$pK
+    # add the bcmvn dataframe to the sce metadata
+    metadata(sce) <- c(metadata(sce), list(doubletfinder_bcmvn = bcmvn))
   } else {
     cli::cli_text("Skipping parameter sweep and using pK={.value {args$pK}}.")
   }
+  # add the pK value used to metadata
+  metadata(sce) <- c(metadata(sce), list(doubletfinder_pK = args$pK))
 
   # Homotypic Doublet Proportion Estimate -----------------------------------
   cat(cli::rule("Estimating homotypic doublet proportions", line = 1), "\r\n")
@@ -129,6 +133,8 @@ run_doubletfinder <- function(sce, ...) {
 
   # prepare data to return
   sce$is_singlet <- seu@meta.data$DF_hi.lo == "Singlet"
+  SingleCellExperiment::reducedDim(sce, "seurat_pca_by_individual") <-
+    as.matrix(seu@reductions$pca@cell.embeddings)
   SingleCellExperiment::reducedDim(sce, "seurat_umap_by_individual") <-
     as.matrix(seu@reductions$umap@cell.embeddings)
 

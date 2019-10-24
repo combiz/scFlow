@@ -15,7 +15,10 @@
 #' @export
 
 find_singlets <- function(sce,
-                          singlet_find_method) {
+                          singlet_find_method,
+                          ...) {
+
+  args <- list(...)
 
   cat(cli::rule("Finding Singlets", line = 1), "\r\n")
 
@@ -34,9 +37,13 @@ find_singlets <- function(sce,
     )
   }
 
-  find_singlet_fn <- get(singlet_find_methods_l[[singlet_find_method]])
+  #find_singlet_fn <- get(singlet_find_methods_l[[singlet_find_method]])
 
-  sce <- find_singlet_fn(sce)
+  sce <- do.call(
+    singlet_find_methods_l[[singlet_find_method]],
+    list(sce, args)
+  )
+  #sce <- find_singlet_fn(sce)
 
   return(sce)
 

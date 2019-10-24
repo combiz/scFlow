@@ -40,7 +40,7 @@ Imports:
     DoubletFinder
 Remotes:
     r-lib/cli,
-    chris-mcginnis-ucsf/DoubletFinder/,
+    chris-mcginnis-ucsf/DoubletFinder,
     satijalab/seurat,
     bioc::release/biomaRt,
     bioc::release/SingleCellExperiment,
