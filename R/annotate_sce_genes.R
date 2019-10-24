@@ -23,7 +23,7 @@
 annotate_sce_genes <- function(sce,
                                ensembl_mapping_file = NULL) {
 
-  cat(cli::rule("Annotating SingleCellExperiment genes", line = 1), "\r\n")
+  cat(cli::rule("Annotating SingleCellExperiment genes", line = 2), "\r\n")
 
   if (class(sce) != "SingleCellExperiment") {
     stop(cli::cli_alert_danger("A SingleCellExperiment is required."))
@@ -35,27 +35,24 @@ annotate_sce_genes <- function(sce,
   }
 
   # annotate rowdata with biomart data
-  mapped_ensembl_ids <- map_ensembl_gene_id(
+  mapping_results <- map_ensembl_gene_id(
     SummarizedExperiment::rowData(sce)$ensembl_gene_id,
     mappings_filepath = ensembl_mapping_file
   )
 
-  mapped_ensembl_ids$ensembl_gene_id <- factor(
-    mapped_ensembl_ids$ensembl_gene_id,
-    levels = sort(union(
-      levels(mapped_ensembl_ids$ensembl_gene_id),
-      levels(SummarizedExperiment::rowData(sce)$ensembl_gene_id)))
+  mapping_results$ensembl_gene_id <- as.character(
+    mapping_results$ensembl_gene_id
   )
 
   SummarizedExperiment::rowData(sce) <- dplyr::full_join(
     data.frame(SummarizedExperiment::rowData(sce)),
-    mapped_ensembl_ids,
+    mapping_results,
     by = "ensembl_gene_id",
     all = TRUE
     ) %>% dplyr::rename(gene = external_gene_name)
 
-  if(!all(
-    SummarizedExperiment::rowData(sce)$ensembl_gene_id == rownames(sce))){
+  if (!all(
+    SummarizedExperiment::rowData(sce)$ensembl_gene_id == rownames(sce))) {
     stop(cli::cli_alert_danger("Fatal error: Misaligned new_rowdata."))
   }
 
@@ -79,4 +76,3 @@ annotate_sce_genes <- function(sce,
   return(sce)
 
 }
-

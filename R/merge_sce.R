@@ -1,7 +1,7 @@
 ################################################################################
-#' merge multiple SingleCellExperiments
+#' Merge Multiple SingleCellExperiment Objects
 #'
-#' @param sce_l a list of SingleCellExperiment objects or folder_paths to
+#' @param sce_l a list of SingleCellExperiment objects, or, folder_paths to
 #' SingleCellExperiment objects to be read in with \code{\link{read_sce}}
 #' @param ensembl_mapping_file path to the mappings tsv file
 #'
@@ -13,7 +13,7 @@
 #'
 merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
 
-  cat(cli::rule("Merging SingleCellExperiments", line = 1), "\r\n")
+  cat(cli::rule("Merging SingleCellExperiments", line = 2), "\r\n")
 
   if (!class(sce_l) %in% c("list", "character")) {
     stop(cli::cli_alert_danger(
@@ -31,10 +31,11 @@ merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
 
   cat(cli::rule("Starting merge", line = 1), "\r\n")
   cli::cli_text("Merging {.var {length(sce_l)}} SingleCellExperiments")
-  ensembl_gene_id_l <- purrr::map(sce_l, ~ rowData(.)$ensembl_gene_id)
+  ensembl_gene_id_l <- purrr::map(sce_l,
+                                  ~ as.character(rowData(.)$ensembl_gene_id))
   n_sce_genes <- paste0(map_int(ensembl_gene_id_l, length), collapse = ", ")
   cli::cli_text("Genes in each SingleCellExperiment: {.var {n_sce_genes}}")
-  union_ensembl_gene_id <- Reduce(dplyr::union, ensembl_gene_id_l)
+  union_ensembl_gene_id <- as.character(Reduce(dplyr::union, ensembl_gene_id_l))
   cli::cli_text(c("Union of genes across all SingleCellExperiments: ",
                   "{.var {length(union_ensembl_gene_id)}}"))
   cli::cli_text("Equalizing to {.var {length(union_ensembl_gene_id)}} genes.")
@@ -50,7 +51,7 @@ merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
     ensembl_mapping_file = ensembl_mapping_file)
 
   n_merged <- tools::toTitleCase(english::words(length(sce_l)))
-  cli::cli_alert_success("{{n_merged}} SingleCellExperiments were merged.")
+  cli::cli_alert_success("{.val {n_merged}} SingleCellExperiment were merged.")
 
   return(sce)
 
@@ -67,6 +68,7 @@ merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
 #' @param union_ensembl_gene_id the full list of ensembl_gene_id to be included
 #' in the new expanded SingleCellExperiment
 #'
+#' @import purrr SingleCellExperiment SummarizedExperiment
 #' @return sce a annotated SingleCellExperiment object with any
 #' @keywords internal
 .expand_sce_rows <- function(sce, union_ensembl_gene_id) {
@@ -86,18 +88,21 @@ merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
     newsce <- SingleCellExperiment::SingleCellExperiment(
       assays = list(counts = mat),
       colData = data.frame(SummarizedExperiment::colData(sce)),
-      rowData = data.frame(ensembl_gene_id = as.character(rownames(mat)))
+      rowData = data.frame(ensembl_gene_id = rownames(mat))
     )
 
-    reducedDims(newsce) <- reducedDims(sce)
+    SingleCellExperiment::reducedDims(newsce) <-
+      SingleCellExperiment::reducedDims(sce)
 
   } else {
     newsce <- sce
   }
+
+  SummarizedExperiment::rowData(newsce)$ensembl_gene_id <-
+    as.character(SummarizedExperiment::rowData(newsce)$ensembl_gene_id)
 
   metadata(newsce) <- list() # drop for merge
 
   return(newsce)
 
 }
-

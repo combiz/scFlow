@@ -21,7 +21,7 @@ write_feature_barcode_matrix <- function(mat,
                                          folder_path,
                                          overwrite_files = TRUE) {
 
-  cat(cli::rule("Writing feature-barcode matrix", line = 1), "\r\n")
+  cat(cli::rule("Writing feature-barcode matrix", line = 2), "\r\n")
 
   if (class(mat) != "dgTMatrix") {
     stop(cli::cli_alert_danger("Expected dgTMatrix, received {{class(mat)}}."))

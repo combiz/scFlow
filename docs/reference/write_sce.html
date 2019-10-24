@@ -144,7 +144,7 @@ ReducedDim_x.tsv
     
     </div>
 
-    <pre class="usage"><span class='fu'>write_sce</span>(<span class='no'>sce</span>, <span class='no'>folder_path</span>)</pre>
+    <pre class="usage"><span class='fu'>write_sce</span>(<span class='no'>sce</span>, <span class='no'>folder_path</span>, <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -156,6 +156,10 @@ ReducedDim_x.tsv
     <tr>
       <th>folder_path</th>
       <td><p>path to save the SingleCellExperiment</p></td>
+    </tr>
+    <tr>
+      <th>overwrite</th>
+      <td><p>delete the existing directory and overwrite if TRUE</p></td>
     </tr>
     </table>
     

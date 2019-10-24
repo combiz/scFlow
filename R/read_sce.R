@@ -26,7 +26,7 @@
 #' @export
 read_sce <- function(folder_path) {
 
-  cat(cli::rule("Reading SingleCellExperiment", line = 1), "\r\n")
+  cat(cli::rule("Reading SingleCellExperiment", line = 2), "\r\n")
 
   ## Check core files are present
   paths_l <- list()
@@ -38,7 +38,7 @@ read_sce <- function(folder_path) {
   paths_l[["matrix_path"]] <-  file.path(folder_path, "matrix.mtx.gz")
 
   # check all files exist or throw error
-  if(!(all(purrr::map_lgl(paths_l, file.exists)))){
+  if (!(all(purrr::map_lgl(paths_l, file.exists)))) {
     stop("Files not found.  Specify a valid folder path.")
   }
 
@@ -52,7 +52,7 @@ read_sce <- function(folder_path) {
   cli::cli_text("Reading: {.path {paths_l$col_classes}}")
   col_classes <- read.delim(
     paths_l$col_classes,
-    header=FALSE
+    header = FALSE
   )
   cc <- as.character(col_classes[, 2])
   names(cc) <- as.character(col_classes[, 1])
@@ -75,12 +75,12 @@ read_sce <- function(folder_path) {
     folder_path)[startsWith(list.files(folder_path), prefix = "ReducedDim_")]
 
   # if there are reduced dimension data, import them
-  if (length(rd_files_l) > 0){
-    for(rd_file in rd_files_l){
+  if (length(rd_files_l) > 0) {
+    for (rd_file in rd_files_l) {
       rdname <- tools::file_path_sans_ext(gsub("ReducedDim_", "", rd_file))
       cli::cli_text("Reading: {.path {rd_file}}")
-      SingleCellExperiment::reducedDim(sce, rdname) <- read.delim(
-        file = file.path(folder_path, rd_file))
+      SingleCellExperiment::reducedDim(sce, rdname) <- matrix(read.delim(
+        file = file.path(folder_path, rd_file)), nrow = ncol(sce))
     }
   }
 

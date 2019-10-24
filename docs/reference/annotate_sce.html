@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Add basic annotations and qc metrics for a SingleCellExperiment — annotate_sce • scflow</title>
+<title>Annotate a SingleCellExperiment with gene names and QC metrics — annotate_sce • scflow</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -32,7 +32,7 @@
 
 
 
-<meta property="og:title" content="Add basic annotations and qc metrics for a SingleCellExperiment — annotate_sce" />
+<meta property="og:title" content="Annotate a SingleCellExperiment with gene names and QC metrics — annotate_sce" />
 
 <meta property="og:description" content="Adds biomaRt annotations (e.g. gene, gene_biotype) and QC metric annotations." />
 <meta name="twitter:card" content="summary" />
@@ -103,7 +103,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Add basic annotations and qc metrics for a SingleCellExperiment</h1>
+    <h1>Annotate a SingleCellExperiment with gene names and QC metrics</h1>
     <small class="dont-index">Source: <a href='https://github.com/combiz/scflow/blob/master/R/annotate_sce.R'><code>R/annotate_sce.R</code></a></small>
     <div class="hidden name"><code>annotate_sce.Rd</code></div>
     </div>
@@ -116,6 +116,7 @@
 
     <pre class="usage"><span class='fu'>annotate_sce</span>(<span class='no'>sce</span>, <span class='kw'>min_library_size</span> <span class='kw'>=</span> <span class='fl'>300</span>, <span class='kw'>min_features</span> <span class='kw'>=</span> <span class='fl'>100</span>,
   <span class='kw'>max_mito</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='kw'>max_ribo</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>min_counts</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>min_cells</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='kw'>annotate_genes</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>annotate_cells</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>ensembl_mapping_file</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -153,6 +154,14 @@ ribosomal genes (0 - 1)</p></td>
       <td><p>the minimum number of cells with min_counts</p></td>
     </tr>
     <tr>
+      <th>annotate_genes</th>
+      <td><p>optionally skip gene annotation with FALSE</p></td>
+    </tr>
+    <tr>
+      <th>annotate_cells</th>
+      <td><p>optionally skip cell annotation with FALSE</p></td>
+    </tr>
+    <tr>
       <th>ensembl_mapping_file</th>
       <td><p>a local tsv file with ensembl_gene_id and
 additional columns for mapping ensembl_gene_id to gene info.  If
@@ -164,9 +173,23 @@ not provided, the biomaRt db is queried (slower).</p></td>
 
     <p>sce a annotated SingleCellExperiment object</p>
     
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    <h2 class="hasAnchor" id="quality-control-options-and-thresholds"><a class="anchor" href="#quality-control-options-and-thresholds"></a>Quality control options and thresholds</h2>
 
-    <p>Cell-level annotations</p><ul>
+    
+
+
+<p>In addition to calculating QC metrics and annotating gene information, this
+function adds boolean (TRUE/FALSE) indicators of which cells/genes met the QC
+criteria.  This enables QC reports, plots, and various QC-related tables to
+be saved before filtering with the  <code><a href='filter_sce.html'>filter_sce()</a></code> function.</p>
+    
+    <h2 class="hasAnchor" id="annotations"><a class="anchor" href="#annotations"></a>Annotations</h2>
+
+    
+
+
+<p>With the default settings, the SingleCellExperiment object is annotated with:</p>
+<p>Cell-level annotations</p><ul>
 <li><p>total_counts - sum of counts across all genes</p></li>
 <li><p>total_features_by_counts - total number of unique genes with expression &gt;0</p></li>
 <li><p>qc_metric_min_library_size - did the cell have at least min_library_size
@@ -198,6 +221,7 @@ min_features number of cells?</p></li>
   <code><a href='filter_sce.html'>filter_sce</a></code>, <code><a href='find_singlets.html'>find_singlets</a></code>,
   <code><a href='generate_sce.html'>generate_sce</a></code>,
   <code><a href='map_ensembl_gene_id.html'>map_ensembl_gene_id</a></code>,
+  <code><a href='merge_sce.html'>merge_sce</a></code>,
   <code><a href='retrieve_sample_metadata.html'>retrieve_sample_metadata</a></code>,
   <code><a href='run_doubletfinder.html'>run_doubletfinder</a></code></p></div>
     
@@ -210,7 +234,9 @@ min_features number of cells?</p></li>
       
       <li><a href="#value">Value</a></li>
 
-      <li><a href="#details">Details</a></li>
+      <li><a href="#quality-control-options-and-thresholds">Quality control options and thresholds</a></li>
+
+      <li><a href="#annotations">Annotations</a></li>
 
       <li><a href="#see-also">See also</a></li>
           </ul>

@@ -25,7 +25,7 @@ filter_sce <- function(sce,
                        drop_mito = TRUE,
                        drop_ribo = FALSE) {
 
-  cat(cli::rule("Filtering SingleCellExperiment", line = 1), "\r\n")
+  cat(cli::rule("Filtering SingleCellExperiment", line = 2), "\r\n")
 
   if (class(sce) != "SingleCellExperiment") {
     stop(cli::cli_alert_danger("A SingleCellExperiment is required."))
@@ -85,7 +85,7 @@ filter_sce <- function(sce,
 
   if (filter_cells == TRUE) {
 
-    n_qc_failed <- sum(!sce$passed_qc)
+    n_qc_failed <- sum(!sce$qc_metric_passed)
 
     cli::cli_alert_success(
       "{.emph {n_qc_failed}} cells failed QC and were dropped: - \r\n"
@@ -98,25 +98,25 @@ filter_sce <- function(sce,
 
     cli::cli_dl(c(
       "Library size QC" =
-        paste0("{.pass PASS: {sum(sce$qc_metric_min_library_size, na.rm=T)}} / ",
+        paste0("{.pass PASS: {sum(sce$qc_metric_min_library_size, na.rm=T)}}/",
           "{.fail FAIL: {sum(!sce$qc_metric_min_library_size, na.rm=T)}}"),
       "Number of genes QC" =
-        paste0("{.pass PASS: {sum(sce$qc_metric_min_features, na.rm=T)}} / ",
+        paste0("{.pass PASS: {sum(sce$qc_metric_min_features, na.rm=T)}}/",
                "{.fail FAIL: {sum(!sce$qc_metric_min_features, na.rm=T)}}"),
       "Mitochondria counts proportion QC" =
-        paste0("{.pass PASS: {sum(sce$qc_metric_pc_mito_ok, na.rm=T)}} / ",
+        paste0("{.pass PASS: {sum(sce$qc_metric_pc_mito_ok, na.rm=T)}}/",
                "{.fail FAIL: {sum(!sce$qc_metric_pc_mito_ok, na.rm=T)}}"),
       "Ribosomal counts proportion QC" =
-        paste0("{.pass PASS: {sum(sce$qc_metric_pc_ribo_ok, na.rm=T)}} / ",
+        paste0("{.pass PASS: {sum(sce$qc_metric_pc_ribo_ok, na.rm=T)}}/",
                "{.fail FAIL: {sum(!sce$qc_metric_pc_ribo_ok, na.rm=T)}}"),
       "{.strong Overall cell QC}" =
-        paste0("{.pass PASS: {sum(sce$passed_qc, na.rm=T)}} / ",
-               "{.fail FAIL: {sum(!sce$passed_qc, na.rm=T)}}")
+        paste0("{.pass PASS: {sum(sce$qc_metric_passed, na.rm=T)}}/",
+               "{.fail FAIL: {sum(!sce$qc_metric_passed, na.rm=T)}}")
       )
     )
 
     # subset
-    sce <- sce[, sce$passed_qc == TRUE]
+    sce <- sce[, sce$qc_metric_passed == TRUE]
 
   } else {
 

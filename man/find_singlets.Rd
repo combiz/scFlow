@@ -10,6 +10,8 @@ find_singlets(sce, singlet_find_method, ...)
 \item{sce}{a SingleCellExperiment object}
 
 \item{singlet_find_method}{the method to use for identifying singlets}
+
+\item{...}{additional parameters passed to singlet finding algorithm.}
 }
 \value{
 sce a SingleCellExperiment object annotated for singlets
@@ -25,6 +27,7 @@ Other annotation functions: \code{\link{annotate_sce_cells}},
   \code{\link{annotate_sce}}, \code{\link{filter_sce}},
   \code{\link{generate_sce}},
   \code{\link{map_ensembl_gene_id}},
+  \code{\link{merge_sce}},
   \code{\link{retrieve_sample_metadata}},
   \code{\link{run_doubletfinder}}
 }

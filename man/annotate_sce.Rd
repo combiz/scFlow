@@ -2,7 +2,7 @@
 % Please edit documentation in R/annotate_sce.R
 \name{annotate_sce}
 \alias{annotate_sce}
-\title{Add basic annotations and qc metrics for a SingleCellExperiment}
+\title{Annotate a SingleCellExperiment with gene names and QC metrics}
 \usage{
 annotate_sce(sce, min_library_size = 300, min_features = 100,
   max_mito = 0.1, max_ribo = 1, min_counts = 2, min_cells = 2,
@@ -27,6 +27,10 @@ ribosomal genes (0 - 1)}
 
 \item{min_cells}{the minimum number of cells with min_counts}
 
+\item{annotate_genes}{optionally skip gene annotation with FALSE}
+
+\item{annotate_cells}{optionally skip cell annotation with FALSE}
+
 \item{ensembl_mapping_file}{a local tsv file with ensembl_gene_id and
 additional columns for mapping ensembl_gene_id to gene info.  If
 not provided, the biomaRt db is queried (slower).}
@@ -37,7 +41,20 @@ sce a annotated SingleCellExperiment object
 \description{
 Adds biomaRt annotations (e.g. gene, gene_biotype) and QC metric annotations.
 }
-\details{
+\section{Quality control options and thresholds}{
+
+
+In addition to calculating QC metrics and annotating gene information, this
+function adds boolean (TRUE/FALSE) indicators of which cells/genes met the QC
+criteria.  This enables QC reports, plots, and various QC-related tables to
+be saved before filtering with the  \code{\link[=filter_sce]{filter_sce()}} function.
+}
+
+\section{Annotations}{
+
+
+With the default settings, the SingleCellExperiment object is annotated with:
+
 Cell-level annotations
 \itemize{
 \item total_counts - sum of counts across all genes
@@ -64,12 +81,14 @@ Gene-level annotations
 \item qc_metric_is_expressive - did at least min_cells have min_counts?
 }
 }
+
 \seealso{
 Other annotation functions: \code{\link{annotate_sce_cells}},
   \code{\link{annotate_sce_genes}},
   \code{\link{filter_sce}}, \code{\link{find_singlets}},
   \code{\link{generate_sce}},
   \code{\link{map_ensembl_gene_id}},
+  \code{\link{merge_sce}},
   \code{\link{retrieve_sample_metadata}},
   \code{\link{run_doubletfinder}}
 }

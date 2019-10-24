@@ -40,7 +40,8 @@ annotate_sce_cells <- function(sce, ...) {
 
   sce$qc_metric_min_library_size <- sce$total_counts >= args$min_library_size
 
-  sce$qc_metric_min_features <- sce$total_features_by_counts >= args$min_features
+  sce$qc_metric_min_features <-
+    sce$total_features_by_counts >= args$min_features
 
   sce$pc_mito <- Matrix::colSums(
     SingleCellExperiment::counts(
@@ -59,7 +60,7 @@ annotate_sce_cells <- function(sce, ...) {
   sce$qc_metric_pc_ribo_ok <- sce$pc_ribo <= args$max_ribo
 
   and_list_fn <- function(...) Reduce("&", list(...))
-  sce$passed_qc <- and_list_fn(
+  sce$qc_metric_passed <- and_list_fn(
     sce$qc_metric_min_library_size,
     sce$qc_metric_min_features,
     sce$qc_metric_pc_mito_ok,
@@ -69,7 +70,7 @@ annotate_sce_cells <- function(sce, ...) {
   # fast qc for expressive genes with counts from only qc passed cells
   mat <- SingleCellExperiment::counts(sce)
   mat <- mat >= args$min_counts
-  qc_metric_n_cells_expressing <- Matrix::rowSums(mat[, sce$passed_qc])
+  qc_metric_n_cells_expressing <- Matrix::rowSums(mat[, sce$qc_metric_passed])
   SummarizedExperiment::rowData(sce)$qc_metric_n_cells_expressing <-
     qc_metric_n_cells_expressing
   qc_metric_is_expressive <- qc_metric_n_cells_expressing >= args$min_cells

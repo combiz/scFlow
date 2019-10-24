@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Generate a SingleCellExperiment object from a matrix and metadata — generate_sce • scflow</title>
+<title>Helper function to expand a SingleCellExperiment to include specified genes — .expand_sce_rows • scflow</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -32,10 +32,12 @@
 
 
 
-<meta property="og:title" content="Generate a SingleCellExperiment object from a matrix and metadata — generate_sce" />
+<meta property="og:title" content="Helper function to expand a SingleCellExperiment to include specified genes — .expand_sce_rows" />
 
-<meta property="og:description" content="Generate a SingleCellExperiment with a sparse matrix and a one-row dataframe
-containing metadata for the sample." />
+<meta property="og:description" content="The function identifies the missing ensembl_gene_id's (if any), and
+generates new zero'd matrix rows, rbinds them to the matrix, then sorts
+the matrix by ensembl_gene_id.  rowData (except ensembl_gene_id) and metadata
+are dropped to facilitate subsequent cbind-ing of SingleCellExperiments." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -104,47 +106,39 @@ containing metadata for the sample." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Generate a SingleCellExperiment object from a matrix and metadata</h1>
-    <small class="dont-index">Source: <a href='https://github.com/combiz/scflow/blob/master/R/generate_sce.R'><code>R/generate_sce.R</code></a></small>
-    <div class="hidden name"><code>generate_sce.Rd</code></div>
+    <h1>Helper function to expand a SingleCellExperiment to include specified genes</h1>
+    <small class="dont-index">Source: <a href='https://github.com/combiz/scflow/blob/master/R/merge_sce.R'><code>R/merge_sce.R</code></a></small>
+    <div class="hidden name"><code>dot-expand_sce_rows.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Generate a SingleCellExperiment with a sparse matrix and a one-row dataframe
-containing metadata for the sample.</p>
+    <p>The function identifies the missing ensembl_gene_id's (if any), and
+generates new zero'd matrix rows, rbinds them to the matrix, then sorts
+the matrix by ensembl_gene_id.  rowData (except ensembl_gene_id) and metadata
+are dropped to facilitate subsequent cbind-ing of SingleCellExperiments.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>generate_sce</span>(<span class='no'>mat</span>, <span class='no'>metadata</span>)</pre>
+    <pre class="usage"><span class='fu'>.expand_sce_rows</span>(<span class='no'>sce</span>, <span class='no'>union_ensembl_gene_id</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>mat</th>
-      <td><p>a sparse feature-barcode matrix</p></td>
+      <th>sce</th>
+      <td><p>a SingleCellExperiment</p></td>
     </tr>
     <tr>
-      <th>metadata</th>
-      <td><p>a single row dataframe with sample metadata</p></td>
+      <th>union_ensembl_gene_id</th>
+      <td><p>the full list of ensembl_gene_id to be included
+in the new expanded SingleCellExperiment</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>sce a SingleCellExperiment object annotated with sample metadata</p>
-    
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p>Other annotation functions: <code><a href='annotate_sce_cells.html'>annotate_sce_cells</a></code>,
-  <code><a href='annotate_sce_genes.html'>annotate_sce_genes</a></code>,
-  <code><a href='annotate_sce.html'>annotate_sce</a></code>, <code><a href='filter_sce.html'>filter_sce</a></code>,
-  <code><a href='find_singlets.html'>find_singlets</a></code>,
-  <code><a href='map_ensembl_gene_id.html'>map_ensembl_gene_id</a></code>,
-  <code><a href='merge_sce.html'>merge_sce</a></code>,
-  <code><a href='retrieve_sample_metadata.html'>retrieve_sample_metadata</a></code>,
-  <code><a href='run_doubletfinder.html'>run_doubletfinder</a></code></p></div>
+    <p>sce a annotated SingleCellExperiment object with any</p>
     
 
   </div>
@@ -154,8 +148,6 @@ containing metadata for the sample.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#see-also">See also</a></li>
           </ul>
 
   </div>

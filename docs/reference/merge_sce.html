@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Generate a SingleCellExperiment object from a matrix and metadata — generate_sce • scflow</title>
+<title>Merge Multiple SingleCellExperiment Objects — merge_sce • scflow</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -32,10 +32,9 @@
 
 
 
-<meta property="og:title" content="Generate a SingleCellExperiment object from a matrix and metadata — generate_sce" />
+<meta property="og:title" content="Merge Multiple SingleCellExperiment Objects — merge_sce" />
 
-<meta property="og:description" content="Generate a SingleCellExperiment with a sparse matrix and a one-row dataframe
-containing metadata for the sample." />
+<meta property="og:description" content="Merge Multiple SingleCellExperiment Objects" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -104,45 +103,44 @@ containing metadata for the sample." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Generate a SingleCellExperiment object from a matrix and metadata</h1>
-    <small class="dont-index">Source: <a href='https://github.com/combiz/scflow/blob/master/R/generate_sce.R'><code>R/generate_sce.R</code></a></small>
-    <div class="hidden name"><code>generate_sce.Rd</code></div>
+    <h1>Merge Multiple SingleCellExperiment Objects</h1>
+    <small class="dont-index">Source: <a href='https://github.com/combiz/scflow/blob/master/R/merge_sce.R'><code>R/merge_sce.R</code></a></small>
+    <div class="hidden name"><code>merge_sce.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Generate a SingleCellExperiment with a sparse matrix and a one-row dataframe
-containing metadata for the sample.</p>
+    <p>Merge Multiple SingleCellExperiment Objects</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>generate_sce</span>(<span class='no'>mat</span>, <span class='no'>metadata</span>)</pre>
+    <pre class="usage"><span class='fu'>merge_sce</span>(<span class='no'>sce_l</span>, <span class='kw'>ensembl_mapping_file</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>mat</th>
-      <td><p>a sparse feature-barcode matrix</p></td>
+      <th>sce_l</th>
+      <td><p>a list of SingleCellExperiment objects, or, folder_paths to
+SingleCellExperiment objects to be read in with <code><a href='read_sce.html'>read_sce</a></code></p></td>
     </tr>
     <tr>
-      <th>metadata</th>
-      <td><p>a single row dataframe with sample metadata</p></td>
+      <th>ensembl_mapping_file</th>
+      <td><p>path to the mappings tsv file</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>sce a SingleCellExperiment object annotated with sample metadata</p>
+    <p>sce a annotated SingleCellExperiment object</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other annotation functions: <code><a href='annotate_sce_cells.html'>annotate_sce_cells</a></code>,
   <code><a href='annotate_sce_genes.html'>annotate_sce_genes</a></code>,
   <code><a href='annotate_sce.html'>annotate_sce</a></code>, <code><a href='filter_sce.html'>filter_sce</a></code>,
-  <code><a href='find_singlets.html'>find_singlets</a></code>,
+  <code><a href='find_singlets.html'>find_singlets</a></code>, <code><a href='generate_sce.html'>generate_sce</a></code>,
   <code><a href='map_ensembl_gene_id.html'>map_ensembl_gene_id</a></code>,
-  <code><a href='merge_sce.html'>merge_sce</a></code>,
   <code><a href='retrieve_sample_metadata.html'>retrieve_sample_metadata</a></code>,
   <code><a href='run_doubletfinder.html'>run_doubletfinder</a></code></p></div>
     

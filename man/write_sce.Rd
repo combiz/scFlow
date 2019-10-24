@@ -4,12 +4,14 @@
 \alias{write_sce}
 \title{Write a SingleCellExperiment to a folder}
 \usage{
-write_sce(sce, folder_path)
+write_sce(sce, folder_path, overwrite = TRUE)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment Object}
 
 \item{folder_path}{path to save the SingleCellExperiment}
+
+\item{overwrite}{delete the existing directory and overwrite if TRUE}
 }
 \description{
 Write a \linkS4class{SingleCellExperiment} into a folder: -

@@ -11,6 +11,7 @@
 #' @param mappings the biomaRt attributes to be mapped or mappings file column
 #'   names.  This should always include ensembl_gene_id, e.g.
 #'   `c("ensembl_gene_id", "external_gene_name")`
+#' @param species ensembl_ids are mapped to `human` or `mouse`
 #' @param mappings_filepath path to the mappings tsv file
 #'
 #' @return mapped_df a data.frame of the provided ensembl_id's with mappings.
@@ -22,7 +23,7 @@
 #'
 #' @import cli stringr
 #' @importFrom biomaRt useEnsembl getBM
-#' @importFrom purrr map_lgl
+#' @importFrom purrr map_lgl map_if
 #' @importFrom utils read.delim read.csv
 #'
 #' @export
@@ -31,7 +32,12 @@ map_ensembl_gene_id <- function(ensembl_ids,
                                 mappings = c("ensembl_gene_id",
                                              "gene_biotype",
                                              "external_gene_name"),
+                                species = "human",
                                 mappings_filepath = NULL) {
+
+  if (!species %in% c("human", "mouse")) {
+    stop("only human and mouse currently supported.")
+  }
 
   # include the id for biomart
   mappings <- unique(c("ensembl_gene_id", mappings))
@@ -48,7 +54,9 @@ map_ensembl_gene_id <- function(ensembl_ids,
       )
     } else { # file provided and is found
         cat("Reading", cli::col_green(c(mappings_filepath, " \r\n")))
-        ensembl_mappings <- utils::read.delim(mappings_filepath)
+        ensembl_mappings <- utils::read.delim(
+          mappings_filepath,
+          stringsAsFactors = FALSE)
 
         check_mappings_are_present <- purrr::map_lgl(
           mappings,
@@ -68,9 +76,14 @@ map_ensembl_gene_id <- function(ensembl_ids,
 
     cli::cli_alert_info("Mappings file not provided, using biomaRt (slower).")
 
+    species_dataset <- c(
+      "human" = "hsapiens_gene_ensembl",
+      "mouse" = "musculus_gene_ensembl"
+    )
+
     ensembl <- biomaRt::useEnsembl(
       biomart = "ensembl",
-      dataset = "hsapiens_gene_ensembl"
+      dataset = species_dataset[[species]]
     )
 
     mapped_df <- biomaRt::getBM(
@@ -90,6 +103,10 @@ map_ensembl_gene_id <- function(ensembl_ids,
       length(ensembl_ids), " not found).")
     )
   }
+
+  mapped_df <- mapped_df %>%
+    purrr::map_if(is.factor, as.character) %>%
+    dplyr::as_tibble()
 
   return(mapped_df)
 

@@ -10,11 +10,11 @@
 #' @return sce a SingleCellExperiment object annotated with sample metadata
 #'
 #' @family annotation functions
-#' @import cli Matrix SingleCellExperiment dplyr
+#' @import cli Matrix SingleCellExperiment dplyr SummarizedExperiment
 #' @export
 generate_sce <- function(mat, metadata) {
 
-  cat(cli::rule("Generating SingleCellExperiment", line = 1), "\r\n")
+  cat(cli::rule("Generating SingleCellExperiment", line = 2), "\r\n")
 
   if (typeof(mat) != "S4") {
     stop(cli::cli_alert_danger("A sparse Matrix::dgTMatrix is required."))
@@ -28,11 +28,11 @@ generate_sce <- function(mat, metadata) {
     }
   }
 
-  if (is.null(colnames(mat))){
+  if (is.null(colnames(mat))) {
     stop(cli::cli_alert_danger("Matrix coldata is missing."))
   }
 
-  if (is.null(rownames(mat))){
+  if (is.null(rownames(mat))) {
     stop(cli::cli_alert_danger("Matrix rowdata is missing."))
   }
 
@@ -51,13 +51,16 @@ generate_sce <- function(mat, metadata) {
     rowData = data.frame(ensembl_gene_id = rownames(mat))
   )
 
-  sce <- sce[order(rownames(sce)),]
+  SummarizedExperiment::rowData(sce)$ensembl_gene_id <- as.character(
+    SummarizedExperiment::rowData(sce)$ensembl_gene_id
+  )
+  sce <- sce[order(rownames(sce)), ]
 
   cli::cli_alert_success("SingleCellExperiment object generated")
   cli::cli_text(c(
-    dim(sce)[[1]]," gene x ", dim(sce)[[2]],
+    dim(sce)[[1]], " gene x ", dim(sce)[[2]],
     " cells, annotated with ",
-    dim(colData(sce))[[2]], " metadata variables.")
+    dim(colData(sce))[[2]], " metadata variables (incl. barcode).")
   )
 
 

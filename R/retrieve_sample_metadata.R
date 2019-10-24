@@ -27,7 +27,7 @@ retrieve_sample_metadata <- function(unique_id,
   inargs <- list(...)
   args[names(inargs)] <- inargs
 
-  cat(cli::rule("Retrieving sample metadata", line = 1), "\r\n")
+  cat(cli::rule("Retrieving sample metadata", line = 2), "\r\n")
 
   if (!file.exists(samplesheet_path)) {
     stop(cli::cli_alert_danger("Samplesheet not found.\
@@ -68,8 +68,7 @@ retrieve_sample_metadata <- function(unique_id,
                            id_colname,
                            unique_id)
     )
-    #cli::cli_text(paste(colnames(metadata), collapse = ", "))
-    for (var in names(metadata)){
+    for (var in names(metadata)) {
       cli::cli_text(c("{.strong {var}}: {.var {metadata[[var]][[1]]}} ",
         "{.emph ({class(metadata[[var]][[1]])}})")
       )

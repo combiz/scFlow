@@ -7,6 +7,7 @@
 #'
 #' @param sce a SingleCellExperiment object
 #' @param singlet_find_method the method to use for identifying singlets
+#' @param ... additional parameters passed to singlet finding algorithm.
 #'
 #' @return sce a SingleCellExperiment object annotated for singlets
 #'
@@ -20,7 +21,7 @@ find_singlets <- function(sce,
 
   args <- list(...)
 
-  cat(cli::rule("Finding Singlets", line = 1), "\r\n")
+  cat(cli::rule("Finding Singlets", line = 2), "\r\n")
 
   if (class(sce) != "SingleCellExperiment") {
     stop(cli::cli_alert_danger("A SingleCellExperiment is required."))
@@ -37,16 +38,11 @@ find_singlets <- function(sce,
     )
   }
 
-  #find_singlet_fn <- get(singlet_find_methods_l[[singlet_find_method]])
-
   sce <- do.call(
     singlet_find_methods_l[[singlet_find_method]],
     list(sce, args)
   )
-  #sce <- find_singlet_fn(sce)
 
   return(sce)
 
 }
-
-

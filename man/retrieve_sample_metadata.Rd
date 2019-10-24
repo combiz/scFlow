@@ -29,6 +29,6 @@ Other annotation functions: \code{\link{annotate_sce_cells}},
   \code{\link{annotate_sce}}, \code{\link{filter_sce}},
   \code{\link{find_singlets}}, \code{\link{generate_sce}},
   \code{\link{map_ensembl_gene_id}},
-  \code{\link{run_doubletfinder}}
+  \code{\link{merge_sce}}, \code{\link{run_doubletfinder}}
 }
 \concept{annotation functions}

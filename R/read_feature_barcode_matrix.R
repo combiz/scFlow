@@ -18,7 +18,7 @@
 #' @export
 read_feature_barcode_matrix <- function(folder_path) {
 
-  cat(cli::rule("Reading feature-barcode matrix", line = 1), "\r\n")
+  cat(cli::rule("Reading feature-barcode matrix", line = 2), "\r\n")
 
   paths_l <- list()
   paths_l[["barcodes_path"]] <-  file.path(folder_path, "barcodes.tsv.gz")
@@ -32,10 +32,15 @@ read_feature_barcode_matrix <- function(folder_path) {
   }
 
   cli::cli_text("Reading: {.path {paths_l$barcodes_path}}")
-  col_data <- read.csv(gzfile(paths_l$barcodes_path), sep = "", header = FALSE)
+  col_data <- read.csv(gzfile(paths_l$barcodes_path),
+                       sep = "",
+                       header = FALSE,
+                       stringsAsFactors = FALSE)
 
   cli::cli_text("Reading: {.path {paths_l$features_path}}")
-  row_data <- read.delim(gzfile(paths_l$features_path), header = FALSE)
+  row_data <- read.delim(gzfile(paths_l$features_path),
+                         header = FALSE,
+                         stringsAsFactors = FALSE)
 
   cli::cli_text("Reading: {.path {paths_l$matrix_path}}")
   mat <- Matrix::readMM(gzfile(paths_l$matrix_path))

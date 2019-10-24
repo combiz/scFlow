@@ -1,7 +1,18 @@
 ################################################################################
-#' Add basic annotations and qc metrics for a SingleCellExperiment
+#' Annotate a SingleCellExperiment with gene names and QC metrics
 #'
 #' Adds biomaRt annotations (e.g. gene, gene_biotype) and QC metric annotations.
+#'
+#' @section Quality control options and thresholds:
+#'
+#' In addition to calculating QC metrics and annotating gene information, this
+#' function adds boolean (TRUE/FALSE) indicators of which cells/genes met the QC
+#' criteria.  This enables QC reports, plots, and various QC-related tables to
+#' be saved before filtering with the  [filter_sce()] function.
+#'
+#' @section Annotations:
+#'
+#' With the default settings, the SingleCellExperiment object is annotated with:
 #'
 #' Cell-level annotations
 #' * total_counts - sum of counts across all genes
@@ -14,7 +25,7 @@
 #' * qc_metric_pc_mito_ok was pc_mito <= the max_mito cutoff?
 #' * pc_ribo - percentage of counts mapping to ribosomal genes in this cell
 #' * qc_metric_pc_ribo_ok was pc_ribo <= the max_ribo cutoff?
-#' * passed_qc - did the cell pass all of the cell QC tests
+#' * qc_metric_passed - did the cell pass all of the cell QC tests
 #'
 #' Gene-level annotations
 #' * gene - official gene name
@@ -38,11 +49,14 @@
 #' @param ensembl_mapping_file a local tsv file with ensembl_gene_id and
 #'   additional columns for mapping ensembl_gene_id to gene info.  If
 #'   not provided, the biomaRt db is queried (slower).
+#' @param annotate_genes optionally skip gene annotation with FALSE
+#' @param annotate_cells optionally skip cell annotation with FALSE
 #'
 #' @return sce a annotated SingleCellExperiment object
 #'
 #' @family annotation functions
-#' @import cli Matrix SummarizedExperiment dplyr SingleCellExperiment purrr
+#' @import cli Matrix dplyr SingleCellExperiment purrr
+#' @importFrom SummarizedExperiment metadata rowData colData
 #' @export
 annotate_sce <- function(sce,
                          min_library_size = 300,
@@ -59,6 +73,8 @@ annotate_sce <- function(sce,
     stop(cli::cli_alert_danger("A SingleCellExperiment is required."))
   }
 
+  cat(cli::rule("Annotating SingleCellExperiment", line = 2), "\r\n")
+
   before_coldata_colnames <- colnames(SummarizedExperiment::colData(sce))
   before_rowdata_colnames <- colnames(SummarizedExperiment::rowData(sce))
 
@@ -67,7 +83,8 @@ annotate_sce <- function(sce,
                        c("sce", "ensembl_mapping_file",
                          "annotate_genes", "annotate_cells")) #not these args
 
-  metadata(sce)[["qc_params"]] <- purrr::map(qc_params, ~ get(.)) %>%
+  SummarizedExperiment::metadata(sce)[["qc_params"]] <-
+    purrr::map(qc_params, ~ get(.)) %>%
     purrr::set_names(qc_params)
 
   if (annotate_genes) {
@@ -83,12 +100,12 @@ annotate_sce <- function(sce,
                               min_cells = min_cells
     )
   } else {
-    if(!annotate_genes){
+    if (!annotate_genes) {
       stop(cli::cli_alert_danger("Nothing to do. Specify gene/cell/both."))
     }
   }
 
-  if(annotate_cells){
+  if (annotate_cells) {
     cli::cli_alert_success(
       "SingleCellExperiment cells were successfully annotated with: \r\n"
     )
@@ -99,7 +116,7 @@ annotate_sce <- function(sce,
     ))
   }
 
-  if(annotate_genes) {
+  if (annotate_genes) {
     cli::cli_alert_success(
       "SingleCellExperiment genes were successfully annotated with: \r\n"
     )
@@ -113,4 +130,3 @@ annotate_sce <- function(sce,
   return(sce)
 
 }
-

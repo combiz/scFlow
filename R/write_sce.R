@@ -15,6 +15,7 @@
 #'
 #' @param sce a SingleCellExperiment Object
 #' @param folder_path path to save the SingleCellExperiment
+#' @param overwrite delete the existing directory and overwrite if TRUE
 #'
 #' @family import and export functions
 #'
@@ -22,9 +23,11 @@
 #' @importFrom R.utils gzip
 #'
 #' @export
-write_sce <- function(sce, folder_path) {
+write_sce <- function(sce,
+                      folder_path,
+                      overwrite = TRUE) {
 
-  cat(cli::rule("Writing SingleCellExperiment", line = 1), "\r\n")
+  cat(cli::rule("Writing SingleCellExperiment", line = 2), "\r\n")
 
   if (class(sce) != "SingleCellExperiment") {
     stop(cli::cli_alert_danger(
@@ -34,6 +37,16 @@ write_sce <- function(sce, folder_path) {
   if (!dir.exists(file.path(folder_path))) {
     cli::cli_text("Creating dir: {.path {folder_path}}")
     dir.create(file.path(folder_path))
+  } else {
+    if(overwrite){
+      cli::cli_alert_warning("Unlinking: {.path {folder_path}}")
+      unlink(file.path(folder_path), recursive = TRUE)
+      cli::cli_text("Creating dir: {.path {folder_path}}")
+      dir.create(file.path(folder_path))
+    } else {
+      stop(cli::cli_alert_danger(
+        "Write path not empty.  Set overwrite=TRUE to overwrite."))
+    }
   }
 
   # write metadata to tsv files
@@ -68,7 +81,7 @@ write_sce <- function(sce, folder_path) {
   )
 
   # write reducedDim data to tsv files
-  for (rd in names(reducedDims(sce))){
+  for (rd in names(reducedDims(sce))) {
     rd_filename <- file.path(paste0("ReducedDim_", rd, ".tsv"))
     cli::cli_text("Writing: {.path {rd_filename}}")
     write.table(as.data.frame(SingleCellExperiment::reducedDim(sce, rd)),
