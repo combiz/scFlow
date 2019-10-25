@@ -63,6 +63,7 @@ generate_sce <- function(mat, metadata) {
     dim(colData(sce))[[2]], " metadata variables (incl. barcode).")
   )
 
+  sce@metadata$metadata <- metadata
 
   return(sce)
 

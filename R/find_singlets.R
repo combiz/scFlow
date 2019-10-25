@@ -43,6 +43,8 @@ find_singlets <- function(sce,
     list(sce, args)
   )
 
+  sce@metadata$scflow_steps$singlets_annotated <- 1
+
   return(sce)
 
 }

@@ -20,8 +20,14 @@ merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
       "Expected a list or vector, received a {.emph {class(sce_l)}}.")
     )
   }
-  if (all(purrr::map_lgl(sce_l, dir.exists))) {
-    sce_l <- map(sce_l, read_sce)
+  if (all((purrr::map_lgl(sce_l, is.character)))) {
+    if (all(purrr::map_lgl(sce_l, dir.exists))) {
+      sce_l <- map(sce_l, read_sce)
+    } else {
+      stop(cli::cli_alert_danger(
+        "Path(s) not found.")
+      )
+    }
   } else if (!all(purrr::map_lgl(sce_l,
                                  ~ class(.) == "SingleCellExperiment"))) {
     stop(cli::cli_alert_danger(
@@ -87,7 +93,7 @@ merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
 
     newsce <- SingleCellExperiment::SingleCellExperiment(
       assays = list(counts = mat),
-      colData = data.frame(SummarizedExperiment::colData(sce)),
+      colData = data.frame(sce@colData),
       rowData = data.frame(ensembl_gene_id = rownames(mat))
     )
 

@@ -78,6 +78,9 @@ filter_sce <- function(sce,
     )
     sce <-
       sce[SummarizedExperiment::rowData(sce)$qc_metric_is_expressive == TRUE, ]
+
+    sce@metadata$scflow_steps$genes_filtered <- 1
+
     cli::cli_alert_success(
       "{.emph {n_non_expressive}} non-expressive genes were dropped. \r\n")
 
@@ -117,6 +120,8 @@ filter_sce <- function(sce,
 
     # subset
     sce <- sce[, sce$qc_metric_passed == TRUE]
+
+    sce@metadata$scflow_steps$cells_filtered <- 1
 
   } else {
 

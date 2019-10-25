@@ -9,7 +9,7 @@
 #' @param ensembl_ids vector of ensembl_ids, if versioned the version will be
 #'   stripped.
 #' @param mappings the biomaRt attributes to be mapped or mappings file column
-#'   names.  This should always include ensembl_gene_id, e.g.
+#'   names.  ensembl_gene_id will be added if not included here.
 #'   `c("ensembl_gene_id", "external_gene_name")`
 #' @param species ensembl_ids are mapped to `human` or `mouse`
 #' @param mappings_filepath path to the mappings tsv file
@@ -31,7 +31,8 @@
 map_ensembl_gene_id <- function(ensembl_ids,
                                 mappings = c("ensembl_gene_id",
                                              "gene_biotype",
-                                             "external_gene_name"),
+                                             "external_gene_name",
+                                             "percentage_gene_gc_content"),
                                 species = "human",
                                 mappings_filepath = NULL) {
 

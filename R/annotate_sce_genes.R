@@ -73,6 +73,8 @@ annotate_sce_genes <- function(sce,
   SummarizedExperiment::rowData(sce)$qc_metric_is_ribo <-
     qc_metric_is_ribo
 
+  sce@metadata$scflow_steps$genes_annotated <- 1
+
   return(sce)
 
 }

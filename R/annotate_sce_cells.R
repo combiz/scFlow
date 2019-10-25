@@ -77,6 +77,8 @@ annotate_sce_cells <- function(sce, ...) {
   SummarizedExperiment::rowData(sce)$qc_metric_is_expressive <-
     qc_metric_is_expressive
 
+  sce@metadata$scflow_steps$cells_annotated <- 1
+
   return(sce)
 
 }

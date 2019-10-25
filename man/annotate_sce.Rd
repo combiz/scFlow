@@ -67,7 +67,7 @@ min_features number of cells?
 \item qc_metric_pc_mito_ok was pc_mito <= the max_mito cutoff?
 \item pc_ribo - percentage of counts mapping to ribosomal genes in this cell
 \item qc_metric_pc_ribo_ok was pc_ribo <= the max_ribo cutoff?
-\item passed_qc - did the cell pass all of the cell QC tests
+\item qc_metric_passed - did the cell pass all of the cell QC tests
 }
 
 Gene-level annotations
@@ -88,7 +88,7 @@ Other annotation functions: \code{\link{annotate_sce_cells}},
   \code{\link{filter_sce}}, \code{\link{find_singlets}},
   \code{\link{generate_sce}},
   \code{\link{map_ensembl_gene_id}},
-  \code{\link{merge_sce}},
+  \code{\link{merge_sce}}, \code{\link{report_qc_sce}},
   \code{\link{retrieve_sample_metadata}},
   \code{\link{run_doubletfinder}}
 }

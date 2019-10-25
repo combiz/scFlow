@@ -1,0 +1,4 @@
+name: Quality Control
+description: >
+   scflow - quality control report for a SingleCellExperiment
+create_dir: FALSE

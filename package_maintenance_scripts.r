@@ -24,6 +24,12 @@ library(spelling)
 #use_news_md()
 #use_pkgdown()
 
+use_rmarkdown_template(
+  template_name = "Quality Control",
+  template_description = "Quality control report for a SingleCellExperiment",
+  template_create_dir = FALSE
+)
+
 ## Ongoing package dev
 use_r("function_name")
 use_r("retrieve_sample_metadata")
@@ -41,6 +47,8 @@ use_r("write_sce")
 use_r("read_sce")
 
 use_r("merge_sce")
+
+use_r("report_qc_sce")
 
 use_r("find_singlets_with_doubletfinder")
 

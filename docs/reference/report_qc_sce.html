@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Add basic cell-wise annotations for a SingleCellExperiment — annotate_sce_cells • scflow</title>
+<title>Generate plots and a QC report for a SingleCellExperiment — report_qc_sce • scflow</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -32,13 +32,9 @@
 
 
 
-<meta property="og:title" content="Add basic cell-wise annotations for a SingleCellExperiment — annotate_sce_cells" />
+<meta property="og:title" content="Generate plots and a QC report for a SingleCellExperiment — report_qc_sce" />
 
-<meta property="og:description" content="Calculates the following QC metrics:
-qc_metric_total_counts - was the ensembl_gene_id found in biomaRt
-qc_metric_total_features_by_counts - is the gene mitochondrial
-
-" />
+<meta property="og:description" content="Generate plots and a QC report for a SingleCellExperiment" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -107,22 +103,18 @@ qc_metric_total_features_by_counts - is the gene mitochondrial
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Add basic cell-wise annotations for a SingleCellExperiment</h1>
-    <small class="dont-index">Source: <a href='https://github.com/combiz/scflow/blob/master/R/annotate_sce_cells.R'><code>R/annotate_sce_cells.R</code></a></small>
-    <div class="hidden name"><code>annotate_sce_cells.Rd</code></div>
+    <h1>Generate plots and a QC report for a SingleCellExperiment</h1>
+    <small class="dont-index">Source: <a href='https://github.com/combiz/scflow/blob/master/R/report_qc_sce.R'><code>R/report_qc_sce.R</code></a></small>
+    <div class="hidden name"><code>report_qc_sce.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Calculates the following QC metrics:</p><ul>
-<li><p>qc_metric_total_counts - was the ensembl_gene_id found in biomaRt</p></li>
-<li><p>qc_metric_total_features_by_counts - is the gene mitochondrial</p></li>
-</ul>
-
+    <p>Generate plots and a QC report for a SingleCellExperiment</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>annotate_sce_cells</span>(<span class='no'>sce</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>report_qc_sce</span>(<span class='no'>sce</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -131,32 +123,20 @@ qc_metric_total_features_by_counts - is the gene mitochondrial
       <th>sce</th>
       <td><p>a SingleCellExperiment object</p></td>
     </tr>
-    <tr>
-      <th>...</th>
-      <td><p>See <code><a href='annotate_sce.html'>annotate_sce</a></code></p>
-<p>min_library_size the minimum number of counts per cell
-min_features the minimum number of features per cell (i.e. the minimum
-number of genes with &gt;0 counts)
-max_mito the maximum proportion of counts mapping to
-mitochondrial genes (0 - 1)
-max_ribo the maximum proportion of counts mapping to
-ribosomal genes (0 - 1)
-min_counts the minimum number of counts per cell in min_cells
-min_cells the minimum number of cells with min_counts</p></td>
-    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>sce a SingleCellExperiment object annotated with cell QC metrics</p>
+    <p>sce a annotated SingleCellExperiment object</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other annotation functions: <code><a href='annotate_sce_genes.html'>annotate_sce_genes</a></code>,
+    <div class='dont-index'><p>Other annotation functions: <code><a href='annotate_sce_cells.html'>annotate_sce_cells</a></code>,
+  <code><a href='annotate_sce_genes.html'>annotate_sce_genes</a></code>,
   <code><a href='annotate_sce.html'>annotate_sce</a></code>, <code><a href='filter_sce.html'>filter_sce</a></code>,
   <code><a href='find_singlets.html'>find_singlets</a></code>, <code><a href='generate_sce.html'>generate_sce</a></code>,
   <code><a href='map_ensembl_gene_id.html'>map_ensembl_gene_id</a></code>,
-  <code><a href='merge_sce.html'>merge_sce</a></code>, <code><a href='report_qc_sce.html'>report_qc_sce</a></code>,
+  <code><a href='merge_sce.html'>merge_sce</a></code>,
   <code><a href='retrieve_sample_metadata.html'>retrieve_sample_metadata</a></code>,
   <code><a href='run_doubletfinder.html'>run_doubletfinder</a></code></p></div>
     

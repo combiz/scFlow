@@ -1,0 +1,56 @@
+---
+title: "scflow - quality control report"
+author: "scflow"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: false
+    fig_caption: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(scflow)
+```
+
+```{r}
+matpath <- "~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix"
+mat <- read_feature_barcode_matrix(matpath)
+ss_classes <- c(
+  batch = "factor",
+  capdate = "factor",
+  prepdate = "factor",
+  seqdate = "factor",
+  aplevel = "factor"
+)
+metadata <- retrieve_sample_metadata(
+  unique_id = "MS542",
+  id_colname = "individual",
+  samplesheet_path = "~/Documents/ms-sc/refs/sample_metadata.tsv",
+  colClasses = ss_classes
+)
+sce <- generate_sce(mat, metadata)
+sce <- annotate_sce(
+  sce,
+  ensembl_mapping_file = "~/Documents/ms-sc/src/ensembl-ids/ensembl_mappings.tsv"
+)
+sce <- report_qc_sce(sce)
+```
+
+## Sample metadata
+```{r}
+sce@metadata$metadata
+```
+
+## Count depth distribution
+```{r}
+sce@metadata$qc_plots$count_depth_distribution
+```
+
+
+
+This file is what a user will see when they select your template. Make sure that you update the fields in the yaml header. In particular you will want to update the `output` field to whatever format your template requires.
+
+This is a good place to demonstrate special features that your template provides. Ideally it should knit out-of-the-box, or at least contain clear instructions as to what needs changing.
+
+Finally, be sure to remove this message!

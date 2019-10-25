@@ -56,7 +56,8 @@
 #'
 #' @family annotation functions
 #' @import cli Matrix dplyr SingleCellExperiment purrr
-#' @importFrom SummarizedExperiment metadata rowData colData
+#' @importFrom SummarizedExperiment rowData colData
+#' @importFrom magrittr %>%
 #' @export
 annotate_sce <- function(sce,
                          min_library_size = 300,
@@ -75,7 +76,7 @@ annotate_sce <- function(sce,
 
   cat(cli::rule("Annotating SingleCellExperiment", line = 2), "\r\n")
 
-  before_coldata_colnames <- colnames(SummarizedExperiment::colData(sce))
+  before_coldata_colnames <- colnames(sce@colData)
   before_rowdata_colnames <- colnames(SummarizedExperiment::rowData(sce))
 
   # add the qc parameters to the metadata
@@ -83,9 +84,10 @@ annotate_sce <- function(sce,
                        c("sce", "ensembl_mapping_file",
                          "annotate_genes", "annotate_cells")) #not these args
 
-  SummarizedExperiment::metadata(sce)[["qc_params"]] <-
-    purrr::map(qc_params, ~ get(.)) %>%
-    purrr::set_names(qc_params)
+  qc_params_l <- purrr::map(qc_params, ~ get(.))
+  qc_params_l <- purrr::set_names(qc_params_l, qc_params)
+  sce@metadata[["qc_params"]] <- qc_params_l
+
 
   if (annotate_genes) {
     sce <- annotate_sce_genes(sce, ensembl_mapping_file)
@@ -111,7 +113,7 @@ annotate_sce <- function(sce,
     )
 
     cli::cli_ul(setdiff(
-      colnames(SummarizedExperiment::colData(sce)),
+      colnames(sce@colData),
       before_coldata_colnames
     ))
   }
