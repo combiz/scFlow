@@ -136,3 +136,16 @@ ggarrange(
   sce@metadata$qc_plots$ribo_fraction_histogram
 )
 
+library(ggpubr)
+x <- ggplot(data.frame(pc_mito = sce[, sce$total_counts > 10]$pc_mito)) + geom_jitter(aes(x = "", y = pc_mito), size = 0.1, alpha = 0.1) + theme_bw() +     theme(panel.grid.major = element_blank(),
+                                                                                                                                                                  panel.grid.minor = element_blank(),
+                                                                                                                                                                  panel.background = element_blank(), axis.title.x = element_blank(),
+                                                                                                                                                                  axis.text.x = element_blank(),
+                                                                                                                                                                  axis.ticks.x = element_blank())
+
+#y <- ggplot(data.frame(pc_mito = sce[, sce$total_counts > 10]$pc_mito)) + geom_density(aes(pc_mito, stat(count), fill = "sample")) + theme_bw()
+
+
+ggarrange(x  + coord_flip(), metadata$qc_plots$mito_fraction_histogram, ncol = 1, heights = c(1,2))
+
+
