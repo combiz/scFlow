@@ -1,56 +1,98 @@
 ---
-title: "scflow - quality control report"
-author: "scflow"
+title: "<b>scflow</b> - Quality Control Report"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
+    theme: "flatly"
     toc: false
     fig_caption: true
+    keep_md: false
+    css: style.css
+    includes:
+      after_body: footer.html
+params:
+  metadata_path: false
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-library(scflow)
+```{r setup, results='hide', include=FALSE}
+library(plotly)
+library(DT)
+library(dplyr)
+
+knitr::opts_chunk$set(echo = FALSE)
+
+knitr::knit_hooks$set(wrap = function(before, options, envir){
+  if (before){
+    paste0('<', options$wrap, ' align="center">')
+  } else {
+    paste0('</', options$wrap, '>')
+  }
+})
 ```
 
-```{r}
-matpath <- "~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix"
-mat <- read_feature_barcode_matrix(matpath)
-ss_classes <- c(
-  batch = "factor",
-  capdate = "factor",
-  prepdate = "factor",
-  seqdate = "factor",
-  aplevel = "factor"
-)
-metadata <- retrieve_sample_metadata(
-  unique_id = "MS542",
-  id_colname = "individual",
-  samplesheet_path = "~/Documents/ms-sc/refs/sample_metadata.tsv",
-  colClasses = ss_classes
-)
-sce <- generate_sce(mat, metadata)
-sce <- annotate_sce(
-  sce,
-  ensembl_mapping_file = "~/Documents/ms-sc/src/ensembl-ids/ensembl_mappings.tsv"
-)
-sce <- report_qc_sce(sce)
+```{r load_data, results='hide', include=FALSE}
+metadata <- readRDS(params$metadata_path)
 ```
 
 ## Sample metadata
-```{r}
-sce@metadata$metadata
+
+A total of `r length(metadata$metadata)` metadata variables were imported from the sample sheet for this sample: -
+
+```{r, fig.align = "center"}
+classes <- as.character(lapply(metadata$metadata, class))
+metadata_table <- data.frame(
+  metadata = names(metadata$metadata), 
+  class = paste0("<i>", classes, "</i>"), 
+  values = t(metadata$metadata)[,1]
+)
+datatable(metadata_table, rownames = FALSE, options = list(pageLength = 5, scrollX=F, columnDefs = list(list(className = 'dt-left', targets = "_all"))), escape = FALSE )
 ```
 
-## Count depth distribution
-```{r}
-sce@metadata$qc_plots$count_depth_distribution
+## Number of counts / features per cellular barcode
+<div class = "row">
+<div class = "col-md-6">
+```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of count depth per cell.</b> A lower-limit threshold of %s was applied (red line). ", metadata$qc_params$min_library_size)}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$qc_plots$count_depth_histogram
+```
+</div>
+
+<div class = "col-md-6">
+```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of number of genes per cell.</b> A lower-limit threshold of %s was applied (red line). ", metadata$qc_params$min_features)}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$qc_plots$number_genes_histogram
+```
+</div>
+</div>
+
+## Count depth distribution by barcode rank (high to low counts)
+
+```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Barcode count depth rank plot.</b> The 'elbow' indicates where count depth decreases rapidly (relative increase in background counts), and can be used to inform the count depth threshold.  The applied lower-limit counts threshold is indicated at %s counts (red line). ", metadata$qc_params$min_library_size)}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$qc_plots$count_depth_distribution
+```
+
+## Number of genes versus count depth 
+
+```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Number of genes versus count depth coloured by relative mitochondrial counts.</b> The count-depth threshold of %s counts and the number of genes threshold of %s genes are indicated with vertical and horizontal red lines, respectively. Cells with high mitochondrial counts are typically in cells with relatively lower count depth. Cells with fractional mitochondrial counts higher than %s (i.e. %1.2f%%) were filtered.", metadata$qc_params$min_library_size, metadata$qc_params$min_features, metadata$qc_params$max_mito, metadata$qc_params$max_mito * 100)}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$qc_plots$number_genes_vs_count_depth
 ```
 
 
+## Fraction of mitochondrial / ribosomal counts
+<div class = "row">
+<div class = "col-md-6">
+```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of mitochondrial fraction per cell.</b> A upper-threshold of %s (i.e. %1.2f%%) maximum mitochondrial fraction was applied (red line).", metadata$qc_params$max_mito, metadata$qc_params$max_mito * 100)}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$qc_plots$mito_fraction_histogram
+```
+</div>
 
-This file is what a user will see when they select your template. Make sure that you update the fields in the yaml header. In particular you will want to update the `output` field to whatever format your template requires.
-
-This is a good place to demonstrate special features that your template provides. Ideally it should knit out-of-the-box, or at least contain clear instructions as to what needs changing.
-
-Finally, be sure to remove this message!
+<div class = "col-md-6">
+```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of ribosomal fraction per cell.</b> A upper-threshold of %s (i.e. %1.2f%%) maximum ribosomal fraction was applied (red line).", metadata$qc_params$max_ribo, metadata$qc_params$max_ribo * 100)}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$qc_plots$ribo_fraction_histogram
+```
+</div>
+</div>

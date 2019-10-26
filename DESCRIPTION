@@ -37,7 +37,8 @@ Imports:
     vroom,
     english,
     Seurat,
-    DoubletFinder
+    DoubletFinder,
+    ggplot2
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,

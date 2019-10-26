@@ -30,6 +30,31 @@ sce <- annotate_sce(
   ensembl_mapping_file = "~/Documents/ms-sc/src/ensembl-ids/ensembl_mappings.tsv"
 )
 
+sce <- report_qc_sce(sce)
+
+start_time <- Sys.time()
+metadata_tmp_path <- file.path(tempdir(), "metadata.rds")
+saveRDS(sce@metadata, metadata_tmp_path)
+end_time <- Sys.time()
+end_time - start_time
+
+# after dev
+system.file(
+  "rmarkdown/templates/quality-control/skeleton/skeleton.Rmd",
+  package = "scflow")
+
+rmarkdown::render(
+  file.path(getwd(), "inst/rmarkdown/templates/quality-control/skeleton/skeleton.Rmd"),
+  params = list(
+    metadata_path = metadata_tmp_path
+  ),
+  output_dir = getwd(),
+  output_file = "qc"
+)
+
+
+
+
 sce <- .qc_plot_count_depth_distribution(sce)
 sce <- .qc_plot_count_depth_histogram(sce)
 sce <- .qc_plot_features_histogram(sce)
