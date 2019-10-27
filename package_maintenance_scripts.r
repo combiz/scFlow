@@ -57,6 +57,10 @@ use_r("write_feature_barcode_matrix")
 use_test("function_name")
 
 use_package("dplyr") # add to DESCRIPTION
+use_package("rmarkdown")
+use_package("DT")
+use_package("stats")
+
 
 #use_vignette("How to do this cool analysis") # later
 

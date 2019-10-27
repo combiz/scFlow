@@ -54,14 +54,6 @@ rmarkdown::render(
 
 
 
-
-sce <- .qc_plot_count_depth_distribution(sce)
-sce <- .qc_plot_count_depth_histogram(sce)
-sce <- .qc_plot_features_histogram(sce)
-sce <- .qc_plot_features_vs_count_depth(sce)
-sce <- .qc_plot_mito_fraction_histogram(sce)
-sce <- .qc_plot_ribo_fraction_histogram(sce)
-
 # DO QC PLOTS AND TABLE HERE!
 
 sce <- filter_sce(
@@ -111,13 +103,9 @@ ggplot(data = dt[dt$name == "qc_metric_pc_mito_ok",])+
   labs(x="", y="") +
   theme_bw()
 
-table(x$doublet_finder_annotation)
+table(sce$is_singlet)
 
-df <- data.frame(SingleCellExperiment::reducedDim(x, "seurat_umap_by_individual"))
-df$is_singlet <- x$is_singlet
 
-ggplot(data = df)+
-  geom_point(aes(x = UMAP_1, y = UMAP_2, colour = is_singlet))
 
 write_sce(sce, file.path(getwd(), "junk"))
 

@@ -44,6 +44,7 @@ find_singlets <- function(sce,
   )
 
   sce@metadata$scflow_steps$singlets_annotated <- 1
+  sce@metadata$scflow_steps$singlets_method <- singlet_find_method
 
   return(sce)
 

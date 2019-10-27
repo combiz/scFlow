@@ -81,6 +81,9 @@ metadata$qc_plots$number_genes_vs_count_depth
 
 
 ## Fraction of mitochondrial / ribosomal counts
+
+
+
 <div class = "row">
 <div class = "col-md-6">
 ```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of mitochondrial fraction per cell.</b> A upper-threshold of %s (i.e. %1.2f%%) maximum mitochondrial fraction was applied (red line).", metadata$qc_params$max_mito, metadata$qc_params$max_mito * 100)}
@@ -96,3 +99,9 @@ metadata$qc_plots$ribo_fraction_histogram
 ```
 </div>
 </div>
+
+## Doublet/multiplet identification
+`r if(metadata$scflow_steps$singlets_annotated == 0){"No doublet/multiplet identification algorithm was run on this dataset."}`
+
+```{r conditional_doubletfinder_block, child='doubletfinder_template.Rmd', eval = (metadata$scflow_steps$singlets_annotated == 1 & metadata$scflow_steps$singlets_method == "doubletfinder")}
+```

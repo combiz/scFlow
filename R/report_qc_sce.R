@@ -2,26 +2,54 @@
 #' Generate plots and a QC report for a SingleCellExperiment
 #'
 #' @param sce a SingleCellExperiment object
+#' @param report_folder_path folder path to save the report
 #'
 #' @return sce a annotated SingleCellExperiment object
 #'
 #' @family annotation functions
 #' @import cli Matrix SummarizedExperiment dplyr SingleCellExperiment purrr
 #' @import ggplot2
+#' @importFrom rmarkdown render
 #' @export
 #'
-report_qc_sce <- function(sce) {
+report_qc_sce <- function(sce,
+                          report_folder_path = getwd()) {
 
   if(!class(sce) == "SingleCellExperiment"){
     stop("expecting singlecellexperiment")
   }
 
-  sce <- .qc_plot_count_depth_distribution(sce)
-  sce <- .qc_plot_features_vs_count_depth(sce)
-  sce <- .qc_plot_count_depth_histogram(sce)
-  sce <- .qc_plot_number_genes_histogram(sce)
-  sce <- .qc_plot_mito_fraction_histogram(sce)
-  sce <- .qc_plot_ribo_fraction_histogram(sce)
+  cat(cli::rule(
+    "Generating QC plots and report for SingleCellExperiment", line = 2),
+    "\r\n")
+
+  # run all functions starting with .qc_plot_ on sce
+  cli::cli_text("Generating QC plots and appending to metadata...")
+  all_scflow_fns <- ls(getNamespace("scflow"), all.names=TRUE)
+  qc_plot_fns <- all_scflow_fns[startsWith(all_scflow_fns, ".qc_plot_")]
+  for (fn in qc_plot_fns) { sce <- get(fn)(sce) }
+
+  metadata_tmp_path <- file.path(tempdir(), "metadata.rds")
+
+  cli::cli_text("Writing data for QC report...")
+  saveRDS(sce@metadata, metadata_tmp_path)
+
+  cli::cli_text("Generating QC report...")
+  rmarkdown::render(
+    # for dev use file.path(getwd(),
+    # "inst/rmarkdown/templates/quality-control/skeleton/skeleton.Rmd")
+    system.file(
+      "rmarkdown/templates/quality-control/skeleton/skeleton.Rmd",
+      package = "scflow"),
+    params = list(
+      metadata_path = metadata_tmp_path
+    ),
+    output_dir = report_folder_path,
+    output_file = "qc_report_scflow"
+  )
+
+  cli::cli_alert_success(
+    "QC plots and report succesfully generated. \r\n")
 
   return(sce)
 }

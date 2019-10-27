@@ -4,10 +4,12 @@
 \alias{report_qc_sce}
 \title{Generate plots and a QC report for a SingleCellExperiment}
 \usage{
-report_qc_sce(sce)
+report_qc_sce(sce, report_folder_path = getwd())
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}
+
+\item{report_folder_path}{folder path to save the report}
 }
 \value{
 sce a annotated SingleCellExperiment object

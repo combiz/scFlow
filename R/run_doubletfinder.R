@@ -20,7 +20,7 @@
 #'
 #' @family annotation functions
 #' @import cli Matrix SummarizedExperiment dplyr SingleCellExperiment
-#' @import Seurat DoubletFinder
+#' @import Seurat DoubletFinder ggplot2 purrr
 #' @export
 
 run_doubletfinder <- function(sce, ...) {
@@ -30,10 +30,15 @@ run_doubletfinder <- function(sce, ...) {
   # defaults
   args <- list(
     pK = NULL,
+    pca_dims = 10,
+    vars_to_regress_out = c("nCount_RNA"),
+    var_features = 2000,
     doublet_rate = 0.075 # assume 7.5%
   )
   inargs <- list(...)
   args[names(inargs)] <- inargs #override defaults if provided
+
+  sce@metadata$doubletfinder_params <- args
 
   cat(cli::boxx(c(
     "Remember to cite:",
@@ -47,44 +52,53 @@ run_doubletfinder <- function(sce, ...) {
     stop(cli::cli_alert_danger("A SingleCellExperiment is required."))
   }
 
-  mat <- counts(sce)
+  mat <- SingleCellExperiment::counts(sce)
   colnames(mat) <- sce$barcode
 
   # Pre-process Seurat object -----------------------------------------------
   cat("\r\n")
   cat(cli::rule("Creating SeuratObject", line = 1), "\r\n")
-  seu <- Seurat::CreateSeuratObject(mat)
+  seu <- Seurat::CreateSeuratObject(
+    counts = mat,
+    meta.data = data.frame(sce@colData)
+  )
   cat(cli::rule("Normalizing data", line = 1), "\r\n")
   seu <- Seurat::NormalizeData(seu)
   cat(cli::rule("Scaling data", line = 1), "\r\n")
-  seu <- Seurat::ScaleData(seu)
+  seu <- Seurat::ScaleData(seu, vars.to.regress = args$vars_to_regress_out)
   cat(cli::rule("Finding variable features", line = 1), "\r\n")
   seu <- Seurat::FindVariableFeatures(
     seu,
     selection.method = "vst",
-    nfeatures = 2000
+    nfeatures = args$var_features
   )
   cat(cli::rule("Calculating PCA reduced dimensions", line = 1), "\r\n")
-  seu <- Seurat::RunPCA(seu, )
+  seu <- Seurat::RunPCA(seu)
+  cat(cli::rule("Calculating tSNE reduced dimensions", line = 1), "\r\n")
+  seu <- Seurat::RunTSNE(seu, dims = 1:args$pca_dims)
   cat(cli::rule("Calculating UMAP reduced dimensions", line = 1), "\r\n")
-  seu <- Seurat::RunUMAP(seu, dims = 1:10)
+  seu <- Seurat::RunUMAP(seu, dims = 1:args$pca_dims)
 
   # pK Identification -------------------------------------------------------
   if (is.null(args$pK)) { # if not specified, use sweep
     cat(cli::rule(
       "Identifying optimal pK with parameter sweep", line = 1), "\r\n")
-    sweep_res_list <- DoubletFinder::paramSweep_v3(seu, PCs = 1:10)
+    sweep_res_list <- DoubletFinder::paramSweep_v3(seu, PCs = 1:args$pca_dims)
     sweep_stats <- DoubletFinder::summarizeSweep(sweep_res_list, GT = FALSE)
     bcmvn <- DoubletFinder::find.pK(sweep_stats)
     bcmvn$pK <- as.numeric(as.character(bcmvn$pK)) # oddly, pK are factors
     args$pK <- bcmvn[bcmvn$BCmetric == max(bcmvn$BCmetric), ]$pK
+    sce <- .doublet_finder_plot_param_sweep(sce, bcmvn)
     # add the bcmvn dataframe to the sce metadata
-    metadata(sce) <- c(metadata(sce), list(doubletfinder_bcmvn = bcmvn))
+    sce@metadata$qc_plot_data$doubletfinder_param_sweep <- bcmvn
+
+    sce@metadata$doubletfinder_params$doubletfinder_sweep <- TRUE
   } else {
     cli::cli_text("Skipping parameter sweep and using pK={.value {args$pK}}.")
+    sce@metadata$scflow_steps$doubletfinder_sweep <- FALSE
   }
   # add the pK value used to metadata
-  metadata(sce) <- c(metadata(sce), list(doubletfinder_pK = args$pK))
+  sce@metadata$doubletfinder_params$pK <- args$pK
 
   # Homotypic Doublet Proportion Estimate -----------------------------------
   cat(cli::rule("Estimating homotypic doublet proportions", line = 1), "\r\n")
@@ -102,7 +116,7 @@ run_doubletfinder <- function(sce, ...) {
   # Run DoubletFinder with varying classification stringencies -------------
   cat(cli::rule("Running DoubletFinder", line = 1), "\r\n")
   seu <- DoubletFinder::doubletFinder_v3(seu,
-    PCs = 1:10, pN = 0.25, pK = as.numeric(args$pK),
+    PCs = 1:args$pca_dims, pN = 0.25, pK = as.numeric(args$pK),
     nExp = n_exp_poi,
     reuse.pANN = FALSE
   )
@@ -133,12 +147,92 @@ run_doubletfinder <- function(sce, ...) {
 
   # prepare data to return
   sce$is_singlet <- seu@meta.data$DF_hi.lo == "Singlet"
-  SingleCellExperiment::reducedDim(sce, "seurat_pca_by_individual") <-
-    as.matrix(seu@reductions$pca@cell.embeddings)
-  SingleCellExperiment::reducedDim(sce, "seurat_umap_by_individual") <-
-    as.matrix(seu@reductions$umap@cell.embeddings)
+  sce@metadata$doubletfinder_params$singlets_found <- sum(sce$is_singlet)
+  sce@metadata$doubletfinder_params$multiplets_found <- sum(!sce$is_singlet)
+
+  # save dim_reductions and generate metadata plots
+  for (dr_method in names(seu@reductions)) {
+    dim_red_name <- paste0(dr_method, "_by_individual")
+    SingleCellExperiment::reducedDim(sce, dim_red_name) <-
+      as.matrix(seu@reductions[[dr_method]]@cell.embeddings)
+    sce <- .doublet_finder_plot_dim_red(sce, dim_red_name)
+  }
+
+
 
   cli::cli_alert_success("DoubletFinder completed succesfully")
+
+  return(sce)
+
+}
+
+
+#' plot 2d dimensionality reduction with is_doublet colour
+#' @keywords internal
+.doublet_finder_plot_dim_red <- function(sce,
+                                        reduced_dim = NULL) {
+
+  if (is.null(reduced_dim)){
+    stop("need a reduced dim slot, see reducedDims(sce).")
+  }
+
+  df <- data.frame(
+    SingleCellExperiment::reducedDim(sce, reduced_dim)
+  )
+  colnames(df) <- paste0("dim_", seq_along(df))
+  df$is_singlet <- sce$is_singlet
+
+  p <- ggplot2::ggplot(data = df)+
+    geom_point(aes(
+      x = dim_1,
+      y = dim_2,
+      colour = is_singlet
+      ), shape = 16, size = 1, alpha = .4) +
+    scale_colour_manual(values = c("#E64B35", "#4DBBD5"))+
+    theme_bw() +
+    theme(
+      panel.border = element_blank(),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      panel.background = element_blank(),
+      line = element_blank(),
+      text = element_blank(),
+      title = element_blank(),
+      legend.position = "none",
+      plot.title = element_text(size = 18, hjust = 0.5)
+    )
+
+  sce@metadata$qc_plots$doublet_finder[[reduced_dim]] <- p
+
+  return(sce)
+
+}
+
+
+#' pparam sweep plot, pK vs BCmetricx with BCmetric maxima highlighted
+#' @keywords internal
+.doublet_finder_plot_param_sweep <- function(sce, bcmvn) {
+
+  p <- ggplot2::ggplot(data = bcmvn, aes(x = pK, y = BCmetric))+
+    geom_line() +
+    geom_point(size = 4) +
+    geom_point(
+      data = bcmvn[bcmvn$pK == sce@metadata$doubletfinder_params$pK, ],
+      size = 4,
+      colour = "red") +
+    theme_bw() +
+    theme(
+      #panel.border = element_blank(),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      panel.background = element_blank(),
+      #line = element_blank(),
+      text = element_text(size = 18, hjust = 0.5, colour = "black"),
+      #title = element_blank(),
+      legend.position = "none",
+      plot.title = element_text(size = 18, hjust = 0.5))
+
+  sce@metadata$qc_plots$doublet_finder$param_sweep <- p
 
   return(sce)
 

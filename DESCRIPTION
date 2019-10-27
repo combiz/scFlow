@@ -38,7 +38,10 @@ Imports:
     english,
     Seurat,
     DoubletFinder,
-    ggplot2
+    ggplot2,
+    DT,
+    rmarkdown,
+    stats
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,
