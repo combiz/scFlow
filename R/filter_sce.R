@@ -8,9 +8,6 @@
 #' @param sce a SingleCellExperiment object
 #' @param filter_genes if set `FALSE`, genes will not be filtered
 #' @param filter_cells if set `FALSE`, cells will not be filtered
-#' @param drop_unmapped set `TRUE` to remove unmapped ensembl_gene_id
-#' @param drop_mito set `TRUE` to remove mitochondrial genes
-#' @param drop_ribo set `TRUE` to remove ribosomal genes
 #'
 #' @return sce a SingleCellExperiment object filtered for QC passed cells and
 #'   genes, with QC metrics annotations removed
@@ -20,10 +17,7 @@
 #' @export
 filter_sce <- function(sce,
                        filter_genes = FALSE,
-                       filter_cells = TRUE,
-                       drop_unmapped = TRUE,
-                       drop_mito = TRUE,
-                       drop_ribo = FALSE) {
+                       filter_cells = TRUE) {
 
   cat(cli::rule("Filtering SingleCellExperiment", line = 2), "\r\n")
 

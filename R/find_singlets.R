@@ -27,6 +27,11 @@ find_singlets <- function(sce,
     stop(cli::cli_alert_danger("A SingleCellExperiment is required."))
   }
 
+  if(sce@metadata$scflow_steps$singlets_annotated == 1) {
+    warning(cli::cli_alert_danger(
+      "find_singlets was previously run on this data. Re-running."))
+  }
+
   singlet_find_methods_l <- list()
   singlet_find_methods_l[["doubletfinder"]] <- "run_doubletfinder"
 

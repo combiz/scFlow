@@ -4,10 +4,17 @@
 \alias{annotate_sce_genes}
 \title{Add basic gene-wise annotations for a SingleCellExperiment}
 \usage{
-annotate_sce_genes(sce, ensembl_mapping_file = NULL)
+annotate_sce_genes(sce, drop_unmapped = TRUE, drop_mito = TRUE,
+  drop_ribo = FALSE, ensembl_mapping_file = NULL)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object with ensembl_gene_id rowData}
+
+\item{drop_unmapped}{set \code{TRUE} to remove unmapped ensembl_gene_id}
+
+\item{drop_mito}{set \code{TRUE} to remove mitochondrial genes}
+
+\item{drop_ribo}{set \code{TRUE} to remove ribosomal genes}
 
 \item{ensembl_mapping_file}{a local tsv file with ensembl_gene_id and
 additional columns for mapping ensembl_gene_id to gene info.  If

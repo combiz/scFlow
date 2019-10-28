@@ -47,20 +47,30 @@ run_doubletfinder <- function(sce, ...) {
     "McGinnis CS, Murrow LM, Gartner ZJ",
     "Cell Syst. 2019 Apr 24;8(4):329-337.e4."),
     padding = 1, align = "center", float = "center"))
+  cat("\r\n")
 
   if (class(sce) != "SingleCellExperiment") {
     stop(cli::cli_alert_danger("A SingleCellExperiment is required."))
   }
 
+  cat(cli::rule("Selecting QC passed cells/genes", line = 1), "\r\n")
   mat <- SingleCellExperiment::counts(sce)
   colnames(mat) <- sce$barcode
+  col_idx <- which(sce$qc_metric_passed)
+  mat <- mat[
+    SummarizedExperiment::rowData(sce)$qc_metric_gene_passed,
+    col_idx]
+  cat(cli::cli_text(
+    "Selected {.var {dim(mat)[[2]]}} cells and {.var {dim(mat)[[1]]}} genes"),
+    "\r\n")
+
 
   # Pre-process Seurat object -----------------------------------------------
   cat("\r\n")
   cat(cli::rule("Creating SeuratObject", line = 1), "\r\n")
   seu <- Seurat::CreateSeuratObject(
     counts = mat,
-    meta.data = data.frame(sce@colData)
+    meta.data = data.frame(sce[, col_idx]@colData)
   )
   cat(cli::rule("Normalizing data", line = 1), "\r\n")
   seu <- Seurat::NormalizeData(seu)
@@ -146,19 +156,30 @@ run_doubletfinder <- function(sce, ...) {
     "Doublet_hi"
 
   # prepare data to return
-  sce$is_singlet <- seu@meta.data$DF_hi.lo == "Singlet"
-  sce@metadata$doubletfinder_params$singlets_found <- sum(sce$is_singlet)
-  sce@metadata$doubletfinder_params$multiplets_found <- sum(!sce$is_singlet)
+  #sce$is_singlet <- seu@meta.data$DF_hi.lo == "Singlet"
+  is_singlet <- rep(NA, dim(sce)[[2]])
+  is_singlet[col_idx] <- seu@meta.data$DF_hi.lo == "Singlet"
+  sce$is_singlet <- is_singlet
+  sce@metadata$doubletfinder_params$singlets_found <-
+    sum(sce$is_singlet, na.rm = TRUE)
+  sce@metadata$doubletfinder_params$multiplets_found <-
+    sum(!sce$is_singlet, na.rm = TRUE)
 
   # save dim_reductions and generate metadata plots
   for (dr_method in names(seu@reductions)) {
-    dim_red_name <- paste0(dr_method, "_by_individual")
-    SingleCellExperiment::reducedDim(sce, dim_red_name) <-
-      as.matrix(seu@reductions[[dr_method]]@cell.embeddings)
-    sce <- .doublet_finder_plot_dim_red(sce, dim_red_name)
+    dim_rd_name <- paste0(dr_method, "_by_individual")
+    rd_mat <- as.matrix(seu@reductions[[dr_method]]@cell.embeddings)
+    full_rd_mat <- matrix(
+      data = NA,
+      nrow = dim(sce)[[2]],
+      ncol = dim(rd_mat)[[2]],
+      dimnames = list(colnames(sce), colnames(rd_mat))
+    )
+    full_rd_mat[col_idx, ] <- rd_mat
+    SingleCellExperiment::reducedDim(sce, dim_rd_name) <-
+      full_rd_mat
+    sce <- .doublet_finder_plot_dim_red(sce, dim_rd_name)
   }
-
-
 
   cli::cli_alert_success("DoubletFinder completed succesfully")
 
@@ -181,6 +202,7 @@ run_doubletfinder <- function(sce, ...) {
   )
   colnames(df) <- paste0("dim_", seq_along(df))
   df$is_singlet <- sce$is_singlet
+  df <- na.omit(df)
 
   p <- ggplot2::ggplot(data = df)+
     geom_point(aes(

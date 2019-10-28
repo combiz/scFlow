@@ -23,12 +23,16 @@ metadata <- retrieve_sample_metadata(
 
 sce <- generate_sce(mat, metadata)
 
-#sce <- annotate_sce(sce)
-
 sce <- annotate_sce(
   sce,
   ensembl_mapping_file = "~/Documents/ms-sc/src/ensembl-ids/ensembl_mappings.tsv"
 )
+
+#sce <- filter_sce(
+#  sce,
+#  filter_genes = TRUE, filter_cells = TRUE, drop_unmapped = TRUE, drop_mito = TRUE, drop_ribo = FALSE)
+
+sce <- find_singlets(sce, "doubletfinder", pK = 0.005)
 
 sce <- report_qc_sce(sce)
 

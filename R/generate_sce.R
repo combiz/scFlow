@@ -64,6 +64,12 @@ generate_sce <- function(mat, metadata) {
   )
 
   sce@metadata$metadata <- metadata
+  sce@metadata$scflow_steps$cells_annotated <- 0
+  sce@metadata$scflow_steps$genes_annotated <- 0
+  sce@metadata$scflow_steps$singlets_annotated <- 0
+  sce@metadata$scflow_steps$cells_filtered <- 0
+  sce@metadata$scflow_steps$genes_filtered <- 0
+
 
   return(sce)
 

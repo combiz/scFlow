@@ -5,8 +5,9 @@
 \title{Annotate a SingleCellExperiment with gene names and QC metrics}
 \usage{
 annotate_sce(sce, min_library_size = 300, min_features = 100,
-  max_mito = 0.1, max_ribo = 1, min_counts = 2, min_cells = 2,
-  annotate_genes = TRUE, annotate_cells = TRUE,
+  max_mito = 0.1, min_ribo = 0, max_ribo = 1, min_counts = 2,
+  min_cells = 2, drop_unmapped = TRUE, drop_mito = TRUE,
+  drop_ribo = FALSE, annotate_genes = TRUE, annotate_cells = TRUE,
   ensembl_mapping_file = NULL)
 }
 \arguments{
@@ -20,12 +21,21 @@ number of genes with >0 counts)}
 \item{max_mito}{the maximum proportion of counts mapping to
 mitochondrial genes (0 - 1)}
 
+\item{min_ribo}{the minimum proportion of counts mapping to
+ribosomal genes (0 - 1)}
+
 \item{max_ribo}{the maximum proportion of counts mapping to
 ribosomal genes (0 - 1)}
 
 \item{min_counts}{the minimum number of counts per cell in min_cells}
 
 \item{min_cells}{the minimum number of cells with min_counts}
+
+\item{drop_unmapped}{set \code{TRUE} to remove unmapped ensembl_gene_id}
+
+\item{drop_mito}{set \code{TRUE} to remove mitochondrial genes}
+
+\item{drop_ribo}{set \code{TRUE} to remove ribosomal genes}
 
 \item{annotate_genes}{optionally skip gene annotation with FALSE}
 

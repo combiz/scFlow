@@ -8,9 +8,13 @@
 #' * qc_metric_is_ribosomal - is the gene ribosomal
 #'
 #' @param sce a SingleCellExperiment object with ensembl_gene_id rowData
+#' @param drop_unmapped set `TRUE` to remove unmapped ensembl_gene_id
+#' @param drop_mito set `TRUE` to remove mitochondrial genes
+#' @param drop_ribo set `TRUE` to remove ribosomal genes
 #' @param ensembl_mapping_file a local tsv file with ensembl_gene_id and
 #'   additional columns for mapping ensembl_gene_id to gene info.  If
 #'   not provided, the biomaRt db is queried (slower).
+#'
 #'
 #' @return sce a SingleCellExperiment object annotated with gene data
 #'
@@ -21,6 +25,9 @@
 #'
 #' @export
 annotate_sce_genes <- function(sce,
+                               drop_unmapped = TRUE,
+                               drop_mito = TRUE,
+                               drop_ribo = FALSE,
                                ensembl_mapping_file = NULL) {
 
   cat(cli::rule("Annotating SingleCellExperiment genes", line = 2), "\r\n")
@@ -72,6 +79,14 @@ annotate_sce_genes <- function(sce,
   qc_metric_is_ribo[is.na(qc_metric_is_ribo)] <- 0
   SummarizedExperiment::rowData(sce)$qc_metric_is_ribo <-
     qc_metric_is_ribo
+
+  # boolean logic to obtain keep flags
+  SummarizedExperiment::rowData(sce)$qc_metric_mapped_keep <-
+    (SummarizedExperiment::rowData(sce)$qc_metric_ensembl_mapped | !drop_unmapped)
+  SummarizedExperiment::rowData(sce)$qc_metric_mito_keep <-
+    !(qc_metric_is_mito & drop_mito)
+  SummarizedExperiment::rowData(sce)$qc_metric_ribo_keep <-
+    !(qc_metric_is_ribo & drop_ribo)
 
   sce@metadata$scflow_steps$genes_annotated <- 1
 

@@ -13,6 +13,7 @@
 #'   number of genes with >0 counts)
 #' max_mito the maximum proportion of counts mapping to
 #'   mitochondrial genes (0 - 1)
+#' min_ribo
 #' max_ribo the maximum proportion of counts mapping to
 #'   ribosomal genes (0 - 1)
 #' min_counts the minimum number of counts per cell in min_cells
@@ -57,7 +58,8 @@ annotate_sce_cells <- function(sce, ...) {
     )
   ) / sce$total_counts
 
-  sce$qc_metric_pc_ribo_ok <- sce$pc_ribo <= args$max_ribo
+  sce$qc_metric_pc_ribo_ok <-
+    (sce$pc_ribo <= args$max_ribo) & (sce$pc_ribo >= args$min_ribo)
 
   and_list_fn <- function(...) Reduce("&", list(...))
   sce$qc_metric_passed <- and_list_fn(
@@ -76,6 +78,14 @@ annotate_sce_cells <- function(sce, ...) {
   qc_metric_is_expressive <- qc_metric_n_cells_expressing >= args$min_cells
   SummarizedExperiment::rowData(sce)$qc_metric_is_expressive <-
     qc_metric_is_expressive
+
+  # final row qc flag
+  SummarizedExperiment::rowData(sce)$qc_metric_gene_passed <- and_list_fn(
+    SummarizedExperiment::rowData(sce)$qc_metric_is_expressive,
+    SummarizedExperiment::rowData(sce)$qc_metric_mapped_keep,
+    SummarizedExperiment::rowData(sce)$qc_metric_mito_keep,
+    SummarizedExperiment::rowData(sce)$qc_metric_ribo_keep
+  )
 
   sce@metadata$scflow_steps$cells_annotated <- 1
 
