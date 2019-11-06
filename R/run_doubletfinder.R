@@ -19,8 +19,16 @@
 #' @return sce a SingleCellExperiment object annotated for singlets
 #'
 #' @family annotation functions
-#' @import cli Matrix SummarizedExperiment dplyr SingleCellExperiment
-#' @import Seurat DoubletFinder ggplot2 purrr
+#' @import cli Matrix dplyr SingleCellExperiment
+#' @import DoubletFinder ggplot2 purrr
+#' @importFrom magrittr %>%
+#' @import Seurat
+#' @importFrom SummarizedExperiment rowData colData
+#' @importFrom stats setNames na.omit
+#' @importFrom sctransform vst get_residual_var get_residuals correct_counts
+#' @importFrom future.apply future_lapply
+#' @importFrom future nbrOfWorkers
+#'
 #' @export
 
 run_doubletfinder <- function(sce, ...) {
@@ -28,17 +36,17 @@ run_doubletfinder <- function(sce, ...) {
   cat(cli::rule("Finding Singlets with DoubletFinder", line = 1), "\r\n")
 
   # defaults
-  args <- list(
+  fargs <- list(
     pK = NULL,
     pca_dims = 10,
-    vars_to_regress_out = c("nCount_RNA"),
+    vars_to_regress_out = "nCount_RNA",
     var_features = 2000,
-    doublet_rate = 0.075 # assume 7.5%
+    doublet_rate = 0.075
   )
   inargs <- list(...)
-  args[names(inargs)] <- inargs #override defaults if provided
+  fargs[names(inargs)] <- inargs #override defaults if provided
 
-  sce@metadata$doubletfinder_params <- args
+  sce@metadata$doubletfinder_params <- fargs
 
   cat(cli::boxx(c(
     "Remember to cite:",
@@ -54,85 +62,76 @@ run_doubletfinder <- function(sce, ...) {
   }
 
   cat(cli::rule("Selecting QC passed cells/genes", line = 1), "\r\n")
-  mat <- SingleCellExperiment::counts(sce)
-  colnames(mat) <- sce$barcode
   col_idx <- which(sce$qc_metric_passed)
-  mat <- mat[
-    SummarizedExperiment::rowData(sce)$qc_metric_gene_passed,
-    col_idx]
+  sce_ss <- sce[SummarizedExperiment::rowData(sce)$qc_metric_gene_passed,
+                col_idx]
+  #mat <- SingleCellExperiment::counts(sce_ss)
+  #rownames(mat) <- SummarizedExperiment::rowData(sce_ss)$ensembl_gene_id
+  #colnames(mat) <- sce_ss$barcode
   cat(cli::cli_text(
-    "Selected {.var {dim(mat)[[2]]}} cells and {.var {dim(mat)[[1]]}} genes"),
+    "Selected {.var {dim(sce_ss)[[2]]}} cells and {.var {dim(sce_ss)[[1]]}} genes"),
     "\r\n")
-
+  #seu_metadata <- data.frame(sce_ss@colData) %>%
+  #  droplevels()
 
   # Pre-process Seurat object -----------------------------------------------
-  cat("\r\n")
-  cat(cli::rule("Creating SeuratObject", line = 1), "\r\n")
-  seu <- Seurat::CreateSeuratObject(
-    counts = mat,
-    meta.data = data.frame(sce[, col_idx]@colData)
+  seu <- do.call(
+    .preprocess_seurat_object,
+    list(sce = sce_ss,
+         vars_to_regress_out = fargs$vars_to_regress_out,
+         pca_dims = fargs$pca_dims,
+         var_features = fargs$var_features)
   )
-  cat(cli::rule("Normalizing data", line = 1), "\r\n")
-  seu <- Seurat::NormalizeData(seu)
-  cat(cli::rule("Scaling data", line = 1), "\r\n")
-  seu <- Seurat::ScaleData(seu, vars.to.regress = args$vars_to_regress_out)
-  cat(cli::rule("Finding variable features", line = 1), "\r\n")
-  seu <- Seurat::FindVariableFeatures(
-    seu,
-    selection.method = "vst",
-    nfeatures = args$var_features
-  )
-  cat(cli::rule("Calculating PCA reduced dimensions", line = 1), "\r\n")
-  seu <- Seurat::RunPCA(seu)
-  cat(cli::rule("Calculating tSNE reduced dimensions", line = 1), "\r\n")
-  seu <- Seurat::RunTSNE(seu, dims = 1:args$pca_dims)
-  cat(cli::rule("Calculating UMAP reduced dimensions", line = 1), "\r\n")
-  seu <- Seurat::RunUMAP(seu, dims = 1:args$pca_dims)
+
+  #seu <- sce_to_seu(sce_ss)
 
   # pK Identification -------------------------------------------------------
-  if (is.null(args$pK)) { # if not specified, use sweep
+  if (is.null(fargs$pK)) { # if not specified, use sweep
     cat(cli::rule(
       "Identifying optimal pK with parameter sweep", line = 1), "\r\n")
-    sweep_res_list <- DoubletFinder::paramSweep_v3(seu, PCs = 1:args$pca_dims)
+    sweep_res_list <- DoubletFinder::paramSweep_v3(
+      seu,
+      PCs = 1:fargs$pca_dims, sct = FALSE
+    )
     sweep_stats <- DoubletFinder::summarizeSweep(sweep_res_list, GT = FALSE)
     bcmvn <- DoubletFinder::find.pK(sweep_stats)
     bcmvn$pK <- as.numeric(as.character(bcmvn$pK)) # oddly, pK are factors
-    args$pK <- bcmvn[bcmvn$BCmetric == max(bcmvn$BCmetric), ]$pK
+    fargs$pK <- bcmvn[bcmvn$BCmetric == max(bcmvn$BCmetric), ]$pK
     sce <- .doublet_finder_plot_param_sweep(sce, bcmvn)
     # add the bcmvn dataframe to the sce metadata
     sce@metadata$qc_plot_data$doubletfinder_param_sweep <- bcmvn
 
     sce@metadata$doubletfinder_params$doubletfinder_sweep <- TRUE
   } else {
-    cli::cli_text("Skipping parameter sweep and using pK={.value {args$pK}}.")
+    cli::cli_text("Skipping parameter sweep and using pK={.value {fargs$pK}}.")
     sce@metadata$scflow_steps$doubletfinder_sweep <- FALSE
   }
   # add the pK value used to metadata
-  sce@metadata$doubletfinder_params$pK <- args$pK
+  sce@metadata$doubletfinder_params$pK <- fargs$pK
 
   # Homotypic Doublet Proportion Estimate -----------------------------------
   cat(cli::rule("Estimating homotypic doublet proportions", line = 1), "\r\n")
   annotations <- seu@meta.data$seurat_clusters
   homotypic_prop <- DoubletFinder::modelHomotypic(annotations)
-  n_exp_poi <- round(args$doublet_rate * length(seu@meta.data$orig.ident))
+  n_exp_poi <- round(fargs$doublet_rate * length(seu@meta.data$orig.ident))
   n_exp_poi_adj <- round(n_exp_poi * (1 - homotypic_prop))
   doublet_vals <- data.frame(
     n_exp_poi = n_exp_poi,
     n_exp_poi_adj = n_exp_poi_adj
   )
 
-  pann_hi <- sprintf("pANN_0.25_%s_%s", args$pK, doublet_vals$n_exp_poi)
+  pann_hi <- sprintf("pANN_0.25_%s_%s", fargs$pK, doublet_vals$n_exp_poi)
 
   # Run DoubletFinder with varying classification stringencies -------------
   cat(cli::rule("Running DoubletFinder", line = 1), "\r\n")
   seu <- DoubletFinder::doubletFinder_v3(seu,
-    PCs = 1:args$pca_dims, pN = 0.25, pK = as.numeric(args$pK),
+    PCs = 1:fargs$pca_dims, pN = 0.25, pK = as.numeric(fargs$pK),
     nExp = n_exp_poi,
     reuse.pANN = FALSE
   )
 
   seu <- DoubletFinder::doubletFinder_v3(seu,
-    pN = 0.25, pK = as.numeric(args$pK),
+    pN = 0.25, pK = as.numeric(fargs$pK),
     nExp = doublet_vals$n_exp_poi_adj,
     reuse.pANN = pann_hi
   )
@@ -141,14 +140,14 @@ run_doubletfinder <- function(sce, ...) {
   cat(cli::rule("Annotating results", line = 1), "\r\n")
   seu@meta.data[, "DF_hi.lo"] <- seu@meta.data[, sprintf(
     "DF.classifications_0.25_%s_%s",
-    args$pK,
+    fargs$pK,
     doublet_vals$n_exp_poi
   )]
 
   seu@meta.data$DF_hi.lo[which(seu@meta.data$DF_hi.lo == "Doublet" &
     seu@meta.data[, sprintf(
       "DF.classifications_0.25_%s_%s",
-      args$pK,
+      fargs$pK,
       doublet_vals$n_exp_poi_adj
     )] == "Singlet")] <- "Doublet_lo"
 
@@ -181,9 +180,77 @@ run_doubletfinder <- function(sce, ...) {
     sce <- .doublet_finder_plot_dim_red(sce, dim_rd_name)
   }
 
+  # append df to qc_summary metadata table
+  doubletfinder_params <- purrr::map_df(
+    sce@metadata$doubletfinder_params, ~ .) %>%
+    dplyr::rename_all(~ paste0("doubletfinder_",.))
+
+  sce@metadata$qc_summary <- cbind(
+    sce@metadata$qc_summary,
+    doubletfinder_params
+  )
+
   cli::cli_alert_success("DoubletFinder completed succesfully")
 
   return(sce)
+
+}
+
+################################################################################
+#' temp fn
+#'
+#' @param sce a SingleCellExperiment object
+#'
+#' @return seu a seurat object
+#'
+#' @family annotation functions
+#'
+#' @importFrom SingleCellExperiment counts
+#' @import Seurat
+#' @importFrom magrittr %>%
+#'
+#' @export
+.preprocess_seurat_object <- function(sce,
+                                      vars_to_regress_out,
+                                      pca_dims,
+                                      var_features) {
+
+  cat("\r\n")
+  cat(cli::rule("Creating SeuratObject", line = 1), "\r\n")
+
+  seu_metadata <- data.frame(sce@colData) %>%
+    droplevels()
+  seu <- Seurat::CreateSeuratObject(
+    counts = counts(sce),
+    meta.data = seu_metadata
+  )
+  # doubletfinder not compatible yet, no slots error
+  #seu <- Seurat::SCTransform(
+  #  seu,
+  #  vars.to.regress = vars_to_regress_out)
+  cat(cli::rule("Normalizing data", line = 1), "\r\n")
+  seu <- Seurat::NormalizeData(seu)
+  cat(cli::rule("Scaling data", line = 1), "\r\n")
+  message(sprintf("Regressing out %s, this may take a while..", fargs$vars_to_regress_out))
+  seu <- Seurat::ScaleData(
+    seu,
+    vars.to.regress = vars_to_regress_out
+  )
+
+  cat(cli::rule("Finding variable features", line = 1), "\r\n")
+  seu <- Seurat::FindVariableFeatures(
+    seu,
+    selection.method = "vst",
+    nfeatures = var_features
+  )
+  cat(cli::rule("Calculating PCA reduced dimensions", line = 1), "\r\n")
+  seu <- Seurat::RunPCA(seu)
+  cat(cli::rule("Calculating tSNE reduced dimensions", line = 1), "\r\n")
+  seu <- Seurat::RunTSNE(seu, dims = 1:pca_dims)
+  cat(cli::rule("Calculating UMAP reduced dimensions", line = 1), "\r\n")
+  seu <- Seurat::RunUMAP(seu, dims = 1:pca_dims)
+
+  return(seu)
 
 }
 
@@ -210,7 +277,7 @@ run_doubletfinder <- function(sce, ...) {
       y = dim_2,
       colour = is_singlet
       ), shape = 16, size = 1, alpha = .4) +
-    scale_colour_manual(values = c("#E64B35", "#4DBBD5"))+
+    scale_colour_manual(values = c("#E64B35", "#4DBBD5")) +
     theme_bw() +
     theme(
       panel.border = element_blank(),
@@ -259,3 +326,5 @@ run_doubletfinder <- function(sce, ...) {
   return(sce)
 
 }
+
+

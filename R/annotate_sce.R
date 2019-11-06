@@ -63,6 +63,7 @@
 #' @import cli Matrix dplyr SingleCellExperiment purrr
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom magrittr %>%
+#' @importFrom stats quantile
 #' @export
 annotate_sce <- function(sce,
                          min_library_size = 300,
@@ -96,7 +97,6 @@ annotate_sce <- function(sce,
   qc_params_l <- purrr::map(qc_params, ~ get(.))
   qc_params_l <- purrr::set_names(qc_params_l, qc_params)
   sce@metadata[["qc_params"]] <- qc_params_l
-
 
   if (annotate_genes) {
     sce <- annotate_sce_genes(
@@ -150,13 +150,99 @@ annotate_sce <- function(sce,
     "\r\n")
 
   # generate plots - run all functions starting with .qc_plot_ on sce
-  cli::cli_text("Generating QC plots and appending to metadata...")
+  cli::cli_text("Generating QC plots and appending to metadata.")
   all_scflow_fns <- ls(getNamespace("scflow"), all.names=TRUE)
   qc_plot_fns <- all_scflow_fns[startsWith(all_scflow_fns, ".qc_plot_")]
   for (fn in qc_plot_fns) { sce <- get(fn)(sce) }
 
+  # generate qc summary table
+  cli::cli_text("Generating QC summary table and appending to metadata.")
+  sce <- .qc_append_summary_table(sce)
+
   return(sce)
 
+}
+
+#' generate table of qc results
+#' @keywords internal
+.qc_append_summary_table <- function(sce) {
+
+  # qc params to data frame
+  qc_params_df <- map_df(sce@metadata$qc_params, ~ .) %>%
+    dplyr::rename_all(~ paste0("qc_params_",.))
+
+  # gene qc results to data frame
+  genes_qc <- list()
+  genes_qc$n_genes <- dim(sce)[[1]]
+  genes_qc$n_mito <-
+    sum(SummarizedExperiment::rowData(sce)$qc_metric_is_mito, na.rm=T)
+  genes_qc$n_ribo <-
+    sum(SummarizedExperiment::rowData(sce)$qc_metric_is_ribo, na.rm=T)
+  genes_qc$n_unmapped <-
+    sum(!SummarizedExperiment::rowData(sce)$qc_metric_ensembl_mapped, na.rm=T)
+
+  genes_qc$n_expressive <- sum(
+    SummarizedExperiment::rowData(sce)$qc_metric_is_expressive, na.rm=T)
+
+  genes_qc$n_nonexpressive <- sum(
+    !SummarizedExperiment::rowData(sce)$qc_metric_is_expressive, na.rm=T)
+
+  genes_qc$n_unmapped_dropped <- sum(
+    !SummarizedExperiment::rowData(sce)$qc_metric_mapped_keep, na.rm=T)
+
+  genes_qc$n_mito_dropped <- sum(
+    !SummarizedExperiment::rowData(sce)$qc_metric_mito_keep, na.rm=T)
+
+  genes_qc$n_ribo_dropped <- sum(
+    !SummarizedExperiment::rowData(sce)$qc_metric_ribo_keep, na.rm=T)
+
+  genes_qc$n_genes_passed <-
+    sum(SummarizedExperiment::rowData(sce)$qc_metric_gene_passed, na.rm=T)
+  genes_qc$n_genes_failed <-
+    sum(!SummarizedExperiment::rowData(sce)$qc_metric_gene_passed, na.rm=T)
+
+  genes_qc_df <- purrr::map_df(genes_qc, ~ .) %>%
+    dplyr::rename_all(~ paste0("qc_genes_",.))
+
+  # cell qc results to data frame
+
+  cells_qc <- list()
+  cells_qc$n_cells <- dim(sce)[[2]]
+  cells_qc$n_library_size_passed <-
+    sum(sce$qc_metric_min_library_size, na.rm=T)
+  cells_qc$n_library_size_failed <-
+    sum(!sce$qc_metric_min_library_size, na.rm=T)
+  cells_qc$n_min_features_passed <-
+    sum(sce$qc_metric_min_features, na.rm=T)
+  cells_qc$n_min_features_failed <-
+    sum(!sce$qc_metric_min_features, na.rm=T)
+  cells_qc$n_mito_fraction_passed <-
+    sum(sce$qc_metric_pc_mito_ok, na.rm=T)
+  cells_qc$n_mito_fraction_failed <-
+    sum(!sce$qc_metric_pc_mito_ok, na.rm=T)
+  cells_qc$n_ribo_fraction_passed <-
+    sum(sce$qc_metric_pc_ribo_ok, na.rm=T)
+  cells_qc$n_ribo_fraction_failed <-
+    sum(!sce$qc_metric_pc_ribo_ok, na.rm=T)
+  cells_qc$n_cells_passed <-
+    sum(sce$qc_metric_passed, na.rm=T)
+  cells_qc$n_cells_failed <-
+    sum(!sce$qc_metric_passed, na.rm=T)
+
+  cells_qc_df <- purrr::map_df(cells_qc, ~ .) %>%
+    dplyr::rename_all(~ paste0("qc_cells_",.))
+
+  qc_summary <- cbind(
+    #sce@metadata$metadata,
+    qc_params_df,
+    genes_qc_df,
+    cells_qc_df
+  )
+
+  rownames(qc_summary) <- NULL
+  sce@metadata$qc_summary <- qc_summary
+
+  return(sce)
 }
 
 
@@ -245,7 +331,7 @@ annotate_sce <- function(sce,
 
   dt <- dplyr::as_tibble(data.frame(
     total_counts = sce$total_counts)) %>%
-    filter(total_counts <= quantile(total_counts, c(.99)) ) %>%
+    filter(total_counts <= stats::quantile(total_counts, c(.99)) ) %>%
     filter(total_counts > 10 )
 
   p <- ggplot2::ggplot(dt) +
@@ -348,6 +434,10 @@ annotate_sce <- function(sce,
 
   p <- ggplot2::ggplot(dt) +
     geom_histogram(aes(x = pc_ribo), bins = 100) +
+    geom_vline(
+      xintercept = sce@metadata$qc_params$min_ribo,
+      linetype = "solid",
+      color = "red") +
     geom_vline(
       xintercept = sce@metadata$qc_params$max_ribo,
       linetype = "solid",

@@ -10,7 +10,8 @@
 #' @return sce a SingleCellExperiment object annotated with sample metadata
 #'
 #' @family annotation functions
-#' @import cli Matrix SingleCellExperiment dplyr SummarizedExperiment
+#' @import cli Matrix SingleCellExperiment dplyr
+#' @importFrom SummarizedExperiment rowData colData
 #' @export
 generate_sce <- function(mat, metadata) {
 

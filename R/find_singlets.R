@@ -12,14 +12,15 @@
 #' @return sce a SingleCellExperiment object annotated for singlets
 #'
 #' @family annotation functions
-#' @import cli Matrix SummarizedExperiment dplyr SingleCellExperiment
+#' @import cli Matrix dplyr SingleCellExperiment
+#' @importFrom SummarizedExperiment rowData colData
 #' @export
 
 find_singlets <- function(sce,
                           singlet_find_method,
                           ...) {
 
-  args <- list(...)
+  fargs <- list(...)
 
   cat(cli::rule("Finding Singlets", line = 2), "\r\n")
 
@@ -45,7 +46,7 @@ find_singlets <- function(sce,
 
   sce <- do.call(
     singlet_find_methods_l[[singlet_find_method]],
-    list(sce, args)
+    c(sce = sce, fargs)
   )
 
   sce@metadata$scflow_steps$singlets_annotated <- 1

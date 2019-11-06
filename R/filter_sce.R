@@ -13,7 +13,8 @@
 #'   genes, with QC metrics annotations removed
 #'
 #' @family annotation functions
-#' @import cli Matrix SummarizedExperiment dplyr SingleCellExperiment
+#' @import cli Matrix dplyr SingleCellExperiment
+#' @importFrom SummarizedExperiment rowData colData
 #' @export
 filter_sce <- function(sce,
                        filter_genes = FALSE,

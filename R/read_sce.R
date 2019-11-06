@@ -19,7 +19,8 @@
 #'
 #' @family import and export functions
 #'
-#' @import cli Matrix SummarizedExperiment dplyr SingleCellExperiment
+#' @import cli Matrix dplyr SingleCellExperiment
+#' @importFrom SummarizedExperiment rowData colData
 #' @importFrom R.utils gzip
 #' @importFrom tools file_path_sans_ext
 #'
@@ -79,7 +80,7 @@ read_sce <- function(folder_path) {
     for (rd_file in rd_files_l) {
       rdname <- tools::file_path_sans_ext(gsub("ReducedDim_", "", rd_file))
       cli::cli_text("Reading: {.path {rd_file}}")
-      SingleCellExperiment::reducedDim(sce, rdname) <- matrix(read.delim(
+      SingleCellExperiment::reducedDim(sce, rdname) <- as.matrix(read.delim(
         file = file.path(folder_path, rd_file)), nrow = ncol(sce))
     }
   }

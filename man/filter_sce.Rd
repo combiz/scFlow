@@ -7,8 +7,7 @@ Quality control metrics previously calculated are used to subset the
 SingleCellExperiment for both cells and genes passing QC criteria previously
 specified in the \code{annotate_sce_genes} and \code{annotate_sce_cells} functions}
 \usage{
-filter_sce(sce, filter_genes = FALSE, filter_cells = TRUE,
-  drop_unmapped = TRUE, drop_mito = TRUE, drop_ribo = FALSE)
+filter_sce(sce, filter_genes = FALSE, filter_cells = TRUE)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}
@@ -16,12 +15,6 @@ filter_sce(sce, filter_genes = FALSE, filter_cells = TRUE,
 \item{filter_genes}{if set \code{FALSE}, genes will not be filtered}
 
 \item{filter_cells}{if set \code{FALSE}, cells will not be filtered}
-
-\item{drop_unmapped}{set \code{TRUE} to remove unmapped ensembl_gene_id}
-
-\item{drop_mito}{set \code{TRUE} to remove mitochondrial genes}
-
-\item{drop_ribo}{set \code{TRUE} to remove ribosomal genes}
 }
 \value{
 sce a SingleCellExperiment object filtered for QC passed cells and
@@ -34,13 +27,14 @@ SingleCellExperiment for both cells and genes passing QC criteria previously
 specified in the \code{annotate_sce_genes} and \code{annotate_sce_cells} functions
 }
 \seealso{
-Other annotation functions: \code{\link{annotate_sce_cells}},
+Other annotation functions: \code{\link{.preprocess_seurat_object}},
+  \code{\link{annotate_sce_cells}},
   \code{\link{annotate_sce_genes}},
   \code{\link{annotate_sce}}, \code{\link{find_singlets}},
   \code{\link{generate_sce}},
   \code{\link{map_ensembl_gene_id}},
   \code{\link{merge_sce}}, \code{\link{report_qc_sce}},
   \code{\link{retrieve_sample_metadata}},
-  \code{\link{run_doubletfinder}}
+  \code{\link{run_doubletfinder}}, \code{\link{sce_to_seu}}
 }
 \concept{annotation functions}

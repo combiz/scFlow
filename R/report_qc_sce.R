@@ -7,8 +7,9 @@
 #' @return sce a annotated SingleCellExperiment object
 #'
 #' @family annotation functions
-#' @import cli Matrix SummarizedExperiment dplyr SingleCellExperiment purrr
+#' @import cli Matrix dplyr SingleCellExperiment purrr
 #' @import ggplot2
+#' @importFrom SummarizedExperiment rowData colData
 #' @importFrom rmarkdown render
 #' @export
 #'

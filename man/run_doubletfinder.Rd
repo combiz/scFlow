@@ -29,12 +29,14 @@ Cell Syst. 2019 Apr 24;8(4):329-337.e4.
 doi: \url{https://doi.org/10.1016/j.cels.2019.03.003}.
 }
 \seealso{
-Other annotation functions: \code{\link{annotate_sce_cells}},
+Other annotation functions: \code{\link{.preprocess_seurat_object}},
+  \code{\link{annotate_sce_cells}},
   \code{\link{annotate_sce_genes}},
   \code{\link{annotate_sce}}, \code{\link{filter_sce}},
   \code{\link{find_singlets}}, \code{\link{generate_sce}},
   \code{\link{map_ensembl_gene_id}},
   \code{\link{merge_sce}}, \code{\link{report_qc_sce}},
-  \code{\link{retrieve_sample_metadata}}
+  \code{\link{retrieve_sample_metadata}},
+  \code{\link{sce_to_seu}}
 }
 \concept{annotation functions}

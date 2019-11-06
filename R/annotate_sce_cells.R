@@ -22,7 +22,8 @@
 #' @return sce a SingleCellExperiment object annotated with cell QC metrics
 #'
 #' @family annotation functions
-#' @import cli Matrix SummarizedExperiment dplyr SingleCellExperiment
+#' @import cli Matrix dplyr SingleCellExperiment
+#' @importFrom SummarizedExperiment rowData colData
 #' @export
 annotate_sce_cells <- function(sce, ...) {
 

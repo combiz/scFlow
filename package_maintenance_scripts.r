@@ -34,6 +34,8 @@ use_rmarkdown_template(
 use_r("function_name")
 use_r("retrieve_sample_metadata")
 
+use_r("sce_to_seurat")
+
 use_r("read_feature_barcode_matrix")
 use_r("map_ensembl_gene_id")
 use_r("generate_sce_from_mat_and_meta")
@@ -92,3 +94,7 @@ use_package("english")
 use_package("Seurat")
 use_package("DoubletFinder")
 use_package("ggplot2")
+use_package("rlang")
+use_package("sctransform")
+use_package("future")
+use_package("future.apply")

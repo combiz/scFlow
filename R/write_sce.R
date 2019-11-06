@@ -19,7 +19,8 @@
 #'
 #' @family import and export functions
 #'
-#' @import cli Matrix SummarizedExperiment dplyr SingleCellExperiment
+#' @import cli Matrix dplyr SingleCellExperiment
+#' @importFrom SummarizedExperiment rowData colData
 #' @importFrom R.utils gzip
 #'
 #' @export

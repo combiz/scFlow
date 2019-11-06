@@ -41,7 +41,11 @@ Imports:
     ggplot2,
     DT,
     rmarkdown,
-    stats
+    stats,
+    rlang,
+    sctransform,
+    future,
+    future.apply
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,

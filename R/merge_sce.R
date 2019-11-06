@@ -8,7 +8,8 @@
 #' @return sce a annotated SingleCellExperiment object
 #'
 #' @family annotation functions
-#' @import cli Matrix SummarizedExperiment dplyr SingleCellExperiment purrr
+#' @import cli Matrix dplyr SingleCellExperiment purrr
+#' @importFrom SummarizedExperiment rowData colData
 #' @export
 #'
 merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
@@ -74,7 +75,8 @@ merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
 #' @param union_ensembl_gene_id the full list of ensembl_gene_id to be included
 #' in the new expanded SingleCellExperiment
 #'
-#' @import purrr SingleCellExperiment SummarizedExperiment
+#' @import purrr SingleCellExperiment
+#' @importFrom SummarizedExperiment rowData colData
 #' @return sce a annotated SingleCellExperiment object with any
 #' @keywords internal
 .expand_sce_rows <- function(sce, union_ensembl_gene_id) {

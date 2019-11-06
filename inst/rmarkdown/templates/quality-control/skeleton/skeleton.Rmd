@@ -105,3 +105,9 @@ metadata$qc_plots$ribo_fraction_histogram
 
 ```{r conditional_doubletfinder_block, child='doubletfinder_template.Rmd', eval = (metadata$scflow_steps$singlets_annotated == 1 & metadata$scflow_steps$singlets_method == "doubletfinder")}
 ```
+
+## Full QC parameters and results
+```{r, fig.align = "center"}
+datatable(metadata$qc_summary, colnames = "")
+```
+
