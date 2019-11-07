@@ -39,23 +39,39 @@ sce <- annotate_sce(
   ensembl_mapping_file = "~/Documents/ms-sc/src/ensembl-ids/ensembl_mappings.tsv"
 )
 
-x <- filter_sce(sce)
-y <- find_singlets(x, "doubletfinder", pK = 0.005, vars_to_regress_out = NULL)
+sce <- filter_sce(sce, filter_genes = TRUE, filter_cells = TRUE)
+#sce <- find_singlets(sce, "doubletfinder", pK = 0.005, vars_to_regress_out = NULL)
+sce <- find_singlets(sce, "doubletfinder", vars_to_regress_out = c("nCount_RNA", "pc_mito"))
+sce <- filter_sce(sce)
 
 #sce <- filter_sce(
 #  sce,
 #  filter_genes = TRUE, filter_cells = TRUE, drop_unmapped = TRUE, drop_mito = TRUE, drop_ribo = FALSE)
 #sce <- filter_sce(sce)
-
+x <- sce
+rm(sce)
 #sce <- find_singlets(sce, "doubletfinder", pK = 0.005, vars_to_regress_out = "pc_mito")
-sce <- find_singlets(sce, "doubletfinder", pK = 0.005, vars_to_regress_out = NULL)
+sce <- find_singlets(x, "doubletfinder", pK = 0.005, vars_to_regress_out = NULL)
 #sce <- find_singlets(sce, "doubletfinder")
 
-sce <- report_qc_sce(sce)
-saveRDS(sce@metadata, "../junk/")
+report_qc_sce(sce)
+saveRDS(sce@metadata, "../junk/sce/metadata.rds")
+
 
 #start_time <- Sys.time()
 #metadata_tmp_path <- file.path(tempdir(), "metadata.rds")
 #saveRDS(sce@metadata, metadata_tmp_path)
 #end_time <- Sys.time()
 #end_time - start_time
+
+install.packages("mvbutils")
+library(mvbutils)
+
+foodweb( where = "package:scflow",
+        border = TRUE,
+        expand.xbox = 1.5, boxcolor = "#FC6512",
+        textcolor = "black", cex = 1.0, lwd=1)
+mtext("scflow functions")
+
+
+#BiocManager::install("Rgraphviz")

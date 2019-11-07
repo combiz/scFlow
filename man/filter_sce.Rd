@@ -7,7 +7,7 @@ Quality control metrics previously calculated are used to subset the
 SingleCellExperiment for both cells and genes passing QC criteria previously
 specified in the \code{annotate_sce_genes} and \code{annotate_sce_cells} functions}
 \usage{
-filter_sce(sce, filter_genes = FALSE, filter_cells = TRUE)
+filter_sce(sce, filter_genes = TRUE, filter_cells = TRUE)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}

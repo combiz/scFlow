@@ -82,8 +82,6 @@ metadata$qc_plots$number_genes_vs_count_depth
 
 ## Fraction of mitochondrial / ribosomal counts
 
-
-
 <div class = "row">
 <div class = "col-md-6">
 ```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of mitochondrial fraction per cell.</b> A upper-threshold of %s (i.e. %1.2f%%) maximum mitochondrial fraction was applied (red line).", metadata$qc_params$max_mito, metadata$qc_params$max_mito * 100)}
@@ -108,6 +106,6 @@ metadata$qc_plots$ribo_fraction_histogram
 
 ## Full QC parameters and results
 ```{r, fig.align = "center"}
-datatable(metadata$qc_summary, colnames = "")
+datatable(t(metadata$qc_summary), colnames = "")
 ```
 

@@ -17,7 +17,8 @@ BugReports: https://github.com/combiz/scflow/issues
 Suggests: 
     testthat (>= 2.1.0),
     spelling,
-    covr
+    covr,
+    knitr
 Language: en-US
 RoxygenNote: 6.1.1
 Imports: 
@@ -53,3 +54,4 @@ Remotes:
     bioc::release/biomaRt,
     bioc::release/SingleCellExperiment,
     bioc::release/SummarizedExperiment
+VignetteBuilder: knitr

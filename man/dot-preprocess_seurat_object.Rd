@@ -4,7 +4,7 @@
 \alias{.preprocess_seurat_object}
 \title{temp fn}
 \usage{
-.preprocess_seurat_object(sce, ...)
+.preprocess_seurat_object(sce, vars_to_regress_out, pca_dims, var_features)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}

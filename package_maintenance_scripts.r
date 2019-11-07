@@ -63,6 +63,7 @@ use_package("rmarkdown")
 use_package("DT")
 use_package("stats")
 
+use_vignette("basic-qc", title = "Guided tutorial for sample quality control")
 
 #use_vignette("How to do this cool analysis") # later
 

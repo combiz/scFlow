@@ -63,25 +63,58 @@ run_doubletfinder <- function(sce, ...) {
 
   cat(cli::rule("Selecting QC passed cells/genes", line = 1), "\r\n")
   col_idx <- which(sce$qc_metric_passed)
-  sce_ss <- sce[SummarizedExperiment::rowData(sce)$qc_metric_gene_passed,
-                col_idx]
-  #mat <- SingleCellExperiment::counts(sce_ss)
-  #rownames(mat) <- SummarizedExperiment::rowData(sce_ss)$ensembl_gene_id
-  #colnames(mat) <- sce_ss$barcode
+  sce_ss <- filter_sce(
+    sce,
+    filter_genes = TRUE,
+    filter_cells = TRUE
+  )
+
   cat(cli::cli_text(
     "Selected {.var {dim(sce_ss)[[2]]}} cells and {.var {dim(sce_ss)[[1]]}} genes"),
     "\r\n")
-  #seu_metadata <- data.frame(sce_ss@colData) %>%
-  #  droplevels()
 
   # Pre-process Seurat object -----------------------------------------------
-  seu <- do.call(
-    .preprocess_seurat_object,
-    list(sce = sce_ss,
-         vars_to_regress_out = fargs$vars_to_regress_out,
-         pca_dims = fargs$pca_dims,
-         var_features = fargs$var_features)
+  #seu <- do.call(
+  #  .preprocess_seurat_object,
+  #  list(sce = sce_ss,
+  #       vars_to_regress_out = fargs$vars_to_regress_out,
+  #       pca_dims = fargs$pca_dims,
+  #       var_features = fargs$var_features)
+  #)
+  #seu <- .preprocess_seurat_object(
+  #  sce = sce_ss,
+  #  vars_to_regress_out = fargs$vars_to_regress_out,
+  #  pca_dims = fargs$pca_dims,
+  #  var_features = fargs$var_features
+  #)
+
+  seu_metadata <- data.frame(sce_ss@colData) %>%
+    droplevels()
+  seu <- Seurat::CreateSeuratObject(
+    counts = SingleCellExperiment::counts(sce_ss),
+    meta.data = seu_metadata
   )
+
+  cat(cli::rule("Normalizing data", line = 1), "\r\n")
+  seu <- Seurat::NormalizeData(seu)
+  cat(cli::rule("Scaling data", line = 1), "\r\n")
+  seu <- Seurat::ScaleData(
+    seu,
+    vars.to.regress = fargs$vars_to_regress_out
+  )
+
+  cat(cli::rule("Finding variable features", line = 1), "\r\n")
+  seu <- Seurat::FindVariableFeatures(
+    seu,
+    selection.method = "vst",
+    nfeatures = fargs$var_features
+  )
+  cat(cli::rule("Calculating PCA reduced dimensions", line = 1), "\r\n")
+  seu <- Seurat::RunPCA(seu)
+  cat(cli::rule("Calculating tSNE reduced dimensions", line = 1), "\r\n")
+  seu <- Seurat::RunTSNE(seu, dims = 1:fargs$pca_dims)
+  cat(cli::rule("Calculating UMAP reduced dimensions", line = 1), "\r\n")
+  seu <- Seurat::RunUMAP(seu, dims = 1:fargs$pca_dims)
 
   #seu <- sce_to_seu(sce_ss)
 
@@ -181,14 +214,23 @@ run_doubletfinder <- function(sce, ...) {
   }
 
   # append df to qc_summary metadata table
+
+  doubletfinder_params <- sce@metadata$doubletfinder_params
+  lidx <- which(purrr::map_int(doubletfinder_params, length) > 1)
+  for (idx in lidx){
+    doubletfinder_params[[idx]] <- paste(doubletfinder_params[[idx]], collapse = ";")
+  }
+
   doubletfinder_params <- purrr::map_df(
-    sce@metadata$doubletfinder_params, ~ .) %>%
+    unlist(doubletfinder_params), ~ .) %>%
     dplyr::rename_all(~ paste0("doubletfinder_",.))
 
   sce@metadata$qc_summary <- cbind(
     sce@metadata$qc_summary,
     doubletfinder_params
   )
+
+  sce$qc_metric_passed <- sce$qc_metric_passed & sce$is_singlet
 
   cli::cli_alert_success("DoubletFinder completed succesfully")
 
@@ -231,7 +273,7 @@ run_doubletfinder <- function(sce, ...) {
   cat(cli::rule("Normalizing data", line = 1), "\r\n")
   seu <- Seurat::NormalizeData(seu)
   cat(cli::rule("Scaling data", line = 1), "\r\n")
-  message(sprintf("Regressing out %s, this may take a while..", fargs$vars_to_regress_out))
+  cat(sprintf("Regressing out %s, this may take a while..", vars_to_regress_out))
   seu <- Seurat::ScaleData(
     seu,
     vars.to.regress = vars_to_regress_out
@@ -256,6 +298,7 @@ run_doubletfinder <- function(sce, ...) {
 
 
 #' plot 2d dimensionality reduction with is_doublet colour
+#' @export
 #' @keywords internal
 .doublet_finder_plot_dim_red <- function(sce,
                                         reduced_dim = NULL) {
@@ -299,6 +342,7 @@ run_doubletfinder <- function(sce, ...) {
 
 
 #' pparam sweep plot, pK vs BCmetricx with BCmetric maxima highlighted
+#' @export
 #' @keywords internal
 .doublet_finder_plot_param_sweep <- function(sce, bcmvn) {
 
