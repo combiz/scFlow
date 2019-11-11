@@ -58,6 +58,8 @@ report_qc_sce(sce)
 saveRDS(sce@metadata, "../junk/sce/metadata.rds")
 
 
+sce <-
+
 #start_time <- Sys.time()
 #metadata_tmp_path <- file.path(tempdir(), "metadata.rds")
 #saveRDS(sce@metadata, metadata_tmp_path)

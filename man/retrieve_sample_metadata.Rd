@@ -13,7 +13,7 @@ retrieve_sample_metadata(unique_id, id_colname, samplesheet_path, ...)
 
 \item{samplesheet_path}{path to a tsv file containing a samplesheet}
 
-\item{...}{for colClasses (may be extended later - fix)}
+\item{...}{for col_classes (may be extended later - fix)}
 }
 \value{
 metadata the metadata for the specified sample
