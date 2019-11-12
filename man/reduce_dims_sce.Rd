@@ -23,6 +23,9 @@ sce a SingleCellExperiment object annotated with reducedDims
 PCA, tSNE, UMAP, UMAP3D
 }
 \seealso{
-Other clustering and dimensionality reduction: \code{\link{cluster_sce}}
+Other clustering and dimensionality reduction: \code{\link{.get_x_most_specific_genes}},
+  \code{\link{.map_celltypes_with_ewce}},
+  \code{\link{.map_celltypes}}, \code{\link{cluster_sce}},
+  \code{\link{map_celltypes_sce}}
 }
 \concept{clustering and dimensionality reduction}

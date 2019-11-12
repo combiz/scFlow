@@ -12,6 +12,7 @@
 #' @family annotation functions
 #' @import cli Matrix SingleCellExperiment dplyr
 #' @importFrom SummarizedExperiment rowData colData
+#' @importFrom stringr str_replace
 #' @export
 generate_sce <- function(mat, metadata) {
 
@@ -45,6 +46,14 @@ generate_sce <- function(mat, metadata) {
   colnames(mat) <- barcode
 
   col_data <- cbind(barcode, metadata, row.names = NULL)
+
+  rownames(mat) <- stringr::str_replace(
+    rownames(mat),
+    pattern = "\\..*",
+    replacement = ""
+  )
+
+  mat <- mat[!duplicated(rownames(mat)), ]
 
   sce <- SingleCellExperiment::SingleCellExperiment(
     assays = list(counts = mat),

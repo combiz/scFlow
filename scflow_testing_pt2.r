@@ -1,10 +1,12 @@
 library(scflow)
-library(monocle3)
-library(uwot)
-sce <- read_sce("../junk/subsetsce")
+#sce <- read_sce("../junk/subsetsce")
+sce <- reduce_dims_sce(sce, pca_dims = 5)
+sce <- cluster_sce(sce)
 
-sce <-reduce_dims_sce(sce, pca_dims = 5)
+sce <- read_sce("../junk/subsetscewithanno/")
 
-colData(cds) <- colData(cds)[, 1:10]
-x <- cluster_cells(cds)
+
+ctd_path = "~/Documents/nf-sc/refs/ctd/"
+sce <- map_celltypes_sce(sce, ctd_folder = ctd_path)
+table(sce$cluster_celltype)
 

@@ -27,7 +27,10 @@ report_qc_sce <- function(sce,
   metadata_tmp_path <- file.path(tempdir(), "metadata.rds")
 
   cli::cli_text("Writing data for QC report...")
-  saveRDS(sce@metadata, metadata_tmp_path)
+  saveRDS(
+    sce@metadata[!(names(sce@metadata) %in% "qc_plot_data")],
+    metadata_tmp_path
+  )
 
   cli::cli_text("Generating QC report...")
   rmarkdown::render(

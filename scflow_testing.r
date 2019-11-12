@@ -11,6 +11,7 @@ library(scflow)
 #install_github("satijalab/seurat", ref = "develop")
 
 matpath <- "~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix"
+matpath <- "~/Documents/testmatrices/enriched"
 
 #ensembl_tsv <- read.delim("~/Documents/ms-sc/src/ensembl-ids/ensembl_mappings.tsv")
 
@@ -40,25 +41,12 @@ sce <- annotate_sce(
 )
 
 sce <- filter_sce(sce, filter_genes = TRUE, filter_cells = TRUE)
-#sce <- find_singlets(sce, "doubletfinder", pK = 0.005, vars_to_regress_out = NULL)
-sce <- find_singlets(sce, "doubletfinder", vars_to_regress_out = c("nCount_RNA", "pc_mito"))
+sce <- find_singlets(sce, "doubletfinder", pK = 0.005, vars_to_regress_out = NULL)
+#sce <- find_singlets(sce, "doubletfinder", vars_to_regress_out = c("nCount_RNA", "pc_mito"))
 sce <- filter_sce(sce)
+#report_qc_sce(sce)
+#saveRDS(sce@metadata, "../junk/sce/metadata.rds")
 
-#sce <- filter_sce(
-#  sce,
-#  filter_genes = TRUE, filter_cells = TRUE, drop_unmapped = TRUE, drop_mito = TRUE, drop_ribo = FALSE)
-#sce <- filter_sce(sce)
-x <- sce
-rm(sce)
-#sce <- find_singlets(sce, "doubletfinder", pK = 0.005, vars_to_regress_out = "pc_mito")
-sce <- find_singlets(x, "doubletfinder", pK = 0.005, vars_to_regress_out = NULL)
-#sce <- find_singlets(sce, "doubletfinder")
-
-report_qc_sce(sce)
-saveRDS(sce@metadata, "../junk/sce/metadata.rds")
-
-
-sce <-
 
 #start_time <- Sys.time()
 #metadata_tmp_path <- file.path(tempdir(), "metadata.rds")

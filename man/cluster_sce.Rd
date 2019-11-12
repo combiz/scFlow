@@ -22,6 +22,10 @@ sce a SingleCellExperiment object annotated with reducedDims
 Cluster SingleCellExperiment with monocle3::cluster_cells
 }
 \seealso{
-Other clustering and dimensionality reduction: \code{\link{reduce_dims_sce}}
+Other clustering and dimensionality reduction: \code{\link{.get_x_most_specific_genes}},
+  \code{\link{.map_celltypes_with_ewce}},
+  \code{\link{.map_celltypes}},
+  \code{\link{map_celltypes_sce}},
+  \code{\link{reduce_dims_sce}}
 }
 \concept{clustering and dimensionality reduction}

@@ -60,7 +60,11 @@ use_r(".sce_to_cds")
 use_r("reduce_dims_sce")
 use_r("cluster_sce")
 
+use_r("map_with_ewce")
+use_r("reduced_dimension_plots")
+
 use_test("function_name")
+
 
 use_package("dplyr") # add to DESCRIPTION
 use_package("rmarkdown")
@@ -71,6 +75,10 @@ use_package("monocle3")
 use_package("plotly")
 use_package("threejs")
 use_package("assertthat")
+use_package("EWCE")
+use_package("plyr")
+use_package("httr")
+
 
 use_vignette("basic-qc", title = "Guided tutorial for sample quality control")
 

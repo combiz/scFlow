@@ -291,7 +291,8 @@ annotate_sce <- function(sce,
     total_features = sce$total_features_by_counts,
     total_counts = sce$total_counts,
     pc_mito = sce$pc_mito)) %>%
-    dplyr::filter(total_counts > 0)
+    dplyr::filter(total_counts > 10) %>%
+    dplyr::filter(total_features > 10)
 
   p <- ggplot2::ggplot(dt) +
     geom_point(aes(x = total_counts, y = total_features, colour = pc_mito), size = .01)+
@@ -329,9 +330,14 @@ annotate_sce <- function(sce,
 #' @keywords internal
 .qc_plot_count_depth_histogram <- function(sce) {
 
+  counts_cutoff <- ceiling(
+    mean(sce[, sce$total_counts > 0]$total_counts) +
+    2 * sd(sce[, sce$total_counts > 0]$total_counts)
+  )
+
   dt <- dplyr::as_tibble(data.frame(
     total_counts = sce$total_counts)) %>%
-    filter(total_counts <= stats::quantile(total_counts, c(.99)) ) %>%
+    filter(total_counts <= counts_cutoff ) %>%
     filter(total_counts > 10 )
 
   p <- ggplot2::ggplot(dt) +
@@ -362,9 +368,14 @@ annotate_sce <- function(sce,
 #' @keywords internal
 .qc_plot_number_genes_histogram <- function(sce) {
 
+  features_cutoff <- ceiling(
+    mean(sce[, sce$total_features_by_counts > 0]$total_features_by_counts) +
+      2 * sd(sce[, sce$total_features_by_counts > 0]$total_features_by_counts)
+  )
+
   dt <- dplyr::as_tibble(data.frame(
     total_features = sce$total_features_by_counts)) %>%
-    filter(total_features <= quantile(total_features, c(.99))) %>%
+    filter(total_features <= features_cutoff) %>%
     filter(total_features >= 10 )
 
   p <- ggplot2::ggplot(dt) +

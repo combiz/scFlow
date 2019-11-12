@@ -50,7 +50,11 @@ Imports:
     RcppParallel,
     plotly,
     monocle3,
-    threejs
+    threejs,
+    EWCE,
+    plyr,
+    assertthat,
+    httr
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,
@@ -59,5 +63,6 @@ Remotes:
     bioc::release/SingleCellExperiment,
     bioc::release/SummarizedExperiment,
     cole-trapnell-lab/monocle3,
-    ropensci/plotly
+    ropensci/plotly,
+    NathanSkene/EWCE
 VignetteBuilder: knitr
