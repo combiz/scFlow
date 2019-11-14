@@ -5,7 +5,7 @@
 #library(future)
 library(scflow)
 #library(devtools)
-
+x <- Sys.time()
 #plan(list(multiprocess, sequential))
 
 #install_github("satijalab/seurat", ref = "develop")
@@ -44,9 +44,10 @@ sce <- filter_sce(sce, filter_genes = TRUE, filter_cells = TRUE)
 sce <- find_singlets(sce, "doubletfinder", pK = 0.005, vars_to_regress_out = NULL)
 #sce <- find_singlets(sce, "doubletfinder", vars_to_regress_out = c("nCount_RNA", "pc_mito"))
 sce <- filter_sce(sce)
-#report_qc_sce(sce)
+report_qc_sce(sce)
 #saveRDS(sce@metadata, "../junk/sce/metadata.rds")
-
+totaltime <- Sys.time() - x
+print(totaltime)
 
 #start_time <- Sys.time()
 #metadata_tmp_path <- file.path(tempdir(), "metadata.rds")
@@ -58,10 +59,9 @@ install.packages("mvbutils")
 library(mvbutils)
 
 foodweb( where = "package:scflow",
-        border = TRUE,
-        expand.xbox = 1.5, boxcolor = "#FC6512",
+        border = TRUE, boxcolor = "#FC6512",
         textcolor = "black", cex = 1.0, lwd=1)
 mtext("scflow functions")
 
-
+saveRDS(sce@metadata$qc_plots$number_genes_vs_count_depth, "test.rds")
 #BiocManager::install("Rgraphviz")

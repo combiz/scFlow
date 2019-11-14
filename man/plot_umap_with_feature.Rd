@@ -6,7 +6,7 @@
 \usage{
 plot_umap_with_feature(sce, feature_dim = "Cluster",
   reduced_dim = "UMAP", highlight_feature = NA,
-  label_clusters = FALSE)
+  label_clusters = FALSE, size = 0.1, alpha = 0.2)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}

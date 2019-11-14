@@ -3,7 +3,7 @@ A total of `r sum(metadata$doubletfinder_params$singlets_found, metadata$doublet
 ### Parameter sweep for optimal pK
 `r if(!metadata$doubletfinder_params$doubletfinder_sweep){sprintf("A pK value of %s was specified, therefore a parameter sweep was not performed.", metadata$doubletfinder_params$pK)}`
 
-```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Doubletfinder parameter sweep for optimal pK.</b> An optimal pK value of %s was found at the BCmetric maxima.", metadata$doubletfinder_params$pK), eval=(metadata$scflow_steps$doubletfinder_sweep)}
+```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Doubletfinder parameter sweep for optimal pK.</b> An optimal pK value of %s was found at the BCmetric maxima.", metadata$doubletfinder_params$pK), eval=(metadata$doubletfinder_params$doubletfinder_sweep)}
 knitr::opts_chunk$set(echo = FALSE)
 metadata$qc_plots$doublet_finder$param_sweep
 ```

@@ -137,7 +137,7 @@ run_doubletfinder <- function(sce, ...) {
     sce@metadata$doubletfinder_params$doubletfinder_sweep <- TRUE
   } else {
     cli::cli_text("Skipping parameter sweep and using pK={.value {fargs$pK}}.")
-    sce@metadata$scflow_steps$doubletfinder_sweep <- FALSE
+    sce@metadata$doubletfinder_params$doubletfinder_sweep <- FALSE
   }
   # add the pK value used to metadata
   sce@metadata$doubletfinder_params$pK <- fargs$pK
