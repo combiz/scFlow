@@ -11,6 +11,8 @@ perform_de <- function(sce,
                        pval_cutoff = 0.05
                        ) {
 
+
+
   sce <- .preprocess_sce_for_de(
     sce = sce,
     min_counts = min_counts,
@@ -27,7 +29,7 @@ perform_de <- function(sce,
       list(
         sce = sce,
         fc_threshold = fc_threshold,
-        pval_cutoff
+        pval_cutoff = pval_cutoff
       )
     )
   }

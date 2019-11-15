@@ -48,14 +48,8 @@ run_doubletfinder <- function(sce, ...) {
 
   sce@metadata$doubletfinder_params <- fargs
 
-  cat(cli::boxx(c(
-    "Remember to cite:",
-    "DoubletFinder: Doublet Detection in Single-Cell RNA Sequencing",
-    "Data Using Artificial Nearest Neighbors.",
-    "McGinnis CS, Murrow LM, Gartner ZJ",
-    "Cell Syst. 2019 Apr 24;8(4):329-337.e4."),
-    padding = 1, align = "center", float = "center"))
-  cat("\r\n")
+  # add citations and print
+  sce <- .append_citation_sce(sce, key = c("doubletfinder", "seurat"))
 
   if (class(sce) != "SingleCellExperiment") {
     stop(cli::cli_alert_danger("A SingleCellExperiment is required."))

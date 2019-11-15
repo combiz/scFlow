@@ -1,6 +1,5 @@
 ################################################################################
 #' Filter SingleCellExperiment according to QC metrics
-
 #' Quality control metrics previously calculated are used to subset the
 #' SingleCellExperiment for both cells and genes passing QC criteria previously
 #' specified in the `annotate_sce_genes` and `annotate_sce_cells` functions

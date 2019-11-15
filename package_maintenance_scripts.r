@@ -50,6 +50,8 @@ use_r("read_sce")
 
 use_r("merge_sce")
 
+use_r("citations")
+
 use_r("report_qc_sce")
 
 use_r("find_singlets_with_doubletfinder")
