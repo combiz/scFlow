@@ -19,7 +19,8 @@
 #'
 #' @family import and export functions
 #'
-#' @import cli Matrix dplyr SingleCellExperiment
+#' @import cli Matrix dplyr
+#' @importFrom SingleCellExperiment counts reducedDim reducedDims
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom R.utils gzip
 #'
@@ -53,7 +54,7 @@ write_sce <- function(sce,
   # write metadata to tsv files
   cli::cli_text("Writing: {.path sce-rowdata.tsv}")
   write.table(
-    as.data.frame(rowData(sce)),
+    as.data.frame(SummarizedExperiment::rowData(sce)),
     file = file.path(folder_path, "sce-rowdata.tsv"),
     quote = FALSE,
     sep = "\t",
@@ -63,7 +64,7 @@ write_sce <- function(sce,
 
   cli::cli_text("Writing: {.path 'scecoldata.tsv'}")
   write.table(
-    as.data.frame(colData(sce)),
+    as.data.frame(SummarizedExperiment::colData(sce)),
     file = file.path(folder_path, "sce-coldata.tsv"),
     quote = FALSE,
     sep = "\t",
@@ -72,7 +73,7 @@ write_sce <- function(sce,
   )
 
   cli::cli_text("Writing: {.path 'scecoldata_classes.tsv'}")
-  col_classes <- sapply(colData(sce), class)
+  col_classes <- sapply(SummarizedExperiment::colData(sce), class)
   write.table(
     col_classes,
     file = file.path(folder_path, "scecoldata_classes.tsv"),
@@ -82,7 +83,7 @@ write_sce <- function(sce,
   )
 
   # write reducedDim data to tsv files
-  for (rd in names(reducedDims(sce))) {
+  for (rd in names(SingleCellExperiment::reducedDims(sce))) {
     rd_filename <- file.path(paste0("ReducedDim_", rd, ".tsv"))
     cli::cli_text("Writing: {.path {rd_filename}}")
     write.table(as.data.frame(SingleCellExperiment::reducedDim(sce, rd)),
@@ -93,8 +94,8 @@ write_sce <- function(sce,
   }
 
   # save the matrix
-  write_feature_barcode_matrix(
-    counts(sce),
+  write_sparse_matrix(
+    SingleCellExperiment::counts(sce),
     folder_path
   )
 

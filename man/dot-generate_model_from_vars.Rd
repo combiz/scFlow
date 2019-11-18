@@ -4,15 +4,19 @@
 \alias{.generate_model_from_vars}
 \title{Generate a model formula from dependent, confounding, and random vars}
 \usage{
-.generate_model_from_vars(dependent_var, confounding_vars,
-  re_vars = NULL)
+.generate_model_from_vars(sce, dependent_var, confounding_vars,
+  random_effects_var = NULL, prefix = NULL)
 }
 \arguments{
+\item{sce}{the data}
+
 \item{dependent_var}{the dependent variable}
 
 \item{confounding_vars}{the confounding variables}
 
-\item{re_vars}{the random effect variables (optional)}
+\item{random_effects_var}{the random effect variables (optional)}
+
+\item{prefix}{a variable prefix (e.g. "sce$") (optional)}
 }
 \value{
 model_formula a model formula

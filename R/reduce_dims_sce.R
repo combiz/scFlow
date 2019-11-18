@@ -12,7 +12,7 @@
 #' @return sce a SingleCellExperiment object annotated with reducedDims
 #'
 #' @family clustering and dimensionality reduction
-#' @import cli monocle3
+#' @importFrom monocle3 preprocess_cds
 #' @importFrom SingleCellExperiment reducedDim reducedDims
 #' @importFrom RcppParallel defaultNumThreads
 #' @importFrom purrr map_lgl

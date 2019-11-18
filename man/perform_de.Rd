@@ -9,7 +9,7 @@ perform_de(sce, de_method = "MASTZLM", min_counts = 1,
   dependent_var = "group", ref_class = "Control",
   confounding_vars = c("individual", "cngeneson", "sex", "age", "PMI",
   "RIN", "seqdate", "pc_mito"), random_effects_var = NULL,
-  fc_threshold = 1.1, pval_cutoff = 0.05)
+  fc_threshold = 1.1, pval_cutoff = 0.05, ...)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}
@@ -31,6 +31,8 @@ perform_de(sce, de_method = "MASTZLM", min_counts = 1,
 \item{fc_threshold}{fold change up/down threshold}
 
 \item{pval_cutoff}{the adjusted pvalue cutoff threshold}
+
+\item{...}{advanced options}
 }
 \value{
 results_l a list of DE table results

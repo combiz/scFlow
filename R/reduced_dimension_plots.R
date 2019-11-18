@@ -12,8 +12,10 @@
 #' @return p a ggplot object
 #'
 #' @family plotting functions
-#' @import cli Matrix dplyr SingleCellExperiment paletteer
-#' @import ggplot2 purrr
+#' @import ggplot2
+#' @importFrom dplyr select group_by summarize
+#' @importFrom paletteer paletteer_d
+#' @importFrom SingleCellExperiment reducedDim
 #' @importFrom magrittr %>%
 #' @importFrom grDevices colorRampPalette
 #' @importFrom SummarizedExperiment rowData colData

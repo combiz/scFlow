@@ -14,14 +14,14 @@
 #'
 #'
 #' @family annotation functions
-#' @import cli
+#' @importFrom cli rule cli_alert_danger col_green cli_alert_danger cli_text
 #' @importFrom tools toTitleCase
 #' @importFrom english words
 #' @export
-retrieve_sample_metadata <- function(unique_id,
-                                     id_colname,
-                                     samplesheet_path,
-                                     ...) {
+retrieve_metadata <- function(unique_id,
+                              id_colname,
+                              samplesheet_path,
+                              ...) {
 
   args <- list(col_classes = NA)
   inargs <- list(...)

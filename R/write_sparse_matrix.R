@@ -11,15 +11,15 @@
 #'
 #' @family import and export functions
 #'
-#' @import cli
+#' @importFrom cli cli_alert_danger cli_text cli_alert_success
 #' @importFrom utils write.table
 #' @importFrom Matrix writeMM
 #' @importFrom R.utils gzip
 #'
 #' @export
-write_feature_barcode_matrix <- function(mat,
-                                         folder_path,
-                                         overwrite_files = TRUE) {
+write_sparse_matrix <- function(mat,
+                                folder_path,
+                                overwrite_files = TRUE) {
 
   cat(cli::rule("Writing feature-barcode matrix", line = 2), "\r\n")
 

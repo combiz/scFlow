@@ -1,6 +1,7 @@
 library(scflow)
 #sce <- read_sce("../junk/subsetsce")
-sce <- read_sce("../junk/mergedsce")
+#sce <- read_sce("../junk/mergedsce")
+sce <- read_sce("../junk/endosce")
 #sce <- reduce_dims_sce(sce, pca_dims = 5)
 #x <- reduce_dims_sce(sce, pca_dims = 5)
 #sce <- cluster_sce(sce)
@@ -16,6 +17,8 @@ sce <- read_sce("../junk/mergedsce")
 sce_all <- sce
 
 sce <- sce_all[, sce$cluster_celltype == "Endo"]
+write_sce(sce, "../junk/endosce")
+
 de_results <- perform_de(sce)
 sce
 sce

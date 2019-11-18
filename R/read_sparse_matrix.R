@@ -16,7 +16,7 @@
 #' @import cli
 #'
 #' @export
-read_feature_barcode_matrix <- function(folder_path) {
+read_sparse_matrix <- function(folder_path) {
 
   cat(cli::rule("Reading feature-barcode matrix", line = 2), "\r\n")
 

@@ -82,6 +82,12 @@ use_package("assertthat")
 use_package("EWCE")
 use_package("plyr")
 use_package("httr")
+use_package("MAST")
+use_package("bib2df")
+use_package("limma")
+use_package("methods")
+use_package("paletteer")
+use_package("scater")
 
 
 use_vignette("basic-qc", title = "Guided tutorial for sample quality control")

@@ -21,7 +21,8 @@
 #'
 #' @family annotation functions
 #'
-#' @import cli stringr
+#' @importFrom cli cli_alert_danger col_green cli_alert_info
+#' @importFrom stringr str_replace
 #' @importFrom biomaRt useEnsembl getBM
 #' @importFrom purrr map_lgl map_if
 #' @importFrom utils read.delim read.csv

@@ -15,7 +15,7 @@ matpath <- "~/Documents/testmatrices/enriched"
 
 #ensembl_tsv <- read.delim("~/Documents/ms-sc/src/ensembl-ids/ensembl_mappings.tsv")
 
-mat <- read_feature_barcode_matrix(matpath)
+mat <- read_sparse_matrix(matpath)
 
 ss_classes <- c(
   batch = "factor",

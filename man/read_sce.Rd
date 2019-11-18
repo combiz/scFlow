@@ -34,8 +34,8 @@ Read a \linkS4class{SingleCellExperiment} from a folder: -
 }
 }
 \seealso{
-Other import and export functions: \code{\link{read_feature_barcode_matrix}},
-  \code{\link{write_feature_barcode_matrix}},
-  \code{\link{write_sce}}
+Other import and export functions: \code{\link{read_sparse_matrix}},
+  \code{\link{write_sce}},
+  \code{\link{write_sparse_matrix}}
 }
 \concept{import and export functions}

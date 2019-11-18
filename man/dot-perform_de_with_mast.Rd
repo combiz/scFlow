@@ -2,7 +2,7 @@
 % Please edit documentation in R/diffexp_models.R
 \name{.perform_de_with_mast}
 \alias{.perform_de_with_mast}
-\title{Perform DE with MAST#'}
+\title{Perform DE with MAST}
 \usage{
 .perform_de_with_mast(...)
 }
@@ -13,7 +13,7 @@
 sce a SingleCellExperiment object
 }
 \description{
-Perform DE with MAST#'
+Perform DE with MAST
 }
 \seealso{
 Other differential gene expression: \code{\link{.filter_sce_genes_for_de}},

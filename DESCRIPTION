@@ -54,7 +54,13 @@ Imports:
     EWCE,
     plyr,
     assertthat,
-    httr
+    httr,
+    MAST,
+    bib2df,
+    limma,
+    methods,
+    paletteer,
+    scater
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,

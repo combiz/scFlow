@@ -1,5 +1,5 @@
 ################################################################################
-#' Annotate a SingleCellExperiment with gene names and QC metrics
+#' Annotate a SingleCellExperiment With Gene Names and QC Metrics
 #'
 #' Adds biomaRt annotations (e.g. gene, gene_biotype) and QC metric annotations.
 #'
@@ -60,7 +60,10 @@
 #' @return sce a annotated SingleCellExperiment object
 #'
 #' @family annotation functions
-#' @import cli Matrix dplyr SingleCellExperiment purrr
+#' @importFrom SingleCellExperiment counts
+#' @importFrom dplyr rename_all
+#' @importFrom cli cli_alert_danger cli_alert_success rule cli_text
+#' @importFrom purrr map set_names map_df
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom magrittr %>%
 #' @importFrom stats quantile
@@ -151,7 +154,7 @@ annotate_sce <- function(sce,
 
   # generate plots - run all functions starting with .qc_plot_ on sce
   cli::cli_text("Generating QC plots and appending to metadata.")
-  all_scflow_fns <- ls(getNamespace("scflow"), all.names=TRUE)
+  all_scflow_fns <- ls(getNamespace("scflow"), all.names = TRUE)
   qc_plot_fns <- all_scflow_fns[startsWith(all_scflow_fns, ".qc_plot_")]
   for (fn in qc_plot_fns) { sce <- get(fn)(sce) }
 
@@ -169,71 +172,70 @@ annotate_sce <- function(sce,
 
   # qc params to data frame
   qc_params_df <- map_df(sce@metadata$qc_params, ~ .) %>%
-    dplyr::rename_all(~ paste0("qc_params_",.))
+    dplyr::rename_all(~ paste0("qc_params_", .))
 
   # gene qc results to data frame
   genes_qc <- list()
   genes_qc$n_genes <- dim(sce)[[1]]
   genes_qc$n_mito <-
-    sum(SummarizedExperiment::rowData(sce)$qc_metric_is_mito, na.rm=T)
+    sum(SummarizedExperiment::rowData(sce)$qc_metric_is_mito, na.rm = T)
   genes_qc$n_ribo <-
-    sum(SummarizedExperiment::rowData(sce)$qc_metric_is_ribo, na.rm=T)
+    sum(SummarizedExperiment::rowData(sce)$qc_metric_is_ribo, na.rm = T)
   genes_qc$n_unmapped <-
-    sum(!SummarizedExperiment::rowData(sce)$qc_metric_ensembl_mapped, na.rm=T)
+    sum(!SummarizedExperiment::rowData(sce)$qc_metric_ensembl_mapped, na.rm = T)
 
   genes_qc$n_expressive <- sum(
-    SummarizedExperiment::rowData(sce)$qc_metric_is_expressive, na.rm=T)
+    SummarizedExperiment::rowData(sce)$qc_metric_is_expressive, na.rm = T)
 
   genes_qc$n_nonexpressive <- sum(
-    !SummarizedExperiment::rowData(sce)$qc_metric_is_expressive, na.rm=T)
+    !SummarizedExperiment::rowData(sce)$qc_metric_is_expressive, na.rm = T)
 
   genes_qc$n_unmapped_dropped <- sum(
-    !SummarizedExperiment::rowData(sce)$qc_metric_mapped_keep, na.rm=T)
+    !SummarizedExperiment::rowData(sce)$qc_metric_mapped_keep, na.rm = T)
 
   genes_qc$n_mito_dropped <- sum(
-    !SummarizedExperiment::rowData(sce)$qc_metric_mito_keep, na.rm=T)
+    !SummarizedExperiment::rowData(sce)$qc_metric_mito_keep, na.rm = T)
 
   genes_qc$n_ribo_dropped <- sum(
-    !SummarizedExperiment::rowData(sce)$qc_metric_ribo_keep, na.rm=T)
+    !SummarizedExperiment::rowData(sce)$qc_metric_ribo_keep, na.rm = T)
 
   genes_qc$n_genes_passed <-
-    sum(SummarizedExperiment::rowData(sce)$qc_metric_gene_passed, na.rm=T)
+    sum(SummarizedExperiment::rowData(sce)$qc_metric_gene_passed, na.rm = T)
   genes_qc$n_genes_failed <-
-    sum(!SummarizedExperiment::rowData(sce)$qc_metric_gene_passed, na.rm=T)
+    sum(!SummarizedExperiment::rowData(sce)$qc_metric_gene_passed, na.rm = T)
 
   genes_qc_df <- purrr::map_df(genes_qc, ~ .) %>%
-    dplyr::rename_all(~ paste0("qc_genes_",.))
+    dplyr::rename_all(~ paste0("qc_genes_", .))
 
   # cell qc results to data frame
 
   cells_qc <- list()
   cells_qc$n_cells <- dim(sce)[[2]]
   cells_qc$n_library_size_passed <-
-    sum(sce$qc_metric_min_library_size, na.rm=T)
+    sum(sce$qc_metric_min_library_size, na.rm = T)
   cells_qc$n_library_size_failed <-
-    sum(!sce$qc_metric_min_library_size, na.rm=T)
+    sum(!sce$qc_metric_min_library_size, na.rm = T)
   cells_qc$n_min_features_passed <-
-    sum(sce$qc_metric_min_features, na.rm=T)
+    sum(sce$qc_metric_min_features, na.rm = T)
   cells_qc$n_min_features_failed <-
-    sum(!sce$qc_metric_min_features, na.rm=T)
+    sum(!sce$qc_metric_min_features, na.rm = T)
   cells_qc$n_mito_fraction_passed <-
-    sum(sce$qc_metric_pc_mito_ok, na.rm=T)
+    sum(sce$qc_metric_pc_mito_ok, na.rm = T)
   cells_qc$n_mito_fraction_failed <-
-    sum(!sce$qc_metric_pc_mito_ok, na.rm=T)
+    sum(!sce$qc_metric_pc_mito_ok, na.rm = T)
   cells_qc$n_ribo_fraction_passed <-
-    sum(sce$qc_metric_pc_ribo_ok, na.rm=T)
+    sum(sce$qc_metric_pc_ribo_ok, na.rm = T)
   cells_qc$n_ribo_fraction_failed <-
-    sum(!sce$qc_metric_pc_ribo_ok, na.rm=T)
+    sum(!sce$qc_metric_pc_ribo_ok, na.rm = T)
   cells_qc$n_cells_passed <-
-    sum(sce$qc_metric_passed, na.rm=T)
+    sum(sce$qc_metric_passed, na.rm = T)
   cells_qc$n_cells_failed <-
-    sum(!sce$qc_metric_passed, na.rm=T)
+    sum(!sce$qc_metric_passed, na.rm = T)
 
   cells_qc_df <- purrr::map_df(cells_qc, ~ .) %>%
-    dplyr::rename_all(~ paste0("qc_cells_",.))
+    dplyr::rename_all(~ paste0("qc_cells_", .))
 
   qc_summary <- cbind(
-    #sce@metadata$metadata,
     qc_params_df,
     genes_qc_df,
     cells_qc_df
@@ -467,12 +469,5 @@ annotate_sce <- function(sce,
   sce@metadata$qc_plot_data$ribo_fraction_histogram <- dt
 
   return(sce)
-
-}
-
-#' temp
-#' @keywords internal
-.generate_rmd_report <- function(sce) {
-
 
 }

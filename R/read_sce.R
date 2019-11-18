@@ -19,7 +19,8 @@
 #'
 #' @family import and export functions
 #'
-#' @import cli Matrix dplyr SingleCellExperiment
+#' @importFrom SingleCellExperiment SingleCellExperiment reducedDim
+#' @importFrom cli rule cli_alert_danger col_green cli_alert_info cli_alert_success cli_text
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom R.utils gzip
 #' @importFrom tools file_path_sans_ext
@@ -43,7 +44,7 @@ read_sce <- function(folder_path) {
     stop("Files not found.  Specify a valid folder path.")
   }
 
-  all_counts <- read_feature_barcode_matrix(folder_path)
+  all_counts <- read_sparse_matrix(folder_path)
 
   cli::cli_text("Reading: {.path {paths_l$all_rowdata}}")
   all_rowdata <- read.delim(

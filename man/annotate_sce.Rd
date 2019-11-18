@@ -2,7 +2,7 @@
 % Please edit documentation in R/annotate_sce.R
 \name{annotate_sce}
 \alias{annotate_sce}
-\title{Annotate a SingleCellExperiment with gene names and QC metrics}
+\title{Annotate a SingleCellExperiment With Gene Names and QC Metrics}
 \usage{
 annotate_sce(sce, min_library_size = 300, min_features = 100,
   max_mito = 0.1, min_ribo = 0, max_ribo = 1, min_counts = 2,
@@ -100,7 +100,7 @@ Other annotation functions: \code{\link{.preprocess_seurat_object}},
   \code{\link{generate_sce}},
   \code{\link{map_ensembl_gene_id}},
   \code{\link{merge_sce}}, \code{\link{report_qc_sce}},
-  \code{\link{retrieve_sample_metadata}},
+  \code{\link{retrieve_metadata}},
   \code{\link{run_doubletfinder}}, \code{\link{sce_to_seu}}
 }
 \concept{annotation functions}
