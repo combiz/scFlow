@@ -11,11 +11,13 @@ Quality control metrics previously calculated are used to subset the
 SingleCellExperiment for both cells and genes passing QC criteria previously
 specified in the <code>annotate_sce_genes</code> and <code>annotate_sce_cells</code> functions — filter_sce • scflow</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -35,16 +37,17 @@ specified in the <code>annotate_sce_genes</code> and <code>annotate_sce_cells</c
 
 
 
+
 <meta property="og:title" content="Filter SingleCellExperiment according to QC metrics
 Quality control metrics previously calculated are used to subset the
 SingleCellExperiment for both cells and genes passing QC criteria previously
 specified in the <code>annotate_sce_genes</code> and <code>annotate_sce_cells</code> functions — filter_sce" />
-
 <meta property="og:description" content="Filter SingleCellExperiment according to QC metrics
 Quality control metrics previously calculated are used to subset the
 SingleCellExperiment for both cells and genes passing QC criteria previously
 specified in the annotate_sce_genes and annotate_sce_cells functions" />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -75,7 +78,7 @@ specified in the annotate_sce_genes and annotate_sce_cells functions" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scflow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -90,8 +93,19 @@ specified in the annotate_sce_genes and annotate_sce_cells functions" />
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/basic-qc.html">scflow: Guided Tutorial for Sample QC</a>
+    </li>
+  </ul>
+</li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/combiz/scflow">
@@ -121,17 +135,14 @@ specified in the <code>annotate_sce_genes</code> and <code>annotate_sce_cells</c
     </div>
 
     <div class="ref-description">
-    
     <p>Filter SingleCellExperiment according to QC metrics
 Quality control metrics previously calculated are used to subset the
 SingleCellExperiment for both cells and genes passing QC criteria previously
 specified in the <code>annotate_sce_genes</code> and <code>annotate_sce_cells</code> functions</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>filter_sce</span>(<span class='no'>sce</span>, <span class='kw'>filter_genes</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>filter_cells</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>drop_unmapped</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>drop_mito</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>drop_ribo</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>filter_sce</span>(<span class='no'>sce</span>, <span class='kw'>filter_genes</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>filter_cells</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -147,47 +158,32 @@ specified in the <code>annotate_sce_genes</code> and <code>annotate_sce_cells</c
       <th>filter_cells</th>
       <td><p>if set <code>FALSE</code>, cells will not be filtered</p></td>
     </tr>
-    <tr>
-      <th>drop_unmapped</th>
-      <td><p>set <code>TRUE</code> to remove unmapped ensembl_gene_id</p></td>
-    </tr>
-    <tr>
-      <th>drop_mito</th>
-      <td><p>set <code>TRUE</code> to remove mitochondrial genes</p></td>
-    </tr>
-    <tr>
-      <th>drop_ribo</th>
-      <td><p>set <code>TRUE</code> to remove ribosomal genes</p></td>
-    </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>sce a SingleCellExperiment object filtered for QC passed cells and
 genes, with QC metrics annotations removed</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other annotation functions: <code><a href='annotate_sce_cells.html'>annotate_sce_cells</a></code>,
+    <div class='dont-index'><p>Other annotation functions: <code><a href='dot-preprocess_seurat_object.html'>.preprocess_seurat_object</a></code>,
+  <code><a href='annotate_sce_cells.html'>annotate_sce_cells</a></code>,
   <code><a href='annotate_sce_genes.html'>annotate_sce_genes</a></code>,
   <code><a href='annotate_sce.html'>annotate_sce</a></code>, <code><a href='find_singlets.html'>find_singlets</a></code>,
   <code><a href='generate_sce.html'>generate_sce</a></code>,
   <code><a href='map_ensembl_gene_id.html'>map_ensembl_gene_id</a></code>,
   <code><a href='merge_sce.html'>merge_sce</a></code>, <code><a href='report_qc_sce.html'>report_qc_sce</a></code>,
-  <code><a href='retrieve_sample_metadata.html'>retrieve_sample_metadata</a></code>,
-  <code><a href='run_doubletfinder.html'>run_doubletfinder</a></code></p></div>
-    
+  <code><a href='retrieve_metadata.html'>retrieve_metadata</a></code>,
+  <code><a href='run_doubletfinder.html'>run_doubletfinder</a></code>, <code><a href='sce_to_seu.html'>sce_to_seu</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#see-also">See also</a></li>
-          </ul>
+    </ul>
 
   </div>
 </div>

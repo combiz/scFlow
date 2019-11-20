@@ -11,7 +11,7 @@ x <- Sys.time()
 #install_github("satijalab/seurat", ref = "develop")
 
 matpath <- "~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix"
-matpath <- "~/Documents/testmatrices/enriched"
+#matpath <- "~/Documents/testmatrices/enriched"
 
 #ensembl_tsv <- read.delim("~/Documents/ms-sc/src/ensembl-ids/ensembl_mappings.tsv")
 
@@ -25,7 +25,7 @@ ss_classes <- c(
   aplevel = "factor"
 )
 
-metadata <- retrieve_sample_metadata(
+metadata <- retrieve_metadata(
   unique_id = "MS542",
   id_colname = "individual",
   samplesheet_path = "~/Documents/ms-sc/refs/sample_metadata.tsv",
@@ -33,6 +33,8 @@ metadata <- retrieve_sample_metadata(
 )
 
 sce <- generate_sce(mat, metadata)
+sce <- .append_citation_sce(sce, key = c("doubletfinder", "seurat"))
+
 rm(mat, metadata)
 
 sce <- annotate_sce(

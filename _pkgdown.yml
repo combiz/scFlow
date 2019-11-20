@@ -6,3 +6,13 @@ reference:
 - title: Pre-Processing and Annotation
   contents:
     - has_concept("annotation functions")
+- title: Clustering and Dimensionality Reduction
+  contents:
+    - has_concept("clustering and dimensionality reduction")
+- title: Differential Gene Expression
+  contents:
+    - has_concept("differential gene expression")
+- title: Data Visualization
+  contents:
+    - has_concept("plotting functions")
+

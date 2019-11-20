@@ -29,7 +29,7 @@
 #' @importFrom future.apply future_lapply
 #' @importFrom future nbrOfWorkers
 #'
-#' @export
+#' @keywords internal
 
 run_doubletfinder <- function(sce, ...) {
 
@@ -245,7 +245,7 @@ run_doubletfinder <- function(sce, ...) {
 #' @import Seurat
 #' @importFrom magrittr %>%
 #'
-#' @export
+#' @keywords internal
 .preprocess_seurat_object <- function(sce,
                                       vars_to_regress_out,
                                       pca_dims,
@@ -267,7 +267,9 @@ run_doubletfinder <- function(sce, ...) {
   cat(cli::rule("Normalizing data", line = 1), "\r\n")
   seu <- Seurat::NormalizeData(seu)
   cat(cli::rule("Scaling data", line = 1), "\r\n")
-  cat(sprintf("Regressing out %s, this may take a while..", vars_to_regress_out))
+  cat(sprintf(
+    "Regressing out %s, this may take a while..",
+    vars_to_regress_out))
   seu <- Seurat::ScaleData(
     seu,
     vars.to.regress = vars_to_regress_out

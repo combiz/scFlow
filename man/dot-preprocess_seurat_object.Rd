@@ -26,3 +26,4 @@ Other annotation functions: \code{\link{annotate_sce_cells}},
   \code{\link{run_doubletfinder}}, \code{\link{sce_to_seu}}
 }
 \concept{annotation functions}
+\keyword{internal}

@@ -9,17 +9,26 @@
 #' @family citation functions
 #' @importFrom bib2df bib2df
 #' @importFrom cli cli_text
+#' @importFrom purrr map_lgl
+#' @importFrom assertthat assert_that
 #' @keywords internal
 .append_citation_sce <- function(sce,
                                  key_var = "MENDELEY.TAGS",
                                  key,
                                  verbose = TRUE) {
 
-  biblio <- system.file("bibtex/references.bib", package = "scflow")
+  bib <- bib2df::bib2df(
+    system.file("bibtex/references.bib", package = "scflow")
+    )
+
+  assertthat::assert_that(
+    all(purrr::map_lgl(key, ~ . %in% bib[[key_var]])),
+    msg = "Invalid citation.")
+
   citations <- bib[bib[[key_var]] %in% key, ]
   sce@metadata$citations <- unique(rbind(sce@metadata$citations, citations))
 
-  if(verbose){
+  if(verbose) {
     cli::cli_text("Please consider citing: -")
     apply(citations, 1, .print_citation)
   }
@@ -33,14 +42,14 @@
 #' @param citation a single row from a bib2df tibble
 #'
 #' @family citation functions
-#' @importFrom cli cli_text
+#' @importFrom cli cli_text symbol
 #' @keywords internal
 .print_citation <- function(citation) {
 
   author_text <- paste0(unlist(citation$AUTHOR), collapse = ", ")
 
   cli::cli_text(c(
-    "{symbol$square_small_filled} ",
+    "{cli::symbol$square_small_filled} ",
     "{{author_text}} ",
     "({citation$YEAR}). ",
     "{.strong {citation$TITLE}}. ",

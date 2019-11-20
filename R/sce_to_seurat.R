@@ -11,7 +11,7 @@
 #' @import Seurat
 #' @importFrom magrittr %>%
 #'
-#' @export
+#' @keywords internal
 sce_to_seu <- function(sce){
 
   seu_metadata <- data.frame(sce@colData) %>%

@@ -8,11 +8,13 @@
 
 <title>Function reference • scflow</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -32,7 +34,9 @@
 
 
 
+
 <meta property="og:title" content="Function reference" />
+
 
 
 
@@ -63,7 +67,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scflow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -78,8 +82,19 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/basic-qc.html">scflow: Guided Tutorial for Sample QC</a>
+    </li>
+  </ul>
+</li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/combiz/scflow">
@@ -121,27 +136,27 @@
       <tr>
         
         <td>
-          <p><code><a href="read_feature_barcode_matrix.html">read_feature_barcode_matrix()</a></code> </p>
-        </td>
-        <td><p>Read a feature-barcode matrix</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="read_sce.html">read_sce()</a></code> </p>
         </td>
         <td><p>Read a SingleCellExperiment from a folder</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="write_feature_barcode_matrix.html">write_feature_barcode_matrix()</a></code> </p>
+          <p><code><a href="read_sparse_matrix.html">read_sparse_matrix()</a></code> </p>
         </td>
-        <td><p>Write a feature-barcode matrix</p></td>
+        <td><p>Read a feature-barcode matrix</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="write_sce.html">write_sce()</a></code> </p>
         </td>
         <td><p>Write a SingleCellExperiment to a folder</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="write_sparse_matrix.html">write_sparse_matrix()</a></code> </p>
+        </td>
+        <td><p>Write a feature-barcode matrix</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -155,7 +170,7 @@
         <td>
           <p><code><a href="annotate_sce.html">annotate_sce()</a></code> </p>
         </td>
-        <td><p>Annotate a SingleCellExperiment with gene names and QC metrics</p></td>
+        <td><p>Annotate a SingleCellExperiment With Gene Names and QC Metrics</p></td>
       </tr><tr>
         
         <td>
@@ -168,6 +183,12 @@
           <p><code><a href="annotate_sce_genes.html">annotate_sce_genes()</a></code> </p>
         </td>
         <td><p>Add basic gene-wise annotations for a SingleCellExperiment</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="dot-preprocess_seurat_object.html">.preprocess_seurat_object()</a></code> </p>
+        </td>
+        <td><p>temp fn</p></td>
       </tr><tr>
         
         <td>
@@ -210,7 +231,7 @@ specified in the <code>annotate_sce_genes</code> and <code>annotate_sce_cells</c
       </tr><tr>
         
         <td>
-          <p><code><a href="retrieve_sample_metadata.html">retrieve_sample_metadata()</a></code> </p>
+          <p><code><a href="retrieve_metadata.html">retrieve_metadata()</a></code> </p>
         </td>
         <td><p>Retrieve the metadata for a sample from a samplesheet</p></td>
       </tr><tr>
@@ -220,6 +241,66 @@ specified in the <code>annotate_sce_genes</code> and <code>annotate_sce_cells</c
         </td>
         <td><p>Find singlets in a SingleCellExperiment with DoubletFinder by McGinnis CS
 et al</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="sce_to_seu.html">sce_to_seu()</a></code> </p>
+        </td>
+        <td><p>temp fn</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-clustering-and-dimensionality-reduction" class="hasAnchor"><a href="#section-clustering-and-dimensionality-reduction" class="anchor"></a>Clustering and Dimensionality Reduction</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="cluster_sce.html">cluster_sce()</a></code> </p>
+        </td>
+        <td><p>Cluster SingleCellExperiment with monocle3::cluster_cells</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="map_celltypes_sce.html">map_celltypes_sce()</a></code> </p>
+        </td>
+        <td><p>Map cluster celltypes with EWCE</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="reduce_dims_sce.html">reduce_dims_sce()</a></code> </p>
+        </td>
+        <td><p>Calculate dimensionality reductions for a SingleCellExperiment</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-differential-gene-expression" class="hasAnchor"><a href="#section-differential-gene-expression" class="anchor"></a>Differential Gene Expression</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="perform_de.html">perform_de()</a></code> </p>
+        </td>
+        <td><p>Perform Differential Gene Expression on a SingleCellExperiment</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-data-visualization" class="hasAnchor"><a href="#section-data-visualization" class="anchor"></a>Data Visualization</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="plot_umap_with_feature.html">plot_umap_with_feature()</a></code> </p>
+        </td>
+        <td><p>Plot Cells Reduced Dimensions With Feature Highlighting</p></td>
       </tr>
     </tbody>
     </table>
@@ -230,6 +311,9 @@ et al</p></td>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#section-import-and-export">Import and Export</a></li>
       <li><a href="#section-pre-processing-and-annotation">Pre-Processing and Annotation</a></li>
+      <li><a href="#section-clustering-and-dimensionality-reduction">Clustering and Dimensionality Reduction</a></li>
+      <li><a href="#section-differential-gene-expression">Differential Gene Expression</a></li>
+      <li><a href="#section-data-visualization">Data Visualization</a></li>
     </ul>
   </div>
 </div>

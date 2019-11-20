@@ -18,6 +18,8 @@ params:
 library(plotly)
 library(DT)
 library(dplyr)
+library(utils)
+library(bib2df)
 
 knitr::opts_chunk$set(echo = FALSE)
 
@@ -109,3 +111,11 @@ metadata$qc_plots$ribo_fraction_histogram
 datatable(t(metadata$qc_summary), colnames = "")
 ```
 
+## References
+``` {r, eval = (!is.null(metadata$citations))}
+knitr::opts_chunk$set(echo = FALSE)
+apply(metadata$citations, 1, .print_citation)
+```
+
+<br> Report generated with scflow v`r utils::packageVersion("scflow")`.
+<br> `r Sys.time()`

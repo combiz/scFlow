@@ -9,11 +9,13 @@
 <title>Find singlets in a SingleCellExperiment with DoubletFinder by McGinnis CS
 et al — run_doubletfinder • scflow</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -33,12 +35,13 @@ et al — run_doubletfinder • scflow</title>
 
 
 
+
 <meta property="og:title" content="Find singlets in a SingleCellExperiment with DoubletFinder by McGinnis CS
 et al — run_doubletfinder" />
-
 <meta property="og:description" content="Runs the doubletfinder algorithm on the SingleCellExperiment. Returns a
 SingleCellExperiment annotated with is_singlet and tSNE coordinates." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -69,7 +72,7 @@ SingleCellExperiment annotated with is_singlet and tSNE coordinates." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scflow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -84,8 +87,19 @@ SingleCellExperiment annotated with is_singlet and tSNE coordinates." />
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/basic-qc.html">scflow: Guided Tutorial for Sample QC</a>
+    </li>
+  </ul>
+</li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/combiz/scflow">
@@ -113,14 +127,12 @@ et al</h1>
     </div>
 
     <div class="ref-description">
-    
     <p>Runs the doubletfinder algorithm on the SingleCellExperiment. Returns a
 SingleCellExperiment annotated with is_singlet and tSNE coordinates.</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>run_doubletfinder</span>(<span class='no'>sce</span>, <span class='no'>...</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -134,11 +146,10 @@ SingleCellExperiment annotated with is_singlet and tSNE coordinates.</p>
 'doublet_rate' passed here will override the default of 7.5%</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>sce a SingleCellExperiment object annotated for singlets</p>
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Remember to cite: -
@@ -147,30 +158,26 @@ Artificial Nearest Neighbors.
 McGinnis CS, Murrow LM, Gartner ZJ.
 Cell Syst. 2019 Apr 24;8(4):329-337.e4.
 doi: <a href='https://doi.org/10.1016/j.cels.2019.03.003'>https://doi.org/10.1016/j.cels.2019.03.003</a>.</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other annotation functions: <code><a href='annotate_sce_cells.html'>annotate_sce_cells</a></code>,
+    <div class='dont-index'><p>Other annotation functions: <code><a href='dot-preprocess_seurat_object.html'>.preprocess_seurat_object</a></code>,
+  <code><a href='annotate_sce_cells.html'>annotate_sce_cells</a></code>,
   <code><a href='annotate_sce_genes.html'>annotate_sce_genes</a></code>,
   <code><a href='annotate_sce.html'>annotate_sce</a></code>, <code><a href='filter_sce.html'>filter_sce</a></code>,
   <code><a href='find_singlets.html'>find_singlets</a></code>, <code><a href='generate_sce.html'>generate_sce</a></code>,
   <code><a href='map_ensembl_gene_id.html'>map_ensembl_gene_id</a></code>,
   <code><a href='merge_sce.html'>merge_sce</a></code>, <code><a href='report_qc_sce.html'>report_qc_sce</a></code>,
-  <code><a href='retrieve_sample_metadata.html'>retrieve_sample_metadata</a></code></p></div>
-    
+  <code><a href='retrieve_metadata.html'>retrieve_metadata</a></code>, <code><a href='sce_to_seu.html'>sce_to_seu</a></code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#details">Details</a></li>
-
       <li><a href="#see-also">See also</a></li>
-          </ul>
+    </ul>
 
   </div>
 </div>

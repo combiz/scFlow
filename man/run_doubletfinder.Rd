@@ -39,3 +39,4 @@ Other annotation functions: \code{\link{.preprocess_seurat_object}},
   \code{\link{retrieve_metadata}}, \code{\link{sce_to_seu}}
 }
 \concept{annotation functions}
+\keyword{internal}

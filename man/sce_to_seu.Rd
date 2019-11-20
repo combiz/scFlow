@@ -27,3 +27,4 @@ Other annotation functions: \code{\link{.preprocess_seurat_object}},
   \code{\link{run_doubletfinder}}
 }
 \concept{annotation functions}
+\keyword{internal}

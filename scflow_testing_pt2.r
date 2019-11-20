@@ -1,6 +1,6 @@
 library(scflow)
 #sce <- read_sce("../junk/subsetsce")
-#sce <- read_sce("../junk/mergedsce")
+sce <- read_sce("../junk/mergedsce")
 sce <- read_sce("../junk/endosce")
 #sce <- reduce_dims_sce(sce, pca_dims = 5)
 #x <- reduce_dims_sce(sce, pca_dims = 5)

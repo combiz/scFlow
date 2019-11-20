@@ -28,7 +28,7 @@ Generate a model formula from dependent, confounding, and random vars
 Other differential gene expression: \code{\link{.filter_sce_genes_for_de}},
   \code{\link{.perform_de_with_mast}},
   \code{\link{.preprocess_sce_for_de}},
-  \code{\link{perform_de}}
+  \code{\link{perform_de}}, \code{\link{pseudobulk_sce}}
 }
 \concept{differential gene expression}
 \keyword{internal}

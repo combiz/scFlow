@@ -8,11 +8,13 @@
 
 <title>Return mappings for Ensembl Gene IDs — map_ensembl_gene_id • scflow</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -32,13 +34,14 @@
 
 
 
-<meta property="og:title" content="Return mappings for Ensembl Gene IDs — map_ensembl_gene_id" />
 
+<meta property="og:title" content="Return mappings for Ensembl Gene IDs — map_ensembl_gene_id" />
 <meta property="og:description" content="Returns a data frame with the provided ensembl gene ids and requested
 mappings from biomaRt or a local file.  If the mappings are absent from the
 local file, or the local file is not provided or missing, the mappings are
 retrieved by querying biomaRt." />
 <meta name="twitter:card" content="summary" />
+
 
 
 
@@ -69,7 +72,7 @@ retrieved by querying biomaRt." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scflow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
       </span>
     </div>
 
@@ -84,8 +87,19 @@ retrieved by querying biomaRt." />
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/basic-qc.html">scflow: Guided Tutorial for Sample QC</a>
+    </li>
+  </ul>
+</li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/combiz/scflow">
@@ -112,18 +126,16 @@ retrieved by querying biomaRt." />
     </div>
 
     <div class="ref-description">
-    
     <p>Returns a data frame with the provided ensembl gene ids and requested
 mappings from biomaRt or a local file.  If the mappings are absent from the
 local file, or the local file is not provided or missing, the mappings are
 retrieved by querying biomaRt.</p>
-    
     </div>
 
     <pre class="usage"><span class='fu'>map_ensembl_gene_id</span>(<span class='no'>ensembl_ids</span>, <span class='kw'>mappings</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ensembl_gene_id"</span>,
   <span class='st'>"gene_biotype"</span>, <span class='st'>"external_gene_name"</span>, <span class='st'>"percentage_gene_gc_content"</span>),
   <span class='kw'>species</span> <span class='kw'>=</span> <span class='st'>"human"</span>, <span class='kw'>mappings_filepath</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -147,21 +159,20 @@ names.  ensembl_gene_id will be added if not included here.
       <td><p>path to the mappings tsv file</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>mapped_df a data.frame of the provided ensembl_id's with mappings.</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other annotation functions: <code><a href='annotate_sce_cells.html'>annotate_sce_cells</a></code>,
+    <div class='dont-index'><p>Other annotation functions: <code><a href='dot-preprocess_seurat_object.html'>.preprocess_seurat_object</a></code>,
+  <code><a href='annotate_sce_cells.html'>annotate_sce_cells</a></code>,
   <code><a href='annotate_sce_genes.html'>annotate_sce_genes</a></code>,
   <code><a href='annotate_sce.html'>annotate_sce</a></code>, <code><a href='filter_sce.html'>filter_sce</a></code>,
   <code><a href='find_singlets.html'>find_singlets</a></code>, <code><a href='generate_sce.html'>generate_sce</a></code>,
   <code><a href='merge_sce.html'>merge_sce</a></code>, <code><a href='report_qc_sce.html'>report_qc_sce</a></code>,
-  <code><a href='retrieve_sample_metadata.html'>retrieve_sample_metadata</a></code>,
-  <code><a href='run_doubletfinder.html'>run_doubletfinder</a></code></p></div>
-    
+  <code><a href='retrieve_metadata.html'>retrieve_metadata</a></code>,
+  <code><a href='run_doubletfinder.html'>run_doubletfinder</a></code>, <code><a href='sce_to_seu.html'>sce_to_seu</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>map_ensembl_gene_id</span>(<span class='st'>"ENSG00000130707"</span>)</div><div class='output co'>#&gt; Error : Cannot write to fd (system error 9, Bad file descriptor) @client.c:149</div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span><span> Mappings file not provided, using biomaRt (slower).</span>
@@ -175,11 +186,8 @@ names.  ensembl_gene_id will be added if not included here.
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
       <li><a href="#value">Value</a></li>
-
       <li><a href="#see-also">See also</a></li>
-      
       <li><a href="#examples">Examples</a></li>
     </ul>
 
