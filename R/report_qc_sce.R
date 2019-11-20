@@ -45,6 +45,9 @@ report_qc_sce <- function(sce,
     metadata_tmp_path
   )
 
+  #biblio_tmp_path <- file.path(tempdir(), "scflow_references.bib")
+  #bib2df::df2bib(sce@metadata$citations, biblio_tmp_path)
+
   cli::cli_text("Generating QC report...")
   rmarkdown::render(
     # for dev use file.path(getwd(),

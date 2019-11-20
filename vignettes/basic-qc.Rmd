@@ -17,7 +17,7 @@ knitr::opts_chunk$set(comment = "#>", collapse = TRUE)
 ```
 
 ## Overview
-The basic _scflow_ workflow for sample QC begins with the import of the feature-barcode sparse matrix with `read_feature_barcode_matrix`.  The metadata for the sample is then imported from a sample sheet with `retrieve_sample_metadata`.  A SingleCellExperiment object is created from the matrix and the metadata using `generate_sce` which is then annotated with both gene and cell-level data using `annotate_sce`.  We then filter the SingleCellExperiment to select only cells and genes meeting our QC criteria using `filter_sce`.  We can then optionally find singlets in our filtered SingleCellExperiment using `find_singlets` before filtering them out again with `filter_sce`.  A complete QC report can then be generated using `report_qc_sce` before saving the filtered and quality-controlled SingleCellExperiment with `write_sce`.  
+The basic _scflow_ workflow for sample QC begins with the import of the feature-barcode sparse matrix with `read_feature_barcode_matrix`.  The metadata for the sample is then imported from a sample sheet with `read_metadata`.  A SingleCellExperiment object is created from the matrix and the metadata using `generate_sce` which is then annotated with both gene and cell-level data using `annotate_sce`.  We then filter the SingleCellExperiment to select only cells and genes meeting our QC criteria using `filter_sce`.  We can then optionally find singlets in our filtered SingleCellExperiment using `find_singlets` before filtering them out again with `filter_sce`.  A complete QC report can then be generated using `report_qc_sce` before saving the filtered and quality-controlled SingleCellExperiment with `write_sce`.  
 
 ## Step one - import the matrix and metadata
 
@@ -28,9 +28,9 @@ mat <- read_sparse_matrix("~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feat
 Next we retrieve the metadata by pointing to a Sample Sheet and specifying a unique identifier (`unique_id`) in a specific column (`id_colname`): -
 
 ```{r, results = 'asis', echo = TRUE, include = TRUE}
-metadata <- retrieve_metadata(
-  unique_id = "MS542",
-  id_colname = "individual",
+metadata <- read_metadata(
+  unique_key = "MS542",
+  key_colname = "individual",
   samplesheet_path = "~/Documents/ms-sc/refs/sample_metadata.tsv"
 )
 ```
@@ -46,9 +46,9 @@ var_classes <- c(
   aplevel = "factor"
 )
 
-metadata <- retrieve_metadata(
-  unique_id = "MS542",
-  id_colname = "individual",
+metadata <- read_metadata(
+  unique_key = "MS542",
+  key_colname = "individual",
   samplesheet_path = "~/Documents/ms-sc/refs/sample_metadata.tsv",
   colClasses = var_classes
 )

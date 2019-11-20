@@ -19,7 +19,6 @@ library(plotly)
 library(DT)
 library(dplyr)
 library(utils)
-library(bib2df)
 
 knitr::opts_chunk$set(echo = FALSE)
 
@@ -55,14 +54,14 @@ datatable(metadata_table, rownames = FALSE, options = list(pageLength = 5, scrol
 <div class = "col-md-6">
 ```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of count depth per cell.</b> A lower-limit threshold of %s was applied (red line). ", metadata$qc_params$min_library_size)}
 knitr::opts_chunk$set(echo = FALSE)
-metadata$qc_plots$count_depth_histogram
+ggplotly(metadata$qc_plots$count_depth_histogram)
 ```
 </div>
 
 <div class = "col-md-6">
 ```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of number of genes per cell.</b> A lower-limit threshold of %s was applied (red line). ", metadata$qc_params$min_features)}
 knitr::opts_chunk$set(echo = FALSE)
-metadata$qc_plots$number_genes_histogram
+ggplotly(metadata$qc_plots$number_genes_histogram)
 ```
 </div>
 </div>
@@ -88,14 +87,14 @@ metadata$qc_plots$number_genes_vs_count_depth
 <div class = "col-md-6">
 ```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of mitochondrial fraction per cell.</b> A upper-threshold of %s (i.e. %1.2f%%) maximum mitochondrial fraction was applied (red line).", metadata$qc_params$max_mito, metadata$qc_params$max_mito * 100)}
 knitr::opts_chunk$set(echo = FALSE)
-metadata$qc_plots$mito_fraction_histogram
+ggplotly(metadata$qc_plots$mito_fraction_histogram)
 ```
 </div>
 
 <div class = "col-md-6">
 ```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of ribosomal fraction per cell.</b> A upper-threshold of %s (i.e. %1.2f%%) maximum ribosomal fraction was applied (red line).", metadata$qc_params$max_ribo, metadata$qc_params$max_ribo * 100)}
 knitr::opts_chunk$set(echo = FALSE)
-metadata$qc_plots$ribo_fraction_histogram
+ggplotly(metadata$qc_plots$ribo_fraction_histogram)
 ```
 </div>
 </div>
@@ -112,10 +111,9 @@ datatable(t(metadata$qc_summary), colnames = "")
 ```
 
 ## References
-``` {r, eval = (!is.null(metadata$citations))}
+``` {r, results='markdown', eval = (!is.null(metadata$citations))}
 knitr::opts_chunk$set(echo = FALSE)
 apply(metadata$citations, 1, .print_citation)
 ```
 
-<br> Report generated with scflow v`r utils::packageVersion("scflow")`.
-<br> `r Sys.time()`
+<br> Report generated with scflow v`r utils::packageVersion("scflow")` -- `r Sys.time()`

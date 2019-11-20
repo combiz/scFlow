@@ -25,15 +25,15 @@ ss_classes <- c(
   aplevel = "factor"
 )
 
-metadata <- retrieve_metadata(
-  unique_id = "MS542",
-  id_colname = "individual",
+metadata <- read_metadata(
+  unique_key = "MS542",
+  key_colname = "individual",
   samplesheet_path = "~/Documents/ms-sc/refs/sample_metadata.tsv",
   colClasses = ss_classes
 )
 
 sce <- generate_sce(mat, metadata)
-sce <- .append_citation_sce(sce, key = c("doubletfinder", "seurat"))
+sce <- scflow:::.append_citation_sce(sce, key = c("doubletfinder", "seurat"))
 
 rm(mat, metadata)
 

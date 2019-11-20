@@ -50,7 +50,7 @@
 
   cli::cli_text(c(
     "{cli::symbol$square_small_filled} ",
-    "{{author_text}} ",
+    "{author_text} ",
     "({citation$YEAR}). ",
     "{.strong {citation$TITLE}}. ",
     "{citation$JOURNAL}. ",
