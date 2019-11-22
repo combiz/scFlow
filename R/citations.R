@@ -60,3 +60,28 @@
   )
 
 }
+
+#' Print a single citation to stdout as html
+#'
+#' @param citation a single row from a bib2df tibble
+#'
+#' @family citation functions
+#' @importFrom cli symbol
+#' @keywords internal
+.print_citation_html <- function(citation) {
+
+  author_text <- paste0(unlist(citation$AUTHOR), collapse = ", ")
+
+  cat(paste0(
+    "<p>",
+    sprintf("%s ", author_text),
+    sprintf("(%s). ", citation$YEAR),
+    sprintf("<b>%s</b>. ", citation$TITLE),
+    sprintf("%s. ", citation$JOURNAL),
+    sprintf("%s(%s), ", citation$VOLUME, citation$NUMBER),
+    sprintf("%s. ", citation$PAGES),
+    sprintf("<a href=\"http://dx.doi.org/%s\"><strong>[DOI]</strong></a>",
+            citation$DOI),
+    "</p>"))
+
+}

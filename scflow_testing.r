@@ -11,7 +11,8 @@ x <- Sys.time()
 #install_github("satijalab/seurat", ref = "develop")
 
 matpath <- "~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix"
-#matpath <- "~/Documents/testmatrices/enriched"
+matpath <- "~/Documents/hpc/public_datasets/single_nuclei/tsai_et_al_alzheimers/ExpressionData/projid/20173942/"
+matpath <- "~/Documents/testmatrices/enriched"
 
 #ensembl_tsv <- read.delim("~/Documents/ms-sc/src/ensembl-ids/ensembl_mappings.tsv")
 

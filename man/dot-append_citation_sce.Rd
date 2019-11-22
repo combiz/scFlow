@@ -21,7 +21,8 @@ sce a SingleCellExperiment object
 Append a citation to a SingleCellExperiment
 }
 \seealso{
-Other citation functions: \code{\link{.print_citation}}
+Other citation functions: \code{\link{.print_citation_html}},
+  \code{\link{.print_citation}}
 }
 \concept{citation functions}
 \keyword{internal}
