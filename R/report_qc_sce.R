@@ -60,6 +60,8 @@ report_qc_sce <- function(sce,
     ),
     output_dir = report_folder_path,
     output_file = report_file,
+    knit_root_dir = file.path(tempdir(), "krdqc"),
+    intermediates_dir = file.path(tempdir(), "idqc"),
     quiet = TRUE
   )
 
