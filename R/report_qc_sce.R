@@ -48,6 +48,11 @@ report_qc_sce <- function(sce,
   #biblio_tmp_path <- file.path(tempdir(), "scflow_references.bib")
   #bib2df::df2bib(sce@metadata$citations, biblio_tmp_path)
 
+  krd <- file.path(tempdir(), "krdqc")
+  intd <- file.path(tempdir(), "idqc")
+  dir.create(krd)
+  dir.create(intd)
+
   cli::cli_text("Generating QC report...")
   rmarkdown::render(
     # for dev use file.path(getwd(),
@@ -60,8 +65,8 @@ report_qc_sce <- function(sce,
     ),
     output_dir = report_folder_path,
     output_file = report_file,
-    knit_root_dir = file.path(tempdir(), "krdqc"),
-    intermediates_dir = file.path(tempdir(), "idqc"),
+    knit_root_dir = krd,
+    intermediates_dir = intd,
     quiet = TRUE
   )
 
