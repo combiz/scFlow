@@ -13,6 +13,7 @@ x <- Sys.time()
 matpath <- "~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix"
 matpath <- "~/Documents/hpc/public_datasets/single_nuclei/tsai_et_al_alzheimers/ExpressionData/projid/20173942/"
 matpath <- "~/Documents/testmatrices/enriched"
+matpath <- "~/Documents/nfl/data/raw/MS/BATCH2_outputs/PDC05/outs/raw_feature_bc_matrix/"
 
 #ensembl_tsv <- read.delim("~/Documents/ms-sc/src/ensembl-ids/ensembl_mappings.tsv")
 
@@ -26,10 +27,17 @@ ss_classes <- c(
   aplevel = "factor"
 )
 
+#metadata <- read_metadata(
+#  unique_key = "MS542",
+#  key_colname = "individual",
+#  samplesheet_path = "~/Documents/ms-sc/refs/sample_metadata.tsv",
+#  colClasses = ss_classes
+#)
+
 metadata <- read_metadata(
-  unique_key = "MS542",
-  key_colname = "individual",
-  samplesheet_path = "~/Documents/ms-sc/refs/sample_metadata.tsv",
+  unique_key = "hajov",
+  key_colname = "manifest",
+  samplesheet_path = "~/Documents/nfl/refs/SampleSheet.tsv",
   colClasses = ss_classes
 )
 
@@ -68,3 +76,35 @@ mtext("scflow functions")
 
 saveRDS(sce@metadata$qc_plots$number_genes_vs_count_depth, "test.rds")
 #BiocManager::install("Rgraphviz")
+
+for (df in names(sce@metadata$qc_plot_data)) {
+  write.table(
+    sce@metadata$qc_plot_data[[df]],
+    paste0(df, ".tsv"),
+    sep = "\t",
+    col.names = TRUE, row.names = FALSE)
+}
+
+write.table(
+  cbind(sce@metadata$metadata, sce@metadata$qc_summary),
+  paste0(df, "qc_summary.tsv"),
+  sep = "\t",
+  col.names = TRUE, row.names = FALSE)
+
+#save_sce
+
+#save_plots
+
+# qc plots
+for(pname in names(sce@metadata$qc_plots)) {
+  png(paste0(pname, ".png"), width = 247, height = 170, units = "mm", res = 600)
+  print(sce@metadata$qc_plots[[pname]])
+  dev.off()
+}
+
+# doublet finder plots, square
+for(pname in names(sce@metadata$qc_plots$doublet_finder)) {
+  png(paste0(pname, "_doublet_finder.png"), width = 170, height = 170, units = "mm", res = 600)
+  print(sce@metadata$qc_plots$doublet_finder[[pname]])
+  dev.off()
+}
