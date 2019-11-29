@@ -109,7 +109,7 @@ merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
   SummarizedExperiment::rowData(newsce)$ensembl_gene_id <-
     as.character(SummarizedExperiment::rowData(newsce)$ensembl_gene_id)
 
-  metadata(newsce) <- list() # drop for merge
+  newsce@metadata <- list() # drop for merge
 
   return(newsce)
 

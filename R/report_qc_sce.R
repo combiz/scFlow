@@ -50,8 +50,8 @@ report_qc_sce <- function(sce,
 
   krd <- file.path(tempdir(), "krdqc")
   intd <- file.path(tempdir(), "idqc")
-  dir.create(krd)
-  dir.create(intd)
+  dir.create(krd, showWarnings = FALSE)
+  dir.create(intd, showWarnings = FALSE)
 
   cli::cli_text("Generating QC report...")
   rmarkdown::render(

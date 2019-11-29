@@ -339,7 +339,7 @@ annotate_sce <- function(sce,
 
   dt <- dplyr::as_tibble(data.frame(
     total_counts = sce$total_counts)) %>%
-    filter(total_counts <= counts_cutoff ) %>%
+    #filter(total_counts <= counts_cutoff ) %>%
     filter(total_counts > 10 )
 
   p <- ggplot2::ggplot(dt) +
@@ -377,7 +377,7 @@ annotate_sce <- function(sce,
 
   dt <- dplyr::as_tibble(data.frame(
     total_features = sce$total_features_by_counts)) %>%
-    filter(total_features <= features_cutoff) %>%
+    #filter(total_features <= features_cutoff) %>%
     filter(total_features >= 10 )
 
   p <- ggplot2::ggplot(dt) +
