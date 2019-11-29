@@ -23,8 +23,11 @@ write_sparse_matrix <- function(mat,
 
   cat(cli::rule("Writing feature-barcode matrix", line = 2), "\r\n")
 
+  mat <- as(mat, "dgTMatrix")
+
   if (class(mat) != "dgTMatrix") {
-    stop(cli::cli_alert_danger("Expected dgTMatrix, received {{class(mat)}}."))
+    cli::cli_alert_danger("Expected dgTMatrix, received {{class(mat)}}.")
+    stop("Expected dgTMatrix.")
   }
 
   if (!dir.exists(file.path(folder_path))) {
@@ -65,7 +68,7 @@ write_sparse_matrix <- function(mat,
 
   cli::cli_text("Writing: {.path {paths_l$matrix_path}}")
   Matrix::writeMM(
-    obj = mat,
+    obj = as(mat, "dgTMatrix"),
     file = paths_l$matrix_path)
 
   cli::cli_text("Compressing: {.path {paths_l$matrix_path}}")

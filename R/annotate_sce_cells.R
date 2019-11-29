@@ -45,19 +45,27 @@ annotate_sce_cells <- function(sce, ...) {
   sce$qc_metric_min_features <-
     sce$total_features_by_counts >= args$min_features
 
-  sce$pc_mito <- Matrix::colSums(
-    SingleCellExperiment::counts(
-      sce[SummarizedExperiment::rowData(sce)$qc_metric_is_mito == 1, ]
-    )
-  ) / sce$total_counts
+  if(length(sce$pc_mito) == 0) {
+    sce$pc_mito <- Matrix::colSums(
+      SingleCellExperiment::counts(
+        sce[SummarizedExperiment::rowData(sce)$qc_metric_is_mito == 1, ]
+      )
+    ) / sce$total_counts
+  } else {
+    print("Retaining previously calculated percentage mitochondrial counts.")
+  }
 
   sce$qc_metric_pc_mito_ok <- sce$pc_mito <= args$max_mito
 
-  sce$pc_ribo <- Matrix::colSums(
-    SingleCellExperiment::counts(
-      sce[SummarizedExperiment::rowData(sce)$qc_metric_is_ribo == 1, ]
-    )
-  ) / sce$total_counts
+  if(length(sce$pc_ribo) == 0) {
+    sce$pc_ribo <- Matrix::colSums(
+      SingleCellExperiment::counts(
+        sce[SummarizedExperiment::rowData(sce)$qc_metric_is_ribo == 1, ]
+      )
+    ) / sce$total_counts
+  } else {
+    print("Retaining previously calculated percentage ribosomal counts.")
+  }
 
   sce$qc_metric_pc_ribo_ok <-
     (sce$pc_ribo <= args$max_ribo) & (sce$pc_ribo >= args$min_ribo)

@@ -8,8 +8,15 @@
 #' @return sce a annotated SingleCellExperiment object
 #'
 #' @family annotation functions
-#' @import cli Matrix dplyr SingleCellExperiment purrr
+#' @importFrom cli cli_alert_danger rule cli_text cli_alert_success
+#' @importFrom purrr map map_lgl map_chr
+#' @importFrom SingleCellExperiment counts
+#' @importFrom Matrix colSums rowSums
 #' @importFrom SummarizedExperiment rowData colData
+#' @importFrom dplyr left_join union
+#' @importFrom scater calculateQCMetrics
+#' @importFrom english words
+#' @importFrom tools toTitleCase
 #' @export
 #'
 merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
@@ -23,7 +30,7 @@ merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
   }
   if (all((purrr::map_lgl(sce_l, is.character)))) {
     if (all(purrr::map_lgl(sce_l, dir.exists))) {
-      sce_l <- map(sce_l, read_sce)
+      sce_l <- purrr::map(sce_l, read_sce)
     } else {
       stop(cli::cli_alert_danger(
         "Path(s) not found.")
@@ -40,7 +47,7 @@ merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
   cli::cli_text("Merging {.var {length(sce_l)}} SingleCellExperiments")
   ensembl_gene_id_l <- purrr::map(sce_l,
                                   ~ as.character(rowData(.)$ensembl_gene_id))
-  n_sce_genes <- paste0(map_int(ensembl_gene_id_l, length), collapse = ", ")
+  n_sce_genes <- paste0(purrr::map_int(ensembl_gene_id_l, length), collapse = ", ")
   cli::cli_text("Genes in each SingleCellExperiment: {.var {n_sce_genes}}")
   union_ensembl_gene_id <- as.character(Reduce(dplyr::union, ensembl_gene_id_l))
   cli::cli_text(c("Union of genes across all SingleCellExperiments: ",
@@ -52,10 +59,36 @@ merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
 
   sce <- Reduce(cbind, sce_expanded_l)
 
-  sce <- annotate_sce(
-    sce,
-    annotate_cells = FALSE,
-    ensembl_mapping_file = ensembl_mapping_file)
+  # drop previous cell annotations
+  keep_idx <- !(startsWith(
+    colnames(SummarizedExperiment::colData(sce)),
+    "qc_metric"))
+
+  new_rd <- map_ensembl_gene_id(
+    names(sce),
+    mappings_filepath = ensembl_mapping_file)
+
+  SummarizedExperiment::rowData(sce) <- dplyr::left_join(
+    as.data.frame(SummarizedExperiment::rowData(sce)),
+    new_rd, by = "ensembl_gene_id"
+  )
+
+  SummarizedExperiment::colData(sce) <-
+    SummarizedExperiment::colData(sce)[, keep_idx]
+
+  # recalculate cell metrics
+  sce$total_counts <- Matrix::colSums(SingleCellExperiment::counts(sce))
+
+  sce$total_features_by_counts <- Matrix::colSums(
+    SingleCellExperiment::counts(sce) > 0
+  )
+
+  # recalculate gene metrics
+  SummarizedExperiment::rowData(sce)$total_counts <-
+    Matrix::rowSums(SingleCellExperiment::counts(sce))
+
+  SummarizedExperiment::rowData(sce)$n_cells_by_counts <-
+    Matrix::rowSums(SingleCellExperiment::counts(sce) > 0)
 
   n_merged <- tools::toTitleCase(english::words(length(sce_l)))
   cli::cli_alert_success("{.val {n_merged}} SingleCellExperiment were merged.")
@@ -77,6 +110,7 @@ merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
 #'
 #' @import purrr SingleCellExperiment
 #' @importFrom SummarizedExperiment rowData colData
+#' @import methods Matrix
 #' @return sce a annotated SingleCellExperiment object with any
 #' @keywords internal
 .expand_sce_rows <- function(sce, union_ensembl_gene_id) {
@@ -90,8 +124,9 @@ merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
       nrow = length(missing_ids),
       dimnames = list(missing_ids)
     )
-    mat <- rbind(counts(sce), zeros_mat)
+    mat <- rbind(SingleCellExperiment::counts(sce), zeros_mat)
     mat <- mat[order(rownames(mat)), ]
+    mat <- as(mat, "dgTMatrix")
 
     newsce <- SingleCellExperiment::SingleCellExperiment(
       assays = list(counts = mat),
@@ -104,6 +139,8 @@ merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
 
   } else {
     newsce <- sce
+    SingleCellExperiment::counts(sce) <-
+      as(SingleCellExperiment::counts(sce), "dgTMatrix")
   }
 
   SummarizedExperiment::rowData(newsce)$ensembl_gene_id <-
