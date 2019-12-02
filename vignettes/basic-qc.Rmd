@@ -22,16 +22,16 @@ The basic _scflow_ workflow for sample QC begins with the import of the feature-
 ## Step one - import the matrix and metadata
 
 ```{r, results = 'asis', echo = TRUE, include = TRUE}
-mat <- read_sparse_matrix("~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix")
+mat <- read_sparse_matrix("~/Documents/nf-sc/data/raw/MS/BATCH1_outputs/C54/outs/raw_feature_bc_matrix")
 ```
 
 Next we retrieve the metadata by pointing to a Sample Sheet and specifying a unique identifier (`unique_id`) in a specific column (`id_colname`): -
 
 ```{r, results = 'asis', echo = TRUE, include = TRUE}
 metadata <- read_metadata(
-  unique_key = "MS542",
-  key_colname = "individual",
-  samplesheet_path = "~/Documents/ms-sc/refs/sample_metadata.tsv"
+  unique_key = "sisos",
+  key_colname = "manifest",
+  samplesheet_path = "~/Documents/nf-sc/refs/SampleSheet.tsv"
 )
 ```
 
@@ -47,9 +47,9 @@ var_classes <- c(
 )
 
 metadata <- read_metadata(
-  unique_key = "MS542",
-  key_colname = "individual",
-  samplesheet_path = "~/Documents/ms-sc/refs/sample_metadata.tsv",
+  unique_key = "sisos",
+  key_colname = "manifest",
+  samplesheet_path = "~/Documents/nf-sc/refs/SampleSheet.tsv",
   colClasses = var_classes
 )
 ```

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Add basic cell-wise annotations for a SingleCellExperiment — annotate_sce_cells • scflow</title>
+<title>Read the metadata for a sample from a samplesheet — read_metadata • scflow</title>
 
 
 <!-- jquery -->
@@ -35,12 +35,10 @@
 
 
 
-<meta property="og:title" content="Add basic cell-wise annotations for a SingleCellExperiment — annotate_sce_cells" />
-<meta property="og:description" content="Calculates the following QC metrics:
-qc_metric_total_counts - was the ensembl_gene_id found in biomaRt
-qc_metric_total_features_by_counts - is the gene mitochondrial
-
-" />
+<meta property="og:title" content="Read the metadata for a sample from a samplesheet — read_metadata" />
+<meta property="og:description" content="Retrieves a single row from a samplesheet table where the provided
+unique_key parameter is matched in the key_colname column of the
+samplesheet." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -121,56 +119,52 @@ qc_metric_total_features_by_counts - is the gene mitochondrial
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Add basic cell-wise annotations for a SingleCellExperiment</h1>
-    <small class="dont-index">Source: <a href='https://github.com/combiz/scflow/blob/master/R/annotate_sce_cells.R'><code>R/annotate_sce_cells.R</code></a></small>
-    <div class="hidden name"><code>annotate_sce_cells.Rd</code></div>
+    <h1>Read the metadata for a sample from a samplesheet</h1>
+    <small class="dont-index">Source: <a href='https://github.com/combiz/scflow/blob/master/R/read_metadata.R'><code>R/read_metadata.R</code></a></small>
+    <div class="hidden name"><code>read_metadata.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Calculates the following QC metrics:</p><ul>
-<li><p>qc_metric_total_counts - was the ensembl_gene_id found in biomaRt</p></li>
-<li><p>qc_metric_total_features_by_counts - is the gene mitochondrial</p></li>
-</ul>
-
+    <p>Retrieves a single row from a samplesheet table where the provided
+<code>unique_key</code> parameter is matched in the <code>key_colname</code> column of the
+samplesheet.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>annotate_sce_cells</span>(<span class='no'>sce</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>read_metadata</span>(<span class='no'>unique_key</span>, <span class='no'>key_colname</span>, <span class='no'>samplesheet_path</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>sce</th>
-      <td><p>a SingleCellExperiment object</p></td>
+      <th>unique_key</th>
+      <td><p>unique value for this sample in the <code>key_colname</code> column</p></td>
+    </tr>
+    <tr>
+      <th>key_colname</th>
+      <td><p>the column name containing the <code>unique_key</code></p></td>
+    </tr>
+    <tr>
+      <th>samplesheet_path</th>
+      <td><p>path to a tsv file containing a samplesheet</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>See <code><a href='annotate_sce.html'>annotate_sce</a></code></p>
-<p>min_library_size the minimum number of counts per cell
-min_features the minimum number of features per cell (i.e. the minimum
-number of genes with &gt;0 counts)
-max_mito the maximum proportion of counts mapping to
-mitochondrial genes (0 - 1)
-min_ribo
-max_ribo the maximum proportion of counts mapping to
-ribosomal genes (0 - 1)
-min_counts the minimum number of counts per cell in min_cells
-min_cells the minimum number of cells with min_counts</p></td>
+      <td><p>for col_classes (may be extended later - fix)</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>sce a SingleCellExperiment object annotated with cell QC metrics</p>
+    <p>metadata the metadata for the specified sample#'</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other annotation functions: <code><a href='dot-preprocess_seurat_object.html'>.preprocess_seurat_object</a></code>,
+  <code><a href='annotate_sce_cells.html'>annotate_sce_cells</a></code>,
   <code><a href='annotate_sce_genes.html'>annotate_sce_genes</a></code>,
   <code><a href='annotate_sce.html'>annotate_sce</a></code>, <code><a href='filter_sce.html'>filter_sce</a></code>,
   <code><a href='find_singlets.html'>find_singlets</a></code>, <code><a href='generate_sce.html'>generate_sce</a></code>,
   <code><a href='map_ensembl_gene_id.html'>map_ensembl_gene_id</a></code>,
-  <code><a href='merge_sce.html'>merge_sce</a></code>, <code><a href='read_metadata.html'>read_metadata</a></code>,
-  <code><a href='report_qc_sce.html'>report_qc_sce</a></code>,
+  <code><a href='merge_sce.html'>merge_sce</a></code>, <code><a href='report_qc_sce.html'>report_qc_sce</a></code>,
   <code><a href='run_doubletfinder.html'>run_doubletfinder</a></code>, <code><a href='sce_to_seu.html'>sce_to_seu</a></code></p></div>
 
   </div>

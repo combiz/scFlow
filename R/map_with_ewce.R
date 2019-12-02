@@ -60,7 +60,7 @@ map_celltypes_sce <- function(sce,
     dplyr::arrange(Cluster)
 
   # split long allan name into components
-  allan_split <- map_df(
+  allan_split <- purrr::map_df(
     as.character(mappings_lookup$Allan2019_ML2),
     function(x) data.frame(t(unlist(strsplit(x, split = " "))))
   )
@@ -100,6 +100,8 @@ map_celltypes_sce <- function(sce,
     reducedDims = reducedDims(sce),
     metadata = sce@metadata
   )
+
+  sce <- .append_celltype_plots_sce(sce)
 
   return(sce)
 
@@ -306,3 +308,66 @@ map_celltypes_sce <- function(sce,
 
   return(rds_l)
 }
+
+################################################################################
+#' Helper function to plot celltypes in reduced dimensions
+#'
+#' @param sce SingleCellExperiment
+#' @param celltype_dim the colData variable with the celltype annotation
+#'
+#' @return sce a SCE with plots appended to the metadata
+#' @family helper functions
+#' @importFrom SingleCellExperiment reducedDims reducedDim
+#' @importFrom leaflet colorFactor
+#' @importFrom threejs scatterplot3js
+#' @importFrom plotly plot_ly
+#' @keywords internal
+.append_celltype_plots_sce <- function(sce,
+                                       celltype_dim = "cluster_celltype") {
+
+  # 2d
+  sce@metadata$celltype_plots <- list()
+  for (reddim in names(SingleCellExperiment::reducedDims(sce))) {
+    sce@metadata$celltype_plots[[reddim]] <- plot_umap_with_feature(
+      sce,
+      feature_dim = celltype_dim,
+      reduced_dim = reddim,
+      label_clusters = TRUE,
+      size = 1)
+  }
+
+  #3d
+  if ("UMAP3D" %in% names(SingleCellExperiment::reducedDims(sce))) {
+
+    umap_res <- SingleCellExperiment::reducedDim(sce, "UMAP3D")
+
+    pal <- leaflet::colorFactor(palette = "Accent", domain = sce[[celltype_dim]])
+    celltype_pal <- pal(sce[[celltype_dim]])
+
+    sce@metadata$celltype_plots$umap3d_3js <- threejs::scatterplot3js(
+      x = umap_res[, 1],
+      y = umap_res[, 2],
+      z = umap_res[, 3],
+      color = celltype_pal,
+      axis = FALSE,
+      num.ticks = NULL,
+      stroke = "#4682b4",
+      size = .01
+    )
+
+    sce@metadata$celltype_plots$umap3d_plotly <- plotly::plot_ly(
+      x = umap_res[, 1],
+      y = umap_res[, 2],
+      z = umap_res[, 3],
+      color = celltype_pal,
+      name = sce[[celltype_dim]],
+      type = "scatter3d",
+      mode = "markers",
+      size = 0.1
+    )
+  }
+
+  return(sce)
+}
+
+

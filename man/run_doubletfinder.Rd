@@ -11,7 +11,8 @@ run_doubletfinder(sce, ...)
 \item{sce}{a SingleCellExperiment object}
 
 \item{...}{'pK' passed here will override parameter sweep,
-'doublet_rate' passed here will override the default of 7.5\%}
+'doublet_rate' passed here will override the default of 7.5\%
+a doublet_rate of 0 is a special case that automates the estimated dr}
 }
 \value{
 sce a SingleCellExperiment object annotated for singlets

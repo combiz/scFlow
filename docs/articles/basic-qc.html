@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scflow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3</span>
       </span>
     </div>
 
@@ -92,149 +92,145 @@
 <div id="overview" class="section level2">
 <h2 class="hasAnchor">
 <a href="#overview" class="anchor"></a>Overview</h2>
-<p>The basic <em>scflow</em> workflow for sample QC begins with the import of the feature-barcode sparse matrix with <code>read_feature_barcode_matrix</code>. The metadata for the sample is then imported from a sample sheet with <code>retrieve_sample_metadata</code>. A SingleCellExperiment object is created from the matrix and the metadata using <code>generate_sce</code> which is then annotated with both gene and cell-level data using <code>annotate_sce</code>. We then filter the SingleCellExperiment to select only cells and genes meeting our QC criteria using <code>filter_sce</code>. We can then optionally find singlets in our filtered SingleCellExperiment using <code>find_singlets</code> before filtering them out again with <code>filter_sce</code>. A complete QC report can then be generated using <code>report_qc_sce</code> before saving the filtered and quality-controlled SingleCellExperiment with <code>write_sce</code>.</p>
+<p>The basic <em>scflow</em> workflow for sample QC begins with the import of the feature-barcode sparse matrix with <code>read_feature_barcode_matrix</code>. The metadata for the sample is then imported from a sample sheet with <code>read_metadata</code>. A SingleCellExperiment object is created from the matrix and the metadata using <code>generate_sce</code> which is then annotated with both gene and cell-level data using <code>annotate_sce</code>. We then filter the SingleCellExperiment to select only cells and genes meeting our QC criteria using <code>filter_sce</code>. We can then optionally find singlets in our filtered SingleCellExperiment using <code>find_singlets</code> before filtering them out again with <code>filter_sce</code>. A complete QC report can then be generated using <code>report_qc_sce</code> before saving the filtered and quality-controlled SingleCellExperiment with <code>write_sce</code>.</p>
 </div>
 <div id="step-one---import-the-matrix-and-metadata" class="section level2">
 <h2 class="hasAnchor">
 <a href="#step-one---import-the-matrix-and-metadata" class="anchor"></a>Step one - import the matrix and metadata</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">mat &lt;-<span class="st"> </span><span class="kw"><a href="../reference/read_sparse_matrix.html">read_sparse_matrix</a></span>(<span class="st">"~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix"</span>)</a></code></pre></div>
-<p>══ Reading feature-barcode matrix ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════ Error : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; Reading: ~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix/barcodes.tsv.gz</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">mat &lt;-<span class="st"> </span><span class="kw"><a href="../reference/read_sparse_matrix.html">read_sparse_matrix</a></span>(<span class="st">"~/Documents/nf-sc/data/raw/MS/BATCH2_outputs/MS542/outs/raw_feature_bc_matrix"</span>)</a></code></pre></div>
+<p>══ Reading feature-barcode matrix ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════ Error : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
+<pre><code>#&gt; Reading: ~/Documents/nf-sc/data/raw/MS/BATCH2_outputs/MS542/outs/raw_feature_bc_matrix/barcodes.tsv.gz</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; Reading: ~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix/features.tsv.gz</code></pre>
+<pre><code>#&gt; Reading: ~/Documents/nf-sc/data/raw/MS/BATCH2_outputs/MS542/outs/raw_feature_bc_matrix/features.tsv.gz</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; Reading: ~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix/matrix.mtx.gz</code></pre>
+<pre><code>#&gt; Reading: ~/Documents/nf-sc/data/raw/MS/BATCH2_outputs/MS542/outs/raw_feature_bc_matrix/matrix.mtx.gz</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
 <pre><code>#&gt; ✔ Imported sparse matrix: 737280 cols x 33694 rows.</code></pre>
 <p>Next we retrieve the metadata by pointing to a Sample Sheet and specifying a unique identifier (<code>unique_id</code>) in a specific column (<code>id_colname</code>): -</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">metadata &lt;-<span class="st"> </span><span class="kw"><a href="../reference/retrieve_metadata.html">retrieve_metadata</a></span>(</a>
-<a class="sourceLine" id="cb6-2" data-line-number="2">  <span class="dt">unique_id =</span> <span class="st">"MS542"</span>,</a>
-<a class="sourceLine" id="cb6-3" data-line-number="3">  <span class="dt">id_colname =</span> <span class="st">"individual"</span>,</a>
-<a class="sourceLine" id="cb6-4" data-line-number="4">  <span class="dt">samplesheet_path =</span> <span class="st">"~/Documents/ms-sc/refs/sample_metadata.tsv"</span></a>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">metadata &lt;-<span class="st"> </span><span class="kw"><a href="../reference/read_metadata.html">read_metadata</a></span>(</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">  <span class="dt">unique_key =</span> <span class="st">"sisos"</span>,</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">  <span class="dt">key_colname =</span> <span class="st">"manifest"</span>,</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">  <span class="dt">samplesheet_path =</span> <span class="st">"~/Documents/nf-sc/refs/SampleSheet.tsv"</span></a>
 <a class="sourceLine" id="cb6-5" data-line-number="5">)</a></code></pre></div>
-<p>══ Retrieving sample metadata ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════ Reading ~/Documents/ms-sc/refs/sample_metadata.tsv<br>
+<p>══ Retrieving sample metadata ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════ Reading ~/Documents/nf-sc/refs/SampleSheet.tsv<br>
 Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; ✔ Twenty metadata variables loaded for individual='MS542'</code></pre>
+<pre><code>#&gt; ✔ Nineteen metadata variables loaded for manifest='sisos'</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; individual: MS542 (factor)</code></pre>
+<pre><code>#&gt; individual: C54 (factor)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; batch: 2 (integer)</code></pre>
+<pre><code>#&gt; group: Control (factor)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; group: High (factor)</code></pre>
+<pre><code>#&gt; diagnosis: Control (factor)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; diagnosis: MS (factor)</code></pre>
+<pre><code>#&gt; coverage: High (factor)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; coverage: Low (factor)</code></pre>
+<pre><code>#&gt; sex: M (factor)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; batches: 1 (integer)</code></pre>
+<pre><code>#&gt; age: 66 (integer)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; sex: F (factor)</code></pre>
+<pre><code>#&gt; PMI: 16 (integer)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; age: 76 (integer)</code></pre>
+<pre><code>#&gt; duration: NA (integer)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; PMI: 12 (integer)</code></pre>
+<pre><code>#&gt; capdate: 20180806 (integer)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; duration: 35 (integer)</code></pre>
+<pre><code>#&gt; prepdate: 20180807 (integer)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; capdate: 20181030 (integer)</code></pre>
+<pre><code>#&gt; seqdate: 201808 (integer)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; prepdate: 20181031 (integer)</code></pre>
+<pre><code>#&gt; nucleicount: 1.45 (numeric)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; seqdate: 201811 (integer)</code></pre>
+<pre><code>#&gt; cdnaconc: 0.408 (numeric)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; nucleicount: 1.96 (numeric)</code></pre>
+<pre><code>#&gt; libraryconc: 11.3 (numeric)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; cdnaconc: 0.584 (numeric)</code></pre>
+<pre><code>#&gt; MLS: 425 (integer)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; libraryconc: 13.1 (numeric)</code></pre>
+<pre><code>#&gt; RIN: 3.8 (numeric)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; MLS: 394 (integer)</code></pre>
+<pre><code>#&gt; ap: Anterior (factor)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; RIN: 5.3 (numeric)</code></pre>
+<pre><code>#&gt; aplevel: 1 (integer)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; ap: Posterior (factor)</code></pre>
-<p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; aplevel: 2 (integer)</code></pre>
+<pre><code>#&gt; manifest: sisos (factor)</code></pre>
 <p>For downstream analyses it’s important that the variable classes are correctly specified. Carefully inspect the metadata classes in brackets. In the above example we see that the <em>batch</em>, <em>capdate</em>, <em>prepdate</em>, <em>seqdate</em>, and <em>aplevel</em> were imported as <em>integer</em> rather than <em>factor</em> variables. Let’s correct this by reloading the metadata, this time specifying the correct variable classes for these variables: -</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">var_classes &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(</a>
-<a class="sourceLine" id="cb28-2" data-line-number="2">  <span class="dt">batch =</span> <span class="st">"factor"</span>,</a>
-<a class="sourceLine" id="cb28-3" data-line-number="3">  <span class="dt">capdate =</span> <span class="st">"factor"</span>,</a>
-<a class="sourceLine" id="cb28-4" data-line-number="4">  <span class="dt">prepdate =</span> <span class="st">"factor"</span>,</a>
-<a class="sourceLine" id="cb28-5" data-line-number="5">  <span class="dt">seqdate =</span> <span class="st">"factor"</span>,</a>
-<a class="sourceLine" id="cb28-6" data-line-number="6">  <span class="dt">aplevel =</span> <span class="st">"factor"</span></a>
-<a class="sourceLine" id="cb28-7" data-line-number="7">)</a>
-<a class="sourceLine" id="cb28-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb28-9" data-line-number="9">metadata &lt;-<span class="st"> </span><span class="kw"><a href="../reference/retrieve_metadata.html">retrieve_metadata</a></span>(</a>
-<a class="sourceLine" id="cb28-10" data-line-number="10">  <span class="dt">unique_id =</span> <span class="st">"MS542"</span>,</a>
-<a class="sourceLine" id="cb28-11" data-line-number="11">  <span class="dt">id_colname =</span> <span class="st">"individual"</span>,</a>
-<a class="sourceLine" id="cb28-12" data-line-number="12">  <span class="dt">samplesheet_path =</span> <span class="st">"~/Documents/ms-sc/refs/sample_metadata.tsv"</span>,</a>
-<a class="sourceLine" id="cb28-13" data-line-number="13">  <span class="dt">colClasses =</span> var_classes</a>
-<a class="sourceLine" id="cb28-14" data-line-number="14">)</a></code></pre></div>
-<p>══ Retrieving sample metadata ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════ Reading ~/Documents/ms-sc/refs/sample_metadata.tsv<br>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">var_classes &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(</a>
+<a class="sourceLine" id="cb27-2" data-line-number="2">  <span class="dt">batch =</span> <span class="st">"factor"</span>,</a>
+<a class="sourceLine" id="cb27-3" data-line-number="3">  <span class="dt">capdate =</span> <span class="st">"factor"</span>,</a>
+<a class="sourceLine" id="cb27-4" data-line-number="4">  <span class="dt">prepdate =</span> <span class="st">"factor"</span>,</a>
+<a class="sourceLine" id="cb27-5" data-line-number="5">  <span class="dt">seqdate =</span> <span class="st">"factor"</span>,</a>
+<a class="sourceLine" id="cb27-6" data-line-number="6">  <span class="dt">aplevel =</span> <span class="st">"factor"</span></a>
+<a class="sourceLine" id="cb27-7" data-line-number="7">)</a>
+<a class="sourceLine" id="cb27-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb27-9" data-line-number="9">metadata &lt;-<span class="st"> </span><span class="kw"><a href="../reference/read_metadata.html">read_metadata</a></span>(</a>
+<a class="sourceLine" id="cb27-10" data-line-number="10">  <span class="dt">unique_key =</span> <span class="st">"sisos"</span>,</a>
+<a class="sourceLine" id="cb27-11" data-line-number="11">  <span class="dt">key_colname =</span> <span class="st">"manifest"</span>,</a>
+<a class="sourceLine" id="cb27-12" data-line-number="12">  <span class="dt">samplesheet_path =</span> <span class="st">"~/Documents/nf-sc/refs/SampleSheet.tsv"</span>,</a>
+<a class="sourceLine" id="cb27-13" data-line-number="13">  <span class="dt">colClasses =</span> var_classes</a>
+<a class="sourceLine" id="cb27-14" data-line-number="14">)</a></code></pre></div>
+<p>══ Retrieving sample metadata ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════ Reading ~/Documents/nf-sc/refs/SampleSheet.tsv<br>
 Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; ✔ Twenty metadata variables loaded for individual='MS542'</code></pre>
+<pre><code>#&gt; ✔ Nineteen metadata variables loaded for manifest='sisos'</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; individual: MS542 (factor)</code></pre>
+<pre><code>#&gt; individual: C54 (factor)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; batch: 2 (integer)</code></pre>
+<pre><code>#&gt; group: Control (factor)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; group: High (factor)</code></pre>
+<pre><code>#&gt; diagnosis: Control (factor)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; diagnosis: MS (factor)</code></pre>
+<pre><code>#&gt; coverage: High (factor)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; coverage: Low (factor)</code></pre>
+<pre><code>#&gt; sex: M (factor)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; batches: 1 (integer)</code></pre>
+<pre><code>#&gt; age: 66 (integer)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; sex: F (factor)</code></pre>
+<pre><code>#&gt; PMI: 16 (integer)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; age: 76 (integer)</code></pre>
+<pre><code>#&gt; duration: NA (integer)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; PMI: 12 (integer)</code></pre>
+<pre><code>#&gt; capdate: 20180806 (integer)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; duration: 35 (integer)</code></pre>
+<pre><code>#&gt; prepdate: 20180807 (integer)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; capdate: 20181030 (integer)</code></pre>
+<pre><code>#&gt; seqdate: 201808 (integer)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; prepdate: 20181031 (integer)</code></pre>
+<pre><code>#&gt; nucleicount: 1.45 (numeric)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; seqdate: 201811 (integer)</code></pre>
+<pre><code>#&gt; cdnaconc: 0.408 (numeric)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; nucleicount: 1.96 (numeric)</code></pre>
+<pre><code>#&gt; libraryconc: 11.3 (numeric)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; cdnaconc: 0.584 (numeric)</code></pre>
+<pre><code>#&gt; MLS: 425 (integer)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; libraryconc: 13.1 (numeric)</code></pre>
+<pre><code>#&gt; RIN: 3.8 (numeric)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; MLS: 394 (integer)</code></pre>
+<pre><code>#&gt; ap: Anterior (factor)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; RIN: 5.3 (numeric)</code></pre>
+<pre><code>#&gt; aplevel: 1 (integer)</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; ap: Posterior (factor)</code></pre>
-<p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; aplevel: 2 (integer)</code></pre>
+<pre><code>#&gt; manifest: sisos (factor)</code></pre>
 <p>With the metadata imported with the correct variable classes, and the previously loaded sparse matrix, we can generate our SingleCellExperiment object: -</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb50-1" data-line-number="1">sce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/generate_sce.html">generate_sce</a></span>(mat, metadata)</a></code></pre></div>
-<p>══ Generating SingleCellExperiment ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════ Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" data-line-number="1">sce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/generate_sce.html">generate_sce</a></span>(mat, metadata)</a></code></pre></div>
+<p>══ Generating SingleCellExperiment ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════ Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
 <pre><code>#&gt; ✔ SingleCellExperiment object generated</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; 33694 gene x 737280 cells, annotated with 21 metadata variables (incl. barcode).</code></pre>
+<pre><code>#&gt; 33694 gene x 737280 cells, annotated with 20 metadata variables (incl. barcode).</code></pre>
 <p>The SingleCellExperiment object was succesfully created and we can now proceed with annotation.</p>
-<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb53-1" data-line-number="1">sce</a></code></pre></div>
-<p>class: SingleCellExperiment dim: 33694 737280 metadata(2): metadata scflow_steps assays(1): counts rownames(33694): ENSG00000000003 ENSG00000000005 … ENSG00000283118 ENSG00000283125 rowData names(1): ensembl_gene_id colnames(737280): MS542_2_AAACCTGAGAAACCAT-1 MS542_2_AAACCTGAGAAACCGC-1 … MS542_2_TTTGTCATCTTTAGTC-1 MS542_2_TTTGTCATCTTTCCTC-1 colData names(21): barcode individual … ap aplevel reducedDimNames(0): spikeNames(0):</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb51-1" data-line-number="1">sce</a></code></pre></div>
+<p>class: SingleCellExperiment dim: 33694 737280 metadata(2): metadata scflow_steps assays(1): counts rownames(33694): ENSG00000000003 ENSG00000000005 … ENSG00000283118 ENSG00000283125 rowData names(1): ensembl_gene_id colnames(737280): C54_Control_AAACCTGAGAAACCAT-1 C54_Control_AAACCTGAGAAACCGC-1 … C54_Control_TTTGTCATCTTTAGTC-1 C54_Control_TTTGTCATCTTTCCTC-1 colData names(20): barcode individual … aplevel manifest reducedDimNames(0): spikeNames(0):</p>
 </div>
 <div id="step-two-annotate-the-singlecellexperiment" class="section level2">
 <h2 class="hasAnchor">
 <a href="#step-two-annotate-the-singlecellexperiment" class="anchor"></a>Step two – Annotate the SingleCellExperiment</h2>
 <p>In <em>scflow</em> we specify all of our QC preferences and cutoffs with the <code>annotate_sce</code> command. This will also produce plots in the <a href="mailto:sce@metadata" class="email">sce@metadata</a> slot allowing rapid revision and optimization of QC parameters. Let’s start with the default parameters by simply providing the SingleCellExperiment object to the <code>annotate_sce</code> function: -</p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb54-1" data-line-number="1">sce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/annotate_sce.html">annotate_sce</a></span>(</a>
-<a class="sourceLine" id="cb54-2" data-line-number="2">  sce,</a>
-<a class="sourceLine" id="cb54-3" data-line-number="3">  <span class="dt">ensembl_mapping_file =</span> <span class="st">"~/Documents/ms-sc/src/ensembl-ids/ensembl_mappings.tsv"</span></a>
-<a class="sourceLine" id="cb54-4" data-line-number="4">)</a></code></pre></div>
-<p>══ Annotating SingleCellExperiment ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════ ══ Annotating SingleCellExperiment genes ════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════ Reading ~/Documents/ms-sc/src/ensembl-ids/ensembl_mappings.tsv<br>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb52-1" data-line-number="1">sce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/annotate_sce.html">annotate_sce</a></span>(</a>
+<a class="sourceLine" id="cb52-2" data-line-number="2">  sce,</a>
+<a class="sourceLine" id="cb52-3" data-line-number="3">  <span class="dt">ensembl_mapping_file =</span> <span class="st">"~/Documents/ms-sc/src/ensembl-ids/ensembl_mappings.tsv"</span></a>
+<a class="sourceLine" id="cb52-4" data-line-number="4">)</a></code></pre></div>
+<p>══ Annotating SingleCellExperiment ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════ ══ Annotating SingleCellExperiment genes ════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════ Reading ~/Documents/ms-sc/src/ensembl-ids/ensembl_mappings.tsv<br>
 Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
 <pre><code>#&gt; ℹ Note: not all ensembl_ids were found (700/33694 not found).</code></pre>
-<p>── Annotating SingleCellExperiment cells ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
+<p>── Annotating SingleCellExperiment cells ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
 <pre><code>#&gt; ✔ SingleCellExperiment cells were successfully annotated with: </code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
 <pre><code>#&gt; ● total_counts
@@ -261,18 +257,18 @@ Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad f
 #&gt; ● qc_metric_n_cells_expressing
 #&gt; ● qc_metric_is_expressive
 #&gt; ● qc_metric_gene_passed</code></pre>
-<p>══ Generating QC plots for SingleCellExperiment ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════ Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
+<p>══ Generating QC plots for SingleCellExperiment ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════ Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
 <pre><code>#&gt; Generating QC plots and appending to metadata.</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
 <pre><code>#&gt; Generating QC summary table and appending to metadata.</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span> Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
 <p>A list of QC plots are available to browse in the <code>sce@metadata$qc_plots</code>, e.g.</p>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb62-1" data-line-number="1">sce<span class="op">@</span>metadata<span class="op">$</span>qc_plots<span class="op">$</span>number_genes_vs_count_depth</a></code></pre></div>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" data-line-number="1">sce<span class="op">@</span>metadata<span class="op">$</span>qc_plots<span class="op">$</span>number_genes_vs_count_depth</a></code></pre></div>
 <p><img src="basic-qc_files/figure-html/unnamed-chunk-8-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>At this stage we regenerate the SingleCellExperiment with <code>generate_sce</code> and re-annotate with <code>annotate_sce</code> until satisfied the QC cutoffs are suitable.</p>
 <p>The next step is to filter the SingleCellExperiment with <code>filter_sce</code>: -</p>
-<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb63-1" data-line-number="1">sce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/filter_sce.html">filter_sce</a></span>(sce)</a></code></pre></div>
-<p>══ Filtering SingleCellExperiment ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════ Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb61-1" data-line-number="1">sce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/filter_sce.html">filter_sce</a></span>(sce)</a></code></pre></div>
+<p>══ Filtering SingleCellExperiment ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════ Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
 <pre><code>#&gt; Pre-filtered SingleCellExperiment contains 33694 genes and 737280 cells.</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
 <pre><code>#&gt; ✔ ✔ 13/13 mitochondrial genes were dropped. </code></pre>
@@ -281,34 +277,34 @@ Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad f
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
 <pre><code>#&gt; ✔ ✔ 700/700 unmapped genes were dropped. </code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; ✔ ✔ 18109 non-expressive genes were dropped. </code></pre>
+<pre><code>#&gt; ✔ ✔ 18462 non-expressive genes were dropped. </code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; ✔ ✔ 15442/33694 genes passed QC. </code></pre>
+<pre><code>#&gt; ✔ ✔ 15095/33694 genes passed QC. </code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; ✔ ✔ 723865 cells failed QC and were dropped: - </code></pre>
+<pre><code>#&gt; ✔ ✔ 726439 cells failed QC and were dropped: - </code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span> Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; Library size QC: PASS: 13494/FAIL: 723786
-#&gt; Number of genes QC: PASS: 55616/FAIL: 681664
-#&gt; Mitochondria counts proportion QC: PASS: 487990/FAIL: 45225
-#&gt; Ribosomal counts proportion QC: PASS: 533215/FAIL: 0
-#&gt; Overall cell QC: PASS: 13415/FAIL: 723865</code></pre>
+<pre><code>#&gt; Library size QC: PASS: 12504/FAIL: 724776
+#&gt; Number of genes QC: PASS: 23320/FAIL: 713960
+#&gt; Mitochondria counts proportion QC: PASS: 396294/FAIL: 75835
+#&gt; Ribosomal counts proportion QC: PASS: 472129/FAIL: 0
+#&gt; Overall cell QC: PASS: 10841/FAIL: 726439</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; ✔ SingleCellExperiment was filtered successfully to ✔ 15442 genes and ✔ 13415 cells. </code></pre>
+<pre><code>#&gt; ✔ SingleCellExperiment was filtered successfully to ✔ 15095 genes and ✔ 10841 cells. </code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span> Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
 </div>
 <div id="finding-singlets-and-discarding-multiplets" class="section level2">
 <h2 class="hasAnchor">
 <a href="#finding-singlets-and-discarding-multiplets" class="anchor"></a>Finding singlets and discarding multiplets</h2>
 <p>At this stage we may wish to identify singlets in the SingleCellExperiment and discard any multiplets. In <em>scflow</em> we simply run <code>find_singlets</code> and specify our preferred multiplet identification algorithm. Here we will use <code>doubletfinder</code>: -</p>
-<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb73-1" data-line-number="1">knitr<span class="op">::</span>opts_chunk<span class="op">$</span><span class="kw">set</span>(<span class="dt">echo =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb73-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb73-3" data-line-number="3">sce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/find_singlets.html">find_singlets</a></span>(sce, <span class="st">"doubletfinder"</span>, <span class="dt">pK =</span> <span class="fl">0.005</span>, <span class="dt">vars_to_regress_out =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"nCount_RNA"</span>, <span class="st">"pc_mito"</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb71-1" data-line-number="1">knitr<span class="op">::</span>opts_chunk<span class="op">$</span><span class="kw">set</span>(<span class="dt">echo =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb71-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb71-3" data-line-number="3">sce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/find_singlets.html">find_singlets</a></span>(sce, <span class="st">"doubletfinder"</span>, <span class="dt">pK =</span> <span class="fl">0.005</span>, <span class="dt">vars_to_regress_out =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"nCount_RNA"</span>, <span class="st">"pc_mito"</span>))</a></code></pre></div>
 <p>Now we can filter out these multiplets with <code>filter_sce</code>: -</p>
-<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb74-1" data-line-number="1">sce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/filter_sce.html">filter_sce</a></span>(sce)</a></code></pre></div>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb72-1" data-line-number="1">sce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/filter_sce.html">filter_sce</a></span>(sce)</a></code></pre></div>
 <p>Finally we produce a report with <code>report_qc_sce</code> (this takes a few minutes): -</p>
-<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb75-1" data-line-number="1">sce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/report_qc_sce.html">report_qc_sce</a></span>(sce)</a></code></pre></div>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb73-1" data-line-number="1">sce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/report_qc_sce.html">report_qc_sce</a></span>(sce)</a></code></pre></div>
 <p>And save our SingleCellExperiment: -</p>
-<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb76-1" data-line-number="1"><span class="kw"><a href="../reference/write_sce.html">write_sce</a></span>(sce, <span class="st">"../test/testsce"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb74-1" data-line-number="1"><span class="kw"><a href="../reference/write_sce.html">write_sce</a></span>(sce, <span class="st">"../test/testsce"</span>)</a></code></pre></div>
 </div>
   </div>
 

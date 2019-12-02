@@ -60,7 +60,8 @@ Imports:
     limma,
     methods,
     paletteer,
-    scater
+    scater,
+    leaflet
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,

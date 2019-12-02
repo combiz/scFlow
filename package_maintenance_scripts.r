@@ -88,7 +88,7 @@ use_package("limma")
 use_package("methods")
 use_package("paletteer")
 use_package("scater")
-
+use_package("leaflet")
 
 use_vignette("basic-qc", title = "Guided tutorial for sample quality control")
 
@@ -105,6 +105,7 @@ use_vignette("basic-qc", title = "Guided tutorial for sample quality control")
 pkgdown::build_site()
 
 use_version()
+build()
 
 #########################
 use_package("purrr")

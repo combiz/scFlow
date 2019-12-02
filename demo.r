@@ -12,7 +12,7 @@ matpath <- "~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix"
 #matpath <- "~/Documents/testmatrices/enriched"
 
 ensembl_fp <- "~/Documents/ms-sc/src/ensembl-ids/ensembl_mappings.tsv"
-samplesheet_fp <- "~/Documents/nfl/refs/SampleSheet.tsv"
+samplesheet_fp <- "~/Documents/nf-sc/refs/SampleSheet.tsv"
 ctd_fp <- "~/Documents/nf-sc/refs/ctd/"
 
 ##  ............................................................................
@@ -59,42 +59,3 @@ totaltime <- Sys.time() - x
 
 print(totaltime)
 alarm()
-
-##
-
-plot_umap_with_feature(sce, feature_dim = "cluster_celltype", reduced_dim = "UMAP", label_clusters = TRUE, size = 1)
-plot_umap_with_feature(sce, feature_dim = "cluster_celltype", reduced_dim = "tSNE", label_clusters = TRUE, size = 1)
-plot_umap_with_feature(sce, feature_dim = "cluster_celltype", reduced_dim = "PCA", label_clusters = TRUE, size = 1)
-
-
-
-# 3D
-
-
-umap_res <- SingleCellExperiment::reducedDim(sce, "UMAP3D")
-
-pal <- colorFactor(palette = "Accent", domain = sce$cluster_celltype.y)
-celltype_pal <- pal(sce$cluster_celltype.y)
-
-threejs::scatterplot3js(
-  x = umap_res[, 1],
-  y = umap_res[, 2],
-  z = umap_res[, 3],
-  color = celltype_pal,
-  axis = FALSE,
-  num.ticks = NULL,
-  stroke = "#4682b4",
-  size = .01
-)
-
-
-plotly::plot_ly(
-  x = umap_res[, 1],
-  y = umap_res[, 2],
-  z = umap_res[, 3],
-  color = celltype_pal,
-  name = sce$cluster_celltype.y,
-  type = "scatter3d",
-  mode = "markers",
-  size = 0.1
-)

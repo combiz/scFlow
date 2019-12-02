@@ -15,6 +15,7 @@
 #' @param sce a SingleCellExperiment object
 #' @param ... 'pK' passed here will override parameter sweep,
 #' 'doublet_rate' passed here will override the default of 7.5\%
+#' a doublet_rate of 0 is a special case that automates the estimated dr
 #'
 #' @return sce a SingleCellExperiment object annotated for singlets
 #'
@@ -41,7 +42,7 @@ run_doubletfinder <- function(sce, ...) {
     pca_dims = 10,
     vars_to_regress_out = "nCount_RNA",
     var_features = 2000,
-    doublet_rate = 0.075,
+    doublet_rate = 0,
     dpk = 8 # estimated doublets per thousand cells
   )
   inargs <- list(...)
@@ -65,7 +66,7 @@ run_doubletfinder <- function(sce, ...) {
   )
 
   # calculate estimated doublet rate
-  if(tolower(fargs$doublet_rate) == "auto") {
+  if(fargs$doublet_rate == 0) {
     abs_dpk <- (dim(sce_ss)[[2]] / 1000) * fargs$dpk
     fargs$doublet_rate <-  abs_dpk / 1000
     cli::cli_text(

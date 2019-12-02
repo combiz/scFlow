@@ -15,5 +15,8 @@ rds_l list of objects imported with readRDS
 \description{
 Helper function to read rds files into a list
 }
+\seealso{
+Other helper functions: \code{\link{.append_celltype_plots_sce}}
+}
 \concept{helper functions}
 \keyword{internal}
