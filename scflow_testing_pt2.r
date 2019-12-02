@@ -13,7 +13,7 @@ sce <- read_sce("../junk/endosce")
 #sce <- map_celltypes_sce(sce, ctd_folder = ctd_path)
 #table(sce$cluster_celltype)
 
-
+reduce_dims_sce()
 sce_all <- sce
 
 sce <- sce_all[, sce$cluster_celltype == "Endo"]
@@ -46,3 +46,5 @@ args$random_effects_var = NULL
 args$fc_threshold = 1.1
 args$pval_cutoff = 0.05
 args$re_vars = NULL
+
+

@@ -41,12 +41,13 @@ run_doubletfinder <- function(sce, ...) {
     pca_dims = 10,
     vars_to_regress_out = "nCount_RNA",
     var_features = 2000,
-    doublet_rate = 0.075
+    doublet_rate = 0.075,
+    dpk = 8 # estimated doublets per thousand cells
   )
   inargs <- list(...)
   fargs[names(inargs)] <- inargs #override defaults if provided
 
-  sce@metadata$doubletfinder_params <- fargs
+
 
   # add citations and print
   sce <- .append_citation_sce(sce, key = c("doubletfinder", "seurat"))
@@ -63,8 +64,22 @@ run_doubletfinder <- function(sce, ...) {
     filter_cells = TRUE
   )
 
+  # calculate estimated doublet rate
+  if(tolower(fargs$doublet_rate) == "auto") {
+    abs_dpk <- (dim(sce_ss)[[2]] / 1000) * fargs$dpk
+    fargs$doublet_rate <-  abs_dpk / 1000
+    cli::cli_text(
+      "Estimating a doublet rate of {.var {fargs$doublet_rate}} ",
+      "based on a doublets-per-thousand (dpk) increment of {.var {fargs$dpk}}")
+  } else {
+    fargs$dpk <- NULL
+  }
+
+  sce@metadata$doubletfinder_params <- fargs
+
   cat(cli::cli_text(
-    "Selected {.var {dim(sce_ss)[[2]]}} cells and {.var {dim(sce_ss)[[1]]}} genes"),
+    "Selected {.var {dim(sce_ss)[[2]]}} cells ",
+    "and {.var {dim(sce_ss)[[1]]}} genes"),
     "\r\n")
 
   # Pre-process Seurat object -----------------------------------------------

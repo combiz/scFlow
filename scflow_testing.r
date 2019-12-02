@@ -37,7 +37,7 @@ ss_classes <- c(
 metadata <- read_metadata(
   unique_key = "hajov",
   key_colname = "manifest",
-  samplesheet_path = "~/Documents/nfl/refs/SampleSheet.tsv",
+  samplesheet_path = "~/Documents/nf-sc/refs/SampleSheet.tsv",
   colClasses = ss_classes
 )
 
