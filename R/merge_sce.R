@@ -13,7 +13,7 @@
 #' @importFrom SingleCellExperiment counts
 #' @importFrom Matrix colSums rowSums
 #' @importFrom SummarizedExperiment rowData colData
-#' @importFrom dplyr left_join union
+#' @importFrom dplyr left_join union rename
 #' @importFrom scater calculateQCMetrics
 #' @importFrom english words
 #' @importFrom tools toTitleCase
@@ -66,7 +66,8 @@ merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
 
   new_rd <- map_ensembl_gene_id(
     names(sce),
-    mappings_filepath = ensembl_mapping_file)
+    mappings_filepath = ensembl_mapping_file) %>%
+    dplyr::rename(gene = external_gene_name)
 
   SummarizedExperiment::rowData(sce) <- dplyr::left_join(
     as.data.frame(SummarizedExperiment::rowData(sce)),
