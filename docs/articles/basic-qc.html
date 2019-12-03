@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scflow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
 
@@ -97,13 +97,13 @@
 <div id="step-one---import-the-matrix-and-metadata" class="section level2">
 <h2 class="hasAnchor">
 <a href="#step-one---import-the-matrix-and-metadata" class="anchor"></a>Step one - import the matrix and metadata</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">mat &lt;-<span class="st"> </span><span class="kw"><a href="../reference/read_sparse_matrix.html">read_sparse_matrix</a></span>(<span class="st">"~/Documents/nf-sc/data/raw/MS/BATCH2_outputs/MS542/outs/raw_feature_bc_matrix"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">mat &lt;-<span class="st"> </span><span class="kw"><a href="../reference/read_sparse_matrix.html">read_sparse_matrix</a></span>(<span class="st">"~/Documents/nf-sc/data/raw/MS/BATCH1_outputs/C54/outs/raw_feature_bc_matrix"</span>)</a></code></pre></div>
 <p>══ Reading feature-barcode matrix ═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════ Error : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; Reading: ~/Documents/nf-sc/data/raw/MS/BATCH2_outputs/MS542/outs/raw_feature_bc_matrix/barcodes.tsv.gz</code></pre>
+<pre><code>#&gt; Reading: ~/Documents/nf-sc/data/raw/MS/BATCH1_outputs/C54/outs/raw_feature_bc_matrix/barcodes.tsv.gz</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; Reading: ~/Documents/nf-sc/data/raw/MS/BATCH2_outputs/MS542/outs/raw_feature_bc_matrix/features.tsv.gz</code></pre>
+<pre><code>#&gt; Reading: ~/Documents/nf-sc/data/raw/MS/BATCH1_outputs/C54/outs/raw_feature_bc_matrix/features.tsv.gz</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; Reading: ~/Documents/nf-sc/data/raw/MS/BATCH2_outputs/MS542/outs/raw_feature_bc_matrix/matrix.mtx.gz</code></pre>
+<pre><code>#&gt; Reading: ~/Documents/nf-sc/data/raw/MS/BATCH1_outputs/C54/outs/raw_feature_bc_matrix/matrix.mtx.gz</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
 <pre><code>#&gt; ✔ Imported sparse matrix: 737280 cols x 33694 rows.</code></pre>
 <p>Next we retrieve the metadata by pointing to a Sample Sheet and specifying a unique identifier (<code>unique_id</code>) in a specific column (<code>id_colname</code>): -</p>
@@ -277,19 +277,19 @@ Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad f
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
 <pre><code>#&gt; ✔ ✔ 700/700 unmapped genes were dropped. </code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; ✔ ✔ 18462 non-expressive genes were dropped. </code></pre>
+<pre><code>#&gt; ✔ ✔ 19338 non-expressive genes were dropped. </code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; ✔ ✔ 15095/33694 genes passed QC. </code></pre>
+<pre><code>#&gt; ✔ ✔ 14234/33694 genes passed QC. </code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; ✔ ✔ 726439 cells failed QC and were dropped: - </code></pre>
+<pre><code>#&gt; ✔ ✔ 728358 cells failed QC and were dropped: - </code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span> Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; Library size QC: PASS: 12504/FAIL: 724776
-#&gt; Number of genes QC: PASS: 23320/FAIL: 713960
-#&gt; Mitochondria counts proportion QC: PASS: 396294/FAIL: 75835
-#&gt; Ribosomal counts proportion QC: PASS: 472129/FAIL: 0
-#&gt; Overall cell QC: PASS: 10841/FAIL: 726439</code></pre>
+<pre><code>#&gt; Library size QC: PASS: 9149/FAIL: 728131
+#&gt; Number of genes QC: PASS: 14255/FAIL: 723025
+#&gt; Mitochondria counts proportion QC: PASS: 389312/FAIL: 56330
+#&gt; Ribosomal counts proportion QC: PASS: 445642/FAIL: 0
+#&gt; Overall cell QC: PASS: 8922/FAIL: 728358</code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
-<pre><code>#&gt; ✔ SingleCellExperiment was filtered successfully to ✔ 15095 genes and ✔ 10841 cells. </code></pre>
+<pre><code>#&gt; ✔ SingleCellExperiment was filtered successfully to ✔ 14234 genes and ✔ 8922 cells. </code></pre>
 <p>Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span> Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad file descriptor) <span class="citation">@client.c:149</span></p>
 </div>
 <div id="finding-singlets-and-discarding-multiplets" class="section level2">
