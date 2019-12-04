@@ -9,3 +9,5 @@
 ^codecov\.yml$
 ^appveyor\.yml$
 ^data-raw$
+^doc$
+^Meta$

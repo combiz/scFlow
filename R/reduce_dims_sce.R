@@ -66,7 +66,7 @@ reduce_dims_sce <- function(sce,
   cds <- .sce_to_cds(sce)
 
   message(sprintf("Reducing Dimensions with PCA"))
-  if(!is.null(vars_to_regress_out)){
+  if(!is.null(vars_to_regress_out)) {
     message(sprintf("Regressing out: %s", res_mod_formula_str))
   }
   cds <- monocle3::preprocess_cds(
@@ -74,7 +74,9 @@ reduce_dims_sce <- function(sce,
     num_dim = pca_dims,
     residual_model_formula_str = res_mod_formula_str
   )
-  SingleCellExperiment::reducedDim(sce, "PCA") <- cds@reducedDims$PCA
+  #SingleCellExperiment::reducedDim(sce, "PCA") <- cds@reducedDims$PCA
+  SingleCellExperiment::reducedDim(sce, "PCA") <-
+    SingleCellExperiment::reducedDim(cds, "PCA")
 
   for (reddim_method in reduction_methods) {
 
@@ -87,13 +89,16 @@ reduce_dims_sce <- function(sce,
         preprocess_method = "PCA",
         reduction_method = "tSNE"
       )
-      SingleCellExperiment::reducedDim(sce, "tSNE") <- cds@reducedDims$tSNE
+      #SingleCellExperiment::reducedDim(sce, "tSNE") <- cds@reducedDims$tSNE
+      SingleCellExperiment::reducedDim(sce, "tSNE") <-
+        SingleCellExperiment::reducedDim(cds, "tSNE")
     }
 
     # Reduce dimensions with UMAP
     if (reddim_method %in% c("UMAP", "UMAP3D")) {
 
-      mat <- as.matrix(cds@reducedDims$PCA)
+      #mat <- as.matrix(cds@reducedDims$PCA)
+      mat <- as.matrix(SingleCellExperiment::reducedDim(cds, "PCA"))
 
       if(reddim_method == "UMAP3D"){
         fargs$n_components <- 3
@@ -106,7 +111,7 @@ reduce_dims_sce <- function(sce,
       )
 
       row.names(umap_res) <- colnames(cds)
-      SingleCellExperiment::reducedDim(cds, reddim_method) <- umap_res
+      #SingleCellExperiment::reducedDim(cds, reddim_method) <- umap_res
       SingleCellExperiment::reducedDim(sce, reddim_method) <- umap_res
 
       if(reddim_method == "UMAP3D") {

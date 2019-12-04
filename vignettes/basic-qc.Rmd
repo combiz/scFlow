@@ -50,7 +50,7 @@ metadata <- read_metadata(
   unique_key = "sisos",
   key_colname = "manifest",
   samplesheet_path = "~/Documents/nf-sc/refs/SampleSheet.tsv",
-  colClasses = var_classes
+  col_classes = var_classes
 )
 ```
 
@@ -83,7 +83,7 @@ A list of QC plots are available to browse in the `sce@metadata$qc_plots`, e.g.
 sce@metadata$qc_plots$number_genes_vs_count_depth
 ```
 
-At this stage we regenerate the SingleCellExperiment with `generate_sce` and re-annotate with `annotate_sce` until satisfied the QC cutoffs are suitable.  
+After running `annotate_sce` we may examine the plots and assess whether the applied thresholds are sensible for the sample.  The effects of different parameters can be explored by iterating through the above `generate_sce` and `annotate_sce` functions until satisfied with the settings.
 
 The next step is to filter the SingleCellExperiment with `filter_sce`: -
 
@@ -110,7 +110,7 @@ sce <- filter_sce(sce)
 Finally we produce a report with `report_qc_sce` (this takes a few minutes): -
 
 ```{r, results = 'asis', eval = FALSE, include = TRUE}
-sce <- report_qc_sce(sce)
+report_qc_sce(sce)
 ```
 
 And save our SingleCellExperiment: -

@@ -45,9 +45,6 @@ report_qc_sce <- function(sce,
     metadata_tmp_path
   )
 
-  #biblio_tmp_path <- file.path(tempdir(), "scflow_references.bib")
-  #bib2df::df2bib(sce@metadata$citations, biblio_tmp_path)
-
   krd <- file.path(tempdir(), "krdqc")
   intd <- file.path(tempdir(), "idqc")
   dir.create(krd, showWarnings = FALSE)
@@ -74,6 +71,8 @@ report_qc_sce <- function(sce,
     "{cli::col_green(symbol$tick)} QC report succesfully generated: ",
     "{.file {file.path(report_folder_path, 'qc_report_scflow.html')}}")
   )
+
+  return(sce)
 
 }
 
