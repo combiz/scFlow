@@ -16,7 +16,8 @@ seu a seurat object
 temp fn
 }
 \seealso{
-Other annotation functions: \code{\link{annotate_sce_cells}},
+Other annotation functions: \code{\link{annotate_merged_sce}},
+  \code{\link{annotate_sce_cells}},
   \code{\link{annotate_sce_genes}},
   \code{\link{annotate_sce}}, \code{\link{filter_sce}},
   \code{\link{find_singlets}}, \code{\link{generate_sce}},

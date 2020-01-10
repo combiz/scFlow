@@ -7,9 +7,9 @@
 library(scflow)
 
 # v2 chemistry
-matpath <- "~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix"
+#matpath <- "~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix"
 # v3 chemistry, enriched
-#matpath <- "~/Documents/testmatrices/enriched"
+matpath <- "~/Documents/testmatrices/enriched"
 
 ensembl_fp <- "~/Documents/ms-sc/src/ensembl-ids/ensembl_mappings.tsv"
 samplesheet_fp <- "~/Documents/nf-sc/refs/SampleSheet.tsv"
@@ -42,6 +42,7 @@ report_qc_sce(sce)
 totaltime <- Sys.time() - x
 
 print(totaltime)
+
 alarm()
 
 ##  ............................................................................

@@ -48,13 +48,22 @@ pseudobulk_sce <- function(sce,
     sep = "_"
   )
 
-  pb_matrix <- scater::sumCountsAcrossCells(
-    sce,
-    sce$pseudobulk_id,
-    exprs_values = assay_name
-  )
+  #pb_matrix <- scater::sumCountsAcrossCells(
+  #  sce,
+  #  sce$pseudobulk_id,
+  #  exprs_values = assay_name
+  #)
 
-  rownames(pb_matrix) <- SummarizedExperiment::rowData(sce)$ensembl_gene_id
+  pb_matrix_l <- parallel::mclapply(
+    unique(sce$manifest), 
+    #function(x) {Matrix::rowSums(SingleCellExperiment::counts(sce[, sce$manifest == x]))},
+    function(x) {Matrix::rowSums(sce[, sce$manifest == x]@assays$data[[assay_name]])}, 
+    mc.cores = detectCores() - 1)
+
+  pb_matrix <- Reduce(cbind, pb_matrix_l)
+  colnames(pb_matrix) <- unique(sce$pseudobulk_id)
+
+  #rownames(pb_matrix) <- SummarizedExperiment::rowData(sce)$ensembl_gene_id
 
   # create lookup table for cellnumbers by individual/cluster
   n_lookup <- data.frame(SummarizedExperiment::colData(sce)) %>%

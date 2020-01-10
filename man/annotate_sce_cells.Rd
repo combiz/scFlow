@@ -34,6 +34,7 @@ Calculates the following QC metrics:
 }
 \seealso{
 Other annotation functions: \code{\link{.preprocess_seurat_object}},
+  \code{\link{annotate_merged_sce}},
   \code{\link{annotate_sce_genes}},
   \code{\link{annotate_sce}}, \code{\link{filter_sce}},
   \code{\link{find_singlets}}, \code{\link{generate_sce}},

@@ -3,6 +3,7 @@
 export(.doublet_finder_plot_dim_red)
 export(.doublet_finder_plot_param_sweep)
 export(.sce_to_cds)
+export(annotate_merged_sce)
 export(annotate_sce)
 export(annotate_sce_cells)
 export(annotate_sce_genes)

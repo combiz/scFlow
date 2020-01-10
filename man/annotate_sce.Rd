@@ -94,6 +94,7 @@ Gene-level annotations
 
 \seealso{
 Other annotation functions: \code{\link{.preprocess_seurat_object}},
+  \code{\link{annotate_merged_sce}},
   \code{\link{annotate_sce_cells}},
   \code{\link{annotate_sce_genes}},
   \code{\link{filter_sce}}, \code{\link{find_singlets}},

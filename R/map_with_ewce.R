@@ -26,6 +26,11 @@ map_celltypes_sce <- function(sce,
                               clusters_colname = "clusters") {
 
   assertthat::assert_that(dir.exists(ctd_folder))
+  assertthat::assert_that(
+    clusters_colname %in% names(SummarizedExperiment::colData(sce)),
+    msg = "clusters_colname missing from colData"
+    )
+
   l_ctd <- .read_rds_files_to_list(ctd_folder)
 
   if(dim(sce)[[2]] > cells_to_sample) {
