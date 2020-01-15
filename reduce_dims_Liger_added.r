@@ -147,6 +147,7 @@ reduce_dims_sce <- function(sce,
 	# Reduce dimensions with Liger
 	if (reddim_method == "Liger") {
 		ligerex <- liger_reduce_dims(ligerex)
+		SingleCellExperiment::reducedDim(sce, "Liger") <- ligerex$H.norm
   }
 
   return(sce)
