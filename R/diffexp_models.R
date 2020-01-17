@@ -365,12 +365,21 @@ perform_de <- function(sce,
   if(!is.null(prefix)) {
     dependent_var <- purrr::map_chr(
       dependent_var, ~ paste0(prefix, .))
-    confounding_vars <- purrr::map_chr(
-      confounding_vars, ~ paste0(prefix, .))
+    if(!is.null(confounding_vars)) {
+      confounding_vars <- purrr::map_chr(
+        confounding_vars, ~ paste0(prefix, .))
+    }
     if(!is.null(random_effects_var)){
       random_effects_var <- purrr::map_chr(
         random_effects_var, ~ paste0(prefix, .))
     }
+  }
+
+  # allows a model without confounding variables
+  if (!is.null(confounding_vars)) {
+    plus_or_blank <- " + "
+  } else {
+    plus_or_blank <- ""
   }
 
   if (!is.null(random_effects_var)) {
@@ -381,17 +390,20 @@ perform_de <- function(sce,
 
     model_formula <- as.formula(
       sprintf(
-        "~ %s + %s + %s",
+        "~ %s + %s%s %s",
         dependent_var,
         random_effects_var,
+        plus_or_blank,
         paste(confounding_vars, collapse = " + ")
       )
     )
   } else {
+
     model_formula <- as.formula(
       sprintf(
-        "~ %s + %s",
+        "~ %s%s%s",
         dependent_var,
+        plus_or_blank,
         paste(confounding_vars, collapse = " + ")
       )
     )

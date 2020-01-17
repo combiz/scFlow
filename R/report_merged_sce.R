@@ -1,43 +1,9 @@
-
-
-#' helper fn to generate a pseudobulk sce for post-merge qc
-#'
-#' @param sce a singlecellexperiment object
-#' @param unique_id_var the colData variable identifying unique samples
-#' @keywords internal
-.generate_pbsce_for_whole_samples <- function(sce,
-                                              unique_id_var = "manifest") {
-
-  pbsce <- pseudobulk_sce(
-    sce,
-    sample_var = unique_id_var,
-    celltype_var = unique_id_var
-    )
-
-  unique_id_var_names <- as.data.frame(SummarizedExperiment::colData(pbsce)) %>%
-    dplyr::select(!!unique_id_var)
-  colnames(pbsce) <- unique_id_var_names[, 1]
-
-  pbsce <- reduce_dims_sce(
-    pbsce,
-    vars_to_regress_out = c("n_cells"),
-    pca_dims = 5,
-    n_neighbors = 2,
-    reduction_methods = c("PCA", "UMAP", "UMAP3D")
-  )
-
-  return(pbsce)
-
-}
-
-
 ################################################################################
-#' Annotate a post-merge SingleCellExperiment with plots
+#' Generate plots and a QC report for a SingleCellExperiment
 #'
 #' @param sce a SingleCellExperiment object
-#' @param plot_vars the colData variable(s) to generate plots for
-#' @param unique_id_var the colData variable identifying unique samples
-#' @param facet_vars the colData variable(s) to facet/subset by
+#' @param report_folder_path folder path to save the report
+#' @param report_file filename for report (without an extension)
 #'
 #' @return sce a annotated SingleCellExperiment object
 #'
@@ -49,147 +15,56 @@
 #' @importFrom tools file_path_sans_ext
 #' @export
 #'
-annotate_merged_sce <- function(sce,
-                                plot_vars = c("total_features_by_counts",
-                                            "total_counts", "pc_mito",
-                                            "pc_ribo"),
-                                unique_id_var = "manifest",
-                                facet_vars = NULL) {
+report_merged_sce <- function(sce,
+                              report_folder_path = getwd(),
+                              report_file = "merged_report_scflow") {
 
-  plot_vars <- unique(
-    c("total_features_by_counts", "total_counts", "pc_mito", "pc_ribo",
-      plot_vars)
+  if(!class(sce) == "SingleCellExperiment"){
+    stop("expecting singlecellexperiment")
+  }
+
+  report_file <- tools::file_path_sans_ext(report_file)
+
+  cat(cli::rule(
+    "Generating merged QC report for SingleCellExperiment", line = 2),
+    "\r\n")
+
+  metadata_tmp_path <- file.path(tempdir(), "metadata.rds")
+
+  cli::cli_text("Writing temp files for report...")
+  saveRDS(
+    sce@metadata,
+    metadata_tmp_path
   )
 
-  # generate cell metadata plots
-  merged_plots_l <- list()
-  for(pv in plot_vars) {
-    merged_plots_l[[pv]][[pv]] <- .generate_merge_summary_plot(
-      sce,
-      plot_var = pv,
-      unique_id_var = unique_id_var,
-      facet_var = NULL,
-      plot_points = TRUE) # no facets
-    for(fv in facet_vars) {
-      plot_name <- paste(pv, fv, sep = "_vs_")
-      merged_plots_l[[pv]][[plot_name]] <- .generate_merge_summary_plot(
-        sce,
-        plot_var = pv,
-        unique_id_var = unique_id_var,
-        facet_var = fv,
-        plot_points = TRUE)
-    }
-  }
+  krd <- file.path(tempdir(), "krdqc")
+  intd <- file.path(tempdir(), "idqc")
+  dir.create(krd, showWarnings = FALSE)
+  dir.create(intd, showWarnings = FALSE)
 
-  sce@metadata$merged_plots <- merged_plots_l
+  cli::cli_text("Generating merged QC report...")
+  rmarkdown::render(
+    # for dev use file.path(getwd(),
+    # "inst/rmarkdown/templates/quality-control/skeleton/skeleton.Rmd")
+    system.file(
+      "rmarkdown/templates/merged-quality-control/skeleton/skeleton.Rmd",
+      package = "scflow"),
+    params = list(
+      metadata_path = metadata_tmp_path
+    ),
+    output_dir = report_folder_path,
+    output_file = report_file,
+    knit_root_dir = krd,
+    intermediates_dir = intd,
+    quiet = TRUE
+  )
 
-  # generate whole sample pseudobulk and plots
-  x <- Sys.time()
-  pbsce <- .generate_pbsce_for_whole_samples(sce, unique_id_var = unique_id_var)
-  print(Sys.time() - x)
-
-  # generate reduced dimension pseudobulk sample plots
-  sce@metadata$pseudobulk_plots <- list()
-  for (rd_method in SingleCellExperiment::reducedDimNames(pbsce)) {
-    p <- plot_umap_with_feature(
-      pbsce,
-      feature_dim = unique_id_var,
-      reduced_dim = rd_method,
-      size = 6,
-      alpha = 1, label_clusters = TRUE
-      )
-    sce@metadata$pseudobulk_plots[[rd_method]] <- p
-  }
-
-  # extend pseudobulk reducedDim coordinates to all cells and save to sce
-  for (rd_method in SingleCellExperiment::reducedDimNames(pbsce)) {
-    mat <- as.data.frame(SingleCellExperiment::reducedDim(pbsce, rd_method))
-    mat$id <- as.character(rownames(mat))
-    big_mat <- dplyr::left_join(data.frame("id" = as.character(sce[[unique_id_var]]),
-                                           stringsAsFactors = FALSE),
-                                mat,
-                                by = "id")
-    rownames(big_mat) <- sce$barcode
-    big_mat$id <- NULL
-    big_mat <- as.matrix(big_mat)
-    SingleCellExperiment::reducedDim(sce, paste0(rd_method, "_PB")) <- big_mat
-  }
+  cli::cli_text(c(
+    "{cli::col_green(symbol$tick)} merged QC report succesfully generated: ",
+    "{.file {file.path(report_folder_path, 'merged_qc_report_scflow.html')}}")
+  )
 
   return(sce)
 
 }
-
-#' helper fn to generate a merge summary plot for a SingleCellExperiment
-#'
-#' if plot_var is a factor, a bar plot is returned.
-#' if plot_var is.numeric, a violin plot is returned.
-#'
-#' @param sce a singlecellexperiment object
-#' @param plot_var the colData variable with values to plot
-#' @param unique_id_var the colData variable identifying unique samples
-#' @param facet_var the colData variable to facet/subset by
-#' @param plot_points if TRUE plot individual values for violin plots
-#' @keywords internal
-.generate_merge_summary_plot <- function(sce,
-                                         plot_var,
-                                         unique_id_var,
-                                         facet_var = NULL,
-                                         plot_points = FALSE) {
-
-  dt <- as.data.frame(SummarizedExperiment::colData(sce))
-  dt$plot_var <- dt[[plot_var]]
-  if(!is.null(facet_var)) dt$facet_var <- as.factor(dt[[facet_var]])
-
-  if(class(dt$plot_var) == "factor") {
-
-    p <- ggplot(dt, aes(x = plot_var)) +
-      geom_bar() +
-      scale_y_continuous(breaks = scales::pretty_breaks()) +
-      xlab(plot_var) +
-      theme_bw() +
-      theme(
-        text = element_text(size = 16),
-        axis.text = element_text(size = 16),
-        axis.title = element_text(size = 18)
-      )
-
-    if(!is.null(facet_var)) {
-      p <- p + facet_grid(~ get(facet_var))
-    }
-
-  }
-
-  if(is.numeric(dt$plot_var)) {
-
-    if(is.null(facet_var)) dt$facet_var <- dt[[unique_id_var]]
-
-    p <- ggplot(dt, aes(x = facet_var, y = plot_var)) +
-      geom_violin(fill = "grey40", trim=TRUE)+
-      scale_y_continuous(breaks = scales::pretty_breaks()) +
-      ylab(plot_var) +
-      xlab(facet_var) +
-      theme_bw()+
-      theme(legend.position = "none",
-            plot.title = element_text(hjust = 0.5, face = "italic", size = 20),
-            text = element_text(size = 16),
-            axis.text = element_text(size = 16),
-            axis.text.x = element_text(angle = 90, hjust = 1),
-            axis.title = element_text(size = 18)
-            )
-
-      if(plot_points == TRUE) {
-        p <- p + geom_jitter(size = .01, width = .2, alpha = .05)
-      } else {
-        p <- p + stat_summary(fun.y = median,
-                              fun.ymin = function(x) max(0, mean(x) - sd(x)),
-                              fun.ymax = function(x) mean(x) + sd(x),
-                              geom="crossbar", width = 0.1, fill = "white")
-      }
-  }
-
-  return(p)
-}
-
-
-
 

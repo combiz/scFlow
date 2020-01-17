@@ -114,6 +114,7 @@ plot_umap_with_feature <- function(sce,
         ggplot2::theme(legend.position = "none")
   }
 
+  p$plot_env$sce <- NULL
   return(p)
 
 }
@@ -167,6 +168,7 @@ PlotUMAPWithGene <- function(sce, gene = "PLP1"){
       plot.title = element_text(size = 18, hjust = 0.5, colour = "black")
     )
 
+  p$plot_env$sce <- NULL
   return(p)
 
 }
