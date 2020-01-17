@@ -333,7 +333,7 @@ map_celltypes_sce <- function(sce,
   # 2d
   sce@metadata$celltype_plots <- list()
   for (reddim in names(SingleCellExperiment::reducedDims(sce))) {
-    sce@metadata$celltype_plots[[reddim]] <- plot_umap_with_feature(
+    sce@metadata$celltype_plots[[reddim]] <- plot_reduced_dim(
       sce,
       feature_dim = celltype_dim,
       reduced_dim = reddim,

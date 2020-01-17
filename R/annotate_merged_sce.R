@@ -58,7 +58,7 @@ annotate_merged_sce <- function(sce,
   # generate reduced dimension pseudobulk sample plots
   sce@metadata$pseudobulk_plots <- list()
   for (rd_method in SingleCellExperiment::reducedDimNames(pbsce)) {
-    p <- plot_umap_with_feature(
+    p <- plot_reduced_dim(
       pbsce,
       feature_dim = unique_id_var,
       reduced_dim = rd_method,
