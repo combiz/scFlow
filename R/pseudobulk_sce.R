@@ -21,6 +21,7 @@
 #' @importFrom magrittr %>% set_colnames
 #' @importFrom stringr str_split
 #' @importFrom purrr map_int map_df
+#' @importFrom future availableCores
 #' @importFrom assertthat assert_that
 #' @importFrom scater librarySizeFactors normalize calculateQCMetrics
 #' @importFrom SingleCellExperiment SingleCellExperiment
@@ -55,10 +56,10 @@ pseudobulk_sce <- function(sce,
   #)
 
   pb_matrix_l <- parallel::mclapply(
-    unique(sce$manifest), 
+    unique(sce$manifest),
     #function(x) {Matrix::rowSums(SingleCellExperiment::counts(sce[, sce$manifest == x]))},
-    function(x) {Matrix::rowSums(sce[, sce$manifest == x]@assays$data[[assay_name]])}, 
-    mc.cores = detectCores() - 1)
+    function(x) {Matrix::rowSums(sce[, sce$manifest == x]@assays$data[[assay_name]])},
+    mc.cores = future::availableCores())
 
   pb_matrix <- Reduce(cbind, pb_matrix_l)
   colnames(pb_matrix) <- unique(sce$pseudobulk_id)

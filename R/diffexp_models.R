@@ -183,13 +183,15 @@ perform_de <- function(sce,
   )
 
   #mod_check <- do.call(.check_model, list(model_formula = mod_formulae[[2]]))
-  is_full_rank <- .check_model(mod_formulae[[2]])
-  if(!fargs$force_run){
-    assertthat::assert_that(
-      is_full_rank,
-      msg = "A full rank model specification is required.")
-  } else {
-    cli::cli_alert_info("Forcing run, ignoring model full rank.")
+  if (is.null(fargs$random_effects_var)) {
+    is_full_rank <- .check_model(mod_formulae[[2]])
+    if(!fargs$force_run){
+      assertthat::assert_that(
+        is_full_rank,
+        msg = "A full rank model specification is required.")
+    } else {
+      cli::cli_alert_info("Forcing run, ignoring model full rank.")
+    }
   }
 
   # fit model

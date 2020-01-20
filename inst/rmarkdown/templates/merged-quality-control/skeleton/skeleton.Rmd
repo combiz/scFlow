@@ -33,16 +33,32 @@ knitr::knit_hooks$set(wrap = function(before, options, envir){
 
 ```{r load_data, results='hide', include=FALSE}
 #metadata <- readRDS(params$metadata_path)
-metadata <- readRDS("/home/ckhozoie/Documents/scflow/scemeta.rds")
+metadata <- readRDS("/home/ckhozoie/Documents/scflow/scemetadata_newest.rds")
 ```
 
+## Pseudobulk Dimensionality Reduction Plots
+
+These plots represent the pseudobulking of all cells from a sample into a single point in two-dimensional space.  Taken together with the merge summary plots, these may help to identify potential outliers or otherwise problematic samples.  Data are visualized with: `r setdiff(names(metadata$pseudobulk_plots), "UMAP3D"), collapse = ", ")`.  
+
+```{r, results='asis', fig.align="center", fig.width=4, fig.height=4, fig.cap = ""}
+knitr::opts_chunk$set(echo = FALSE)
+for(rd_name in setdiff(names(metadata$pseudobulk_plots), "UMAP3D")) {
+  cat(sprintf("<p><h3>%s</h3></p>", rd_name))
+  print(metadata$pseudobulk_plots[[rd_name]])
+}
+```
+
+
 ## Multi-Sample Summary Plots
+
+The multi-sample summary plots below examine key sample quality metrics (`r paste0(names(metadata$merged_plots), collapse = ", ")`) across all experimental samples.  These plots may highlight samples with marked differences in these metrics and may be used to inform revision of quality-control thresholds.  In more extreme cases (e.g. severe outliers, sample degradation, etc.), it may be appropriate to omit sample(s) from an analysis.
+
 
 ```{r, results='asis', fig.align="center", fig.width=10, fig.height=4, fig.cap = ""}
 knitr::opts_chunk$set(echo = FALSE)
 for(plot_var in names(metadata$merged_plots)) {
   cat(sprintf("<p><h3>%s</h3></p>", plot_var))
-  for(plot in plot_var){
+  for(plot in names(metadata$merged_plots[[plot_var]])) {
     print(metadata$merged_plots[[plot_var]][[plot]])
   }
 }

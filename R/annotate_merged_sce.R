@@ -13,6 +13,7 @@
 #' @import ggplot2
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom rmarkdown render
+#' @importFrom purrr map_lgl
 #' @importFrom tools file_path_sans_ext
 #' @export
 #'
@@ -23,6 +24,9 @@ annotate_merged_sce <- function(sce,
                                 unique_id_var = "manifest",
                                 facet_vars = NULL) {
 
+  cat(cli::rule("Annotating Merged SingleCellExperiment", line = 2), "\r\n")
+  cat(cli::rule("Appending Merge Summary Plots", line = 1), "\r\n")
+
   plot_vars <- unique(
     c("total_features_by_counts", "total_counts", "pc_mito", "pc_ribo",
       plot_vars)
@@ -30,6 +34,10 @@ annotate_merged_sce <- function(sce,
 
   # generate cell metadata plots
   merged_plots_l <- list()
+  cli::cli_alert_success(
+    "SingleCellExperiment successfully annotated with merge summary plots: \r\n"
+  )
+
   for(pv in plot_vars) {
     merged_plots_l[[pv]][[pv]] <- .generate_merge_summary_plot(
       sce,
@@ -37,6 +45,9 @@ annotate_merged_sce <- function(sce,
       unique_id_var = unique_id_var,
       facet_var = NULL,
       plot_points = TRUE) # no facets
+
+    cli::cli_ul(sprintf("sce@metadata$merged_plots$%s$%s", pv, pv))
+
     for(fv in facet_vars) {
       plot_name <- paste(pv, fv, sep = "_vs_")
       merged_plots_l[[pv]][[plot_name]] <- .generate_merge_summary_plot(
@@ -45,16 +56,27 @@ annotate_merged_sce <- function(sce,
         unique_id_var = unique_id_var,
         facet_var = fv,
         plot_points = TRUE)
+
+      cli::cli_ul(sprintf("sce@metadata$merged_plots$%s$%s", pv, plot_name))
     }
   }
 
   sce@metadata$merged_plots <- merged_plots_l
 
+  cat(cli::rule("Generating Pseudobulking Matrices and Plots", line = 1), "\r\n")
   # generate whole sample pseudobulk and plots
   x <- Sys.time()
+  message(sprintf("Performing Pseudobulking of Cells by %s", unique_id_var))
   pbsce <- .generate_pbsce_for_whole_samples(sce, unique_id_var = unique_id_var)
-  print(Sys.time() - x)
+  time_taken <- difftime(Sys.time(), x, units = "mins")
+  cli::cli_alert_success(sprintf(
+    "Pseudobulking completed (%.2f minutes taken). \r\n",
+    time_taken)
+  )
 
+  cli::cli_alert_success(
+    "SingleCellExperiment successfully annotated with pseudobulk plots: \r\n"
+  )
   # generate reduced dimension pseudobulk sample plots
   sce@metadata$pseudobulk_plots <- list()
   for (rd_method in SingleCellExperiment::reducedDimNames(pbsce)) {
@@ -65,8 +87,11 @@ annotate_merged_sce <- function(sce,
       size = 6,
       alpha = 1, label_clusters = TRUE
       )
+    p$plot_env$sce <- NULL
     sce@metadata$pseudobulk_plots[[rd_method]] <- p
+    cli::cli_ul(sprintf("sce@metadata$pseudobulk_plots$%s", rd_method))
   }
+
 
   # extend pseudobulk reducedDim coordinates to all cells and save to sce
   for (rd_method in SingleCellExperiment::reducedDimNames(pbsce)) {
@@ -81,6 +106,18 @@ annotate_merged_sce <- function(sce,
     big_mat <- as.matrix(big_mat)
     SingleCellExperiment::reducedDim(sce, paste0(rd_method, "_PB")) <- big_mat
   }
+
+  pb_reddims <- SingleCellExperiment::reducedDimNames(
+    sce)[purrr::map_lgl(SingleCellExperiment::reducedDimNames(sce),
+                        ~ endsWith(., "_PB"))]
+  gt <- cli::col_green(cli::symbol$tick)
+  cli::cli_text(sprintf(c(
+    gt,
+    " Pseudobulk reducedDim matrices {.var (%s)} successfully appended ",
+    "to SingleCellExperiment."), paste0(pb_reddims, collapse = ", ")))
+
+  sce@metadata$scflow_steps$merged_annotated <- 1
+  cli::cli_alert_success("Done! \r\n")
 
   return(sce)
 
@@ -133,7 +170,9 @@ annotate_merged_sce <- function(sce,
                                          facet_var = NULL,
                                          plot_points = FALSE) {
 
-  dt <- as.data.frame(SummarizedExperiment::colData(sce))
+  vars_to_keep <- unique(c(plot_var, unique_id_var, facet_var))
+  dt <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
+    select(vars_to_keep)
   dt$plot_var <- dt[[plot_var]]
   if(!is.null(facet_var)) dt$facet_var <- as.factor(dt[[facet_var]])
 
@@ -170,7 +209,7 @@ annotate_merged_sce <- function(sce,
             plot.title = element_text(hjust = 0.5, face = "italic", size = 20),
             text = element_text(size = 16),
             axis.text = element_text(size = 16),
-            axis.text.x = element_text(angle = 90, hjust = 1),
+            axis.text.x = element_text(angle = 90, hjust = 0),
             axis.title = element_text(size = 18)
             )
 
