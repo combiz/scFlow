@@ -71,7 +71,7 @@ liger_reduce_dims <- function(sce,
                             ...) {
 
   # Extract sparse matrix from sce
-  mat <- sce@assays$data
+  mat <- sce@assays$data$counts
   
   # Make a Liger object. Pass in the sparse matrix.  
   ligerex <- createLiger(raw.data = mat, make.sparse = make.sparse, take.gene.union = take.gene.union, 
