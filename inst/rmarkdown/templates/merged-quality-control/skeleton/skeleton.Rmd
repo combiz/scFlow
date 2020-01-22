@@ -21,6 +21,7 @@ library(dplyr)
 library(utils)
 library(formattable)
 library(htmltools)
+library(knitr)
 
 knitr::opts_chunk$set(echo = FALSE)
 
@@ -57,62 +58,21 @@ The multi-sample summary plots below examine key sample quality metrics (`r past
 
 `r if(!is.null(metadata$merge_qc_params$facet_vars)){sprintf("These metrics are also visualized across the specified facet variables: %s", paste(metadata$merge_qc_params$facet_vars, collapse = ", "))}`
 
-
-
-```{r, results='asis'}
-#knitr::opts_chunk$set(echo = FALSE)
+```{r, results='asis', include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
 
 show_plot <- function(plot_object) {
   div(style="margin:auto;text-align:center", plot_object)
 }
 
+out <- NULL
 for(plot_var in names(metadata$merged_plots)) {
-  #cat(sprintf("<p><h3>%s</h3></p>", plot_var))
   for(plot in names(metadata$merged_plots[[plot_var]])) {
-    #print(metadata$merged_plots[[plot_var]][[plot]])
-    div(show_plot(print(formattable(
-                   metadata$merged_plots_data[[plot_var]][[plot]], 
-                   list(
-                     "mean" = color_bar("#71CA97"), 
-                     "stdev_mean" = formatter("span", style = ~ style(color = "grey")),
-                     "median" = color_bar("#71CA97"),
-                     "mad" = formatter("span", style = ~ style(color = "grey"))
-                     )
-                 ))))
+    out <- c(out, knit_child('/home/ckhozoie/Documents/scflow/inst/rmarkdown/templates/merged-quality-control/skeleton/plot_table_template.Rmd'))
   }
 }
 ```
 
-## Multi-Sample Summary Plots - Data
-
-```{r, results='asis'}
-knitr::opts_chunk$set(echo = FALSE)
-#for(dt_l in metadata$merged_plots_data) {
-  #for (dt in dt_l) {
-
-show_plot <- function(plot_object) {
-  div(style="margin:auto;text-align:center", plot_object)
-}
-
-for (plot_var in names(metadata$merged_plots)) {
-  do.call(div, 
-          lapply(names(metadata$merged_plots[[plot_var]]), 
-                 function(dt) {
-                   #show_plot(print(metadata$merged_plots[[plot_var]][[dt]]))
-                   show_plot(print(formattable(
-                     metadata$merged_plots_data[[plot_var]][[dt]], 
-                     list(
-                       "mean" = color_bar("#71CA97"), 
-                       "stdev_mean" = formatter("span", style = ~ style(color = "grey")),
-                       "median" = color_bar("#71CA97"),
-                       "mad" = formatter("span", style = ~ style(color = "grey"))
-                       )
-                   )))
-                 }
-          ))
-}
- # }
-#}
-```
+`r paste(out, collapse='\n')`
 
 <br>scflow v`r utils::packageVersion("scflow")` -- `r Sys.time()`
