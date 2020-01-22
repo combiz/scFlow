@@ -34,11 +34,13 @@ annotate_merged_sce <- function(sce,
 
   # generate cell metadata plots
   merged_plots_l <- list()
+  merged_plots_data_l <- list()
   cli::cli_alert_success(
     "SingleCellExperiment successfully annotated with merge summary plots: \r\n"
   )
 
   for(pv in plot_vars) {
+    # generate plot without faceting
     merged_plots_l[[pv]][[pv]] <- .generate_merge_summary_plot(
       sce,
       plot_var = pv,
@@ -46,9 +48,23 @@ annotate_merged_sce <- function(sce,
       facet_var = NULL,
       plot_points = TRUE) # no facets
 
+    # generate plot data table for export
+    dt <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
+      dplyr::select(unique(c(pv, unique_id_var))) %>%
+      dplyr::group_by_at(unique_id_var) %>%
+      dplyr::summarize(
+        mean = round(mean(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+        stdev_mean = round(sd(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+        median = round(median(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+        mad = round(mad(!!rlang::sym(pv), na.rm = TRUE), digits = 3)
+        )
+
+    merged_plots_data_l[[pv]][[pv]] <- dt
+
     cli::cli_ul(sprintf("sce@metadata$merged_plots$%s$%s", pv, pv))
 
     for(fv in facet_vars) {
+      # generate plot with faceting
       plot_name <- paste(pv, fv, sep = "_vs_")
       merged_plots_l[[pv]][[plot_name]] <- .generate_merge_summary_plot(
         sce,
@@ -57,11 +73,25 @@ annotate_merged_sce <- function(sce,
         facet_var = fv,
         plot_points = TRUE)
 
+      # generate plot data table for export
+      dt <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
+        dplyr::select(unique(c(pv, unique_id_var, fv))) %>%
+        dplyr::group_by_at(fv) %>%
+        dplyr::summarize(
+          mean = round(mean(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+          stdev_mean = round(sd(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+          median = round(median(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+          mad = round(mad(!!rlang::sym(pv), na.rm = TRUE), digits = 3)
+          )
+
+      merged_plots_data_l[[pv]][[plot_name]] <- dt
+
       cli::cli_ul(sprintf("sce@metadata$merged_plots$%s$%s", pv, plot_name))
     }
   }
 
   sce@metadata$merged_plots <- merged_plots_l
+  sce@metadata$merged_plots_data <- merged_plots_data_l
 
   cat(cli::rule("Generating Pseudobulking Matrices and Plots", line = 1), "\r\n")
   # generate whole sample pseudobulk and plots
@@ -117,6 +147,10 @@ annotate_merged_sce <- function(sce,
     "to SingleCellExperiment."), paste0(pb_reddims, collapse = ", ")))
 
   sce@metadata$scflow_steps$merged_annotated <- 1
+  sce@metadata$merge_qc_params$plot_vars <- plot_vars
+  sce@metadata$merge_qc_params$unique_id_var <- unique_id_var
+  sce@metadata$merge_qc_params$facet_vars <- facet_vars
+
   cli::cli_alert_success("Done! \r\n")
 
   return(sce)
@@ -209,7 +243,7 @@ annotate_merged_sce <- function(sce,
             plot.title = element_text(hjust = 0.5, face = "italic", size = 20),
             text = element_text(size = 16),
             axis.text = element_text(size = 16),
-            axis.text.x = element_text(angle = 90, hjust = 0),
+            axis.text.x = element_text(angle = 90, hjust = 0.5),
             axis.title = element_text(size = 18)
             )
 

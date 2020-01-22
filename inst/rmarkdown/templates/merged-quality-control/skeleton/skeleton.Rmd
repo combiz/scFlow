@@ -19,6 +19,8 @@ library(plotly)
 library(DT)
 library(dplyr)
 library(utils)
+library(formattable)
+library(htmltools)
 
 knitr::opts_chunk$set(echo = FALSE)
 
@@ -38,7 +40,7 @@ metadata <- readRDS("/home/ckhozoie/Documents/scflow/scemetadata_newest.rds")
 
 ## Pseudobulk Dimensionality Reduction Plots
 
-These plots represent the pseudobulking of all cells from a sample into a single point in two-dimensional space.  Taken together with the merge summary plots, these may help to identify potential outliers or otherwise problematic samples.  Data are visualized with: `r setdiff(names(metadata$pseudobulk_plots), "UMAP3D"), collapse = ", ")`.  
+These plots represent the pseudobulking of all cells from a sample ("_`r metadata$merge_qc_params$unique_id_var`_") into a single point in two-dimensional space.  Taken together with the merge summary plots, these may help to identify potential outliers or otherwise problematic samples.  Data are visualized with: `r paste(setdiff(names(metadata$pseudobulk_plots), "UMAP3D"), collapse = ", ")`.  
 
 ```{r, results='asis', fig.align="center", fig.width=4, fig.height=4, fig.cap = ""}
 knitr::opts_chunk$set(echo = FALSE)
@@ -51,24 +53,66 @@ for(rd_name in setdiff(names(metadata$pseudobulk_plots), "UMAP3D")) {
 
 ## Multi-Sample Summary Plots
 
-The multi-sample summary plots below examine key sample quality metrics (`r paste0(names(metadata$merged_plots), collapse = ", ")`) across all experimental samples.  These plots may highlight samples with marked differences in these metrics and may be used to inform revision of quality-control thresholds.  In more extreme cases (e.g. severe outliers, sample degradation, etc.), it may be appropriate to omit sample(s) from an analysis.
+The multi-sample summary plots below examine key sample quality metrics (`r paste0(metadata$merge_qc_params$plot_vars, collapse = ", ")`) across all experimental samples.  These plots may highlight samples with marked differences in these metrics and may be used to inform revision of quality-control thresholds.  In more extreme cases (e.g. severe outliers, sample degradation, etc.), it may be appropriate to omit sample(s) from an analysis.
+
+`r if(!is.null(metadata$merge_qc_params$facet_vars)){sprintf("These metrics are also visualized across the specified facet variables: %s", paste(metadata$merge_qc_params$facet_vars, collapse = ", "))}`
 
 
-```{r, results='asis', fig.align="center", fig.width=10, fig.height=4, fig.cap = ""}
-knitr::opts_chunk$set(echo = FALSE)
+
+```{r, results='asis'}
+#knitr::opts_chunk$set(echo = FALSE)
+
+show_plot <- function(plot_object) {
+  div(style="margin:auto;text-align:center", plot_object)
+}
+
 for(plot_var in names(metadata$merged_plots)) {
-  cat(sprintf("<p><h3>%s</h3></p>", plot_var))
+  #cat(sprintf("<p><h3>%s</h3></p>", plot_var))
   for(plot in names(metadata$merged_plots[[plot_var]])) {
-    print(metadata$merged_plots[[plot_var]][[plot]])
+    #print(metadata$merged_plots[[plot_var]][[plot]])
+    div(show_plot(print(formattable(
+                   metadata$merged_plots_data[[plot_var]][[plot]], 
+                   list(
+                     "mean" = color_bar("#71CA97"), 
+                     "stdev_mean" = formatter("span", style = ~ style(color = "grey")),
+                     "median" = color_bar("#71CA97"),
+                     "mad" = formatter("span", style = ~ style(color = "grey"))
+                     )
+                 ))))
   }
 }
 ```
 
+## Multi-Sample Summary Plots - Data
 
-## References
-``` {r, results='asis', eval = (!is.null(metadata$citations))}
+```{r, results='asis'}
 knitr::opts_chunk$set(echo = FALSE)
-cat(apply(metadata$citations, 1, .print_citation_html))
+#for(dt_l in metadata$merged_plots_data) {
+  #for (dt in dt_l) {
+
+show_plot <- function(plot_object) {
+  div(style="margin:auto;text-align:center", plot_object)
+}
+
+for (plot_var in names(metadata$merged_plots)) {
+  do.call(div, 
+          lapply(names(metadata$merged_plots[[plot_var]]), 
+                 function(dt) {
+                   #show_plot(print(metadata$merged_plots[[plot_var]][[dt]]))
+                   show_plot(print(formattable(
+                     metadata$merged_plots_data[[plot_var]][[dt]], 
+                     list(
+                       "mean" = color_bar("#71CA97"), 
+                       "stdev_mean" = formatter("span", style = ~ style(color = "grey")),
+                       "median" = color_bar("#71CA97"),
+                       "mad" = formatter("span", style = ~ style(color = "grey"))
+                       )
+                   )))
+                 }
+          ))
+}
+ # }
+#}
 ```
 
 <br>scflow v`r utils::packageVersion("scflow")` -- `r Sys.time()`

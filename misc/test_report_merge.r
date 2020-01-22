@@ -19,7 +19,6 @@ plot_reduced_dim(x, feature_dim = "individual", reduced_dim = "UMAP", size = 6, 
 plot_reduced_dim(x, feature_dim = "individual", reduced_dim = "PCA", size = 6, alpha = 1, label_clusters = TRUE)
 x@metadata$reduced_dim_plots$umap3d_plot_ly
 
-
 unique_id_var <- "individual"
 
 plot_reduced_dim(sce, reduced_dim = "PCA_PB", feature_dim = "individual", label_clusters = TRUE)
