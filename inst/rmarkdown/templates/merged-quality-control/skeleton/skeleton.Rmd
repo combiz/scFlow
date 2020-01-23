@@ -43,20 +43,24 @@ metadata <- readRDS("/home/ckhozoie/Documents/scflow/scemetadata_newest.rds")
 
 These plots represent the pseudobulking of all cells from a sample ("_`r metadata$merge_qc_params$unique_id_var`_") into a single point in two-dimensional space.  Taken together with the merge summary plots, these may help to identify potential outliers or otherwise problematic samples.  Data are visualized with: `r paste(setdiff(names(metadata$pseudobulk_plots), "UMAP3D"), collapse = ", ")`.  
 
-```{r, results='asis', fig.align="center", fig.width=4, fig.height=4, fig.cap = ""}
+```{r, results='asis'}
 knitr::opts_chunk$set(echo = FALSE)
-for(rd_name in setdiff(names(metadata$pseudobulk_plots), "UMAP3D")) {
-  cat(sprintf("<p><h3>%s</h3></p>", rd_name))
-  print(metadata$pseudobulk_plots[[rd_name]])
-}
-```
 
+cat("<div class = \"row\">")
+for(rd_name in setdiff(names(metadata$pseudobulk_plots), "UMAP3D")) {
+  cat("<div class = \"col-md-6\">")
+  print(metadata$pseudobulk_plots[[rd_name]])
+  cat(sprintf("<p><h3 align=\"center\">%s</h3></p>", rd_name))
+  cat("</div>")
+}
+cat("</div>")
+```
 
 ## Multi-Sample Summary Plots
 
-The multi-sample summary plots below examine key sample quality metrics (`r paste0(metadata$merge_qc_params$plot_vars, collapse = ", ")`) across all experimental samples.  These plots may highlight samples with marked differences in these metrics and may be used to inform revision of quality-control thresholds.  In more extreme cases (e.g. severe outliers, sample degradation, etc.), it may be appropriate to omit sample(s) from an analysis.
+The multi-sample summary plots and matching data tables below examine key sample quality metrics (`r paste0(lapply(metadata$merge_qc_params$plot_vars, function(x) {sprintf("<a href=\"#%s\">%s</a>", x, x)}), collapse = ", ")`) across all experimental samples.  These highlight samples with marked differences in these metrics and may be used to inform revision of quality-control thresholds.  In more extreme cases (e.g. severe outliers, sample degradation, etc.), it may be appropriate to omit sample(s) from an analysis.  To facilitate the identification of these potentially problematic samples, the *QC* column in the tables below highlight any samples with metrics falling outside of two or three standard deviations (σ) of the mean.
 
-`r if(!is.null(metadata$merge_qc_params$facet_vars)){sprintf("These metrics are also visualized across the specified facet variables: %s", paste(metadata$merge_qc_params$facet_vars, collapse = ", "))}`
+`r if(!is.null(metadata$merge_qc_params$facet_vars)){sprintf("These metrics are also visualized across the specified facet variables: %s.", paste("<i>",metadata$merge_qc_params$facet_vars,"</i>", collapse = ", "))}`
 
 ```{r, results='asis', include=FALSE, echo=FALSE}
 knitr::opts_chunk$set(echo = FALSE)

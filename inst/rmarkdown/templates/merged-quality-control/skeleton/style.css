@@ -10,3 +10,13 @@ h1, .h1, h2, .h2, h3, .h3 {
   opacity: 1;
   padding: 20px;
 }
+
+.basicfig {
+  padding: 20px;
+}
+
+.formattable {
+  border: thin solid;
+  background-color: white;
+  padding: 20px;
+}
