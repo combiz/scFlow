@@ -70,3 +70,5 @@ You may need to install scflow using a Personal Access Token (Github->Settings->
 devtools::install_github("combiz/scflow", auth_token = "YOURTOKEN")
 ```
 
+See [this page on the wiki](https://github.com/combiz/scflow/wiki/Installing-package-from-a-private-github-repo) for a full explanation.
+
