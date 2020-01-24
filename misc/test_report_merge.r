@@ -2,9 +2,17 @@ library(scflow)
 
 sce <- read_sce("~/Documents/nf-sc/results/celltype_mapped_sce/celltype_mapped_sce")
 
-sce <- annotate_merged_sce(sce, facet_vars = c("group", "diagnosis", "seqdate"))
+sce <- annotate_merged_sce(
+  sce,
+  plot_vars = c("total_features_by_counts", "total_counts", "pc_mito", "pc_ribo"),
+  facet_vars = c("group", "diagnosis", "seqdate", "PMI", "RIN")
+  )
 
-saveRDS(sce@metadata, file = "scemetadata_newest.rds")
+#saveRDS(sce@metadata, file = "scemetadata_newest.rds")
+
+report_merged_sce(sce)
+
+
 
 unique_var <- "individual"
 

@@ -124,6 +124,10 @@ annotate_merged_sce <- function(sce,
     cli::cli_ul(sprintf("sce@metadata$pseudobulk_plots$%s", rd_method))
   }
 
+  # dendrogram and heatmap of expressed genes
+  p <- .plot_heatmap_of_pbsce(pbsce, binarize = TRUE, trim_name = TRUE)
+  sce@metadata$pseudobulk_heatmap$heatmap_dendro <- p
+  cli::cli_ul("sce@metadata$pseudobulk_heatmap$heatmap_dendro")
 
   # extend pseudobulk reducedDim coordinates to all cells and save to sce
   for (rd_method in SingleCellExperiment::reducedDimNames(pbsce)) {
@@ -188,6 +192,73 @@ annotate_merged_sce <- function(sce,
   return(pbsce)
 
 }
+
+#' helper fn to generate a heatmap and dendrogram for features of a pbsce
+#'
+#' @param pbsce a pseudobulked singlecellexperiment object
+#' @param binarize if TRUE, counts are TRUE/FALSE if counts > 0
+#' @param trim_name if TRUE, the pseudobulked name is trimmed to before _
+#'
+#' @import ggplot2
+#' @importFrom SingleCellExperiment counts
+#' @importFrom purrr map_chr
+#' @importFrom dplyr mutate
+#' @importFrom tidyr pivot_longer
+#' @importFrom stats hclust
+#' @importFrom ggdendro ggdendrogram
+#' @importFrom ggpubr ggarrange
+#' @keywords internal
+.plot_heatmap_of_pbsce <- function(pbsce, binarize = TRUE, trim_name = TRUE) {
+
+  if (binarize) {
+    dt <- as.data.frame(SingleCellExperiment::counts(pbsce) > 0)
+  } else {
+    dt <- as.data.frame(SingleCellExperiment::counts(pbsce))
+  }
+
+  if (trim_name) {
+    colnames(dt) <- purrr::map_chr(colnames(dt), ~ strsplit(., "_")[[1]][[1]])
+  }
+
+  dt_long <- dt %>%
+    dplyr::mutate(ensembl_gene_id = rownames(.)) %>%
+    tidyr::pivot_longer(-ensembl_gene_id)
+
+  dt_long$name <- factor(x = dt_long$name,
+                         levels = dt_long$name[clust$order],
+                         ordered = TRUE)
+
+  clust <- stats::hclust(dist(t(dt)))
+
+  p1 <- ggdendro::ggdendrogram(clust, labels = FALSE, leaf_labels = FALSE) +
+    theme(axis.text.x = element_blank(),
+          axis.text.y = element_blank(),
+          plot.margin = unit(c(0,0,0,0), "lines"))
+
+  p2 <- ggplot(dt_long, aes(x = name, y = ensembl_gene_id)) +
+    geom_tile(aes(fill= !value)) +
+    scale_fill_viridis_d()+
+    xlab("Sample") +
+    ylab("") +
+    theme_bw() +
+    theme(legend.position = "none",
+          text = element_text(size = 16),
+          axis.title = element_text(size = 18),
+          axis.title.x = element_blank(),
+          axis.title.y = element_blank(),
+          axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+          axis.text.y = element_blank(),
+          plot.margin = unit(c(-1, 1.5, 0, 1.5), "lines"))
+
+  p <- ggpubr::ggarrange(p1, p2,
+                         ncol = 1, nrow = 2,
+                         heights = c(0.5,2),
+                         align = "none")
+
+  return(p)
+}
+
+
 
 #' helper fn to generate a merge summary plot for a SingleCellExperiment
 #'

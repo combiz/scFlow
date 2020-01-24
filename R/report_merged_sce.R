@@ -23,6 +23,10 @@ report_merged_sce <- function(sce,
     stop("expecting singlecellexperiment")
   }
 
+  if (sce@metadata$scflow_steps$merged_annotated != 1) {
+    stop("Before producing the merged report, run annotate_merged_sce()")
+  }
+
   report_file <- tools::file_path_sans_ext(report_file)
 
   cat(cli::rule(
@@ -60,7 +64,7 @@ report_merged_sce <- function(sce,
   )
 
   cli::cli_text(c(
-    "{cli::col_green(symbol$tick)} merged QC report succesfully generated: ",
+    "{cli::col_green(symbol$tick)} Merged QC report succesfully generated: ",
     "{.file {file.path(report_folder_path, 'merged_qc_report_scflow.html')}}")
   )
 
