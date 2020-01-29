@@ -110,7 +110,7 @@ annotate_merged_sce <- function(sce,
     "SingleCellExperiment successfully annotated with pseudobulk plots: \r\n"
   )
   # generate reduced dimension pseudobulk sample plots
-  sce@metadata$pseudobulk_plots <- list()
+  sce@metadata$pseudobulk_rd_plots <- list()
   for (rd_method in SingleCellExperiment::reducedDimNames(pbsce)) {
     p <- plot_reduced_dim(
       pbsce,
@@ -120,14 +120,15 @@ annotate_merged_sce <- function(sce,
       alpha = 1, label_clusters = TRUE
       )
     p$plot_env$sce <- NULL
-    sce@metadata$pseudobulk_plots[[rd_method]] <- p
-    cli::cli_ul(sprintf("sce@metadata$pseudobulk_plots$%s", rd_method))
+    sce@metadata$pseudobulk_rd_plots[[rd_method]] <- p
+    cli::cli_ul(sprintf("sce@metadata$pseudobulk_rd_plots$%s", rd_method))
   }
 
   # dendrogram and heatmap of expressed genes
-  p <- .plot_heatmap_of_pbsce(pbsce, binarize = TRUE, trim_name = TRUE)
-  sce@metadata$pseudobulk_heatmap$heatmap_dendro <- p
-  cli::cli_ul("sce@metadata$pseudobulk_heatmap$heatmap_dendro")
+  pbsce <- .plot_heatmap_of_pbsce(pbsce, binarize = TRUE, trim_name = TRUE)
+  sce@metadata$pseudobulk_plots <- pbsce@metadata$pseudobulk_plots
+  sce@metadata$pseudobulk_data <- pbsce@metadata$pseudobulk_data
+  cli::cli_ul("sce@metadata$pseudobulk_plots$combined_heatmap")
 
   # extend pseudobulk reducedDim coordinates to all cells and save to sce
   for (rd_method in SingleCellExperiment::reducedDimNames(pbsce)) {
@@ -174,19 +175,22 @@ annotate_merged_sce <- function(sce,
   pbsce <- pseudobulk_sce(
     sce,
     sample_var = unique_id_var,
-    celltype_var = unique_id_var
+    celltype_var = unique_id_var,
+    keep_vars = unique_id_var
   )
 
-  unique_id_var_names <- as.data.frame(SummarizedExperiment::colData(pbsce)) %>%
-    dplyr::select(!!unique_id_var)
-  colnames(pbsce) <- unique_id_var_names[, 1]
+  colnames(pbsce) <- purrr::map_chr(
+    colnames(pbsce), ~ strsplit(., "_")[[1]][[1]])
+
+  as.data.frame(SummarizedExperiment::colData(pbsce))
+  colnames(pbsce) <- pbsce[[unique_id_var]]
 
   pbsce <- reduce_dims_sce(
     pbsce,
     vars_to_regress_out = c("n_cells"),
     pca_dims = 5,
     n_neighbors = 2,
-    reduction_methods = c("PCA", "UMAP", "UMAP3D")
+    reduction_methods = c("PCA", "UMAP")
   )
 
   return(pbsce)
@@ -220,6 +224,8 @@ annotate_merged_sce <- function(sce,
     colnames(dt) <- purrr::map_chr(colnames(dt), ~ strsplit(., "_")[[1]][[1]])
   }
 
+  clust <- stats::hclust(dist(t(dt)))
+
   dt_long <- dt %>%
     dplyr::mutate(ensembl_gene_id = rownames(.)) %>%
     tidyr::pivot_longer(-ensembl_gene_id)
@@ -227,8 +233,6 @@ annotate_merged_sce <- function(sce,
   dt_long$name <- factor(x = dt_long$name,
                          levels = dt_long$name[clust$order],
                          ordered = TRUE)
-
-  clust <- stats::hclust(dist(t(dt)))
 
   p1 <- ggdendro::ggdendrogram(clust, labels = FALSE, leaf_labels = FALSE) +
     theme(axis.text.x = element_blank(),
@@ -255,7 +259,15 @@ annotate_merged_sce <- function(sce,
                          heights = c(0.5,2),
                          align = "none")
 
-  return(p)
+  pbsce@metadata$pseudobulk_data$dt_long <- dt_long
+  pbsce@metadata$pseudobulk_data$dt <- dt
+  pbsce@metadata$pseudobulk_data$clust <- clust
+
+  pbsce@metadata$pseudobulk_plots$dendrogram <- p1
+  pbsce@metadata$pseudobulk_plots$heatmap <- p2
+  pbsce@metadata$pseudobulk_plots$combined_heatmap <- p
+
+  return(pbsce)
 }
 
 

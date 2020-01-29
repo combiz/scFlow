@@ -52,3 +52,8 @@ notifications:
     on_start: never
     on_cancel: never
     on_error: never
+  email:
+    recipients:
+      - c.khozoie@imperial.ac.uk
+      - n.skene@imperial.ac.uk
+      - m.moradi@imperial.ac.uk
