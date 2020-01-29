@@ -45,7 +45,7 @@ annotate_sce_cells <- function(sce, ...) {
   sce$qc_metric_min_features <-
     sce$total_features_by_counts >= args$min_features
 
-  if(length(sce$pc_mito) == 0) {
+  if (length(sce$pc_mito) == 0) {
     sce$pc_mito <- Matrix::colSums(
       SingleCellExperiment::counts(
         sce[SummarizedExperiment::rowData(sce)$qc_metric_is_mito == 1, ]
@@ -57,7 +57,7 @@ annotate_sce_cells <- function(sce, ...) {
 
   sce$qc_metric_pc_mito_ok <- sce$pc_mito <= args$max_mito
 
-  if(length(sce$pc_ribo) == 0) {
+  if (length(sce$pc_ribo) == 0) {
     sce$pc_ribo <- Matrix::colSums(
       SingleCellExperiment::counts(
         sce[SummarizedExperiment::rowData(sce)$qc_metric_is_ribo == 1, ]

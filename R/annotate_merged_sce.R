@@ -39,7 +39,7 @@ annotate_merged_sce <- function(sce,
     "SingleCellExperiment successfully annotated with merge summary plots: \r\n"
   )
 
-  for(pv in plot_vars) {
+  for (pv in plot_vars) {
     # generate plot without faceting
     merged_plots_l[[pv]][[pv]] <- .generate_merge_summary_plot(
       sce,
@@ -57,14 +57,14 @@ annotate_merged_sce <- function(sce,
         stdev_mean = round(sd(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
         median_avg = round(median(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
         mad = round(mad(!!rlang::sym(pv), na.rm = TRUE), digits = 3)
-        )%>%
-      mutate(z = scale(mean_avg)[,1])
+        ) %>%
+      mutate(z = scale(mean_avg)[, 1])
 
     merged_plots_data_l[[pv]][[pv]] <- dt
 
     cli::cli_ul(sprintf("sce@metadata$merged_plots$%s$%s", pv, pv))
 
-    for(fv in facet_vars) {
+    for (fv in facet_vars) {
       # generate plot with faceting
       plot_name <- paste(pv, fv, sep = "_vs_")
       merged_plots_l[[pv]][[plot_name]] <- .generate_merge_summary_plot(
@@ -79,12 +79,16 @@ annotate_merged_sce <- function(sce,
         dplyr::select(unique(c(pv, unique_id_var, fv))) %>%
         dplyr::group_by_at(fv) %>%
         dplyr::summarize(
-          mean_avg = round(mean(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-          stdev_mean = round(sd(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-          median_avg = round(median(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-          mad = round(mad(!!rlang::sym(pv), na.rm = TRUE), digits = 3)
-          )%>%
-        mutate(z = scale(mean_avg)[,1])
+          mean_avg = round(
+            mean(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+          stdev_mean = round(
+            sd(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+          median_avg = round(
+            median(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+          mad = round(
+            mad(!!rlang::sym(pv), na.rm = TRUE), digits = 3)
+          ) %>%
+        mutate(z = scale(mean_avg)[, 1])
 
       merged_plots_data_l[[pv]][[plot_name]] <- dt
 
@@ -95,11 +99,15 @@ annotate_merged_sce <- function(sce,
   sce@metadata$merged_plots <- merged_plots_l
   sce@metadata$merged_plots_data <- merged_plots_data_l
 
-  cat(cli::rule("Generating Pseudobulking Matrices and Plots", line = 1), "\r\n")
+  cat(cli::rule(
+    "Generating Pseudobulking Matrices and Plots", line = 1), "\r\n")
   # generate whole sample pseudobulk and plots
   x <- Sys.time()
   message(sprintf("Performing Pseudobulking of Cells by %s", unique_id_var))
-  pbsce <- .generate_pbsce_for_whole_samples(sce, unique_id_var = unique_id_var)
+  pbsce <- .generate_pbsce_by_id(
+    sce,
+    unique_id_var = unique_id_var
+    )
   time_taken <- difftime(Sys.time(), x, units = "mins")
   cli::cli_alert_success(sprintf(
     "Pseudobulking completed (%.2f minutes taken). \r\n",
@@ -134,10 +142,12 @@ annotate_merged_sce <- function(sce,
   for (rd_method in SingleCellExperiment::reducedDimNames(pbsce)) {
     mat <- as.data.frame(SingleCellExperiment::reducedDim(pbsce, rd_method))
     mat$id <- as.character(rownames(mat))
-    big_mat <- dplyr::left_join(data.frame("id" = as.character(sce[[unique_id_var]]),
-                                           stringsAsFactors = FALSE),
-                                mat,
-                                by = "id")
+    big_mat <- dplyr::left_join(
+      data.frame(
+        "id" = as.character(sce[[unique_id_var]]),
+        stringsAsFactors = FALSE),
+      mat,
+      by = "id")
     rownames(big_mat) <- sce$barcode
     big_mat$id <- NULL
     big_mat <- as.matrix(big_mat)
@@ -169,8 +179,8 @@ annotate_merged_sce <- function(sce,
 #' @param sce a singlecellexperiment object
 #' @param unique_id_var the colData variable identifying unique samples
 #' @keywords internal
-.generate_pbsce_for_whole_samples <- function(sce,
-                                              unique_id_var = "manifest") {
+.generate_pbsce_by_id <- function(sce,
+                                  unique_id_var = "manifest") {
 
   pbsce <- pseudobulk_sce(
     sce,
@@ -237,11 +247,11 @@ annotate_merged_sce <- function(sce,
   p1 <- ggdendro::ggdendrogram(clust, labels = FALSE, leaf_labels = FALSE) +
     theme(axis.text.x = element_blank(),
           axis.text.y = element_blank(),
-          plot.margin = unit(c(0,0,0,0), "lines"))
+          plot.margin = unit(c(0, 0, 0, 0), "lines"))
 
   p2 <- ggplot(dt_long, aes(x = name, y = ensembl_gene_id)) +
-    geom_tile(aes(fill= !value)) +
-    scale_fill_viridis_d()+
+    geom_tile(aes(fill = !value)) +
+    scale_fill_viridis_d() +
     xlab("Sample") +
     ylab("") +
     theme_bw() +
@@ -256,7 +266,7 @@ annotate_merged_sce <- function(sce,
 
   p <- ggpubr::ggarrange(p1, p2,
                          ncol = 1, nrow = 2,
-                         heights = c(0.5,2),
+                         heights = c(0.5, 2),
                          align = "none")
 
   pbsce@metadata$pseudobulk_data$dt_long <- dt_long
@@ -293,9 +303,9 @@ annotate_merged_sce <- function(sce,
   dt <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
     select(vars_to_keep)
   dt$plot_var <- dt[[plot_var]]
-  if(!is.null(facet_var)) dt$facet_var <- as.factor(dt[[facet_var]])
+  if (!is.null(facet_var)) dt$facet_var <- as.factor(dt[[facet_var]])
 
-  if(class(dt$plot_var) == "factor") {
+  if (class(dt$plot_var) == "factor") {
 
     p <- ggplot(dt, aes(x = plot_var)) +
       geom_bar() +
@@ -308,22 +318,22 @@ annotate_merged_sce <- function(sce,
         axis.title = element_text(size = 18)
       )
 
-    if(!is.null(facet_var)) {
+    if (!is.null(facet_var)) {
       p <- p + facet_grid(~ get(facet_var))
     }
 
   }
 
-  if(is.numeric(dt$plot_var)) {
+  if (is.numeric(dt$plot_var)) {
 
-    if(is.null(facet_var)) dt$facet_var <- dt[[unique_id_var]]
+    if (is.null(facet_var)) dt$facet_var <- dt[[unique_id_var]]
 
     p <- ggplot(dt, aes(x = facet_var, y = plot_var)) +
-      geom_violin(fill = "grey40", trim=TRUE)+
+      geom_violin(fill = "grey40", trim = TRUE) +
       scale_y_continuous(breaks = scales::pretty_breaks()) +
       ylab(plot_var) +
       xlab(facet_var) +
-      theme_bw()+
+      theme_bw() +
       theme(legend.position = "none",
             plot.title = element_text(hjust = 0.5, face = "italic", size = 20),
             text = element_text(size = 16),
@@ -332,20 +342,16 @@ annotate_merged_sce <- function(sce,
             axis.title = element_text(size = 18)
             )
 
-      if(plot_points == TRUE) {
+      if (plot_points == TRUE) {
         p <- p + geom_jitter(size = .01, width = .2, alpha = .05)
       } else {
         p <- p + stat_summary(fun.y = median,
                               fun.ymin = function(x) max(0, mean(x) - sd(x)),
                               fun.ymax = function(x) mean(x) + sd(x),
-                              geom="crossbar", width = 0.1, fill = "white")
+                              geom = "crossbar", width = 0.1, fill = "white")
       }
   }
 
   p$plot_env$sce <- NULL
   return(p)
 }
-
-
-
-

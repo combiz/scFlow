@@ -39,7 +39,8 @@ metadata <- readRDS(params$metadata_path)
 #metadata <- readRDS("/home/ckhozoie/Documents/scflow/scemetadata_newest.rds")
 ```
 
-## Pseudobulk Dimensionality Reduction Plots
+## Sample Pseudobulking Plots
+### Pseudobulked Sample Dimensionality Reduction Plots
 
 These plots represent the pseudobulking of all cells from a sample ("_`r metadata$merge_qc_params$unique_id_var`_") into a single point in two-dimensional space.  Taken together with the merge summary plots, these may help to identify potential outliers or otherwise problematic samples.  Data are visualized with: `r paste(setdiff(names(metadata$pseudobulk_rd_plots), "UMAP3D"), collapse = ", ")`.  
 
@@ -56,7 +57,8 @@ for(rd_name in setdiff(names(metadata$pseudobulk_rd_plots), "UMAP3D")) {
 cat("</div>")
 ```
 
-Here, the pseudobulked counts matrix is used to determine which genes are detected or are absent in each sample.  Hierarchical clustering with Euclidean distance is used to visualize the samples according to these binarized gene expressivity matrices.  Samples with marked differences in the number and range of expressed genes may be potentially problematic and this facet of quality-control may be further explored in the related `total_features_by_counts` plots in this report.
+### Pseudobulked Sample Gene Expressivity Plot
+Below, the pseudobulked counts matrix is used to determine which genes are detected or are absent in each sample.  Hierarchical clustering with Euclidean distance is used to visualize the samples according to these binarized gene expressivity matrices.  Samples with marked differences in the number and range of expressed genes may be potentially problematic and this facet of quality-control may be further explored in the related `total_features_by_counts` plots in this report.
 
 <div class = "basicfig">
 ```{r results='asis', fig.align="center", fig.width=10, fig.height=4.5, fig.cap = "<b>Figure: Heatmap and dendrogram of gene expressivity by sample.</b> Genes (rows) and samples (columns) are hierarchically clustered and reveal the number and distribution of expressed (purple) and non-expressed (yellow) genes per sample.",  echo=FALSE}

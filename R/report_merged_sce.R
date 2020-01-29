@@ -19,7 +19,7 @@ report_merged_sce <- function(sce,
                               report_folder_path = getwd(),
                               report_file = "merged_report_scflow") {
 
-  if(!class(sce) == "SingleCellExperiment"){
+  if (!class(sce) == "SingleCellExperiment") {
     stop("expecting singlecellexperiment")
   }
 
@@ -71,4 +71,3 @@ report_merged_sce <- function(sce,
   return(sce)
 
 }
-
