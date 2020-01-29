@@ -1,15 +1,13 @@
 ################################################################################
-#' Calculate dimensionality reductions for a SingleCellExperiment
+#' Calculate dimensionality reductions for a SingleCellExperiment object
+#' or merged SingleCellExperiment objects using PCA, tSNE, UMAP, UMAP3D, Liger
 #'
-#' PCA, tSNE, UMAP, UMAP3D
-#'
-#'
-#' @param sce a SingleCellExperiment object
-#' @param reduction_methods one or more of "PCA", "tSNE", "UMAP", "UMAP3D"
+#' @param sce a SingleCellExperiment object or merged sce objects
+#' @param reduction_methods one or more of "PCA","tSNE","UMAP","UMAP3D","Liger"
 #' @param pca_dims the number of pca dimensions used
 #' @param ... see uwot::umap for umap options
 #'
-#' @return sce a SingleCellExperiment object annotated with reducedDims
+#' @return sce SingleCellExperiment object annotated with reducedDims
 #'
 #' @family clustering and dimensionality reduction
 #' @importFrom monocle3 preprocess_cds
@@ -23,7 +21,7 @@
 
 reduce_dims_sce <- function(sce,
                             reduction_methods = c(
-                              "PCA", "tSNE", "UMAP", "UMAP3D"),
+                              "PCA", "tSNE", "UMAP", "UMAP3D", "Liger"),
                             vars_to_regress_out = NULL,
                             pca_dims = 20,
                             ...) {
@@ -49,13 +47,13 @@ reduce_dims_sce <- function(sce,
 
   sce@metadata$reduced_dim_plots <- list()
 
-  if(!all(purrr::map_lgl(reduction_methods,
-                  ~ . %in% c("PCA", "tSNE", "UMAP", "UMAP3D")))) {
-    stop("reduction methods must be from: PCA, tSNE, UMAP, UMAP3D")
+  if (!all(purrr::map_lgl(reduction_methods,
+                  ~ . %in% c("PCA", "tSNE", "UMAP", "UMAP3D", "Liger")))) {
+    stop("reduction methods must be from: PCA, tSNE, UMAP, UMAP3D, Liger")
   }
 
   # Generate res mod formula for preprocess
-  if (!is.null(vars_to_regress_out)){
+  if (!is.null(vars_to_regress_out)) {
     res_mod_formula_str <- paste0(
       "~", paste0(vars_to_regress_out, collapse = "+")
     )
@@ -66,7 +64,7 @@ reduce_dims_sce <- function(sce,
   cds <- .sce_to_cds(sce)
 
   message(sprintf("Reducing Dimensions with PCA"))
-  if(!is.null(vars_to_regress_out)) {
+  if (!is.null(vars_to_regress_out)) {
     message(sprintf("Regressing out: %s", res_mod_formula_str))
   }
   cds <- monocle3::preprocess_cds(
@@ -74,7 +72,11 @@ reduce_dims_sce <- function(sce,
     num_dim = pca_dims,
     residual_model_formula_str = res_mod_formula_str
   )
-  #SingleCellExperiment::reducedDim(sce, "PCA") <- cds@reducedDims$PCA
+
+  # Preprocess Liger
+
+  ligerex <- liger_preprocess(sce)
+
   SingleCellExperiment::reducedDim(sce, "PCA") <-
     SingleCellExperiment::reducedDim(cds, "PCA")
 
@@ -89,7 +91,6 @@ reduce_dims_sce <- function(sce,
         preprocess_method = "PCA",
         reduction_method = "tSNE"
       )
-      #SingleCellExperiment::reducedDim(sce, "tSNE") <- cds@reducedDims$tSNE
       SingleCellExperiment::reducedDim(sce, "tSNE") <-
         SingleCellExperiment::reducedDim(cds, "tSNE")
     }
@@ -97,10 +98,9 @@ reduce_dims_sce <- function(sce,
     # Reduce dimensions with UMAP
     if (reddim_method %in% c("UMAP", "UMAP3D")) {
 
-      #mat <- as.matrix(cds@reducedDims$PCA)
       mat <- as.matrix(SingleCellExperiment::reducedDim(cds, "PCA"))
 
-      if(reddim_method == "UMAP3D"){
+      if (reddim_method == "UMAP3D") {
         fargs$n_components <- 3
       }
 
@@ -111,10 +111,9 @@ reduce_dims_sce <- function(sce,
       )
 
       row.names(umap_res) <- colnames(cds)
-      #SingleCellExperiment::reducedDim(cds, reddim_method) <- umap_res
       SingleCellExperiment::reducedDim(sce, reddim_method) <- umap_res
 
-      if(reddim_method == "UMAP3D") {
+      if (reddim_method == "UMAP3D") {
         sce@metadata$reduced_dim_plots$umap3d_plot_ly <-
           plotly::plot_ly(
             x = umap_res[, 1],
@@ -137,6 +136,12 @@ reduce_dims_sce <- function(sce,
             size = .01
           )
       }
+    }
+
+  # Reduce dimensions with Liger
+  if (reddim_method == "Liger") {
+    ligerex <- liger_reduce_dims(ligerex)
+    SingleCellExperiment::reducedDim(sce, "Liger") <- ligerex@H.norm
     }
   }
 
