@@ -16,7 +16,6 @@
 #' @importFrom purrr map_lgl
 #' @importFrom tools file_path_sans_ext
 #' @export
-#'
 annotate_merged_sce <- function(sce,
                                 plot_vars = c("total_features_by_counts",
                                             "total_counts", "pc_mito",
@@ -305,6 +304,12 @@ annotate_merged_sce <- function(sce,
   dt$plot_var <- dt[[plot_var]]
   if (!is.null(facet_var)) dt$facet_var <- as.factor(dt[[facet_var]])
 
+  if (startsWith(plot_var, "pc_")) {
+    scale_y <- scale_y_continuous(labels = scales::percent)
+  } else {
+    scale_y <- scale_y_continuous(breaks = scales::pretty_breaks())
+  }
+
   if (class(dt$plot_var) == "factor") {
 
     p <- ggplot(dt, aes(x = plot_var)) +
@@ -330,7 +335,7 @@ annotate_merged_sce <- function(sce,
 
     p <- ggplot(dt, aes(x = facet_var, y = plot_var)) +
       geom_violin(fill = "grey40", trim = TRUE) +
-      scale_y_continuous(breaks = scales::pretty_breaks()) +
+      scale_y +
       ylab(plot_var) +
       xlab(facet_var) +
       theme_bw() +
