@@ -11,18 +11,15 @@ env:
 matrix:
   include:
     - os: linux
-      r: oldrel
-    - os: linux
       r: release
       before_deploy:
         - Rscript -e 'remotes::install_github("combiz/scflow")'
         - Rscript -e 'install.packages("pkgdown")'
+        - Rscript -e 'BiocManager::install("S4Vectors")'
       deploy:
         provider: script
         script: Rscript -e 'pkgdown::deploy_site_github(verbose = TRUE)'
         skip_cleanup: true
-    - os: linux
-      r: devel
     - os: osx
       r: release
       fortran: false

@@ -156,7 +156,9 @@ annotate_sce <- function(sce,
   cli::cli_text("Generating QC plots and appending to metadata.")
   all_scflow_fns <- ls(getNamespace("scflow"), all.names = TRUE)
   qc_plot_fns <- all_scflow_fns[startsWith(all_scflow_fns, ".qc_plot_")]
-  for (fn in qc_plot_fns) { sce <- get(fn)(sce) }
+  for (fn in qc_plot_fns) {
+    sce <- get(fn)(sce)
+  }
 
   # generate qc summary table
   cli::cli_text("Generating QC summary table and appending to metadata.")
@@ -258,10 +260,10 @@ annotate_sce <- function(sce,
     dplyr::mutate(barcode_rank = as.integer(rownames(.)))
 
   p <- ggplot2::ggplot(dt) +
-    geom_point(aes(x = barcode_rank, y = total_counts))+
-    scale_y_continuous(trans = 'log10') +
+    geom_point(aes(x = barcode_rank, y = total_counts)) +
+    scale_y_continuous(trans = "log10") +
     scale_x_continuous(
-      limits=c(0, max(dt$barcode_rank)),
+      limits = c(0, max(dt$barcode_rank)),
       breaks = seq(0, max(dt$barcode_rank), by = 10000))+
     geom_hline(
       yintercept = sce@metadata$qc_params$min_library_size,
@@ -274,8 +276,8 @@ annotate_sce <- function(sce,
           panel.background = element_blank(),
           axis.text = element_text(size = 12, colour = "black"),
           axis.text.x = element_text(angle = 90),
-          axis.title=element_text(size=16),
-          legend.text=element_text(size=10),
+          axis.title=element_text(size = 16),
+          legend.text=element_text(size = 10),
           plot.title = element_text(size = 18, hjust = 0.5))
 
   sce@metadata$qc_plots$count_depth_distribution <- p
@@ -297,7 +299,9 @@ annotate_sce <- function(sce,
     dplyr::filter(total_features > 10)
 
   p <- ggplot2::ggplot(dt) +
-    geom_point(aes(x = total_counts, y = total_features, colour = pc_mito), size = .01)+
+    geom_point(
+      aes(x = total_counts, y = total_features, colour = pc_mito),
+      size = .01) +
     geom_hline(
       yintercept = sce@metadata$qc_params$min_features,
       linetype = "solid",
@@ -339,7 +343,6 @@ annotate_sce <- function(sce,
 
   dt <- dplyr::as_tibble(data.frame(
     total_counts = sce$total_counts)) %>%
-    #filter(total_counts <= counts_cutoff ) %>%
     filter(total_counts > 10 )
 
   p <- ggplot2::ggplot(dt) +
