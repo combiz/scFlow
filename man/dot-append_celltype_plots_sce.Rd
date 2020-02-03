@@ -18,7 +18,8 @@ sce a SCE with plots appended to the metadata
 Helper function to plot celltypes in reduced dimensions
 }
 \seealso{
-Other helper functions: \code{\link{.read_rds_files_to_list}}
+Other helper functions: 
+\code{\link{.read_rds_files_to_list}()}
 }
 \concept{helper functions}
 \keyword{internal}

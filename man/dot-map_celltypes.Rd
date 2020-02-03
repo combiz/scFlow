@@ -4,9 +4,15 @@
 \alias{.map_celltypes}
 \title{Main mapping function}
 \usage{
-.map_celltypes(ctdToMap, ctdToMapAgainst = MAGMA.Celltyping::ctd_Tasic,
-  inputSpecies = "human", mapAgainstSpecies = "mouse",
-  annotLevel = 2, numTopMarkers = 500, mappingLevel = 2)
+.map_celltypes(
+  ctdToMap,
+  ctdToMapAgainst = MAGMA.Celltyping::ctd_Tasic,
+  inputSpecies = "human",
+  mapAgainstSpecies = "mouse",
+  annotLevel = 2,
+  numTopMarkers = 500,
+  mappingLevel = 2
+)
 }
 \arguments{
 \item{ctdToMap}{ctd for current expt}
@@ -30,11 +36,12 @@ sce a SingleCellExperiment object annotated with sample metadata
 Main mapping function
 }
 \seealso{
-Other clustering and dimensionality reduction: \code{\link{.get_x_most_specific_genes}},
-  \code{\link{.map_celltypes_with_ewce}},
-  \code{\link{cluster_sce}},
-  \code{\link{map_celltypes_sce}},
-  \code{\link{reduce_dims_sce}}
+Other clustering and dimensionality reduction: 
+\code{\link{.get_x_most_specific_genes}()},
+\code{\link{.map_celltypes_with_ewce}()},
+\code{\link{cluster_sce}()},
+\code{\link{map_celltypes_sce}()},
+\code{\link{reduce_dims_sce}()}
 }
 \author{
 Nathan Skene / Combiz Khozoie
