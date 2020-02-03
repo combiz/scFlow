@@ -34,7 +34,10 @@
 #' @examples
 #' set.seed(1234)
 #' enrichment_result <- pathway_analysis_rontotools(
-#'   gene_file = "EN-L5-6-I_MASTZLM__DE_groupLow.tsv",
+#'   gene_file = paste(system.file("extdata", package = "scflow"), "/",
+#'     "EN-L5-6-I_MASTZLM__DE_groupLow.tsv",
+#'     sep = ""
+#'   ),
 #'   project_name = TRUE,
 #'   enrichment_database = "kegg",
 #'   is_output = FALSE
@@ -67,9 +70,13 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
 
 
   if (is.null(reference_file)) {
-    cat(cli::rule(
-      "Using genome_protein-coding as background gene list", line = 2),
-      "\r\n")
+    cat(
+      cli::rule(
+        "Using genome_protein-coding as background gene list",
+        line = 2
+      ),
+      "\r\n"
+    )
     reference_gene <- read.delim(
       file = paste(
         system.file("extdata", package = "scflow"),
