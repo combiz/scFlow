@@ -70,3 +70,26 @@ You may need to install scflow using a Personal Access Token (Github->Settings->
 devtools::install_github("combiz/scflow", auth_token = "YOURTOKEN")
 ```
 
+## Running _scflow_ using an example dataset
+
+Preprocess the `scFlowExample` dataset following this [link](https://github.com/neurogenomics/scFlowExample).
+
+## Running _scflow_
+The basic `scflow` workflow for sample QC begins with the import of the feature-barcode sparse matrix with `read_sparse_matrix`.  The metadata for the sample is then imported from a sample sheet with `read_metadata`.  A SingleCellExperiment object is created from the matrix and the metadata using `generate_sce` which is then annotated with both gene and cell-level data using `annotate_sce`.  We then filter the SingleCellExperiment to select only cells and genes meeting our QC criteria using `filter_sce`.  We can then optionally find singlets in our filtered SingleCellExperiment using `find_singlets` before filtering them out again with `filter_sce`.  A complete QC report can then be generated using `report_qc_sce` before saving the filtered and quality-controlled SingleCellExperiment with `write_sce`.
+
+### Step one - import the matrix and metadata
+
+```{r eval=FALSE, results="hide"}
+library(scflow)
+mat <- read_sparse_matrix(matrix_fp)
+```
+
+Next we retrieve the metadata by pointing to a Sample Sheet and specifying a unique identifier (unique_key) in a specific column (key_colname):
+
+  ```{r eval=FALSE, message=FALSE}
+metadata <- read_metadata(
+  unique_key = "lodut",
+  key_colname = "manifest",
+  samplesheet_path = samplesheet_fp
+)
+```
