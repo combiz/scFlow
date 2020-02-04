@@ -12,13 +12,12 @@
 #'   names.  ensembl_gene_id will be added if not included here.
 #'   `c("ensembl_gene_id", "external_gene_name")`
 #' @param species ensembl_ids are mapped to `human` or `mouse`
-#' @param mappings_filepath path to the mappings tsv file
+#' @param ensembl_mapping_file path to the mappings tsv file
 #'
 #' @return mapped_df a data.frame of the provided ensembl_id's with mappings.
 #'
 #' @examples
 #' map_ensembl_gene_id("ENSG00000130707")
-#'
 #' @family annotation functions
 #'
 #' @importFrom cli cli_alert_danger col_green cli_alert_info
@@ -30,13 +29,14 @@
 #' @export
 
 map_ensembl_gene_id <- function(ensembl_ids,
-                                mappings = c("ensembl_gene_id",
-                                             "gene_biotype",
-                                             "external_gene_name",
-                                             "percentage_gene_gc_content"),
+                                mappings = c(
+                                  "ensembl_gene_id",
+                                  "gene_biotype",
+                                  "external_gene_name",
+                                  "percentage_gene_gc_content"
+                                ),
                                 species = "human",
-                                mappings_filepath = NULL) {
-
+                                ensembl_mapping_file = NULL) {
   if (!species %in% c("human", "mouse")) {
     stop("only human and mouse currently supported.")
   }
@@ -46,34 +46,37 @@ map_ensembl_gene_id <- function(ensembl_ids,
 
   # strip the . number suffix with version number
   ensembl_ids <- stringr::str_replace(ensembl_ids,
-                                    pattern = "\\..*",
-                                    replacement = "")
+    pattern = "\\..*",
+    replacement = ""
+  )
 
-  if (!(is.null(mappings_filepath))) {
-    if (!file.exists(mappings_filepath)) {
+  if (!(is.null(ensembl_mapping_file))) {
+    if (!file.exists(ensembl_mapping_file)) {
       stop(cli::cli_alert_danger(
-        "File not found.  Specify a valid path.")
-      )
+        "File not found.  Specify a valid path."
+      ))
     } else { # file provided and is found
-        cat("Reading", cli::col_green(c(mappings_filepath, " \r\n")))
-        ensembl_mappings <- utils::read.delim(
-          mappings_filepath,
-          stringsAsFactors = FALSE)
+      cat("Reading", cli::col_green(c(ensembl_mapping_file, " \r\n")))
+      ensembl_mappings <- utils::read.delim(
+        ensembl_mapping_file,
+        stringsAsFactors = FALSE
+      )
 
-        check_mappings_are_present <- purrr::map_lgl(
-          mappings,
-          function(x) x %in% colnames(ensembl_mappings)
-        )
+      check_mappings_are_present <- purrr::map_lgl(
+        mappings,
+        function(x) x %in% colnames(ensembl_mappings)
+      )
 
-        if (!all(check_mappings_are_present)) {
-          stop(cli::cli_alert_danger(
-            "Mappings file is missing the requested mappings.")
-          )
-        } else { # mappings requested are present in the file
-          mapped_df <- ensembl_mappings[
-            ensembl_mappings$ensembl_gene_id %in% ensembl_ids, ]
-        }
+      if (!all(check_mappings_are_present)) {
+        stop(cli::cli_alert_danger(
+          "Mappings file is missing the requested mappings."
+        ))
+      } else { # mappings requested are present in the file
+        mapped_df <- ensembl_mappings[
+          ensembl_mappings$ensembl_gene_id %in% ensembl_ids,
+        ]
       }
+    }
   } else { # mappings file not provided, use biomaRt
 
     cli::cli_alert_info("Mappings file not provided, using biomaRt (slower).")
@@ -91,19 +94,18 @@ map_ensembl_gene_id <- function(ensembl_ids,
     mapped_df <- biomaRt::getBM(
       attributes = mappings,
       filters = "ensembl_gene_id",
-      #values = "",
+      # values = "",
       values = ensembl_ids,
       mart = ensembl
     )
-
   }
 
   if (dim(mapped_df)[[1]] != length(ensembl_ids)) {
     cli::cli_alert_info(c(
       "Note: not all ensembl_ids were found (",
       (length(ensembl_ids) - dim(mapped_df)[[1]]), "/",
-      length(ensembl_ids), " not found).")
-    )
+      length(ensembl_ids), " not found)."
+    ))
   }
 
   mapped_df <- mapped_df %>%
@@ -111,5 +113,4 @@ map_ensembl_gene_id <- function(ensembl_ids,
     dplyr::as_tibble()
 
   return(mapped_df)
-
 }

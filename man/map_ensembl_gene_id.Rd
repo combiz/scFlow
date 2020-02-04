@@ -9,7 +9,7 @@ map_ensembl_gene_id(
   mappings = c("ensembl_gene_id", "gene_biotype", "external_gene_name",
     "percentage_gene_gc_content"),
   species = "human",
-  mappings_filepath = NULL
+  ensembl_mapping_file = NULL
 )
 }
 \arguments{
@@ -22,7 +22,7 @@ names.  ensembl_gene_id will be added if not included here.
 
 \item{species}{ensembl_ids are mapped to \code{human} or \code{mouse}}
 
-\item{mappings_filepath}{path to the mappings tsv file}
+\item{ensembl_mapping_file}{path to the mappings tsv file}
 }
 \value{
 mapped_df a data.frame of the provided ensembl_id's with mappings.
@@ -35,7 +35,6 @@ retrieved by querying biomaRt.
 }
 \examples{
 map_ensembl_gene_id("ENSG00000130707")
-
 }
 \seealso{
 Other annotation functions: 
