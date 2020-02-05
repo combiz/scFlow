@@ -4,8 +4,13 @@
 \alias{reduce_dims_sce}
 \title{Calculate dimensionality reductions for a SingleCellExperiment}
 \usage{
-reduce_dims_sce(sce, reduction_methods = c("PCA", "tSNE", "UMAP",
-  "UMAP3D"), vars_to_regress_out = NULL, pca_dims = 20, ...)
+reduce_dims_sce(
+  sce,
+  reduction_methods = c("PCA", "tSNE", "UMAP", "UMAP3D"),
+  vars_to_regress_out = NULL,
+  pca_dims = 20,
+  ...
+)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}
@@ -23,9 +28,11 @@ sce a SingleCellExperiment object annotated with reducedDims
 PCA, tSNE, UMAP, UMAP3D
 }
 \seealso{
-Other clustering and dimensionality reduction: \code{\link{.get_x_most_specific_genes}},
-  \code{\link{.map_celltypes_with_ewce}},
-  \code{\link{.map_celltypes}}, \code{\link{cluster_sce}},
-  \code{\link{map_celltypes_sce}}
+Other clustering and dimensionality reduction: 
+\code{\link{.get_x_most_specific_genes}()},
+\code{\link{.map_celltypes_with_ewce}()},
+\code{\link{.map_celltypes}()},
+\code{\link{cluster_sce}()},
+\code{\link{map_celltypes_sce}()}
 }
 \concept{clustering and dimensionality reduction}

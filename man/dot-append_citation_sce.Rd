@@ -4,8 +4,7 @@
 \alias{.append_citation_sce}
 \title{Append a citation to a SingleCellExperiment}
 \usage{
-.append_citation_sce(sce, key_var = "MENDELEY.TAGS", key,
-  verbose = TRUE)
+.append_citation_sce(sce, key_var = "MENDELEY.TAGS", key, verbose = TRUE)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}
@@ -21,8 +20,9 @@ sce a SingleCellExperiment object
 Append a citation to a SingleCellExperiment
 }
 \seealso{
-Other citation functions: \code{\link{.print_citation_html}},
-  \code{\link{.print_citation}}
+Other citation functions: 
+\code{\link{.print_citation_html}()},
+\code{\link{.print_citation}()}
 }
 \concept{citation functions}
 \keyword{internal}

@@ -5,6 +5,8 @@
 #' @param plot_vars the colData variable(s) to generate plots for
 #' @param unique_id_var the colData variable identifying unique samples
 #' @param facet_vars the colData variable(s) to facet/subset by
+#' @param outlier_vars the colData variable(s) to apply adaptive thresholding
+#' @param outlier_mads the minimum median absolute deviations for thresholding
 #'
 #' @return sce a annotated SingleCellExperiment object
 #'
@@ -21,7 +23,10 @@ annotate_merged_sce <- function(sce,
                                             "total_counts", "pc_mito",
                                             "pc_ribo"),
                                 unique_id_var = "manifest",
-                                facet_vars = NULL) {
+                                facet_vars = NULL,
+                                outlier_vars = c("total_features_by_counts",
+                                                 "total_counts"),
+                                outlier_mads = 3) {
 
   cat(cli::rule("Annotating Merged SingleCellExperiment", line = 2), "\r\n")
   cat(cli::rule("Appending Merge Summary Plots", line = 1), "\r\n")

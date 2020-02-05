@@ -4,8 +4,11 @@
 \alias{report_qc_sce}
 \title{Generate plots and a QC report for a SingleCellExperiment}
 \usage{
-report_qc_sce(sce, report_folder_path = getwd(),
-  report_file = "qc_report_scflow")
+report_qc_sce(
+  sce,
+  report_folder_path = getwd(),
+  report_file = "qc_report_scflow"
+)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}
@@ -21,15 +24,21 @@ sce a annotated SingleCellExperiment object
 Generate plots and a QC report for a SingleCellExperiment
 }
 \seealso{
-Other annotation functions: \code{\link{.preprocess_seurat_object}},
-  \code{\link{annotate_merged_sce}},
-  \code{\link{annotate_sce_cells}},
-  \code{\link{annotate_sce_genes}},
-  \code{\link{annotate_sce}}, \code{\link{filter_sce}},
-  \code{\link{find_singlets}}, \code{\link{generate_sce}},
-  \code{\link{map_ensembl_gene_id}},
-  \code{\link{merge_sce}}, \code{\link{read_metadata}},
-  \code{\link{report_merged_sce}},
-  \code{\link{run_doubletfinder}}, \code{\link{sce_to_seu}}
+Other annotation functions: 
+\code{\link{.preprocess_seurat_object}()},
+\code{\link{annotate_merged_sce}()},
+\code{\link{annotate_sce_cells}()},
+\code{\link{annotate_sce_empty}()},
+\code{\link{annotate_sce_genes}()},
+\code{\link{annotate_sce}()},
+\code{\link{filter_sce}()},
+\code{\link{find_singlets}()},
+\code{\link{generate_sce}()},
+\code{\link{map_ensembl_gene_id}()},
+\code{\link{merge_sce}()},
+\code{\link{read_metadata}()},
+\code{\link{report_merged_sce}()},
+\code{\link{run_doubletfinder}()},
+\code{\link{sce_to_seu}()}
 }
 \concept{annotation functions}

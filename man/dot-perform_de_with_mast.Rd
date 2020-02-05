@@ -16,10 +16,12 @@ sce a SingleCellExperiment object
 Perform DE with MAST
 }
 \seealso{
-Other differential gene expression: \code{\link{.filter_sce_genes_for_de}},
-  \code{\link{.generate_model_from_vars}},
-  \code{\link{.preprocess_sce_for_de}},
-  \code{\link{perform_de}}, \code{\link{pseudobulk_sce}}
+Other differential gene expression: 
+\code{\link{.filter_sce_genes_for_de}()},
+\code{\link{.generate_model_from_vars}()},
+\code{\link{.preprocess_sce_for_de}()},
+\code{\link{perform_de}()},
+\code{\link{pseudobulk_sce}()}
 }
 \concept{differential gene expression}
 \keyword{internal}

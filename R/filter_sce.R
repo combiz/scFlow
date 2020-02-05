@@ -81,6 +81,13 @@ filter_sce <- function(sce,
         "{.emph {n_multiplets}} multiplets were dropped. \r\n")
     }
 
+    if(sce@metadata$scflow_steps$emptydrops_annotated){
+      n_empty_drops <- sum(sce$is_empty_drop)
+      cli::cli_alert_info("EmptyDrops annotations found!")
+      cli::cli_alert_success(
+        "{.emph {n_empty_drops}} empty drops were dropped. \r\n")
+    }
+
     cli::cli_div(theme = list(
       span.pass = list(color = "green"),
       span.fail = list(color = "red")

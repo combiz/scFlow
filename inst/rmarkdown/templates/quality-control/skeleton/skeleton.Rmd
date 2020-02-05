@@ -49,6 +49,13 @@ metadata_table <- data.frame(
 datatable(metadata_table, rownames = FALSE, options = list(pageLength = 5, scrollX=F, columnDefs = list(list(className = 'dt-left', targets = "_all"))), escape = FALSE )
 ```
 
+## Empty droplet identification
+`r if(metadata$scflow_steps$emptydrops_annotated != 1){"EmptyDrops was not run on this dataset."}`
+
+```{r conditional_emptydrops_block, child='emptydrops_template.Rmd', eval =  (metadata$scflow_steps$emptydrops_annotated == 1)}
+```
+
+
 ## Number of counts / features per cellular barcode
 <div class = "row">
 <div class = "col-md-6">

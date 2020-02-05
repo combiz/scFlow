@@ -4,9 +4,15 @@
 \alias{plot_reduced_dim}
 \title{Plot Cells Reduced Dimensions With Feature Highlighting}
 \usage{
-plot_reduced_dim(sce, feature_dim = "Cluster", reduced_dim = "UMAP",
-  highlight_feature = NA, label_clusters = FALSE, size = 0.1,
-  alpha = 0.2)
+plot_reduced_dim(
+  sce,
+  feature_dim = "Cluster",
+  reduced_dim = "UMAP",
+  highlight_feature = NA,
+  label_clusters = FALSE,
+  size = 0.1,
+  alpha = 0.2
+)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}

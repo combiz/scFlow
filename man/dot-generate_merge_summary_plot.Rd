@@ -4,8 +4,13 @@
 \alias{.generate_merge_summary_plot}
 \title{helper fn to generate a merge summary plot for a SingleCellExperiment}
 \usage{
-.generate_merge_summary_plot(sce, plot_var, unique_id_var,
-  facet_var = NULL, plot_points = FALSE)
+.generate_merge_summary_plot(
+  sce,
+  plot_var,
+  unique_id_var,
+  facet_var = NULL,
+  plot_points = FALSE
+)
 }
 \arguments{
 \item{sce}{a singlecellexperiment object}

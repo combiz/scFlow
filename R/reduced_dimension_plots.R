@@ -55,7 +55,7 @@ plot_reduced_dim <- function(sce,
 
   # colour palette
   colourCount <- length(unique(dt$feature_dim))
-  palette_choice <- paletteer::paletteer_d(ggsci, nrc_npg)
+  palette_choice <- paletteer::paletteer_d("ggsci::nrc_npg")
   getPalette <- grDevices::colorRampPalette(palette_choice)
   if (colourCount <= length(palette_choice)) {
     if (colourCount == 2) {

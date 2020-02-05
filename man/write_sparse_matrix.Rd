@@ -19,7 +19,9 @@ Write a feature-barcode matrix into a folder with .gz compressed files.  This
 folder contains 'barcodes.tsv.gz', 'features.tsv.gz',and 'matrix.mtx.gz'.
 }
 \seealso{
-Other import and export functions: \code{\link{read_sce}},
-  \code{\link{read_sparse_matrix}}, \code{\link{write_sce}}
+Other import and export functions: 
+\code{\link{read_sce}()},
+\code{\link{read_sparse_matrix}()},
+\code{\link{write_sce}()}
 }
 \concept{import and export functions}
