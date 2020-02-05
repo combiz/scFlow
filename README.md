@@ -1,10 +1,8 @@
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# scflow
+scflow
+======
 
 <!-- badges: start -->
-
 [![Travis build
 status](https://travis-ci.org/combiz/scflow.svg?branch=master)](https://travis-ci.org/combiz/scflow)
 [![Codecov test
@@ -16,49 +14,50 @@ status](https://ci.appveyor.com/api/projects/status/github/combiz/scflow?branch=
 The goal of scflow is to provide tools in R to build a complete analysis
 workflow for single-cell/nuclei RNA sequencing data.
 
-  - Quality control of gene-cell matrices
-      - Filtering of matrices by counts and features
-      - Filtering of mitochondrial genes and mitochondrial counts
+-   Quality control of gene-cell matrices
+    -   Filtering of matrices by counts and features
+    -   Filtering of mitochondrial genes and mitochondrial counts
         thresholding
-      - Doublet and multiplet identification and removal with
+    -   Doublet and multiplet identification and removal with
         [DoubletFinder](https://github.com/chris-mcginnis-ucsf/DoubletFinder)
-      - Rich QC metrics annotation with
+    -   Rich QC metrics annotation with
         [scater](https://github.com/davismcc/scater)
-  - Dimensionality reduction and celltype identification
-      - Louvain clustering, UMAP dimensionality reduction, and cluster
+-   Dimensionality reduction and celltype identification
+    -   Louvain clustering, UMAP dimensionality reduction, and cluster
         marker gene identification with
         [monocle](https://github.com/cole-trapnell-lab/monocle-release)
-      - Celltype annotation with
+    -   Celltype annotation with
         [EWCE](https://github.com/NathanSkene/EWCE) and
         [Liger](https://github.com/MacoskoLab/liger)
-      - Cluster identity mapping against the [Allen Human Brain
+    -   Cluster identity mapping against the [Allen Human Brain
         Atlas](https://www.brain-map.org) and Mouse Nervous System Data
         from [Zeisel 2018](https://doi.org/10.1016/j.cell.2018.06.021)
-  - Differential gene expression implementations
-      - Zero-inflated regression model with
+-   Differential gene expression implementations
+    -   Zero-inflated regression model with
         [MAST](https://github.com/RGLab/MAST)
-      - Random effects model with [Limma](https://github.com/cran/limma)
-      - Negative binomial distribution pseudobulking model with
+    -   Random effects model with [Limma](https://github.com/cran/limma)
+    -   Negative binomial distribution pseudobulking model with
         [DESeq2](https://github.com/mikelove/DESeq2)
-      - Pseudobulk generalized likelihood ratio tests with
+    -   Pseudobulk generalized likelihood ratio tests with
         [EdgeR](https://github.com/StoreyLab/edge)
-  - Pathway and functional category enrichment analysis
-      - Interface to the Enrichr database with
+-   Pathway and functional category enrichment analysis
+    -   Interface to the Enrichr database with
         [EnrichR](https://github.com/cran/enrichR)
-      - Interface to the WebGestalt tool with
+    -   Interface to the WebGestalt tool with
         [WebGestaltR](http://www.webgestalt.org/)
-  - Publication quality plots and analysis reports
-      - QC plots and tabular metrics suitable for reports.
-      - UMAP plots for cell features and gene expression.
-      - Violin plots for gene expression.
-      - Pathway and gene enrichment plots
+-   Publication quality plots and analysis reports
+    -   QC plots and tabular metrics suitable for reports.
+    -   UMAP plots for cell features and gene expression.
+    -   Violin plots for gene expression.
+    -   Pathway and gene enrichment plots
 
 The package functions are designed to interface neatly with
 [NextFlow](https://www.nextflow.io/) for scalable and containerized
 pipelines deployed locally, on high-performance computing clusters, or
 in the cloud. An accompanying NextFlow pipeline is in the works - TBA.
 
-## Installation
+Installation
+------------
 
 You can install the development version of scflow from
 [GitHub](https://github.com/) with:
@@ -68,17 +67,30 @@ You can install the development version of scflow from
 devtools::install_github("combiz/scflow")
 ```
 
-## Developers
+Developers
+----------
 
 You may need to install scflow using a Personal Access Token
-(Github-\>Settings-\>Developer Settings): -
+(Github-&gt;Settings-&gt;Developer Settings): -
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("combiz/scflow", auth_token = "YOURTOKEN")
 ```
 
-## Running *scflow*
+Follow this
+[link](https://github.com/combiz/scflow/wiki/Installing-package-from-a-private-github-repo)
+for details. For dependecy related issues check this
+[link](https://github.com/combiz/scflow/wiki).
+
+Preprocessing example dataset
+-----------------------------
+
+Preprocess the `scFlowExample` dataset following this
+[link](https://github.com/neurogenomics/scFlowExample).
+
+Running *scflow*
+----------------
 
 The basic `scflow` workflow for sample QC begins with the import of the
 feature-barcode sparse matrix with `read_sparse_matrix`. The metadata
@@ -198,8 +210,7 @@ At this stage we may wish to identify singlets in the
 `SingleCellExperiment` and discard any multiplets. In `scflow` we simply
 run `find_singlets` and specify our preferred multiplet identification
 algorithm. Here we will use `doubletfinder` (This will take a while
-depending on the cell
-numbers):-
+depending on the cell numbers):-
 
 ``` r
 sce <- find_singlets(sce, "doubletfinder", pK = 0.005, vars_to_regress_out = c("nCount_RNA", "pc_mito"))
@@ -225,8 +236,7 @@ minutes): -
 report_qc_sce(sce, report_file = "qc_report_scflow_individual_1")
 ```
 
-And save our SingleCellExperiment:
--
+And save our SingleCellExperiment: -
 
 ``` r
 write_sce(sce, "./sce_individual_1")
@@ -285,8 +295,7 @@ dim(sce_merged)
 sce_merged <- reduce_dims_sce(sce_merged, pca_dims = 5)
 ```
 
-We can now plot
-tSNE:-
+We can now plot tSNE:-
 
 ``` r
 plot_umap_with_feature(sce_merged, feature_dim = "diagnosis", reduced_dim = "tSNE", alpha = 1)
@@ -300,8 +309,7 @@ The next step is to cluster all the cells using `cluster_sce` command.
 sce_merged <- cluster_sce(sce_merged)
 ```
 
-We can then plot the
-clusters:-
+We can then plot the clusters:-
 
 ``` r
 plot_umap_with_feature(sce_merged, feature_dim = "clusters", reduced_dim = "tSNE", alpha = 1)
@@ -321,8 +329,7 @@ sce_merged <- map_celltypes_sce(sce_merged,
 
 The celltypes for each cell can be found in
 `sce_merged@colData$cluster_celltype` slot. We can also generate tSNE
-plot for each
-celltype.
+plot for each celltype.
 
 ``` r
 plot_umap_with_feature(sce_merged, feature_dim = "cluster_celltype", reduced_dim = "tSNE", alpha = 1)
