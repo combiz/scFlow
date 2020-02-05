@@ -44,7 +44,7 @@ annotate_sce_genes <- function(sce,
   # annotate rowdata with biomart data
   mapping_results <- map_ensembl_gene_id(
     SummarizedExperiment::rowData(sce)$ensembl_gene_id,
-    mappings_filepath = ensembl_mapping_file
+    ensembl_mapping_file = ensembl_mapping_file
   )
 
   mapping_results$ensembl_gene_id <- as.character(

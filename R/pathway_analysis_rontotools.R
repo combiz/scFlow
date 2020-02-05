@@ -155,6 +155,8 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
       database = rep(database_name)
     )
 
+    res_table <- res_table[res_table$FDR <= 0.05, ]
+
     rownames(res_table) <- NULL
 
     enrichment_result[[database_name]] <- res_table
