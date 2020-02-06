@@ -26,6 +26,11 @@ map_celltypes_sce <- function(sce,
                               clusters_colname = "clusters") {
 
   assertthat::assert_that(dir.exists(ctd_folder))
+  assertthat::assert_that(
+    clusters_colname %in% names(SummarizedExperiment::colData(sce)),
+    msg = "clusters_colname missing from colData"
+    )
+
   l_ctd <- .read_rds_files_to_list(ctd_folder)
 
   if(dim(sce)[[2]] > cells_to_sample) {
@@ -328,7 +333,7 @@ map_celltypes_sce <- function(sce,
   # 2d
   sce@metadata$celltype_plots <- list()
   for (reddim in names(SingleCellExperiment::reducedDims(sce))) {
-    sce@metadata$celltype_plots[[reddim]] <- plot_umap_with_feature(
+    sce@metadata$celltype_plots[[reddim]] <- plot_reduced_dim(
       sce,
       feature_dim = celltype_dim,
       reduced_dim = reddim,

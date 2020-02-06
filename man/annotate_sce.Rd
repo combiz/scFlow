@@ -4,11 +4,26 @@
 \alias{annotate_sce}
 \title{Annotate a SingleCellExperiment With Gene Names and QC Metrics}
 \usage{
-annotate_sce(sce, min_library_size = 300, min_features = 100,
-  max_mito = 0.1, min_ribo = 0, max_ribo = 1, min_counts = 2,
-  min_cells = 2, drop_unmapped = TRUE, drop_mito = TRUE,
-  drop_ribo = FALSE, annotate_genes = TRUE, annotate_cells = TRUE,
-  ensembl_mapping_file = NULL)
+annotate_sce(
+  sce,
+  min_library_size = 300,
+  min_features = 100,
+  max_mito = 0.1,
+  min_ribo = 0,
+  max_ribo = 1,
+  min_counts = 2,
+  min_cells = 2,
+  drop_unmapped = TRUE,
+  drop_mito = TRUE,
+  drop_ribo = FALSE,
+  ed_lower = 100,
+  ed_retain = NULL,
+  ed_alpha = 0.001,
+  annotate_ed = TRUE,
+  annotate_genes = TRUE,
+  annotate_cells = TRUE,
+  ensembl_mapping_file = NULL
+)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}
@@ -36,6 +51,14 @@ ribosomal genes (0 - 1)}
 \item{drop_mito}{set \code{TRUE} to remove mitochondrial genes}
 
 \item{drop_ribo}{set \code{TRUE} to remove ribosomal genes}
+
+\item{ed_lower}{see \code{\link[dropletUtils:emptyDrops]{dropletUtils::emptyDrops()}}}
+
+\item{ed_retain}{see \code{\link[dropletUtils:emptyDrops]{dropletUtils::emptyDrops()}}}
+
+\item{ed_alpha}{minimum FDR for \code{\link[dropletUtils:emptyDrops]{dropletUtils::emptyDrops()}}}
+
+\item{annotate_ed}{optionally skip emptyDrops annotation with FALSE}
 
 \item{annotate_genes}{optionally skip gene annotation with FALSE}
 
@@ -93,14 +116,21 @@ Gene-level annotations
 }
 
 \seealso{
-Other annotation functions: \code{\link{.preprocess_seurat_object}},
-  \code{\link{annotate_sce_cells}},
-  \code{\link{annotate_sce_genes}},
-  \code{\link{filter_sce}}, \code{\link{find_singlets}},
-  \code{\link{generate_sce}},
-  \code{\link{map_ensembl_gene_id}},
-  \code{\link{merge_sce}}, \code{\link{read_metadata}},
-  \code{\link{report_qc_sce}},
-  \code{\link{run_doubletfinder}}, \code{\link{sce_to_seu}}
+Other annotation functions: 
+\code{\link{.preprocess_seurat_object}()},
+\code{\link{annotate_merged_sce}()},
+\code{\link{annotate_sce_cells}()},
+\code{\link{annotate_sce_empty}()},
+\code{\link{annotate_sce_genes}()},
+\code{\link{filter_sce}()},
+\code{\link{find_singlets}()},
+\code{\link{generate_sce}()},
+\code{\link{map_ensembl_gene_id}()},
+\code{\link{merge_sce}()},
+\code{\link{read_metadata}()},
+\code{\link{report_merged_sce}()},
+\code{\link{report_qc_sce}()},
+\code{\link{run_doubletfinder}()},
+\code{\link{sce_to_seu}()}
 }
 \concept{annotation functions}

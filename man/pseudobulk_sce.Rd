@@ -4,10 +4,13 @@
 \alias{pseudobulk_sce}
 \title{Generate a Pseudo-bulk SingleCellExperiment from a SingleCellExperiment}
 \usage{
-pseudobulk_sce(sce, sample_var = "individual",
-  celltype_var = "cluster_celltype", assay_name = "counts",
-  keep_vars = c("individual", "group", "sex", "age", "PMI", "RIN",
-  "seqdate"))
+pseudobulk_sce(
+  sce,
+  sample_var = "individual",
+  celltype_var = "cluster_celltype",
+  assay_name = "counts",
+  keep_vars = c("individual", "group", "sex", "age", "PMI", "RIN", "seqdate")
+)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}
@@ -29,10 +32,11 @@ cells from the same \code{sample_var} and \code{celltype_var}.  The SCE is then
 re-annotated and library sizes calculated based on cell numbers.
 }
 \seealso{
-Other differential gene expression: \code{\link{.filter_sce_genes_for_de}},
-  \code{\link{.generate_model_from_vars}},
-  \code{\link{.perform_de_with_mast}},
-  \code{\link{.preprocess_sce_for_de}},
-  \code{\link{perform_de}}
+Other differential gene expression: 
+\code{\link{.filter_sce_genes_for_de}()},
+\code{\link{.generate_model_from_vars}()},
+\code{\link{.perform_de_with_mast}()},
+\code{\link{.preprocess_sce_for_de}()},
+\code{\link{perform_de}()}
 }
 \concept{differential gene expression}

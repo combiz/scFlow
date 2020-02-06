@@ -47,9 +47,12 @@ merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
   cli::cli_text("Merging {.var {length(sce_l)}} SingleCellExperiments")
   ensembl_gene_id_l <- purrr::map(sce_l,
                                   ~ as.character(rowData(.)$ensembl_gene_id))
-  n_sce_genes <- paste0(purrr::map_int(ensembl_gene_id_l, length), collapse = ", ")
+  n_sce_genes <- paste0(
+    purrr::map_int(ensembl_gene_id_l, length), collapse = ", ")
   cli::cli_text("Genes in each SingleCellExperiment: {.var {n_sce_genes}}")
-  union_ensembl_gene_id <- as.character(Reduce(dplyr::union, ensembl_gene_id_l))
+  union_ensembl_gene_id <- as.character(
+    Reduce(dplyr::union, ensembl_gene_id_l)
+    )
   cli::cli_text(c("Union of genes across all SingleCellExperiments: ",
                   "{.var {length(union_ensembl_gene_id)}}"))
   cli::cli_text("Equalizing to {.var {length(union_ensembl_gene_id)}} genes.")

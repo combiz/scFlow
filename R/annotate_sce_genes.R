@@ -82,7 +82,8 @@ annotate_sce_genes <- function(sce,
 
   # boolean logic to obtain keep flags
   SummarizedExperiment::rowData(sce)$qc_metric_mapped_keep <-
-    (SummarizedExperiment::rowData(sce)$qc_metric_ensembl_mapped | !drop_unmapped)
+    (SummarizedExperiment::rowData(sce)$qc_metric_ensembl_mapped |
+       !drop_unmapped)
   SummarizedExperiment::rowData(sce)$qc_metric_mito_keep <-
     !(qc_metric_is_mito & drop_mito)
   SummarizedExperiment::rowData(sce)$qc_metric_ribo_keep <-

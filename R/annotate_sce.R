@@ -51,9 +51,13 @@
 #' @param drop_unmapped set `TRUE` to remove unmapped ensembl_gene_id
 #' @param drop_mito set `TRUE` to remove mitochondrial genes
 #' @param drop_ribo set `TRUE` to remove ribosomal genes
+#' @param ed_lower see [dropletUtils::emptyDrops()]
+#' @param ed_retain see [dropletUtils::emptyDrops()]
+#' @param ed_alpha minimum FDR for [dropletUtils::emptyDrops()]
 #' @param ensembl_mapping_file a local tsv file with ensembl_gene_id and
 #'   additional columns for mapping ensembl_gene_id to gene info.  If
 #'   not provided, the biomaRt db is queried (slower).
+#' @param annotate_ed optionally skip emptyDrops annotation with FALSE
 #' @param annotate_genes optionally skip gene annotation with FALSE
 #' @param annotate_cells optionally skip cell annotation with FALSE
 #'
@@ -79,6 +83,10 @@ annotate_sce <- function(sce,
                          drop_unmapped = TRUE,
                          drop_mito = TRUE,
                          drop_ribo = FALSE,
+                         ed_lower = 100,
+                         ed_retain = NULL,
+                         ed_alpha = 0.001,
+                         annotate_ed = TRUE,
                          annotate_genes = TRUE,
                          annotate_cells = TRUE,
                          ensembl_mapping_file = NULL) {
@@ -126,6 +134,15 @@ annotate_sce <- function(sce,
     }
   }
 
+  if (annotate_ed) {
+    sce <- annotate_sce_empty(
+      sce,
+      lower = ed_lower,
+      retain = ed_retain,
+      alpha = ed_alpha
+    )
+  }
+
   if (annotate_cells) {
     cli::cli_alert_success(
       "SingleCellExperiment cells were successfully annotated with: \r\n"
@@ -156,7 +173,9 @@ annotate_sce <- function(sce,
   cli::cli_text("Generating QC plots and appending to metadata.")
   all_scflow_fns <- ls(getNamespace("scflow"), all.names = TRUE)
   qc_plot_fns <- all_scflow_fns[startsWith(all_scflow_fns, ".qc_plot_")]
-  for (fn in qc_plot_fns) { sce <- get(fn)(sce) }
+  for (fn in qc_plot_fns) {
+    sce <- get(fn)(sce)
+  }
 
   # generate qc summary table
   cli::cli_text("Generating QC summary table and appending to metadata.")
@@ -171,7 +190,8 @@ annotate_sce <- function(sce,
 .qc_append_summary_table <- function(sce) {
 
   # qc params to data frame
-  qc_params_df <- map_df(sce@metadata$qc_params, ~ .) %>%
+  sce@metadata$qc_params[purrr::map_lgl(sce@metadata$qc_params, is.null)] <- "null"
+  qc_params_df <- purrr::map_df(sce@metadata$qc_params, ~ .) %>%
     dplyr::rename_all(~ paste0("qc_params_", .))
 
   # gene qc results to data frame
@@ -258,10 +278,10 @@ annotate_sce <- function(sce,
     dplyr::mutate(barcode_rank = as.integer(rownames(.)))
 
   p <- ggplot2::ggplot(dt) +
-    geom_point(aes(x = barcode_rank, y = total_counts))+
-    scale_y_continuous(trans = 'log10') +
+    geom_point(aes(x = barcode_rank, y = total_counts)) +
+    scale_y_continuous(trans = "log10") +
     scale_x_continuous(
-      limits=c(0, max(dt$barcode_rank)),
+      limits = c(0, max(dt$barcode_rank)),
       breaks = seq(0, max(dt$barcode_rank), by = 10000))+
     geom_hline(
       yintercept = sce@metadata$qc_params$min_library_size,
@@ -274,8 +294,8 @@ annotate_sce <- function(sce,
           panel.background = element_blank(),
           axis.text = element_text(size = 12, colour = "black"),
           axis.text.x = element_text(angle = 90),
-          axis.title=element_text(size=16),
-          legend.text=element_text(size=10),
+          axis.title=element_text(size = 16),
+          legend.text=element_text(size = 10),
           plot.title = element_text(size = 18, hjust = 0.5))
 
   sce@metadata$qc_plots$count_depth_distribution <- p
@@ -297,7 +317,9 @@ annotate_sce <- function(sce,
     dplyr::filter(total_features > 10)
 
   p <- ggplot2::ggplot(dt) +
-    geom_point(aes(x = total_counts, y = total_features, colour = pc_mito), size = .01)+
+    geom_point(
+      aes(x = total_counts, y = total_features, colour = pc_mito),
+      size = .01) +
     geom_hline(
       yintercept = sce@metadata$qc_params$min_features,
       linetype = "solid",
@@ -339,7 +361,6 @@ annotate_sce <- function(sce,
 
   dt <- dplyr::as_tibble(data.frame(
     total_counts = sce$total_counts)) %>%
-    #filter(total_counts <= counts_cutoff ) %>%
     filter(total_counts > 10 )
 
   p <- ggplot2::ggplot(dt) +

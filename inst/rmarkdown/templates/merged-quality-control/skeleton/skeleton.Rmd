@@ -1,0 +1,93 @@
+---
+title: "<b>scflow</b> - Merged Multi-Sample Quality-Control Report"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    theme: "flatly"
+    toc: false
+    fig_caption: true
+    keep_md: false
+    css: style.css
+    includes:
+      after_body: footer.html
+params:
+  metadata_path: false
+---
+
+```{r setup, results='hide', include=FALSE}
+library(plotly)
+library(DT)
+library(dplyr)
+library(utils)
+library(formattable)
+library(htmltools)
+library(knitr)
+
+knitr::opts_chunk$set(echo = FALSE)
+
+knitr::knit_hooks$set(wrap = function(before, options, envir){
+  if (before){
+    paste0('<', options$wrap, ' align="center">')
+  } else {
+    paste0('</', options$wrap, '>')
+  }
+})
+```
+
+```{r load_data, results='hide', include=FALSE}
+metadata <- readRDS(params$metadata_path)
+#metadata <- readRDS("/home/ckhozoie/Documents/scflow/scemetadata_newest.rds")
+```
+
+## Sample Pseudobulking Plots
+### Pseudobulked Sample Dimensionality Reduction Plots
+
+These plots represent the pseudobulking of all cells from a sample ("_`r metadata$merge_qc_params$unique_id_var`_") into a single point in two-dimensional space.  Taken together with the merge summary plots, these may help to identify potential outliers or otherwise problematic samples.  Data are visualized with: `r paste(setdiff(names(metadata$pseudobulk_rd_plots), "UMAP3D"), collapse = ", ")`.  
+
+```{r, results='asis'}
+knitr::opts_chunk$set(echo = FALSE)
+
+cat("<div class = \"row\">")
+for(rd_name in setdiff(names(metadata$pseudobulk_rd_plots), "UMAP3D")) {
+  cat("<div class = \"col-md-6\">")
+  print(metadata$pseudobulk_rd_plots[[rd_name]])
+  cat(sprintf("<p><h3 align=\"center\">%s</h3></p>", rd_name))
+  cat("</div>")
+}
+cat("</div>")
+```
+
+### Pseudobulked Sample Gene Expressivity Plot
+Below, the pseudobulked counts matrix is used to determine which genes are detected or are absent in each sample.  Hierarchical clustering with Euclidean distance is used to visualize the samples according to these binarized gene expressivity matrices.  Samples with marked differences in the number and range of expressed genes may be potentially problematic and this facet of quality-control may be further explored in the related `total_features_by_counts` plots in this report.
+
+<div class = "basicfig">
+```{r results='asis', fig.align="center", fig.width=10, fig.height=4.5, fig.cap = "<b>Figure: Heatmap and dendrogram of gene expressivity by sample.</b> Genes (rows) and samples (columns) are hierarchically clustered and reveal the number and distribution of expressed (purple) and non-expressed (yellow) genes per sample.",  echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+print(sce@metadata$pseudobulk_plots$combined_heatmap)
+```
+</div>
+
+## Multi-Sample Summary Plots
+
+The multi-sample summary plots and matching data tables below examine key sample quality metrics (`r paste0(lapply(metadata$merge_qc_params$plot_vars, function(x) {sprintf("<a href=\"#%s\">%s</a>", x, x)}), collapse = ", ")`) across all experimental samples.  These highlight samples with marked differences in these metrics and may be used to inform revision of quality-control thresholds.  In more extreme cases (e.g. severe outliers, sample degradation, etc.), it may be appropriate to omit sample(s) from an analysis.  To facilitate the identification of these potentially problematic samples, the *QC* column in the tables below highlight any samples with metrics falling outside of two or three standard deviations (σ) of the mean.
+
+`r if(!is.null(metadata$merge_qc_params$facet_vars)){sprintf("These metrics are also visualized across the specified facet variables: %s.", paste("<i>",metadata$merge_qc_params$facet_vars,"</i>", collapse = ", "))}`
+
+```{r, results='asis', include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+show_plot <- function(plot_object) {
+  div(style="margin:auto;text-align:center", plot_object)
+}
+
+out <- NULL
+for(plot_var in names(metadata$merged_plots)) {
+  for(plot in names(metadata$merged_plots[[plot_var]])) {
+    out <- c(out, knit_child('/home/ckhozoie/Documents/scflow/inst/rmarkdown/templates/merged-quality-control/skeleton/plot_table_template.Rmd'))
+  }
+}
+```
+
+`r paste(out, collapse='\n')`
+
+<br>scflow v`r utils::packageVersion("scflow")` -- `r Sys.time()`

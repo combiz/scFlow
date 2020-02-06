@@ -17,11 +17,12 @@
 #'
 #' @importFrom cli cli_text rule
 #' @importFrom SummarizedExperiment colData rowData assays
-#' @importFrom dplyr select distinct group_by tally select
+#' @importFrom dplyr select distinct group_by tally select left_join
 #' @importFrom magrittr %>% set_colnames
 #' @importFrom stringr str_split
 #' @importFrom purrr map_int map_df
-#' @importFrom assertthat assert_that
+#' @importFrom future availableCores
+#' @importFrom assertthat are_equal
 #' @importFrom scater librarySizeFactors normalize calculateQCMetrics
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #'
@@ -48,13 +49,21 @@ pseudobulk_sce <- function(sce,
     sep = "_"
   )
 
-  pb_matrix <- scater::sumCountsAcrossCells(
-    sce,
-    sce$pseudobulk_id,
-    exprs_values = assay_name
-  )
+  #pb_matrix <- scater::sumCountsAcrossCells(
+  #  sce,
+  #  sce$pseudobulk_id,
+  #  exprs_values = assay_name
+  #)
 
-  rownames(pb_matrix) <- SummarizedExperiment::rowData(sce)$ensembl_gene_id
+  pb_matrix_l <- parallel::mclapply(
+    unique(sce$pseudobulk_id),
+    function(x) {Matrix::rowSums(sce[, sce$pseudobulk_id == x]@assays$data[[assay_name]])},
+    mc.cores = future::availableCores())
+
+  pb_matrix <- Reduce(cbind, pb_matrix_l)
+  colnames(pb_matrix) <- unique(sce$pseudobulk_id)
+
+  #rownames(pb_matrix) <- SummarizedExperiment::rowData(sce)$ensembl_gene_id
 
   # create lookup table for cellnumbers by individual/cluster
   n_lookup <- data.frame(SummarizedExperiment::colData(sce)) %>%
@@ -67,27 +76,36 @@ pseudobulk_sce <- function(sce,
   names(lup) <- n_lookup$pseudobulk_id
 
   # rebuild basic cell identifiers
-  pb_cd <- purrr::map_df(stringr::str_split(colnames(pb_matrix), "_"),
-                  ~ magrittr::set_colnames(
-                    data.frame(.[[1]], .[[2]]),
-                    c(sample_var, celltype_var))
-                  )
-  pb_cd$pseudobulk_id <- colnames(pb_matrix)
+  pb_cd <- data.frame(Reduce(rbind, strsplit(colnames(pb_matrix), "_")))
   pb_cd <- as.data.frame(unclass(pb_cd)) # chr to factor trick
+
+  pb_cd <- magrittr::set_colnames(
+    pb_cd,
+    c(sample_var, celltype_var)
+    )
+
+  pb_cd$pseudobulk_id <- colnames(pb_matrix)
+  # if sample_var equals celltype_var
+  pb_cd <- pb_cd[, !duplicated(colnames(pb_cd))]
 
   # append cell numbers to each pseudobulk sample
   pb_cd$n_cells <- purrr::map_int(pb_cd$pseudobulk_id, ~ lup[.])
   pb_cd[[sample_var]] <- as.factor(pb_cd[[sample_var]])
+  pb_cd <- pb_cd[order(colnames(pb_matrix)), ]
 
   n_samples <- nrow(pb_cd)
 
   # append the rest of the sample information
-  pb_cd <- merge(pb_cd, sce_cd,
-                 by = sample_var,
-                 all.x = TRUE, all.y = FALSE)
+  pb_cd <- dplyr::left_join(
+    pb_cd, sce_cd,
+    by = sample_var,
+    all.x = TRUE, all.y = FALSE)
 
-  assertthat::assert_that(
-    nrow(pb_cd) == n_samples,
+  # ensure the order of the coldata matches the matrix
+  pb_cd <- pb_cd[match(colnames(pb_matrix), pb_cd$pseudobulk_id),]
+
+  assertthat::are_equal(
+    nrow(pb_cd), n_samples,
     msg = c("keep_vars variable(s) specified that are not ",
             "common across all cells of sample_var."))
 

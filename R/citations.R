@@ -28,7 +28,7 @@
   citations <- bib[bib[[key_var]] %in% key, ]
   sce@metadata$citations <- unique(rbind(sce@metadata$citations, citations))
 
-  if(verbose) {
+  if (verbose) {
     cli::cli_text("Please consider citing: -")
     apply(citations, 1, .print_citation)
   }

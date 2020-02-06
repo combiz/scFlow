@@ -13,8 +13,9 @@
 Print a single citation to stdout as html
 }
 \seealso{
-Other citation functions: \code{\link{.append_citation_sce}},
-  \code{\link{.print_citation}}
+Other citation functions: 
+\code{\link{.append_citation_sce}()},
+\code{\link{.print_citation}()}
 }
 \concept{citation functions}
 \keyword{internal}

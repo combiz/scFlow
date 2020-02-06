@@ -1,6 +1,7 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
 language: r
+r: bioc-release
 warnings_are_errors: false
 cache: packages
 
@@ -11,8 +12,6 @@ env:
 matrix:
   include:
     - os: linux
-      r: oldrel
-    - os: linux
       r: release
       before_deploy:
         - Rscript -e 'remotes::install_github("combiz/scflow")'
@@ -21,8 +20,6 @@ matrix:
         provider: script
         script: Rscript -e 'pkgdown::deploy_site_github(verbose = TRUE)'
         skip_cleanup: true
-    - os: linux
-      r: devel
     - os: osx
       r: release
       fortran: false
@@ -52,3 +49,9 @@ notifications:
     on_start: never
     on_cancel: never
     on_error: never
+  email:
+    recipients:
+      - c.khozoie@imperial.ac.uk
+      - n.skene@imperial.ac.uk
+      - n.fancy@imperial.ac.uk
+      - m.moradi@imperial.ac.uk
