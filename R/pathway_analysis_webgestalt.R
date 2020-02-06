@@ -34,6 +34,7 @@
 #' @importfrom dplyr filter
 #' @importFrom WebGestaltR WebGestaltR
 #' @importFrom ggplot2 ggplot
+#' @importFrom cowplot theme_cowplot background_grid
 #'
 #' @export
 #'
@@ -53,13 +54,13 @@ pathway_analysis_webgestalt <- function(gene_file = NULL,
                                         enrichment_method = "ORA",
                                         project_name = TRUE,
                                         enrichment_database = c(
-                                          "geneontology_Biological_Process_noRedundant",
-                                          "geneontology_Cellular_Component_noRedundant",
-                                          "geneontology_Molecular_Function_noRedundant",
-                                          "pathway_KEGG",
-                                          "pathway_Panther",
-                                          "pathway_Reactome",
-                                          "pathway_Wikipathway"
+                                "geneontology_Biological_Process_noRedundant",
+                                "geneontology_Cellular_Component_noRedundant",
+                                "geneontology_Molecular_Function_noRedundant",
+                                "pathway_KEGG",
+                                "pathway_Panther",
+                                "pathway_Reactome",
+                                "pathway_Wikipathway"
                                         ),
                                         additional_enrichment_databse = FALSE,
                                         is_output = FALSE,
@@ -230,90 +231,24 @@ pathway_analysis_webgestalt <- function(gene_file = NULL,
     x = enrichmentRatio,
     y = reorder(description, enrichmentRatio)
   )) +
-    geom_point(aes(color = FDR, fill = FDR, size = overlap), shape = 21) +
+    geom_point(aes(fill = FDR, size = overlap),
+               shape = 21, alpha = 0.7, color = "black") +
     scale_size(name = "Size", range = c(3, 8)) +
     xlab("Enrichment Ratio") +
     ylab("") +
     ggtitle(plot_title) +
     scale_fill_gradient(
-      low = "tomato", high = "blue", name = "FDR",
+      low = "violetred", high = "navy", name = "FDR",
       guide = guide_colorbar(reverse = TRUE),
       limits = c(0, 0.05),
-      aesthetics = c("fill", "colour")
+      aesthetics = c("fill")
     ) +
     guides(size = guide_legend(
-      override.aes = list(fill = "tomato", color = "tomato")
-    )) +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      axis.text = element_text(colour = "black", size = 12),
-      legend.key = element_blank()
-    )
+      override.aes = list(fill = "violetred", color = "violetred")
+    )) + theme_cowplot() +
+    background_grid()
 }
 
-#' dotplot for GSEA. x axis normalizedEnrichmentScore, y axis description
-#' @keywords internal
-
-.dotplot_gsea <- function(dt) {
-  plot_title <- dt$database[1]
-  dt <- rbind(
-    dplyr::filter(x, normalizedEnrichmentScore > 0)[1:10, ],
-    dplyr::filter(x, normalizedEnrichmentScore < 0)[1:10, ]
-  )
-  dt <- na.omit(dt)
-
-  ggplot2::ggplot(dt, aes(
-    x = normalizedEnrichmentScore,
-    y = reorder(description, normalizedEnrichmentScore)
-  )) +
-    geom_point(aes(color = FDR, fill = FDR, size = overlap), shape = 21) +
-    scale_size(name = "Size", range = c(3, 8)) +
-    xlab("Normalised Enrichment Score") +
-    ylab("") +
-    ggtitle(plot_title) +
-    scale_fill_gradient(
-      low = "tomato", high = "white", name = "FDR",
-      guide = guide_colorbar(reverse = TRUE),
-      limits = c(0, 0.05),
-      aesthetics = c("fill", "colour")
-    ) +
-    guides(size = guide_legend(
-      override.aes = list(fill = "tomato", color = "tomato")
-    )) +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      axis.text = element_text(colour = "black", size = 12),
-      legend.key = element_blank()
-    )
-}
-
-#' barplot for ORA. x axis enrichmentRatio, y axis description
-#' @keywords internal
-
-
-.barplot_ora <- function(dt) {
-  plot_title <- dt$database[1]
-  dt <- dt[1:10, ]
-  dt <- na.omit(dt)
-
-  ggplot2::ggplot(dt) +
-    geom_bar(aes(
-      x = reorder(description, enrichmentRatio),
-      y = enrichmentRatio, fill = FDR
-    ), stat = "identity") +
-    xlab("") +
-    ylab("Enrichment Ratio") +
-    ggtitle(plot_title) +
-    scale_fill_continuous(
-      low = "tomato", high = "white", name = "FDR",
-      guide = guide_colorbar(reverse = TRUE), limits = c(0, 0.05)
-    ) +
-    coord_flip() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      axis.text = element_text(colour = "black", size = 12)
-    )
-}
 
 #' barplot for GSEA. x axis normalizedEnrichmentScore, y axis description
 #' @keywords internal
@@ -330,18 +265,16 @@ pathway_analysis_webgestalt <- function(gene_file = NULL,
   ggplot2::ggplot(dt, aes(
     x = reorder(description, normalizedEnrichmentScore),
     y = normalizedEnrichmentScore, fill = FDR
-  )) +
+  ), alpha = 0.7) +
     geom_bar(stat = "identity") +
     xlab("") +
     ylab("Normalised Enrichment Score") +
     ggtitle(plot_title) +
     scale_fill_continuous(
-      low = "tomato", high = "white", name = "FDR",
+      low = "violetred", high = "navy", name = "FDR",
       guide = guide_colorbar(reverse = TRUE), limits = c(0, 0.05)
     ) +
     coord_flip() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      axis.text = element_text(colour = "black", size = 12)
-    )
+    theme_cowplot() +
+    background_grid()
 }

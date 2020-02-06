@@ -288,7 +288,7 @@ plot_umap_with_feature(sce_merged, feature_dim = "cluster_celltype", reduced_dim
 ```
 
 
-###Performing differential expression analysis following by impacted pathway analysis
+### Step six -- Performing differential expression analysis following by impacted pathway analysis
 
 We need to subset the merged `SingleCellExperiment` object to perform differential expression analysis. Here we are using `MASTZLM` for differential expression analysis. For example, we are interested in performing DE analysis in the `IN-SST` cell cluster. So, we first subset the `IN-SST` cluster.
 

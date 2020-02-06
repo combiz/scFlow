@@ -28,6 +28,7 @@
 #' @importfrom cli cli_alert_danger rule cli_alert_info
 #' @importFrom ROntoTools setNodeWeights alphaMLG pe Summary
 #' @importFrom ggplot2 ggplot
+#' @importFrom cowplot theme_cowplot background_grid
 #'
 #' @export
 #'
@@ -251,23 +252,21 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
     x = perturbation,
     y = reorder(description, perturbation)
   )) +
-    geom_point(aes(color = FDR, fill = FDR, size = overlap), shape = 21) +
+    geom_point(aes(fill = FDR, size = overlap),
+               shape = 21, alpha = 0.7, color = "black") +
     scale_size(name = "Size", range = c(3, 8)) +
     xlab("Total perturbation") +
     ylab("") +
     ggtitle(plot_title) +
     scale_fill_gradient(
-      low = "tomato", high = "blue", name = "FDR",
+      low = "violetred", high = "navy", name = "FDR",
       guide = guide_colorbar(reverse = TRUE),
       limits = c(0, 0.05),
-      aesthetics = c("fill", "colour")
+      aesthetics = c("fill")
     ) +
     guides(size = guide_legend(
-      override.aes = list(fill = "tomato", color = "tomato")
+      override.aes = list(fill = "violetred", color = "violetred")
     )) +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      axis.text = element_text(colour = "black", size = 12),
-      legend.key = element_blank()
-    )
+    theme_cowplot() +
+    background_grid()
 }

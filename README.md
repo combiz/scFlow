@@ -59,6 +59,9 @@ in the cloud. An accompanying NextFlow pipeline is in the works - TBA.
 Installation
 ------------
 
+You must have hdf5 setup on your system to run this. If using linux, run
+“sudo apt-get install libhdf5-dev”.
+
 You can install the development version of scflow from
 [GitHub](https://github.com/) with:
 
@@ -337,8 +340,7 @@ plot_umap_with_feature(sce_merged, feature_dim = "cluster_celltype", reduced_dim
 
 <img src="man/figures/README-unnamed-chunk-26-1.png" width="100%" />
 
-\#\#\#Performing differential expression analysis following by impacted
-pathway analysis
+### Step six – Performing differential expression analysis following by impacted pathway analysis
 
 We need to subset the merged `SingleCellExperiment` object to perform
 differential expression analysis. Here we are using `MASTZLM` for
