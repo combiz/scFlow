@@ -76,7 +76,7 @@ You may need to install scflow using a Personal Access Token (Github->Settings->
 devtools::install_github("combiz/scflow", auth_token = "YOURTOKEN")
 ```
 
-Follow this [link](https://github.com/combiz/scflow/wiki/Installing-package-from-a-private-github-repo) for details. For dependecy related issues check this [link](https://github.com/combiz/scflow/wiki).
+See [this page on the wiki](https://github.com/combiz/scflow/wiki/Installing-scflow-from-a-private-github-repo) for a full explanation. For dependecy related issues check this [link](https://github.com/combiz/scflow/wiki).
 
 ## Preprocessing example dataset
 
