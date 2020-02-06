@@ -21,11 +21,11 @@
 
 reduce_dims_sce <- function(sce,
                             reduction_methods = c(
-                              "PCA", "tSNE", "UMAP", "UMAP3D", "Liger"),
+                              "PCA", "tSNE", "UMAP", "UMAP3D", "Liger"
+                            ),
                             vars_to_regress_out = NULL,
                             pca_dims = 20,
                             ...) {
-
   fargs <- list(
     n_neighbors = 30L,
     n_components = 2L,
@@ -47,8 +47,10 @@ reduce_dims_sce <- function(sce,
 
   sce@metadata$reduced_dim_plots <- list()
 
-  if (!all(purrr::map_lgl(reduction_methods,
-                  ~ . %in% c("PCA", "tSNE", "UMAP", "UMAP3D", "Liger")))) {
+  if (!all(purrr::map_lgl(
+    reduction_methods,
+    ~ . %in% c("PCA", "tSNE", "UMAP", "UMAP3D", "Liger")
+  ))) {
     stop("reduction methods must be from: PCA, tSNE, UMAP, UMAP3D, Liger")
   }
 
@@ -73,15 +75,11 @@ reduce_dims_sce <- function(sce,
     residual_model_formula_str = res_mod_formula_str
   )
 
-  # Preprocess Liger
-
-  ligerex <- liger_preprocess(sce)
 
   SingleCellExperiment::reducedDim(sce, "PCA") <-
     SingleCellExperiment::reducedDim(cds, "PCA")
 
   for (reddim_method in reduction_methods) {
-
     message(sprintf("Reducing Dimensions with %s", reddim_method))
 
     # Reduce dimensions with tSNE
@@ -97,17 +95,19 @@ reduce_dims_sce <- function(sce,
 
     # Reduce dimensions with UMAP
     if (reddim_method %in% c("UMAP", "UMAP3D")) {
-
       mat <- as.matrix(SingleCellExperiment::reducedDim(cds, "PCA"))
 
       if (reddim_method == "UMAP3D") {
         fargs$n_components <- 3
       }
 
-      umap_res <- do.call(uwot::umap,
-                          c(list(X = mat),
-                            fargs[names(fargs) %in%
-                                    names(as.list(args(uwot::umap)))])
+      umap_res <- do.call(
+        uwot::umap,
+        c(
+          list(X = mat),
+          fargs[names(fargs) %in%
+            names(as.list(args(uwot::umap)))]
+        )
       )
 
       row.names(umap_res) <- colnames(cds)
@@ -137,14 +137,22 @@ reduce_dims_sce <- function(sce,
           )
       }
     }
+    # Reduce dimensions with Liger
+    if (reddim_method == "Liger") {
 
-  # Reduce dimensions with Liger
-  if (reddim_method == "Liger") {
-    ligerex <- liger_reduce_dims(ligerex)
-    SingleCellExperiment::reducedDim(sce, "Liger") <- ligerex@H.norm
+      # Preprocess with Liger
+      ligerex <- liger_preprocess(sce, ...)
+      sce@metadata$liger_params$liger_preprocess <-
+        ligerex@parameters$liger_params$liger_preprocess
+
+      # Reduce dimensions with Liger
+      ligerex <- liger_reduce_dims(ligerex, ...)
+      sce@metadata$liger_params$liger_reduce_dims <-
+        ligerex@parameters$liger_params$liger_reduce_dims
+
+      SingleCellExperiment::reducedDim(sce, "Liger") <- ligerex@H.norm
     }
   }
 
   return(sce)
-
 }

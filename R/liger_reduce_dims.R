@@ -72,19 +72,18 @@ liger_reduce_dims <- function(ligerex,
                               k = 30,
                               lambda = 5.0,
                               thresh = 1e-4,
-                              max.iters = 100,
+                              max_iters = 100,
                               nrep = 1,
                               h_init = NULL,
                               w_init = NULL,
                               v_init = NULL,
                               rand_seed = 1,
-                              print.obj = FALSE,
+                              print_obj = FALSE,
                               knn_k = 20,
                               k2 = 500,
                               ref_dataset = NULL,
                               resolution = 1,
-                              dims_use = seq_len(ncol(H[[1]])),
-                              dist_use = FALSE,
+                              dist_use = "CR",
                               prune_thresh = 0.2,
                               min_cells = 2,
                               quantiles = 50,
@@ -95,18 +94,44 @@ liger_reduce_dims <- function(ligerex,
                               print_mod = FALSE,
                               print_align_summary = FALSE,
                               ...) {
+  fargs <- as.list(environment())
+  fargs <- fargs[fargs = c(
+    "k",
+    "lambda",
+    "thresh",
+    "max_iters",
+    "nrep",
+    "h_init",
+    "w_init",
+    "v_init",
+    "rand_seed",
+    "print_obj",
+    "knn_k",
+    "k2",
+    "ref_dataset",
+    "resolution",
+    "dist_use",
+    "prune_thresh",
+    "min_cells",
+    "quantiles",
+    "nstart",
+    "center",
+    "small_clust_thresh",
+    "id_number",
+    "print_mod",
+    "print_align_summary"
+  )]
+
+  ligerex@parameters$liger_params$liger_reduce_dims <- fargs
 
   ### Factorization
 
   # Perform iNMF on scaled datasets
   ligerex <- liger::optimizeALS(ligerex,
     k = k, lambda = lambda, thresh = thresh,
-    max.iters = max.iters, nrep = nrep, H.init = h_init, W.init = w_init,
-    V.init = v_init, rand.seed = rand_seed, print.obj = print.obj
+    max.iters = max_iters, nrep = nrep, H.init = h_init, W.init = w_init,
+    V.init = v_init, rand.seed = rand_seed, print.obj = print_obj
   )
-
-  sce_merged@metadata$liger_params$k <- 30
-  sce_merged@metadata$liger_params$lambda <- 5.0
 
   ### Quantile Alignment/Normalization
 
@@ -114,13 +139,13 @@ liger_reduce_dims <- function(ligerex,
   ligerex <- liger::quantileAlignSNF(ligerex,
     knn_k = knn_k, k2 = k2, prune.thresh = prune_thresh,
     ref_dataset = ref_dataset, min_cells = min_cells, quantiles = quantiles,
-    nstart = nstart, resolution = resolution, dims.use = dims_use,
+    nstart = nstart, resolution = resolution,
+    dims.use = seq_len(ncol(ligerex@H[[1]])),
     dist.use = dist_use, center = center,
     small.clust.thresh = small_clust_thresh, id.number = id_number,
     print.mod = print_mod, print.align.summary = print_align_summary
   )
 
-  sce_merged@metadata$liger_params$resolution <- 1
 
   return(ligerex)
 }

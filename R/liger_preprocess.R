@@ -50,6 +50,7 @@
 #' @export
 
 liger_preprocess <- function(sce_merged,
+                             unique_id_var = "manifest",
                              take_gene_union = F,
                              remove.missing = T,
                              num_genes = 3000,
@@ -60,12 +61,12 @@ liger_preprocess <- function(sce_merged,
                              cex_use = 0.3,
                              use_cols = T,
                              ...) {
-  sce_merged@metadata$liger_params <- list()
+
 
   # Split merged sce object into multiple objects and extract sparse matrices
   dataset_list <- list()
   mat_list <- list()
-  manifests <- unique(sce_merged@colData$manifest)
+  manifests <- unique(sce_merged@colData[, unique_id_var])
   for (mnft in manifests) {
     dataset_name <- paste0("dataset_", mnft)
     dataset_list[[dataset_name]] <-
@@ -80,6 +81,21 @@ liger_preprocess <- function(sce_merged,
     remove.missing = remove.missing
   )
 
+  fargs <- as.list(environment())
+  fargs <- fargs[fargs = c(
+    "unique_id_var",
+    "take_gene_union",
+    "remove.missing",
+    "num_genes",
+    "combine",
+    "keep_unique",
+    "capitalize",
+    "do_plot",
+    "cex_use",
+    "use_cols"
+  )]
+  ligerex@parameters$liger_params$liger_preprocess <- fargs
+
   ### preprocessing steps
 
   # Normalize the data to control for different numbers of UMIs per cell
@@ -92,13 +108,13 @@ liger_preprocess <- function(sce_merged,
     capitalize = capitalize, do.plot = do_plot, cex.use = cex_use
   )
 
-  sce_merged@metadata$liger_params$liger_selected_genes <- 3000
 
   # Scale the data by root-mean-square across cells
   ligerex <- liger::scaleNotCenter(ligerex, remove.missing = remove.missing)
 
   # Remove cells/genes with no expression across any genes/cells
   ligerex <- liger::removeMissingObs(ligerex, use.cols = use_cols)
+
 
   return(ligerex)
 }
