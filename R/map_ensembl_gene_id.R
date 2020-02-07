@@ -12,7 +12,7 @@
 #'   names.  ensembl_gene_id will be added if not included here.
 #'   `c("ensembl_gene_id", "external_gene_name")`
 #' @param species ensembl_ids are mapped to `human` or `mouse`
-#' @param mappings_filepath path to the mappings tsv file
+#' @param ensembl_mapping_file path to the mappings tsv file
 #'
 #' @return mapped_df a data.frame of the provided ensembl_id's with mappings.
 #'
@@ -35,7 +35,7 @@ map_ensembl_gene_id <- function(ensembl_ids,
                                              "external_gene_name",
                                              "percentage_gene_gc_content"),
                                 species = "human",
-                                mappings_filepath = NULL) {
+                                ensembl_mapping_file = NULL) {
 
   if (!species %in% c("human", "mouse")) {
     stop("only human and mouse currently supported.")
@@ -49,15 +49,15 @@ map_ensembl_gene_id <- function(ensembl_ids,
                                     pattern = "\\..*",
                                     replacement = "")
 
-  if (!(is.null(mappings_filepath))) {
-    if (!file.exists(mappings_filepath)) {
+  if (!(is.null(ensembl_mapping_file))) {
+    if (!file.exists(ensembl_mapping_file)) {
       stop(cli::cli_alert_danger(
         "File not found.  Specify a valid path.")
       )
     } else { # file provided and is found
-        cat("Reading", cli::col_green(c(mappings_filepath, " \r\n")))
+        cat("Reading", cli::col_green(c(ensembl_mapping_file, " \r\n")))
         ensembl_mappings <- utils::read.delim(
-          mappings_filepath,
+          ensembl_mapping_file,
           stringsAsFactors = FALSE)
 
         check_mappings_are_present <- purrr::map_lgl(

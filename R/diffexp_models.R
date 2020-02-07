@@ -31,29 +31,30 @@ perform_de <- function(sce,
                        random_effects_var = NULL,
                        fc_threshold = 1.1,
                        pval_cutoff = 0.05,
-                       ...
-                       ) {
-
+                       ...) {
   fargs <- c(as.list(environment()), list(...))
 
   cat(cli::rule(
     "Starting Differential Gene Expression",
-    line = 2))
+    line = 2
+  ))
   cat("\r\n")
 
   cat(cli::rule(
     "Pre-processing SingleCellExperiment",
-    line = 1))
+    line = 1
+  ))
   cat("\r\n")
 
   # preprocess
   fargs$sce <- do.call(.preprocess_sce_for_de, fargs)
 
   # select method
-  if(de_method == "MASTZLM") {
+  if (de_method == "MASTZLM") {
     cat(cli::rule(
       "MAST Zero-inflated Linear Model",
-      line = 1))
+      line = 1
+    ))
     cat("\r\n")
     de_fn <- .perform_de_with_mast
   } else {
@@ -64,7 +65,6 @@ perform_de <- function(sce,
   de_results <- do.call(de_fn, fargs)
 
   return(de_results)
-
 }
 
 
@@ -88,13 +88,12 @@ perform_de <- function(sce,
 #'
 #' @keywords internal
 .preprocess_sce_for_de <- function(...) {
-
   fargs <- list(...)
   sce <- fargs$sce
 
   sce <- .filter_sce_genes_for_de(sce,
-                                  min_counts = fargs$min_counts,
-                                  min_cells_pc = fargs$min_cells_pc
+    min_counts = fargs$min_counts,
+    min_cells_pc = fargs$min_cells_pc
   )
 
   sce@int_colData$size_factor <- scater::librarySizeFactors(sce)
@@ -114,8 +113,8 @@ perform_de <- function(sce,
 
   cli::cli_text(c(
     "Setting '{.emph {fargs$ref_class}}' ",
-    "as the reference class of '{.strong {fargs$dependent_var}}'.")
-  )
+    "as the reference class of '{.strong {fargs$dependent_var}}'."
+  ))
 
   # define the reference class
   sce[[fargs$dependent_var]] <- relevel(
@@ -124,7 +123,6 @@ perform_de <- function(sce,
   )
 
   return(sce)
-
 }
 
 
@@ -147,7 +145,6 @@ perform_de <- function(sce,
 #'
 #' @keywords internal
 .perform_de_with_mast <- function(...) {
-
   fargs <- list(
     mast_method = "bayesglm",
     force_run = FALSE
@@ -171,32 +168,33 @@ perform_de <- function(sce,
         dependent_var = fargs$dependent_var,
         confounding_vars = fargs$confounding_vars,
         random_effects_var = fargs$random_effects_var,
-        prefix = .)
-  ))
+        prefix = .
+      )
+    )
+  )
 
   # main, without prefixes
   model_formula <- mod_formulae[[1]]
 
   cli::cli_text(c(
     "Model formula: ",
-    .formula_to_char(model_formula))
-  )
+    .formula_to_char(model_formula)
+  ))
 
-  #mod_check <- do.call(.check_model, list(model_formula = mod_formulae[[2]]))
-  if (is.null(fargs$random_effects_var)) {
-    is_full_rank <- .check_model(mod_formulae[[2]])
-    if(!fargs$force_run){
-      assertthat::assert_that(
-        is_full_rank,
-        msg = "A full rank model specification is required.")
-    } else {
-      cli::cli_alert_info("Forcing run, ignoring model full rank.")
-    }
+  # mod_check <- do.call(.check_model, list(model_formula = mod_formulae[[2]]))
+  is_full_rank <- .check_model(mod_formulae[[2]])
+  if (!fargs$force_run) {
+    assertthat::assert_that(
+      is_full_rank,
+      msg = "A full rank model specification is required."
+    )
+  } else {
+    cli::cli_alert_info("Forcing run, ignoring model full rank.")
   }
 
   # fit model
   message("Fitting model\n")
-  #options(warn=-1) #temporary silencing
+  # options(warn=-1) #temporary silencing
   x <- Sys.time()
   zlmCond <- MAST::zlm(
     formula = model_formula,
@@ -220,7 +218,7 @@ perform_de <- function(sce,
   contrasts <- purrr::map_chr(
     dependent_var_names,
     ~ paste0(fargs$dependent_var, .)
-    )
+  )
 
   results_l <- list()
 
@@ -252,8 +250,8 @@ perform_de <- function(sce,
 
     # merge
     fcHurdle <- merge(hurdle_pvals, # hurdle P values
-                      logFCcoefs,
-                      by = "primerid"
+      logFCcoefs,
+      by = "primerid"
     ) # logFC coefficients
 
     fcHurdle <- fcHurdle %>% dplyr::rename(
@@ -265,7 +263,9 @@ perform_de <- function(sce,
     # append gene names
     ensembl_res <- map_ensembl_gene_id(
       fcHurdle$ensembl_gene_id,
-      mappings = c("external_gene_name", "gene_biotype")) %>%
+      mappings = c("external_gene_name", "gene_biotype"),
+      ensembl_mapping_file = fargs$ensembl_mapping_file
+    ) %>%
       dplyr::rename(gene = external_gene_name)
 
     fcHurdle <- merge(fcHurdle, ensembl_res, by = "ensembl_gene_id")
@@ -317,14 +317,15 @@ perform_de <- function(sce,
 .filter_sce_genes_for_de <- function(sce,
                                      min_counts = 1L,
                                      min_cells_pc = 0.1) {
-
   n_genes_before <- dim(sce)[[1]]
 
   min_cells <- floor(dim(sce)[[2]] * min_cells_pc)
 
   keep_genes <- apply(
     SingleCellExperiment::counts(sce), 1,
-    function(x) {length(x[x >= min_counts]) > min_cells}
+    function(x) {
+      length(x[x >= min_counts]) > min_cells
+    }
   )
 
   sce <- sce[keep_genes, ]
@@ -337,7 +338,6 @@ perform_de <- function(sce,
   ))
 
   return(sce)
-
 }
 
 
@@ -363,25 +363,18 @@ perform_de <- function(sce,
                                       confounding_vars,
                                       random_effects_var = NULL,
                                       prefix = NULL) {
-
-  if(!is.null(prefix)) {
+  if (!is.null(prefix)) {
     dependent_var <- purrr::map_chr(
-      dependent_var, ~ paste0(prefix, .))
-    if(!is.null(confounding_vars)) {
-      confounding_vars <- purrr::map_chr(
-        confounding_vars, ~ paste0(prefix, .))
-    }
-    if(!is.null(random_effects_var)){
+      dependent_var, ~ paste0(prefix, .)
+    )
+    confounding_vars <- purrr::map_chr(
+      confounding_vars, ~ paste0(prefix, .)
+    )
+    if (!is.null(random_effects_var)) {
       random_effects_var <- purrr::map_chr(
-        random_effects_var, ~ paste0(prefix, .))
+        random_effects_var, ~ paste0(prefix, .)
+      )
     }
-  }
-
-  # allows a model without confounding variables
-  if (!is.null(confounding_vars)) {
-    plus_or_blank <- " + "
-  } else {
-    plus_or_blank <- ""
   }
 
   if (!is.null(random_effects_var)) {
@@ -392,28 +385,23 @@ perform_de <- function(sce,
 
     model_formula <- as.formula(
       sprintf(
-        "~ %s + %s%s %s",
+        "~ %s + %s + %s",
         dependent_var,
         random_effects_var,
-        plus_or_blank,
         paste(confounding_vars, collapse = " + ")
       )
     )
   } else {
-
     model_formula <- as.formula(
       sprintf(
-        "~ %s%s%s",
+        "~ %s + %s",
         dependent_var,
-        plus_or_blank,
         paste(confounding_vars, collapse = " + ")
       )
     )
-
   }
 
   return(model_formula)
-
 }
 
 #' check model is full rank
@@ -423,14 +411,14 @@ perform_de <- function(sce,
 #' @importFrom purrr walk
 #' @keywords internal
 .check_model <- function(model_formula) {
-
   mod0 <- stats::model.matrix(model_formula)
-  if(limma::is.fullrank(mod0)) {
+  if (limma::is.fullrank(mod0)) {
     cli::cli_alert_success("Model formula is full rank")
     return(TRUE)
   } else {
     cli::cli_alert_danger(
-      "The model formula is not full rank.")
+      "The model formula is not full rank."
+    )
     cli::cli_text("The following coefficients are non-estimable: ")
     purrr::walk(limma::nonEstimable(mod0), ~ cli::cli_ul(.))
   }

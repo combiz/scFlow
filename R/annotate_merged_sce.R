@@ -17,6 +17,7 @@
 #' @importFrom rmarkdown render
 #' @importFrom purrr map_lgl
 #' @importFrom tools file_path_sans_ext
+#' @importFrom tidyr pivot_longer
 #' @export
 annotate_merged_sce <- function(sce,
                                 plot_vars = c("total_features_by_counts",
