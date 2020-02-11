@@ -269,33 +269,76 @@ annotate_sce <- function(sce,
 
 
 #' x axis barcode rank, y axis total counts
+#' @importFrom DropletUtils barcodeRanks
 #' @keywords internal
 .qc_plot_count_depth_distribution <- function(sce) {
 
-  dt <- dplyr::as_tibble(data.frame(total_counts = sce$total_counts)) %>%
-    dplyr::filter(total_counts > 10) %>%
-    dplyr::arrange(-total_counts) %>%
-    dplyr::mutate(barcode_rank = as.integer(rownames(.)))
+  bcranks <- DropletUtils::barcodeRanks(SingleCellExperiment::counts(sce))
+
+  knee <- attributes(bcranks)$metadata$knee
+  inflection <- attributes(bcranks)$metadata$inflection
+  empty_cutoff <- max(1, sce@metadata$qc_params$min_library_size)
+
+  dt <- dplyr::as_tibble(bcranks) %>%
+    dplyr::rename(total_counts = total, barcode_rank = rank) %>%
+    dplyr::filter(total_counts > 0) %>%
+    dplyr::arrange(barcode_rank) %>%
+    dplyr::mutate(is_empty = total_counts < empty_cutoff)
+
+  cols <- c(
+    "TRUE" = "grey80",
+    "FALSE" = "black")
+  bluejayway <- rgb(73,108,165, max = 255)
+  vibrantflame <- rgb(232,66,27, max = 255)
+  magicalturquoise <- rgb(0,173,174, max = 255)
 
   p <- ggplot2::ggplot(dt) +
-    geom_point(aes(x = barcode_rank, y = total_counts)) +
+    geom_point(
+      aes(x = barcode_rank, y = total_counts,
+          fill = is_empty, colour = is_empty),
+      shape = 21) +
+    scale_fill_manual(values = cols) +
+    scale_colour_manual(values = cols) +
     scale_y_continuous(trans = "log10") +
-    scale_x_continuous(
-      limits = c(0, max(dt$barcode_rank)),
-      breaks = seq(0, max(dt$barcode_rank), by = 10000))+
+    scale_x_continuous(trans = "log10") +
     geom_hline(
-      yintercept = sce@metadata$qc_params$min_library_size,
+      yintercept = knee,
+      linetype = "dashed",
+      color = bluejayway) +
+    annotate(
+      "text",
+      label = sprintf("Knee (%s counts)", knee),
+      x = 2, y = knee,
+      size = 4, colour = bluejayway,
+      hjust = 0, vjust = -1) +
+    geom_hline(
+      yintercept = inflection,
+      linetype = "dashed",
+      color = magicalturquoise) +
+    annotate(
+      "text",
+      label = sprintf("Inflection (%s counts)", inflection),
+      x = 2, y = inflection,
+      size = 4, colour = magicalturquoise,
+      hjust = 0, vjust = -1) +
+    geom_hline(
+      yintercept = empty_cutoff,
       linetype = "solid",
-      color = "red")+
-    labs(x = "Barcode rank", y = "Count depth")+
+      color = vibrantflame) +
+    annotate(
+      "text",
+      label = sprintf("Threshold (%s counts)", empty_cutoff),
+      x = 2, y = empty_cutoff,
+      size = 4, colour = vibrantflame,
+      hjust = 0, vjust = -1) +
+    labs(x = "Barcode rank", y = "Count depth") +
     theme_bw() +
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
           axis.text = element_text(size = 12, colour = "black"),
-          axis.text.x = element_text(angle = 90),
-          axis.title=element_text(size = 16),
-          legend.text=element_text(size = 10),
+          axis.title = element_text(size = 16),
+          legend.position = "none",
           plot.title = element_text(size = 18, hjust = 0.5))
 
   sce@metadata$qc_plots$count_depth_distribution <- p
