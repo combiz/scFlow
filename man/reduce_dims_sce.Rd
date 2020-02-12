@@ -2,30 +2,32 @@
 % Please edit documentation in R/reduce_dims_sce.R
 \name{reduce_dims_sce}
 \alias{reduce_dims_sce}
-\title{Calculate dimensionality reductions for a SingleCellExperiment}
+\title{Calculate dimensionality reductions for a SingleCellExperiment object
+or merged SingleCellExperiment objects using PCA, tSNE, UMAP, UMAP3D, Liger}
 \usage{
 reduce_dims_sce(
   sce,
-  reduction_methods = c("PCA", "tSNE", "UMAP", "UMAP3D"),
+  reduction_methods = c("PCA", "tSNE", "UMAP", "UMAP3D", "Liger"),
   vars_to_regress_out = NULL,
   pca_dims = 20,
   ...
 )
 }
 \arguments{
-\item{sce}{a SingleCellExperiment object}
+\item{sce}{a SingleCellExperiment object or merged sce objects}
 
-\item{reduction_methods}{one or more of "PCA", "tSNE", "UMAP", "UMAP3D"}
+\item{reduction_methods}{one or more of "PCA","tSNE","UMAP","UMAP3D","Liger"}
 
 \item{pca_dims}{the number of pca dimensions used}
 
 \item{...}{see uwot::umap for umap options}
 }
 \value{
-sce a SingleCellExperiment object annotated with reducedDims
+sce SingleCellExperiment object annotated with reducedDims
 }
 \description{
-PCA, tSNE, UMAP, UMAP3D
+Calculate dimensionality reductions for a SingleCellExperiment object
+or merged SingleCellExperiment objects using PCA, tSNE, UMAP, UMAP3D, Liger
 }
 \seealso{
 Other clustering and dimensionality reduction: 

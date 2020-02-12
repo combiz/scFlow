@@ -89,6 +89,8 @@ use_package("methods")
 use_package("paletteer")
 use_package("scater")
 use_package("leaflet")
+use_package("liger")
+use_package("RANN.L1")
 
 use_vignette("basic-qc", title = "Guided tutorial for sample quality control")
 
