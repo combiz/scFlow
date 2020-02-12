@@ -36,10 +36,10 @@ Annotate a post-merge SingleCellExperiment with plots
 Other annotation functions: 
 \code{\link{.preprocess_seurat_object}()},
 \code{\link{annotate_sce_cells}()},
-\code{\link{annotate_sce_empty}()},
 \code{\link{annotate_sce_genes}()},
 \code{\link{annotate_sce}()},
 \code{\link{filter_sce}()},
+\code{\link{find_cells}()},
 \code{\link{find_singlets}()},
 \code{\link{generate_sce}()},
 \code{\link{map_ensembl_gene_id}()},

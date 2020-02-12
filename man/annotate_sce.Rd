@@ -16,10 +16,6 @@ annotate_sce(
   drop_unmapped = TRUE,
   drop_mito = TRUE,
   drop_ribo = FALSE,
-  ed_lower = 100,
-  ed_retain = NULL,
-  ed_alpha = 0.001,
-  annotate_ed = TRUE,
   annotate_genes = TRUE,
   annotate_cells = TRUE,
   ensembl_mapping_file = NULL
@@ -52,14 +48,6 @@ ribosomal genes (0 - 1)}
 
 \item{drop_ribo}{set \code{TRUE} to remove ribosomal genes}
 
-\item{ed_lower}{see \code{\link[dropletUtils:emptyDrops]{dropletUtils::emptyDrops()}}}
-
-\item{ed_retain}{see \code{\link[dropletUtils:emptyDrops]{dropletUtils::emptyDrops()}}}
-
-\item{ed_alpha}{minimum FDR for \code{\link[dropletUtils:emptyDrops]{dropletUtils::emptyDrops()}}}
-
-\item{annotate_ed}{optionally skip emptyDrops annotation with FALSE}
-
 \item{annotate_genes}{optionally skip gene annotation with FALSE}
 
 \item{annotate_cells}{optionally skip cell annotation with FALSE}
@@ -67,6 +55,8 @@ ribosomal genes (0 - 1)}
 \item{ensembl_mapping_file}{a local tsv file with ensembl_gene_id and
 additional columns for mapping ensembl_gene_id to gene info.  If
 not provided, the biomaRt db is queried (slower).}
+
+\item{annotate_ed}{optionally skip emptyDrops annotation with FALSE}
 }
 \value{
 sce a annotated SingleCellExperiment object
@@ -120,9 +110,9 @@ Other annotation functions:
 \code{\link{.preprocess_seurat_object}()},
 \code{\link{annotate_merged_sce}()},
 \code{\link{annotate_sce_cells}()},
-\code{\link{annotate_sce_empty}()},
 \code{\link{annotate_sce_genes}()},
 \code{\link{filter_sce}()},
+\code{\link{find_cells}()},
 \code{\link{find_singlets}()},
 \code{\link{generate_sce}()},
 \code{\link{map_ensembl_gene_id}()},

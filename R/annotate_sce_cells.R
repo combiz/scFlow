@@ -78,6 +78,10 @@ annotate_sce_cells <- function(sce, ...) {
     sce$qc_metric_pc_ribo_ok
   )
 
+  if (sce@metadata$scflow_steps$emptydrops_annotated == 1) {
+    sce$qc_metric_passed <- sce$qc_metric_passed & !sce$is_empty_drop
+  }
+
   # fast qc for expressive genes with counts from only qc passed cells
   mat <- SingleCellExperiment::counts(sce)
   mat <- mat >= args$min_counts

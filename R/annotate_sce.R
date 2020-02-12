@@ -51,9 +51,6 @@
 #' @param drop_unmapped set `TRUE` to remove unmapped ensembl_gene_id
 #' @param drop_mito set `TRUE` to remove mitochondrial genes
 #' @param drop_ribo set `TRUE` to remove ribosomal genes
-#' @param ed_lower see [dropletUtils::emptyDrops()]
-#' @param ed_retain see [dropletUtils::emptyDrops()]
-#' @param ed_alpha minimum FDR for [dropletUtils::emptyDrops()]
 #' @param ensembl_mapping_file a local tsv file with ensembl_gene_id and
 #'   additional columns for mapping ensembl_gene_id to gene info.  If
 #'   not provided, the biomaRt db is queried (slower).
@@ -83,10 +80,6 @@ annotate_sce <- function(sce,
                          drop_unmapped = TRUE,
                          drop_mito = TRUE,
                          drop_ribo = FALSE,
-                         ed_lower = 100,
-                         ed_retain = NULL,
-                         ed_alpha = 0.001,
-                         annotate_ed = TRUE,
                          annotate_genes = TRUE,
                          annotate_cells = TRUE,
                          ensembl_mapping_file = NULL) {
@@ -132,15 +125,6 @@ annotate_sce <- function(sce,
     if (!annotate_genes) {
       stop(cli::cli_alert_danger("Nothing to do. Specify gene/cell/both."))
     }
-  }
-
-  if (annotate_ed) {
-    sce <- annotate_sce_empty(
-      sce,
-      lower = ed_lower,
-      retain = ed_retain,
-      alpha = ed_alpha
-    )
   }
 
   if (annotate_cells) {
