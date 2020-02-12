@@ -32,7 +32,7 @@ perform_de <- function(sce,
                        fc_threshold = 1.1,
                        pval_cutoff = 0.05,
                        ...
-                       ) {
+) {
 
   fargs <- c(as.list(environment()), list(...))
 
@@ -172,7 +172,7 @@ perform_de <- function(sce,
         confounding_vars = fargs$confounding_vars,
         random_effects_var = fargs$random_effects_var,
         prefix = .)
-  ))
+    ))
 
   # main, without prefixes
   model_formula <- mod_formulae[[1]]
@@ -220,7 +220,7 @@ perform_de <- function(sce,
   contrasts <- purrr::map_chr(
     dependent_var_names,
     ~ paste0(fargs$dependent_var, .)
-    )
+  )
 
   results_l <- list()
 
@@ -265,7 +265,8 @@ perform_de <- function(sce,
     # append gene names
     ensembl_res <- map_ensembl_gene_id(
       fcHurdle$ensembl_gene_id,
-      mappings = c("external_gene_name", "gene_biotype")) %>%
+      mappings = c("external_gene_name", "gene_biotype"),
+      ensembl_mapping_file = fargs$ensembl_mapping_file) %>%
       dplyr::rename(gene = external_gene_name)
 
     fcHurdle <- merge(fcHurdle, ensembl_res, by = "ensembl_gene_id")
