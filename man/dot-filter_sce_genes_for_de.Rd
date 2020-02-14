@@ -17,10 +17,12 @@ This function is applied after the subsetting of a SCE (e.g. celltype).
 It's useful to subset before differential expression analysis.
 }
 \seealso{
-Other differential gene expression: \code{\link{.generate_model_from_vars}},
-  \code{\link{.perform_de_with_mast}},
-  \code{\link{.preprocess_sce_for_de}},
-  \code{\link{perform_de}}, \code{\link{pseudobulk_sce}}
+Other differential gene expression: 
+\code{\link{.generate_model_from_vars}()},
+\code{\link{.perform_de_with_mast}()},
+\code{\link{.preprocess_sce_for_de}()},
+\code{\link{perform_de}()},
+\code{\link{pseudobulk_sce}()}
 }
 \concept{differential gene expression}
 \keyword{internal}

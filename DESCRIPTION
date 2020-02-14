@@ -1,6 +1,6 @@
 Package: scflow
 Title: A Single-Cell/Nuclei Analysis Toolkit
-Version: 0.3.0
+Version: 0.4.0
 Authors@R: 
     person(given = "Combiz",
            family = "Khozoie",
@@ -20,7 +20,7 @@ Suggests:
     covr,
     knitr
 Language: en-US
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Imports: 
     purrr,
     Matrix,

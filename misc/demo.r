@@ -3,7 +3,8 @@
 
 ##  ............................................................................
 ##  Initialize                                                              ####
-
+#options(mc.cores = parallel::detectCores())
+#library(parallel)
 library(scflow)
 
 # v2 chemistry
@@ -29,7 +30,9 @@ metadata <- read_metadata(
 
 sce <- generate_sce(mat, metadata)
 
-sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp)
+sce <- find_cells(sce, lower = 100)
+
+sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 100)
 
 sce <- filter_sce(sce)
 
@@ -42,6 +45,7 @@ report_qc_sce(sce)
 totaltime <- Sys.time() - x
 
 print(totaltime)
+
 alarm()
 
 ##  ............................................................................
@@ -49,7 +53,7 @@ alarm()
 
 x <- Sys.time()
 
-sce <- reduce_dims_sce(sce, pca_dims = 5)
+sce <- reduce_dims_sce(sce, pca_dims = 5, reduction_methods = c("tSNE", "UMAP"))
 
 sce <- cluster_sce(sce)
 

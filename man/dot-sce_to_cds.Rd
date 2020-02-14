@@ -16,3 +16,4 @@ cds a CellDataSet object
 Convert a SingleCellExperiment object o a CellDataSet (Monocle)
 }
 \concept{internal helper}
+\keyword{internal}

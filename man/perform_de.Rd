@@ -4,12 +4,21 @@
 \alias{perform_de}
 \title{Perform Differential Gene Expression on a SingleCellExperiment}
 \usage{
-perform_de(sce, de_method = "MASTZLM", min_counts = 1,
-  min_cells_pc = 0.1, rescale_numerics = TRUE,
-  dependent_var = "group", ref_class = "Control",
-  confounding_vars = c("individual", "cngeneson", "sex", "age", "PMI",
-  "RIN", "seqdate", "pc_mito"), random_effects_var = NULL,
-  fc_threshold = 1.1, pval_cutoff = 0.05, ...)
+perform_de(
+  sce,
+  de_method = "MASTZLM",
+  min_counts = 1,
+  min_cells_pc = 0.1,
+  rescale_numerics = TRUE,
+  dependent_var = "group",
+  ref_class = "Control",
+  confounding_vars = c("individual", "cngeneson", "sex", "age", "PMI", "RIN", "seqdate",
+    "pc_mito"),
+  random_effects_var = NULL,
+  fc_threshold = 1.1,
+  pval_cutoff = 0.05,
+  ...
+)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}
@@ -41,10 +50,11 @@ results_l a list of DE table results
 Perform Differential Gene Expression on a SingleCellExperiment
 }
 \seealso{
-Other differential gene expression: \code{\link{.filter_sce_genes_for_de}},
-  \code{\link{.generate_model_from_vars}},
-  \code{\link{.perform_de_with_mast}},
-  \code{\link{.preprocess_sce_for_de}},
-  \code{\link{pseudobulk_sce}}
+Other differential gene expression: 
+\code{\link{.filter_sce_genes_for_de}()},
+\code{\link{.generate_model_from_vars}()},
+\code{\link{.perform_de_with_mast}()},
+\code{\link{.preprocess_sce_for_de}()},
+\code{\link{pseudobulk_sce}()}
 }
 \concept{differential gene expression}

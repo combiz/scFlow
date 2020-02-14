@@ -4,8 +4,13 @@
 \alias{annotate_sce_genes}
 \title{Add basic gene-wise annotations for a SingleCellExperiment}
 \usage{
-annotate_sce_genes(sce, drop_unmapped = TRUE, drop_mito = TRUE,
-  drop_ribo = FALSE, ensembl_mapping_file = NULL)
+annotate_sce_genes(
+  sce,
+  drop_unmapped = TRUE,
+  drop_mito = TRUE,
+  drop_ribo = FALSE,
+  ensembl_mapping_file = NULL
+)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object with ensembl_gene_id rowData}
@@ -33,13 +38,22 @@ following QC metrics:
 }
 }
 \seealso{
-Other annotation functions: \code{\link{.preprocess_seurat_object}},
-  \code{\link{annotate_sce_cells}},
-  \code{\link{annotate_sce}}, \code{\link{filter_sce}},
-  \code{\link{find_singlets}}, \code{\link{generate_sce}},
-  \code{\link{map_ensembl_gene_id}},
-  \code{\link{merge_sce}}, \code{\link{read_metadata}},
-  \code{\link{report_qc_sce}},
-  \code{\link{run_doubletfinder}}, \code{\link{sce_to_seu}}
+Other annotation functions: 
+\code{\link{.preprocess_seurat_object}()},
+\code{\link{annotate_merged_sce}()},
+\code{\link{annotate_sce_cells}()},
+\code{\link{annotate_sce}()},
+\code{\link{filter_sce}()},
+\code{\link{find_cells}()},
+\code{\link{find_singlets}()},
+\code{\link{generate_sce}()},
+\code{\link{map_ensembl_gene_id}()},
+\code{\link{merge_sce}()},
+\code{\link{read_metadata}()},
+\code{\link{report_impacted_pathway}()},
+\code{\link{report_merged_sce}()},
+\code{\link{report_qc_sce}()},
+\code{\link{run_doubletfinder}()},
+\code{\link{sce_to_seu}()}
 }
 \concept{annotation functions}

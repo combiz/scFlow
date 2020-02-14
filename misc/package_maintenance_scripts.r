@@ -67,6 +67,8 @@ use_r("diffexp_models")
 use_r("map_with_ewce")
 use_r("reduced_dimension_plots")
 
+?use_r
+
 use_test("function_name")
 
 
@@ -89,6 +91,8 @@ use_package("methods")
 use_package("paletteer")
 use_package("scater")
 use_package("leaflet")
+use_package("liger")
+use_package("RANN.L1")
 
 use_vignette("basic-qc", title = "Guided tutorial for sample quality control")
 

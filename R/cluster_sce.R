@@ -34,6 +34,15 @@ cluster_sce <- function(sce, ...) {
   )
 
   cds <- .sce_to_cds(sce)
+
+  if(!(fargs$reduction_method %in% c("UMAP", "tSNE", "PCA", "LSI",
+                                     "Aligned"))) {
+    SingleCellExperiment::reducedDim(cds, "PCA") <-
+      SingleCellExperiment::reducedDim(cds, fargs$reduction_method)
+    rd_method_bck <- fargs$reduction_method
+    fargs$reduction_method <- "PCA"
+  }
+
   cds <- do.call(
     monocle3::cluster_cells,
     c(list(cds = cds), fargs)
@@ -43,6 +52,7 @@ cluster_sce <- function(sce, ...) {
   sce$partitions <-
     as.factor(cds@clusters[[fargs$reduction_method]]$partitions)
 
+  if (!(is.null(rd_method_bck))) fargs$reduction_method <- rd_method_bck
   sce@metadata$cluster_params <- fargs
 
   return(sce)

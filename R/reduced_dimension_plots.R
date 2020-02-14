@@ -15,19 +15,31 @@
 #' @import ggplot2
 #' @importFrom dplyr select group_by summarize
 #' @importFrom paletteer paletteer_d
-#' @importFrom SingleCellExperiment reducedDim
+#' @importFrom SingleCellExperiment reducedDim reducedDimNames
 #' @importFrom magrittr %>%
 #' @importFrom grDevices colorRampPalette
 #' @importFrom SummarizedExperiment rowData colData
 #'
 #' @export
-plot_umap_with_feature <- function(sce,
-                                   feature_dim = "Cluster",
-                                   reduced_dim = "UMAP",
-                                   highlight_feature = NA,
-                                   label_clusters = FALSE,
-                                   size = 0.1,
-                                   alpha = 0.2) {
+plot_reduced_dim <- function(sce,
+                             feature_dim = "Cluster",
+                             reduced_dim = "UMAP",
+                             highlight_feature = NA,
+                             label_clusters = FALSE,
+                             size = 0.1,
+                             alpha = 0.2) {
+
+  assertthat::assert_that(
+    feature_dim %in% names(SummarizedExperiment::colData(sce)),
+    msg = sprintf(
+      "The feature_dim %s is not present in colData(sce)", feature_dim)
+    )
+
+  assertthat::assert_that(
+    reduced_dim %in% SingleCellExperiment::reducedDimNames(sce),
+    msg = sprintf(
+      "The reduced_dim %s is not present in reducedDim(sce)", reduced_dim)
+  )
 
   # prepare data
   dt <- as.data.frame(
@@ -43,7 +55,7 @@ plot_umap_with_feature <- function(sce,
 
   # colour palette
   colourCount <- length(unique(dt$feature_dim))
-  palette_choice <- paletteer::paletteer_d(ggsci, nrc_npg)
+  palette_choice <- paletteer::paletteer_d("ggsci::nrc_npg")
   getPalette <- grDevices::colorRampPalette(palette_choice)
   if (colourCount <= length(palette_choice)) {
     if (colourCount == 2) {
@@ -114,6 +126,7 @@ plot_umap_with_feature <- function(sce,
         ggplot2::theme(legend.position = "none")
   }
 
+  p$plot_env$sce <- NULL
   return(p)
 
 }
@@ -167,6 +180,7 @@ PlotUMAPWithGene <- function(sce, gene = "PLP1"){
       plot.title = element_text(size = 18, hjust = 0.5, colour = "black")
     )
 
+  p$plot_env$sce <- NULL
   return(p)
 
 }

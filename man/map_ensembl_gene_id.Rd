@@ -4,9 +4,13 @@
 \alias{map_ensembl_gene_id}
 \title{Return mappings for Ensembl Gene IDs}
 \usage{
-map_ensembl_gene_id(ensembl_ids, mappings = c("ensembl_gene_id",
-  "gene_biotype", "external_gene_name", "percentage_gene_gc_content"),
-  species = "human", mappings_filepath = NULL)
+map_ensembl_gene_id(
+  ensembl_ids,
+  mappings = c("ensembl_gene_id", "gene_biotype", "external_gene_name",
+    "percentage_gene_gc_content"),
+  species = "human",
+  ensembl_mapping_file = NULL
+)
 }
 \arguments{
 \item{ensembl_ids}{vector of ensembl_ids, if versioned the version will be
@@ -18,7 +22,7 @@ names.  ensembl_gene_id will be added if not included here.
 
 \item{species}{ensembl_ids are mapped to \code{human} or \code{mouse}}
 
-\item{mappings_filepath}{path to the mappings tsv file}
+\item{ensembl_mapping_file}{path to the mappings tsv file}
 }
 \value{
 mapped_df a data.frame of the provided ensembl_id's with mappings.
@@ -34,13 +38,22 @@ map_ensembl_gene_id("ENSG00000130707")
 
 }
 \seealso{
-Other annotation functions: \code{\link{.preprocess_seurat_object}},
-  \code{\link{annotate_sce_cells}},
-  \code{\link{annotate_sce_genes}},
-  \code{\link{annotate_sce}}, \code{\link{filter_sce}},
-  \code{\link{find_singlets}}, \code{\link{generate_sce}},
-  \code{\link{merge_sce}}, \code{\link{read_metadata}},
-  \code{\link{report_qc_sce}},
-  \code{\link{run_doubletfinder}}, \code{\link{sce_to_seu}}
+Other annotation functions: 
+\code{\link{.preprocess_seurat_object}()},
+\code{\link{annotate_merged_sce}()},
+\code{\link{annotate_sce_cells}()},
+\code{\link{annotate_sce_genes}()},
+\code{\link{annotate_sce}()},
+\code{\link{filter_sce}()},
+\code{\link{find_cells}()},
+\code{\link{find_singlets}()},
+\code{\link{generate_sce}()},
+\code{\link{merge_sce}()},
+\code{\link{read_metadata}()},
+\code{\link{report_impacted_pathway}()},
+\code{\link{report_merged_sce}()},
+\code{\link{report_qc_sce}()},
+\code{\link{run_doubletfinder}()},
+\code{\link{sce_to_seu}()}
 }
 \concept{annotation functions}

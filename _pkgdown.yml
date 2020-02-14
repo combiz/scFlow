@@ -15,4 +15,10 @@ reference:
 - title: Data Visualization
   contents:
     - has_concept("plotting functions")
+- title: Impacted Pathway Analysis
+  contents:
+    - has_concept("Impacted pathway analysis")
+- title: Data Integration
+  contents:
+    - has_concept("Data integration")
 

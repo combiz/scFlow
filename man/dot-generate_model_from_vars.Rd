@@ -4,8 +4,13 @@
 \alias{.generate_model_from_vars}
 \title{Generate a model formula from dependent, confounding, and random vars}
 \usage{
-.generate_model_from_vars(sce, dependent_var, confounding_vars,
-  random_effects_var = NULL, prefix = NULL)
+.generate_model_from_vars(
+  sce,
+  dependent_var,
+  confounding_vars,
+  random_effects_var = NULL,
+  prefix = NULL
+)
 }
 \arguments{
 \item{sce}{the data}
@@ -25,10 +30,12 @@ model_formula a model formula
 Generate a model formula from dependent, confounding, and random vars
 }
 \seealso{
-Other differential gene expression: \code{\link{.filter_sce_genes_for_de}},
-  \code{\link{.perform_de_with_mast}},
-  \code{\link{.preprocess_sce_for_de}},
-  \code{\link{perform_de}}, \code{\link{pseudobulk_sce}}
+Other differential gene expression: 
+\code{\link{.filter_sce_genes_for_de}()},
+\code{\link{.perform_de_with_mast}()},
+\code{\link{.preprocess_sce_for_de}()},
+\code{\link{perform_de}()},
+\code{\link{pseudobulk_sce}()}
 }
 \concept{differential gene expression}
 \keyword{internal}

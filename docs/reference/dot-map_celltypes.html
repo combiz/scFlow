@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scflow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -126,9 +126,15 @@
     <p>Main mapping function</p>
     </div>
 
-    <pre class="usage"><span class='fu'>.map_celltypes</span>(<span class='no'>ctdToMap</span>, <span class='kw'>ctdToMapAgainst</span> <span class='kw'>=</span> <span class='kw pkg'>MAGMA.Celltyping</span><span class='kw ns'>::</span><span class='no'>ctd_Tasic</span>,
-  <span class='kw'>inputSpecies</span> <span class='kw'>=</span> <span class='st'>"human"</span>, <span class='kw'>mapAgainstSpecies</span> <span class='kw'>=</span> <span class='st'>"mouse"</span>,
-  <span class='kw'>annotLevel</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>numTopMarkers</span> <span class='kw'>=</span> <span class='fl'>500</span>, <span class='kw'>mappingLevel</span> <span class='kw'>=</span> <span class='fl'>2</span>)</pre>
+    <pre class="usage"><span class='fu'>.map_celltypes</span>(
+  <span class='no'>ctdToMap</span>,
+  <span class='kw'>ctdToMapAgainst</span> <span class='kw'>=</span> <span class='kw pkg'>MAGMA.Celltyping</span><span class='kw ns'>::</span><span class='no'>ctd_Tasic</span>,
+  <span class='kw'>inputSpecies</span> <span class='kw'>=</span> <span class='st'>"human"</span>,
+  <span class='kw'>mapAgainstSpecies</span> <span class='kw'>=</span> <span class='st'>"mouse"</span>,
+  <span class='kw'>annotLevel</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='kw'>numTopMarkers</span> <span class='kw'>=</span> <span class='fl'>500</span>,
+  <span class='kw'>mappingLevel</span> <span class='kw'>=</span> <span class='fl'>2</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -168,11 +174,13 @@
     <p>sce a SingleCellExperiment object annotated with sample metadata</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other clustering and dimensionality reduction: <code><a href='dot-get_x_most_specific_genes.html'>.get_x_most_specific_genes</a></code>,
-  <code><a href='dot-map_celltypes_with_ewce.html'>.map_celltypes_with_ewce</a></code>,
-  <code><a href='cluster_sce.html'>cluster_sce</a></code>,
-  <code><a href='map_celltypes_sce.html'>map_celltypes_sce</a></code>,
-  <code><a href='reduce_dims_sce.html'>reduce_dims_sce</a></code></p></div>
+    <div class='dont-index'><p>Other clustering and dimensionality reduction: 
+<code><a href='dot-get_x_most_specific_genes.html'>.get_x_most_specific_genes</a>()</code>,
+<code><a href='dot-map_celltypes_with_ewce.html'>.map_celltypes_with_ewce</a>()</code>,
+<code><a href='cluster_sce.html'>cluster_sce</a>()</code>,
+<code><a href='map_celltypes_sce.html'>map_celltypes_sce</a>()</code>,
+<code><a href='map_custom_celltypes.html'>map_custom_celltypes</a>()</code>,
+<code><a href='reduce_dims_sce.html'>reduce_dims_sce</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

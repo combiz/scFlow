@@ -4,8 +4,12 @@
 \alias{map_celltypes_sce}
 \title{Map cluster celltypes with EWCE}
 \usage{
-map_celltypes_sce(sce, ctd_folder, cells_to_sample = 10000,
-  clusters_colname = "clusters")
+map_celltypes_sce(
+  sce,
+  ctd_folder,
+  cells_to_sample = 10000,
+  clusters_colname = "clusters"
+)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment}
@@ -23,10 +27,13 @@ sce a SingleCellExperiment object annotated with celltypes/metadata
 Currently works with Allan and Zeisel only
 }
 \seealso{
-Other clustering and dimensionality reduction: \code{\link{.get_x_most_specific_genes}},
-  \code{\link{.map_celltypes_with_ewce}},
-  \code{\link{.map_celltypes}}, \code{\link{cluster_sce}},
-  \code{\link{reduce_dims_sce}}
+Other clustering and dimensionality reduction: 
+\code{\link{.get_x_most_specific_genes}()},
+\code{\link{.map_celltypes_with_ewce}()},
+\code{\link{.map_celltypes}()},
+\code{\link{cluster_sce}()},
+\code{\link{map_custom_celltypes}()},
+\code{\link{reduce_dims_sce}()}
 }
 \author{
 Nathan Skene / Combiz Khozoie

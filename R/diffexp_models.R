@@ -32,7 +32,7 @@ perform_de <- function(sce,
                        fc_threshold = 1.1,
                        pval_cutoff = 0.05,
                        ...
-                       ) {
+) {
 
   fargs <- c(as.list(environment()), list(...))
 
@@ -172,7 +172,7 @@ perform_de <- function(sce,
         confounding_vars = fargs$confounding_vars,
         random_effects_var = fargs$random_effects_var,
         prefix = .)
-  ))
+    ))
 
   # main, without prefixes
   model_formula <- mod_formulae[[1]]
@@ -183,13 +183,15 @@ perform_de <- function(sce,
   )
 
   #mod_check <- do.call(.check_model, list(model_formula = mod_formulae[[2]]))
-  is_full_rank <- .check_model(mod_formulae[[2]])
-  if(!fargs$force_run){
-    assertthat::assert_that(
-      is_full_rank,
-      msg = "A full rank model specification is required.")
-  } else {
-    cli::cli_alert_info("Forcing run, ignoring model full rank.")
+  if (is.null(fargs$random_effects_var)) {
+    is_full_rank <- .check_model(mod_formulae[[2]])
+    if(!fargs$force_run){
+      assertthat::assert_that(
+        is_full_rank,
+        msg = "A full rank model specification is required.")
+    } else {
+      cli::cli_alert_info("Forcing run, ignoring model full rank.")
+    }
   }
 
   # fit model
@@ -218,7 +220,7 @@ perform_de <- function(sce,
   contrasts <- purrr::map_chr(
     dependent_var_names,
     ~ paste0(fargs$dependent_var, .)
-    )
+  )
 
   results_l <- list()
 
@@ -263,7 +265,8 @@ perform_de <- function(sce,
     # append gene names
     ensembl_res <- map_ensembl_gene_id(
       fcHurdle$ensembl_gene_id,
-      mappings = c("external_gene_name", "gene_biotype")) %>%
+      mappings = c("external_gene_name", "gene_biotype"),
+      ensembl_mapping_file = fargs$ensembl_mapping_file) %>%
       dplyr::rename(gene = external_gene_name)
 
     fcHurdle <- merge(fcHurdle, ensembl_res, by = "ensembl_gene_id")
@@ -365,12 +368,21 @@ perform_de <- function(sce,
   if(!is.null(prefix)) {
     dependent_var <- purrr::map_chr(
       dependent_var, ~ paste0(prefix, .))
-    confounding_vars <- purrr::map_chr(
-      confounding_vars, ~ paste0(prefix, .))
+    if(!is.null(confounding_vars)) {
+      confounding_vars <- purrr::map_chr(
+        confounding_vars, ~ paste0(prefix, .))
+    }
     if(!is.null(random_effects_var)){
       random_effects_var <- purrr::map_chr(
         random_effects_var, ~ paste0(prefix, .))
     }
+  }
+
+  # allows a model without confounding variables
+  if (!is.null(confounding_vars)) {
+    plus_or_blank <- " + "
+  } else {
+    plus_or_blank <- ""
   }
 
   if (!is.null(random_effects_var)) {
@@ -381,17 +393,20 @@ perform_de <- function(sce,
 
     model_formula <- as.formula(
       sprintf(
-        "~ %s + %s + %s",
+        "~ %s + %s%s %s",
         dependent_var,
         random_effects_var,
+        plus_or_blank,
         paste(confounding_vars, collapse = " + ")
       )
     )
   } else {
+
     model_formula <- as.formula(
       sprintf(
-        "~ %s + %s",
+        "~ %s%s%s",
         dependent_var,
+        plus_or_blank,
         paste(confounding_vars, collapse = " + ")
       )
     )

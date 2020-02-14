@@ -4,8 +4,13 @@
 \alias{.get_x_most_specific_genes}
 \title{Find x most specific genes}
 \usage{
-.get_x_most_specific_genes(ct, annotLevel = 5, howMany = 20, ctd,
-  exprPercentile = 0.9)
+.get_x_most_specific_genes(
+  ct,
+  annotLevel = 5,
+  howMany = 20,
+  ctd,
+  exprPercentile = 0.9
+)
 }
 \arguments{
 \item{ct}{from colnames of ctdToMap specificity}
@@ -25,10 +30,13 @@ output the x most specific genes
 Find x most specific genes
 }
 \seealso{
-Other clustering and dimensionality reduction: \code{\link{.map_celltypes_with_ewce}},
-  \code{\link{.map_celltypes}}, \code{\link{cluster_sce}},
-  \code{\link{map_celltypes_sce}},
-  \code{\link{reduce_dims_sce}}
+Other clustering and dimensionality reduction: 
+\code{\link{.map_celltypes_with_ewce}()},
+\code{\link{.map_celltypes}()},
+\code{\link{cluster_sce}()},
+\code{\link{map_celltypes_sce}()},
+\code{\link{map_custom_celltypes}()},
+\code{\link{reduce_dims_sce}()}
 }
 \author{
 Nathan Skene / Combiz Khozoie

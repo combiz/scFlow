@@ -18,10 +18,13 @@ sce a SingleCellExperiment object annotated with sample metadata
 Works with Allan and Zeisel only
 }
 \seealso{
-Other clustering and dimensionality reduction: \code{\link{.get_x_most_specific_genes}},
-  \code{\link{.map_celltypes}}, \code{\link{cluster_sce}},
-  \code{\link{map_celltypes_sce}},
-  \code{\link{reduce_dims_sce}}
+Other clustering and dimensionality reduction: 
+\code{\link{.get_x_most_specific_genes}()},
+\code{\link{.map_celltypes}()},
+\code{\link{cluster_sce}()},
+\code{\link{map_celltypes_sce}()},
+\code{\link{map_custom_celltypes}()},
+\code{\link{reduce_dims_sce}()}
 }
 \author{
 Nathan Skene / Combiz Khozoie

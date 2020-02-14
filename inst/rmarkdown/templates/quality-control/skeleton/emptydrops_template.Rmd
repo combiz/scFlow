@@ -1,0 +1,21 @@
+A total of `r prettyNum(sum(metadata$qc_summary$qc_cells_n_cells_passed, metadata$qc_summary$qc_cells_n_cells_failed), big.mark = ",")` barcodes were submitted to the ambient RNA / empty droplet identification method *emptyDrops*.  This identified `r prettyNum(metadata$emptydrops_params$cells_found, big.mark = ",")` cells and `r prettyNum(metadata$emptydrops_params$emptydrops_found, big.mark = ",")` empty droplets with an FDR cutoff of ≤ `r sprintf("%1.2f%%", metadata$emptydrops_params$alpha_cutoff * 100)`.
+
+<div class = "zoomfig">
+```{r, fig.align="center", fig.width=8, fig.height=4, fig.cap = sprintf("<b>Figure: Negative log-likelihood of barcodes in the multinomial model of EmptyDrops against total counts. </b> Barcodes detected as putative cell-containing droplets at an FDR of %1.2f%% are marked in blue.  Only barcodes with total_counts greater than the <i>lower</i> threshold (%s total counts) are shown.", metadata$emptydrops_params$alpha_cutoff * 100, metadata$emptydrops_params$lower)}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$emptydrops_plots$log_likelihood_by_total_counts
+```
+</div>
+
+### Monte-Carlo Iterations
+The EmptyDrops algorithm was run with the specified `r prettyNum(metadata$emptydrops_params$niters, big.mark = ",")` Monte-Carlo iterations for the calculation of p-values.  `r if(metadata$emptydrops_params$n_limited > 0){sprintf("It was found that the p-values of %s non-significant cells were limited by the number of iterations, suggesting that a higher number of iterations would improve the cell / empty droplet calls.", metadata$emptydrops_params$n_limited)} else {sprintf("No barcodes were observed to have p-values limited by the number of iterations, suggesting that %s iterations was suitable for cell / empty droplet calling on this data.", prettyNum(metadata$emptydrops_params$niters, big.mark = ","))}`
+
+### Ambient Profile
+To evaluate whether the model was reliable, the p-values for all presumed ambient barcodes (i.e. total_counts <`r metadata$emptydrops_params$lower`) were extracted.  Under the null hypothesis, the p-values for these barcodes should be uniformly distributed.
+
+```{r, fig.align="center", fig.width=8, fig.height=4, fig.cap = sprintf("<b>Figure: Distribution of p-values for low total-count barcodes. </b>Ideally this distribution should be close to uniform.  Large peaks near zero would suggest that barcodes with fewer _total_counts_ than the *lower* parameter (lower = %s) are not all ambient.  In this case, further decreasing the *lower* parameter is recommended to ensure that barcodes representing genuine cells with relatively low expression are not used to estimate the ambient profile.", metadata$emptydrops_params$lower)}
+knitr::opts_chunk$set(echo = FALSE)
+ggplotly(metadata$emptydrops_plots$emptydrops_hist)
+```
+
+In addition to this visualization, the uniformity was tested using the `r metadata$emptydrops_params$uniformity_method` which yielded a _p-value_ of `r metadata$emptydrops_params$uniformity_pval` (≤0.05 would suggest non-uniformity).

@@ -49,6 +49,20 @@ metadata_table <- data.frame(
 datatable(metadata_table, rownames = FALSE, options = list(pageLength = 5, scrollX=F, columnDefs = list(list(className = 'dt-left', targets = "_all"))), escape = FALSE )
 ```
 
+## Empty droplet identification
+`r if(metadata$scflow_steps$emptydrops_annotated != 1){"EmptyDrops was not run on this dataset."}`
+
+```{r conditional_emptydrops_block, child='emptydrops_template.Rmd', eval =  (metadata$scflow_steps$emptydrops_annotated == 1)}
+```
+
+## Count depth distribution by barcode rank (high to low counts)
+<div class = "zoomfig">
+```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Barcode count depth rank plot.</b> The 'elbow' indicates where count depth decreases rapidly (relative increase in background counts), and can be used to inform the count depth threshold.  The applied lower-limit counts threshold is indicated at %s counts (red line). ", metadata$qc_params$min_library_size)}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$qc_plots$count_depth_distribution
+```
+</div>
+
 ## Number of counts / features per cellular barcode
 <div class = "row">
 <div class = "col-md-6">
@@ -66,13 +80,7 @@ ggplotly(metadata$qc_plots$number_genes_histogram)
 </div>
 </div>
 
-## Count depth distribution by barcode rank (high to low counts)
-<div class = "zoomfig">
-```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Barcode count depth rank plot.</b> The 'elbow' indicates where count depth decreases rapidly (relative increase in background counts), and can be used to inform the count depth threshold.  The applied lower-limit counts threshold is indicated at %s counts (red line). ", metadata$qc_params$min_library_size)}
-knitr::opts_chunk$set(echo = FALSE)
-metadata$qc_plots$count_depth_distribution
-```
-</div>
+
 ## Number of genes versus count depth 
 <div class = "row">
 <div class = "zoomfig">

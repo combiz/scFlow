@@ -2,30 +2,43 @@
 % Please edit documentation in R/reduce_dims_sce.R
 \name{reduce_dims_sce}
 \alias{reduce_dims_sce}
-\title{Calculate dimensionality reductions for a SingleCellExperiment}
+\title{Calculate dimensionality reductions for a SingleCellExperiment object
+or merged SingleCellExperiment objects using tSNE, UMAP, UMAP3D}
 \usage{
-reduce_dims_sce(sce, reduction_methods = c("PCA", "tSNE", "UMAP",
-  "UMAP3D"), vars_to_regress_out = NULL, pca_dims = 20, ...)
+reduce_dims_sce(
+  sce,
+  input_reduced_dim = c("PCA", "Liger"),
+  reduction_methods = c("tSNE", "UMAP", "UMAP3D"),
+  vars_to_regress_out = NULL,
+  pca_dims = 20,
+  ...
+)
 }
 \arguments{
-\item{sce}{a SingleCellExperiment object}
+\item{sce}{a SingleCellExperiment object or merged sce objects}
 
-\item{reduction_methods}{one or more of "PCA", "tSNE", "UMAP", "UMAP3D"}
+\item{input_reduced_dim}{the input reducedDim}
+
+\item{reduction_methods}{one or more of "tSNE","UMAP","UMAP3D"}
 
 \item{pca_dims}{the number of pca dimensions used}
 
 \item{...}{see uwot::umap for umap options}
 }
 \value{
-sce a SingleCellExperiment object annotated with reducedDims
+sce SingleCellExperiment object annotated with reducedDims
 }
 \description{
-PCA, tSNE, UMAP, UMAP3D
+Calculate dimensionality reductions for a SingleCellExperiment object
+or merged SingleCellExperiment objects using tSNE, UMAP, UMAP3D
 }
 \seealso{
-Other clustering and dimensionality reduction: \code{\link{.get_x_most_specific_genes}},
-  \code{\link{.map_celltypes_with_ewce}},
-  \code{\link{.map_celltypes}}, \code{\link{cluster_sce}},
-  \code{\link{map_celltypes_sce}}
+Other clustering and dimensionality reduction: 
+\code{\link{.get_x_most_specific_genes}()},
+\code{\link{.map_celltypes_with_ewce}()},
+\code{\link{.map_celltypes}()},
+\code{\link{cluster_sce}()},
+\code{\link{map_celltypes_sce}()},
+\code{\link{map_custom_celltypes}()}
 }
 \concept{clustering and dimensionality reduction}
