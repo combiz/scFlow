@@ -1,6 +1,6 @@
 Package: scflow
 Title: A Single-Cell/Nuclei Analysis Toolkit
-Version: 0.3.1
+Version: 0.3.2
 Authors@R: 
     person(given = "Combiz",
            family = "Khozoie",
