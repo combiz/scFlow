@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculate dimensionality reductions for a SingleCellExperiment — reduce_dims_sce • scflow</title>
+<title>Calculate dimensionality reductions for a SingleCellExperiment object
+or merged SingleCellExperiment objects using tSNE, UMAP, UMAP3D — reduce_dims_sce • scflow</title>
 
 
 <!-- jquery -->
@@ -35,8 +36,10 @@
 
 
 
-<meta property="og:title" content="Calculate dimensionality reductions for a SingleCellExperiment — reduce_dims_sce" />
-<meta property="og:description" content="PCA, tSNE, UMAP, UMAP3D" />
+<meta property="og:title" content="Calculate dimensionality reductions for a SingleCellExperiment object
+or merged SingleCellExperiment objects using tSNE, UMAP, UMAP3D — reduce_dims_sce" />
+<meta property="og:description" content="Calculate dimensionality reductions for a SingleCellExperiment object
+or merged SingleCellExperiment objects using tSNE, UMAP, UMAP3D" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -69,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scflow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -117,28 +120,40 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculate dimensionality reductions for a SingleCellExperiment</h1>
+    <h1>Calculate dimensionality reductions for a SingleCellExperiment object
+or merged SingleCellExperiment objects using tSNE, UMAP, UMAP3D</h1>
     <small class="dont-index">Source: <a href='https://github.com/combiz/scflow/blob/master/R/reduce_dims_sce.R'><code>R/reduce_dims_sce.R</code></a></small>
     <div class="hidden name"><code>reduce_dims_sce.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>PCA, tSNE, UMAP, UMAP3D</p>
+    <p>Calculate dimensionality reductions for a SingleCellExperiment object
+or merged SingleCellExperiment objects using tSNE, UMAP, UMAP3D</p>
     </div>
 
-    <pre class="usage"><span class='fu'>reduce_dims_sce</span>(<span class='no'>sce</span>, <span class='kw'>reduction_methods</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"PCA"</span>, <span class='st'>"tSNE"</span>, <span class='st'>"UMAP"</span>,
-  <span class='st'>"UMAP3D"</span>), <span class='kw'>vars_to_regress_out</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pca_dims</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>reduce_dims_sce</span>(
+  <span class='no'>sce</span>,
+  <span class='kw'>input_reduced_dim</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"PCA"</span>, <span class='st'>"Liger"</span>),
+  <span class='kw'>reduction_methods</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"tSNE"</span>, <span class='st'>"UMAP"</span>, <span class='st'>"UMAP3D"</span>),
+  <span class='kw'>vars_to_regress_out</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>pca_dims</span> <span class='kw'>=</span> <span class='fl'>20</span>,
+  <span class='no'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>sce</th>
-      <td><p>a SingleCellExperiment object</p></td>
+      <td><p>a SingleCellExperiment object or merged sce objects</p></td>
+    </tr>
+    <tr>
+      <th>input_reduced_dim</th>
+      <td><p>the input reducedDim</p></td>
     </tr>
     <tr>
       <th>reduction_methods</th>
-      <td><p>one or more of "PCA", "tSNE", "UMAP", "UMAP3D"</p></td>
+      <td><p>one or more of "tSNE","UMAP","UMAP3D"</p></td>
     </tr>
     <tr>
       <th>pca_dims</th>
@@ -152,13 +167,16 @@
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>sce a SingleCellExperiment object annotated with reducedDims</p>
+    <p>sce SingleCellExperiment object annotated with reducedDims</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other clustering and dimensionality reduction: <code><a href='dot-get_x_most_specific_genes.html'>.get_x_most_specific_genes</a></code>,
-  <code><a href='dot-map_celltypes_with_ewce.html'>.map_celltypes_with_ewce</a></code>,
-  <code><a href='dot-map_celltypes.html'>.map_celltypes</a></code>, <code><a href='cluster_sce.html'>cluster_sce</a></code>,
-  <code><a href='map_celltypes_sce.html'>map_celltypes_sce</a></code></p></div>
+    <div class='dont-index'><p>Other clustering and dimensionality reduction: 
+<code><a href='dot-get_x_most_specific_genes.html'>.get_x_most_specific_genes</a>()</code>,
+<code><a href='dot-map_celltypes_with_ewce.html'>.map_celltypes_with_ewce</a>()</code>,
+<code><a href='dot-map_celltypes.html'>.map_celltypes</a>()</code>,
+<code><a href='cluster_sce.html'>cluster_sce</a>()</code>,
+<code><a href='map_celltypes_sce.html'>map_celltypes_sce</a>()</code>,
+<code><a href='map_custom_celltypes.html'>map_custom_celltypes</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

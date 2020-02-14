@@ -66,6 +66,8 @@
 #' @importFrom liger optimizeALS
 #' @importFrom liger quantileAlignSNF
 #'
+#' @family Data integration
+#'
 #' @export
 
 liger_reduce_dims <- function(ligerex,

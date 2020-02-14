@@ -47,6 +47,8 @@
 #' @importFrom liger scaleNotCenter
 #' @importFrom liger removeMissingObs
 #'
+#' @family Data integration
+#'
 #' @export
 
 liger_preprocess <- function(sce,

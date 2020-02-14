@@ -37,6 +37,7 @@ Other annotation functions:
 \code{\link{map_ensembl_gene_id}()},
 \code{\link{merge_sce}()},
 \code{\link{read_metadata}()},
+\code{\link{report_impacted_pathway}()},
 \code{\link{report_qc_sce}()},
 \code{\link{run_doubletfinder}()},
 \code{\link{sce_to_seu}()}

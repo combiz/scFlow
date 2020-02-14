@@ -20,4 +20,10 @@ nci and panther.
 \examples{
 pathway_to_graph("kegg")
 }
+\seealso{
+Other Impacted pathway analysis: 
+\code{\link{find_impacted_pathways}()},
+\code{\link{pathway_analysis_rontotools}()},
+\code{\link{pathway_analysis_webgestaltr}()}
+}
 \concept{Impacted pathway analysis}

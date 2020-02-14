@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scflow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -126,8 +126,13 @@
     <p>Generate a model formula from dependent, confounding, and random vars</p>
     </div>
 
-    <pre class="usage"><span class='fu'>.generate_model_from_vars</span>(<span class='no'>sce</span>, <span class='no'>dependent_var</span>, <span class='no'>confounding_vars</span>,
-  <span class='kw'>random_effects_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>prefix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>.generate_model_from_vars</span>(
+  <span class='no'>sce</span>,
+  <span class='no'>dependent_var</span>,
+  <span class='no'>confounding_vars</span>,
+  <span class='kw'>random_effects_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>prefix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -159,10 +164,12 @@
     <p>model_formula a model formula</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other differential gene expression: <code><a href='dot-filter_sce_genes_for_de.html'>.filter_sce_genes_for_de</a></code>,
-  <code><a href='dot-perform_de_with_mast.html'>.perform_de_with_mast</a></code>,
-  <code><a href='dot-preprocess_sce_for_de.html'>.preprocess_sce_for_de</a></code>,
-  <code><a href='perform_de.html'>perform_de</a></code>, <code><a href='pseudobulk_sce.html'>pseudobulk_sce</a></code></p></div>
+    <div class='dont-index'><p>Other differential gene expression: 
+<code><a href='dot-filter_sce_genes_for_de.html'>.filter_sce_genes_for_de</a>()</code>,
+<code><a href='dot-perform_de_with_mast.html'>.perform_de_with_mast</a>()</code>,
+<code><a href='dot-preprocess_sce_for_de.html'>.preprocess_sce_for_de</a>()</code>,
+<code><a href='perform_de.html'>perform_de</a>()</code>,
+<code><a href='pseudobulk_sce.html'>pseudobulk_sce</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

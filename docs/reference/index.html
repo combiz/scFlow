@@ -67,7 +67,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scflow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -136,6 +136,12 @@
       <tr>
         
         <td>
+          <p><code><a href="read_celltype_mappings.html">read_celltype_mappings()</a></code> </p>
+        </td>
+        <td><p>Read Celltype Mappings</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="read_sce.html">read_sce()</a></code> </p>
         </td>
         <td><p>Read a SingleCellExperiment from a folder</p></td>
@@ -145,6 +151,12 @@
           <p><code><a href="read_sparse_matrix.html">read_sparse_matrix()</a></code> </p>
         </td>
         <td><p>Read a feature-barcode matrix</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="write_celltype_mappings.html">write_celltype_mappings()</a></code> </p>
+        </td>
+        <td><p>Write Celltype Mappings</p></td>
       </tr><tr>
         
         <td>
@@ -166,6 +178,12 @@
         </th>
       </tr>
       <tr>
+        
+        <td>
+          <p><code><a href="annotate_merged_sce.html">annotate_merged_sce()</a></code> </p>
+        </td>
+        <td><p>Annotate a post-merge SingleCellExperiment with plots</p></td>
+      </tr><tr>
         
         <td>
           <p><code><a href="annotate_sce.html">annotate_sce()</a></code> </p>
@@ -192,6 +210,12 @@
 Quality control metrics previously calculated are used to subset the
 SingleCellExperiment for both cells and genes passing QC criteria previously
 specified in the <code>annotate_sce_genes</code> and <code>annotate_sce_cells</code> functions</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="find_cells.html">find_cells()</a></code> </p>
+        </td>
+        <td><p>Annotate a SingleCellExperiment with EmptyDrops predictions</p></td>
       </tr><tr>
         
         <td>
@@ -225,6 +249,18 @@ specified in the <code>annotate_sce_genes</code> and <code>annotate_sce_cells</c
       </tr><tr>
         
         <td>
+          <p><code><a href="report_impacted_pathway.html">report_impacted_pathway()</a></code> </p>
+        </td>
+        <td><p>Generate plots and a QC report for a imppacted pathway analysis</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="report_merged_sce.html">report_merged_sce()</a></code> </p>
+        </td>
+        <td><p>Generate plots and a QC report for a SingleCellExperiment</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="report_qc_sce.html">report_qc_sce()</a></code> </p>
         </td>
         <td><p>Generate plots and a QC report for a SingleCellExperiment</p></td>
@@ -251,9 +287,16 @@ specified in the <code>annotate_sce_genes</code> and <code>annotate_sce_cells</c
       </tr><tr>
         
         <td>
+          <p><code><a href="map_custom_celltypes.html">map_custom_celltypes()</a></code> </p>
+        </td>
+        <td><p>Map Custom Celltype Annotations from a DataFrame</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="reduce_dims_sce.html">reduce_dims_sce()</a></code> </p>
         </td>
-        <td><p>Calculate dimensionality reductions for a SingleCellExperiment</p></td>
+        <td><p>Calculate dimensionality reductions for a SingleCellExperiment object
+or merged SingleCellExperiment objects using tSNE, UMAP, UMAP3D</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -285,9 +328,67 @@ specified in the <code>annotate_sce_genes</code> and <code>annotate_sce_cells</c
       <tr>
         
         <td>
-          <p><code><a href="plot_umap_with_feature.html">plot_umap_with_feature()</a></code> </p>
+          <p><code><a href="plot_reduced_dim.html">plot_reduced_dim()</a></code> </p>
         </td>
         <td><p>Plot Cells Reduced Dimensions With Feature Highlighting</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-impacted-pathway-analysis" class="hasAnchor"><a href="#section-impacted-pathway-analysis" class="anchor"></a>Impacted Pathway Analysis</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="find_impacted_pathways.html">find_impacted_pathways()</a></code> </p>
+        </td>
+        <td><p>Functional enrichment analysis</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="pathway_analysis_rontotools.html">pathway_analysis_rontotools()</a></code> </p>
+        </td>
+        <td><p>Functional enrichment analysis using ROntoTools</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="pathway_analysis_webgestaltr.html">pathway_analysis_webgestaltr()</a></code> </p>
+        </td>
+        <td><p>Functional enrichment analysis using WebgestaltR</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="pathway_to_graph.html">pathway_to_graph()</a></code> </p>
+        </td>
+        <td><p>Convert pathway database into graphNEL format</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-data-integration" class="hasAnchor"><a href="#section-data-integration" class="anchor"></a>Data Integration</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="integrate_sce.html">integrate_sce()</a></code> </p>
+        </td>
+        <td><p>Integrate samples within a SingleCellExperiment Object</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="liger_preprocess.html">liger_preprocess()</a></code> </p>
+        </td>
+        <td><p>Preprocessing steps for Liger dimensionality reduction</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="liger_reduce_dims.html">liger_reduce_dims()</a></code> </p>
+        </td>
+        <td><p>Dimensionality reduction using Liger factorization</p></td>
       </tr>
     </tbody>
     </table>
@@ -301,6 +402,8 @@ specified in the <code>annotate_sce_genes</code> and <code>annotate_sce_cells</c
       <li><a href="#section-clustering-and-dimensionality-reduction">Clustering and Dimensionality Reduction</a></li>
       <li><a href="#section-differential-gene-expression">Differential Gene Expression</a></li>
       <li><a href="#section-data-visualization">Data Visualization</a></li>
+      <li><a href="#section-impacted-pathway-analysis">Impacted Pathway Analysis</a></li>
+      <li><a href="#section-data-integration">Data Integration</a></li>
     </ul>
   </div>
 </div>

@@ -10,8 +10,7 @@
 #' @importFrom SingleCellExperiment counts reducedDims
 #' @importFrom SummarizedExperiment rowData
 #' @importFrom monocle3 new_cell_data_set
-#'
-#' @export
+#' @keywords internal
 .sce_to_cds <- function(sce) {
 
   phenoData = data.frame(colData(sce), stringsAsFactors = FALSE)

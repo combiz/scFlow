@@ -125,3 +125,9 @@ liger object with H, H.norm, W, and V slots sets.
 \description{
 Dimensionality reduction using Liger factorization
 }
+\seealso{
+Other Data integration: 
+\code{\link{integrate_sce}()},
+\code{\link{liger_preprocess}()}
+}
+\concept{Data integration}

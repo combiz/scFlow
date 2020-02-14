@@ -24,7 +24,7 @@
 #' @return enrichment_result a list of list containing enrichment output from
 #' different enrichment tools and a list of plots.
 #'
-#' @family Functional enrichment and impacted pathway analysis
+#' @family Impacted pathway analysis
 #'
 #' @export
 #'
