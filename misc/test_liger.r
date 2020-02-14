@@ -38,6 +38,8 @@ plot_reduced_dim(sce, feature_dim = "cluster_celltype", reduced_dim = "UMAP_Lige
 plot_reduced_dim(sce, feature_dim = "manifest", reduced_dim = "tSNE_PCA", alpha = 1, size = 1)
 plot_reduced_dim(sce, feature_dim = "manifest", reduced_dim = "tSNE_Liger", alpha = 1, size = 1)
 
+plot_reduced_dim(sce, feature_dim = "cluster_celltype", reduced_dim = "tSNE_Liger", alpha = 1, size = 1)
+
 sce_bck <- sce
 
 sce <- cluster_sce(sce, reduction_method = "UMAP_Liger")
