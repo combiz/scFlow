@@ -1,0 +1,150 @@
+---
+title: "<b>scflow</b> - Impacted Pathway Enrichment Report"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    theme: "flatly"
+    toc: false
+    fig_caption: true
+    keep_md: false
+    css: style.css
+    includes:
+      after_body: footer.html
+params:
+  metadata_path: false
+---
+
+```{r setup, results='hide', include=FALSE}
+library(DT)
+library(utils)
+
+knitr::opts_chunk$set(echo = FALSE)
+
+knitr::knit_hooks$set(wrap = function(before, options, envir){
+  if (before){
+    paste0('<', options$wrap, ' align="center">')
+  } else {
+    paste0('</', options$wrap, '>')
+  }
+})
+```
+
+```{r load_data, results='hide', include=FALSE}
+metadata <- readRDS(params$metadata_path)
+```
+
+
+**Analysis name:** `r metadata$WebgestaltR$metadata$gene_file`  
+**Enrichment method for WebgestaltR:** `r metadata$WebgestaltR$metadata$enrichment_method`  
+**Enrichment database:** `r metadata$WebgestaltR$metadata$enrichment_database`  
+
+
+# Pathway enrichment analysis {.tabset .tabset-dropdown}
+
+## Top 10 impacted pathway-kegg
+
+### Result table for WebgestaltR enrichment
+
+```{r, fig.align = "center"}
+metadata_table <- metadata$WebgestaltR$kegg[, c(1,2,4,5,7,8,9,12)]
+metadata_table$geneSet <- sapply(metadata_table$geneSet, function(geneSet) sprintf("<a href=\"https://www.genome.jp/dbget-bin/www_bget?pathway:%s\">%s</a>", geneSet, geneSet))
+datatable(metadata_table, rownames = FALSE, options = list(pageLength = 5, scrollX=T), escape = FALSE )
+```
+
+
+### Result table for ROntoTools enrichment 
+
+```{r, fig.align = "center"}
+metadata_table <- metadata$ROntoTools$kegg[, c(1:8)]
+metadata_table$geneSet <- sapply(metadata_table$geneSet, function(geneSet) sprintf("<a href=\"https://www.genome.jp/dbget-bin/www_bget?pathway:%s\">%s</a>", geneSet, geneSet))
+datatable(metadata_table, rownames = FALSE, options = list(pageLength = 5, scrollX=T), escape = FALSE )
+```
+
+### Dot plots for top 10 enriched pathway
+
+<div>
+```{r, fig.align="center", fig.width=8, fig.height=5, fig.cap = sprintf("<b>Figure: Dot plot for WebgestaltR.</b>")}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$WebgestaltR$plot$kegg
+```
+</div>
+
+<div>
+```{r, fig.align="center", fig.width=8, fig.height=5, fig.cap = sprintf("<b>Figure: Dot plot for ROntoTools.</b>")}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$ROntoTools$plot$kegg
+```
+</div>
+
+
+## Top 10 impacted pathway-panther
+
+### Result table for WebgestaltR enrichment
+
+```{r, fig.align = "center"}
+metadata_table <- metadata$WebgestaltR$panther[, c(1,2,4,5,7,8,9,12)]
+metadata_table$geneSet <- sapply(metadata_table$geneSet, function(geneSet) sprintf("<a href=\"http://www.pantherdb.org/pathway/pathwayDiagram.jsp?catAccession=%s\">%s</a>", geneSet, geneSet))
+datatable(metadata_table, rownames = FALSE, options = list(pageLength = 5, scrollX=T), escape = FALSE )
+```
+
+### Result table for ROntoTools enrichment
+
+```{r, fig.align = "center"}
+metadata_table <- metadata$ROntoTools$panther[, c(1:8)]
+metadata_table$geneSet <- sapply(metadata_table$geneSet, function(geneSet) sprintf("<a href=\"http://www.pantherdb.org/pathway/pathwayDiagram.jsp?catAccession=%s\">%s</a>", geneSet, geneSet))
+datatable(metadata_table, rownames = FALSE, options = list(pageLength = 5, scrollX=T), escape = FALSE )
+```
+
+### Dot plots for top 10 enriched pathway
+
+<div>
+```{r, fig.align="center", fig.width=8, fig.height=5, fig.cap = sprintf("<b>Figure: Dot plot for WebgestaltR.</b>")}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$WebgestaltR$plot$panther
+```
+</div>
+
+<div>
+```{r, fig.align="center", fig.width=8, fig.height=5, fig.cap = sprintf("<b>Figure: Dot plot for ROntoTools.</b>")}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$ROntoTools$plot$panther
+```
+</div>
+
+## Top 10 impacted pathway-reactome
+
+### Result table for WebgestaltR enrichment
+
+```{r, fig.align = "center"}
+metadata_table <- metadata$WebgestaltR$reactome[, c(1,2,4,5,7,8,9,12)]
+metadata_table$geneSet <- sapply(metadata_table$geneSet, function(geneSet) sprintf("<a href=\"https://reactome.org/content/detail/%s\">%s</a>", geneSet, geneSet))
+datatable(metadata_table, rownames = FALSE, options = list(pageLength = 5, scrollX=T), escape = FALSE )
+```
+
+### Result table for ROntoTools enrichment
+
+```{r, fig.align = "center"}
+metadata_table <- metadata$ROntoTools$reactome[, c(1:8)]
+metadata_table$geneSet <- sapply(metadata_table$geneSet, function(geneSet) sprintf("<a href=\"https://reactome.org/content/detail/%s\">%s</a>", geneSet, geneSet))
+datatable(metadata_table, rownames = FALSE, options = list(pageLength = 5, scrollX=T), escape = FALSE )
+```
+
+### Dot plots for top 10 enriched pathway
+
+<div>
+
+```{r, fig.align="center", fig.width=8, fig.height=5, fig.cap = sprintf("<b>Figure: Dot plot for WebgestaltR.</b>")}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$WebgestaltR$plot$reactome
+```
+</div>
+
+<div>
+```{r, fig.align="center", fig.width=8, fig.height=5, fig.cap = sprintf("<b>Figure: Dot plot for ROntoTools.</b>")}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$ROntoTools$plot$reactome
+```
+</div>
+
+
+<br>scflow v`r utils::packageVersion("scflow")` -- `r Sys.time()`
