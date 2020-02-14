@@ -1,5 +1,5 @@
 ################################################################################
-#' Functional enrichment analysis using ROntoTools
+#' Functional enrichment analysis using WebgestaltR
 #'
 #' Performs gene ontology and impacted pathway enrichment analysis with a list
 #' of gene names and their fold-change.
@@ -14,8 +14,6 @@
 #' @param enrichment_method Method of enrichment analysis.
 #' Either over-representation analysis (ORA) or (Gene set enrichment analysis)
 #' GSEA.
-#' @param project_name Logical. If TRUE, the gene_file name will be used in
-#' ouput. If FALSE the name will be generate with the timestamp. Default TRUE.
 #' @param enrichment_database Name of the database for enrichment.
 #' If NULL then multiple databases will be used or user can specify one or more
 #' database names.Default NULL.
@@ -30,41 +28,40 @@
 #' and a list of plots of top 10 significant genesets.
 #'
 #' @family Functional enrichment and impacted pathway analysis
-#' @importfrom cli cli_alert_danger rule cli_alert_info
-#' @importfrom dplyr filter
+#' @importFrom cli cli_alert_danger rule cli_alert_info
+#' @importFrom dplyr filter
 #' @importFrom WebGestaltR WebGestaltR
 #' @importFrom ggplot2 ggplot ggsave
 #' @importFrom cowplot theme_cowplot background_grid
+#' @importFrom stringr str_wrap
 #'
 #' @export
 #'
 #' @examples
-#' enrichment_result <- pathway_analysis_webgestalt(
+#' enrichment_result <- pathway_analysis_webgestaltr(
 #'   gene_file = paste(system.file("extdata", package = "scFlowData"), "/",
 #'     "de_result_table.tsv",
 #'     sep = ""
 #'   ),
 #'   enrichment_method = "ORA",
-#'   project_name = TRUE,
 #'   additional_enrichment_databse = FALSE,
 #'   is_output = TRUE
 #' )
-pathway_analysis_webgestalt <- function(gene_file = NULL,
-                                        reference_file = NULL,
-                                        enrichment_method = "ORA",
-                                        project_name = TRUE,
-                                        enrichment_database = c(
-                                "geneontology_Biological_Process_noRedundant",
-                                "geneontology_Cellular_Component_noRedundant",
-                                "geneontology_Molecular_Function_noRedundant",
-                                "pathway_KEGG",
-                                "pathway_Panther",
-                                "pathway_Reactome",
-                                "pathway_Wikipathway"
-                                        ),
-                                        additional_enrichment_databse = FALSE,
-                                        is_output = FALSE,
-                                        output_dir = ".") {
+pathway_analysis_webgestaltr <- function(gene_file = NULL,
+                                         reference_file = NULL,
+                                         enrichment_method = "ORA",
+                                         enrichment_database = c(
+                                  "geneontology_Biological_Process_noRedundant",
+                                  "geneontology_Cellular_Component_noRedundant",
+                                  "geneontology_Molecular_Function_noRedundant",
+                                  "pathway_KEGG",
+                                  "pathway_Panther",
+                                  "pathway_Reactome",
+                                  "pathway_Wikipathway"
+                                         ),
+                                         additional_enrichment_databse = FALSE,
+                                         is_output = FALSE,
+                                         output_dir = ".") {
   if (is.null(gene_file)) {
     cli::cli_alert_danger("No input gene list found! \n")
   } else if (is.data.frame(gene_file)) {
@@ -98,7 +95,9 @@ pathway_analysis_webgestalt <- function(gene_file = NULL,
   if (isTRUE(additional_enrichment_databse)) {
     enrichment_database_file <- list.files(
       path = paste(system.file(
-        "extdata/pathway_database", package = "scFlowData"), "/", sep = ""),
+        "extdata/pathway_database",
+        package = "scFlowData"
+      ), "/", sep = ""),
       pattern = ".gmt", full.names = TRUE
     )[1]
   } else {
@@ -120,10 +119,23 @@ pathway_analysis_webgestalt <- function(gene_file = NULL,
     networkConstructionMethod = "Network_Retrieval_Prioritization",
     isOutput = FALSE,
     outputDirectory = getwd(),
-    projectName = project_name
+    projectName = NULL
   )
 
+  enrichment_result$enrichmentRatio <- round(
+    enrichment_result$enrichmentRatio, 2)
+  enrichment_result$pValue <- as.numeric(format(
+    enrichment_result$pValue,
+    format = "e", digits = 2
+  ))
+  enrichment_result$FDR <- as.numeric(format(
+    enrichment_result$FDR,
+    format = "e", digits = 2
+  ))
 
+  enrichment_result$database <- tolower(
+    gsub("pathway_", "", enrichment_result$database)
+  )
   enrichment_result$database <- factor(enrichment_result$database)
   enrichment_result <- split.data.frame(
     enrichment_result, enrichment_result$database
@@ -151,7 +163,6 @@ pathway_analysis_webgestalt <- function(gene_file = NULL,
   }
 
   project_name <- .generate_project_name(
-    project_name = project_name,
     gene_file = gene_file,
     enrichment_method = enrichment_method
   )
@@ -188,8 +199,15 @@ pathway_analysis_webgestalt <- function(gene_file = NULL,
       }
     )
   } else {
-    cli::cli_alert_info("Outout is returned as a list!")
+    cli::cli_alert_info("Output is returned as a list!")
   }
+
+  enrichment_result$metadata$gene_file <- gsub(
+    "\\.tsv$", "", basename(gene_file)
+  )
+  enrichment_result$metadata$enrichment_method <- enrichment_method
+  enrichment_result$metadata$enrichment_database <- enrichment_database
+
 
   return(enrichment_result)
 }
@@ -199,22 +217,19 @@ pathway_analysis_webgestalt <- function(gene_file = NULL,
 #' Generating project name
 #' @keywords internal
 
-.generate_project_name <- function(project_name = NULL,
-                                   gene_file = NULL,
+.generate_project_name <- function(gene_file = NULL,
                                    enrichment_method = NULL) {
-  if (isTRUE(project_name) && is.data.frame(gene_file)) {
+  if (is.data.frame(gene_file)) {
     project_name <- paste(
       deparse(substitute(gene_file)), enrichment_method,
       sep = "_"
     )
-  } else if (isTRUE(project_name) && !is.data.frame(gene_file)) {
+  } else if (!is.data.frame(gene_file)) {
     project_name <- paste(
       gsub("\\.tsv$", "", basename(gene_file)), enrichment_method,
       sep = "_"
     )
     project_name <- gsub("-", "_", project_name)
-  } else {
-    project_name <- as.character(as.integer(Sys.time()))
   }
 }
 
@@ -224,16 +239,18 @@ pathway_analysis_webgestalt <- function(gene_file = NULL,
 
 
 .dotplot_ora <- function(dt) {
-  plot_title <- dt$database[1]
+  plot_title <- as.character(dt$database[1])
   dt <- dt[1:10, ]
   dt <- na.omit(dt)
+  dt$description <- stringr::str_wrap(dt$description, 40)
 
   ggplot2::ggplot(dt, aes(
     x = enrichmentRatio,
     y = reorder(description, enrichmentRatio)
   )) +
     geom_point(aes(fill = FDR, size = overlap),
-               shape = 21, alpha = 0.7, color = "black") +
+      shape = 21, alpha = 0.7, color = "black"
+    ) +
     scale_size(name = "Size", range = c(3, 8)) +
     xlab("Enrichment Ratio") +
     ylab("") +
@@ -262,6 +279,7 @@ pathway_analysis_webgestalt <- function(gene_file = NULL,
     dplyr::filter(dt, normalizedEnrichmentScore < 0)[1:10, ]
   )
   dt <- na.omit(dt)
+  dt$description <- stringr::str_wrap(dt$description, 40)
 
   ggplot2::ggplot(dt, aes(
     x = reorder(description, normalizedEnrichmentScore),
