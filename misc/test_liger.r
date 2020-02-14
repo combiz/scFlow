@@ -27,6 +27,11 @@ SingleCellExperiment::reducedDim(x, "UMAP_Liger") <- umap_res
 plot_reduced_dim(sce, feature_dim = "manifest", reduced_dim = "UMAP_Liger", alpha = 1, size = 1)
 plot_reduced_dim(sce, feature_dim = "manifest", reduced_dim = "UMAP_PCA", alpha = 1, size = 1)
 
+sce <- cluster_sce(sce, reduction_method = "UMAP_Liger", resolution = 0.01)
+plot_reduced_dim(sce, feature_dim = "clusters", reduced_dim = "UMAP_Liger", alpha = 1, size = 1)
+plot_reduced_dim(sce, feature_dim = "clusters", reduced_dim = "UMAP_PCA", alpha = 1, size = 1)
+
+
 plot_reduced_dim(sce, feature_dim = "cluster_celltype", reduced_dim = "UMAP_PCA", alpha = 1, size = 1)
 plot_reduced_dim(sce, feature_dim = "cluster_celltype", reduced_dim = "UMAP_Liger", alpha = 1, size = 1)
 
@@ -35,7 +40,8 @@ plot_reduced_dim(sce, feature_dim = "manifest", reduced_dim = "tSNE_Liger", alph
 
 sce_bck <- sce
 
-sce <- cluster_sce(sce, )
+sce <- cluster_sce(sce, reduction_method = "UMAP_Liger")
+sce <- cluster_sce(sce, reduction_method = "tSNE_Liger", resolution = 0.01)
 
 
 reduction_methods = c("tSNE", "UMAP", "UMAP3D")
