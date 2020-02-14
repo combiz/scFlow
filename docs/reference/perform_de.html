@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scflow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -126,12 +126,21 @@
     <p>Perform Differential Gene Expression on a SingleCellExperiment</p>
     </div>
 
-    <pre class="usage"><span class='fu'>perform_de</span>(<span class='no'>sce</span>, <span class='kw'>de_method</span> <span class='kw'>=</span> <span class='st'>"MASTZLM"</span>, <span class='kw'>min_counts</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>min_cells_pc</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='kw'>rescale_numerics</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>dependent_var</span> <span class='kw'>=</span> <span class='st'>"group"</span>, <span class='kw'>ref_class</span> <span class='kw'>=</span> <span class='st'>"Control"</span>,
-  <span class='kw'>confounding_vars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"individual"</span>, <span class='st'>"cngeneson"</span>, <span class='st'>"sex"</span>, <span class='st'>"age"</span>, <span class='st'>"PMI"</span>,
-  <span class='st'>"RIN"</span>, <span class='st'>"seqdate"</span>, <span class='st'>"pc_mito"</span>), <span class='kw'>random_effects_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>fc_threshold</span> <span class='kw'>=</span> <span class='fl'>1.1</span>, <span class='kw'>pval_cutoff</span> <span class='kw'>=</span> <span class='fl'>0.05</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>perform_de</span>(
+  <span class='no'>sce</span>,
+  <span class='kw'>de_method</span> <span class='kw'>=</span> <span class='st'>"MASTZLM"</span>,
+  <span class='kw'>min_counts</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>min_cells_pc</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
+  <span class='kw'>rescale_numerics</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>dependent_var</span> <span class='kw'>=</span> <span class='st'>"group"</span>,
+  <span class='kw'>ref_class</span> <span class='kw'>=</span> <span class='st'>"Control"</span>,
+  <span class='kw'>confounding_vars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"individual"</span>, <span class='st'>"cngeneson"</span>, <span class='st'>"sex"</span>, <span class='st'>"age"</span>, <span class='st'>"PMI"</span>, <span class='st'>"RIN"</span>, <span class='st'>"seqdate"</span>,
+    <span class='st'>"pc_mito"</span>),
+  <span class='kw'>random_effects_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>fc_threshold</span> <span class='kw'>=</span> <span class='fl'>1.1</span>,
+  <span class='kw'>pval_cutoff</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
+  <span class='no'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -187,11 +196,12 @@
     <p>results_l a list of DE table results</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other differential gene expression: <code><a href='dot-filter_sce_genes_for_de.html'>.filter_sce_genes_for_de</a></code>,
-  <code><a href='dot-generate_model_from_vars.html'>.generate_model_from_vars</a></code>,
-  <code><a href='dot-perform_de_with_mast.html'>.perform_de_with_mast</a></code>,
-  <code><a href='dot-preprocess_sce_for_de.html'>.preprocess_sce_for_de</a></code>,
-  <code><a href='pseudobulk_sce.html'>pseudobulk_sce</a></code></p></div>
+    <div class='dont-index'><p>Other differential gene expression: 
+<code><a href='dot-filter_sce_genes_for_de.html'>.filter_sce_genes_for_de</a>()</code>,
+<code><a href='dot-generate_model_from_vars.html'>.generate_model_from_vars</a>()</code>,
+<code><a href='dot-perform_de_with_mast.html'>.perform_de_with_mast</a>()</code>,
+<code><a href='dot-preprocess_sce_for_de.html'>.preprocess_sce_for_de</a>()</code>,
+<code><a href='pseudobulk_sce.html'>pseudobulk_sce</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

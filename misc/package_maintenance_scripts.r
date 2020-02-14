@@ -67,6 +67,8 @@ use_r("diffexp_models")
 use_r("map_with_ewce")
 use_r("reduced_dimension_plots")
 
+?use_r
+
 use_test("function_name")
 
 

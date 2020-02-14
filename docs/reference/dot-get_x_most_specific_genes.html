@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scflow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -126,8 +126,13 @@
     <p>Find x most specific genes</p>
     </div>
 
-    <pre class="usage"><span class='fu'>.get_x_most_specific_genes</span>(<span class='no'>ct</span>, <span class='kw'>annotLevel</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>howMany</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='no'>ctd</span>,
-  <span class='kw'>exprPercentile</span> <span class='kw'>=</span> <span class='fl'>0.9</span>)</pre>
+    <pre class="usage"><span class='fu'>.get_x_most_specific_genes</span>(
+  <span class='no'>ct</span>,
+  <span class='kw'>annotLevel</span> <span class='kw'>=</span> <span class='fl'>5</span>,
+  <span class='kw'>howMany</span> <span class='kw'>=</span> <span class='fl'>20</span>,
+  <span class='no'>ctd</span>,
+  <span class='kw'>exprPercentile</span> <span class='kw'>=</span> <span class='fl'>0.9</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -159,10 +164,13 @@
     <p>output the x most specific genes</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other clustering and dimensionality reduction: <code><a href='dot-map_celltypes_with_ewce.html'>.map_celltypes_with_ewce</a></code>,
-  <code><a href='dot-map_celltypes.html'>.map_celltypes</a></code>, <code><a href='cluster_sce.html'>cluster_sce</a></code>,
-  <code><a href='map_celltypes_sce.html'>map_celltypes_sce</a></code>,
-  <code><a href='reduce_dims_sce.html'>reduce_dims_sce</a></code></p></div>
+    <div class='dont-index'><p>Other clustering and dimensionality reduction: 
+<code><a href='dot-map_celltypes_with_ewce.html'>.map_celltypes_with_ewce</a>()</code>,
+<code><a href='dot-map_celltypes.html'>.map_celltypes</a>()</code>,
+<code><a href='cluster_sce.html'>cluster_sce</a>()</code>,
+<code><a href='map_celltypes_sce.html'>map_celltypes_sce</a>()</code>,
+<code><a href='map_custom_celltypes.html'>map_custom_celltypes</a>()</code>,
+<code><a href='reduce_dims_sce.html'>reduce_dims_sce</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

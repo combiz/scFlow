@@ -7,8 +7,7 @@
 pathway_analysis_rontotools(
   gene_file = NULL,
   reference_file = NULL,
-  project_name = TRUE,
-  enrichment_database = "kegg",
+  enrichment_database = c("kegg", "nci", "panther", "reactome"),
   is_output = FALSE,
   output_dir = "."
 )
@@ -22,9 +21,6 @@ Column names should be gene, logFC, pval and padj respectively.}
 that were used as input for differential expression.
 column name should be gene. If not provided the human protein-coding genome
 will be used as background genes.}
-
-\item{project_name}{Logical. If TRUE, the gene_file name will be used in
-ouput. If FALSE the name will be generate with the timestamp. Default TRUE.}
 
 \item{enrichment_database}{Name of the database for enrichment. User can
 specify one or more database names. Default kegg.}
@@ -52,13 +48,14 @@ enrichment_result <- pathway_analysis_rontotools(
     "de_result_table.tsv",
     sep = ""
   ),
-  project_name = TRUE,
   enrichment_database = "kegg",
   is_output = FALSE
 )
 }
 \seealso{
-Other Functional enrichment and impacted pathway analysis: 
-\code{\link{pathway_analysis_webgestalt}()}
+Other Impacted pathway analysis: 
+\code{\link{find_impacted_pathways}()},
+\code{\link{pathway_analysis_webgestaltr}()},
+\code{\link{pathway_to_graph}()}
 }
-\concept{Functional enrichment and impacted pathway analysis}
+\concept{Impacted pathway analysis}

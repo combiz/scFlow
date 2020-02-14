@@ -71,7 +71,7 @@ re-annotated and library sizes calculated based on cell numbers." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scflow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
 
@@ -130,10 +130,13 @@ cells from the same <code>sample_var</code> and <code>celltype_var</code>.  The 
 re-annotated and library sizes calculated based on cell numbers.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>pseudobulk_sce</span>(<span class='no'>sce</span>, <span class='kw'>sample_var</span> <span class='kw'>=</span> <span class='st'>"individual"</span>,
-  <span class='kw'>celltype_var</span> <span class='kw'>=</span> <span class='st'>"cluster_celltype"</span>, <span class='kw'>assay_name</span> <span class='kw'>=</span> <span class='st'>"counts"</span>,
-  <span class='kw'>keep_vars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"individual"</span>, <span class='st'>"group"</span>, <span class='st'>"sex"</span>, <span class='st'>"age"</span>, <span class='st'>"PMI"</span>, <span class='st'>"RIN"</span>,
-  <span class='st'>"seqdate"</span>))</pre>
+    <pre class="usage"><span class='fu'>pseudobulk_sce</span>(
+  <span class='no'>sce</span>,
+  <span class='kw'>sample_var</span> <span class='kw'>=</span> <span class='st'>"individual"</span>,
+  <span class='kw'>celltype_var</span> <span class='kw'>=</span> <span class='st'>"cluster_celltype"</span>,
+  <span class='kw'>assay_name</span> <span class='kw'>=</span> <span class='st'>"counts"</span>,
+  <span class='kw'>keep_vars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"individual"</span>, <span class='st'>"group"</span>, <span class='st'>"sex"</span>, <span class='st'>"age"</span>, <span class='st'>"PMI"</span>, <span class='st'>"RIN"</span>, <span class='st'>"seqdate"</span>)
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -165,11 +168,12 @@ re-annotated and library sizes calculated based on cell numbers.</p>
     <p>pb_sce a pseudobulk SingleCellExperiment object</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other differential gene expression: <code><a href='dot-filter_sce_genes_for_de.html'>.filter_sce_genes_for_de</a></code>,
-  <code><a href='dot-generate_model_from_vars.html'>.generate_model_from_vars</a></code>,
-  <code><a href='dot-perform_de_with_mast.html'>.perform_de_with_mast</a></code>,
-  <code><a href='dot-preprocess_sce_for_de.html'>.preprocess_sce_for_de</a></code>,
-  <code><a href='perform_de.html'>perform_de</a></code></p></div>
+    <div class='dont-index'><p>Other differential gene expression: 
+<code><a href='dot-filter_sce_genes_for_de.html'>.filter_sce_genes_for_de</a>()</code>,
+<code><a href='dot-generate_model_from_vars.html'>.generate_model_from_vars</a>()</code>,
+<code><a href='dot-perform_de_with_mast.html'>.perform_de_with_mast</a>()</code>,
+<code><a href='dot-preprocess_sce_for_de.html'>.preprocess_sce_for_de</a>()</code>,
+<code><a href='perform_de.html'>perform_de</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

@@ -17,3 +17,9 @@ sce SingleCellExperiment object annotated with reducedDims
 \description{
 Produces a reducedDim slot representing common factors across samples
 }
+\seealso{
+Other Data integration: 
+\code{\link{liger_preprocess}()},
+\code{\link{liger_reduce_dims}()}
+}
+\concept{Data integration}

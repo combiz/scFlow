@@ -22,7 +22,7 @@
 #' @return enrichment_result a list of data.frames containing enrichment output
 #' and a list of plots of top 10 significant genesets.
 #'
-#' @family Functional enrichment and impacted pathway analysis
+#' @family Impacted pathway analysis
 #' @importFrom cli cli_alert_danger rule cli_alert_info
 #' @importFrom ROntoTools setNodeWeights alphaMLG pe Summary
 #' @importFrom ggplot2 ggplot ggsave

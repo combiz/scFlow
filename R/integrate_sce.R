@@ -10,6 +10,8 @@
 #'
 #' @importFrom cli cli_h1 cli_h2 cli_text
 #'
+#' @family Data integration
+#'
 #' @export
 
 integrate_sce <- function(sce,
