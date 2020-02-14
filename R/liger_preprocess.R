@@ -3,7 +3,7 @@
 #'
 #'
 #' Split merged object into multiple sce objects and extract sparse matrices:
-#' @param sce_merged merged SingleCellExperiment objects
+#' @param sce merged SingleCellExperiment objects
 #'
 #' Make a Liger object:
 #' @param raw.data List of expression matrices (gene by cell)
@@ -49,7 +49,7 @@
 #'
 #' @export
 
-liger_preprocess <- function(sce_merged,
+liger_preprocess <- function(sce,
                              unique_id_var = "manifest",
                              take_gene_union = F,
                              remove.missing = T,
@@ -61,25 +61,6 @@ liger_preprocess <- function(sce_merged,
                              cex_use = 0.3,
                              use_cols = T,
                              ...) {
-
-
-  # Split merged sce object into multiple objects and extract sparse matrices
-  dataset_list <- list()
-  mat_list <- list()
-  manifests <- unique(sce_merged@colData[, unique_id_var])
-  for (mnft in manifests) {
-    dataset_name <- paste0("dataset_", mnft)
-    dataset_list[[dataset_name]] <-
-      sce_merged[, sce_merged@colData$manifest == mnft]
-    mat_list[[dataset_name]] <-
-      sce_merged@assays$data$counts[, sce_merged@colData$manifest == mnft]
-  }
-
-  # Make a Liger object. Pass in the sparse matrix.
-  ligerex <- createLiger(
-    raw.data = mat_list, take.gene.union = take_gene_union,
-    remove.missing = remove.missing
-  )
 
   fargs <- as.list(environment())
   fargs <- fargs[fargs = c(
@@ -94,7 +75,29 @@ liger_preprocess <- function(sce_merged,
     "cex_use",
     "use_cols"
   )]
+
+  do.call(.check_sce_for_liger, c(sce = sce, fargs))
+
+  # Split merged sce object into multiple objects and extract sparse matrices
+  dataset_list <- list()
+  mat_list <- list()
+  manifests <- unique(sce@colData[, unique_id_var])
+  for (mnft in manifests) {
+    dataset_name <- paste0("dataset_", mnft)
+    dataset_list[[dataset_name]] <-
+      sce[, sce@colData$manifest == mnft]
+    mat_list[[dataset_name]] <-
+      sce@assays$data$counts[, sce@colData$manifest == mnft]
+  }
+
+  # Make a Liger object. Pass in the sparse matrix.
+  ligerex <- createLiger(
+    raw.data = mat_list, take.gene.union = take_gene_union,
+    remove.missing = remove.missing
+  )
+
   ligerex@parameters$liger_params$liger_preprocess <- fargs
+
 
   ### preprocessing steps
 
@@ -108,7 +111,6 @@ liger_preprocess <- function(sce_merged,
     capitalize = capitalize, do.plot = do_plot, cex.use = cex_use
   )
 
-
   # Scale the data by root-mean-square across cells
   ligerex <- liger::scaleNotCenter(ligerex, remove.missing = remove.missing)
 
@@ -118,3 +120,33 @@ liger_preprocess <- function(sce_merged,
 
   return(ligerex)
 }
+
+################################################################################
+#' Helper function to check SCE before running liger
+#'
+#' @param sce SingleCellExperiment
+#' @param ... args
+#'
+#' @return return 1 if completed
+#' @family helper functions
+#' @importFrom SummarizedExperiment colData
+#' @importFrom assertthat is.scalar assert_that
+#' @keywords internal
+.check_sce_for_liger <- function(sce, ...) {
+
+  fargs <- list(...)
+
+  assertthat::is.scalar(fargs$unique_id_var)
+
+  assertthat::assert_that(
+    fargs$unique_id_var %in% names(SummarizedExperiment::colData(sce)))
+
+  min_cells_per_id <- 5
+  assertthat::assert_that(
+    min(table(droplevels(sce[[unique_id_var]]))) >= min_cells_per_id,
+    msg = sprintf("Need at least %s cells per id.", min_cells_per_id))
+
+  return(1)
+
+}
+

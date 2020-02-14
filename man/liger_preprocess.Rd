@@ -5,7 +5,7 @@
 \title{Preprocessing steps for Liger dimensionality reduction}
 \usage{
 liger_preprocess(
-  sce_merged,
+  sce,
   unique_id_var = "manifest",
   take_gene_union = F,
   remove.missing = T,
@@ -20,7 +20,7 @@ liger_preprocess(
 )
 }
 \arguments{
-\item{sce_merged}{merged SingleCellExperiment objects
+\item{sce}{merged SingleCellExperiment objects
 
 Make a Liger object:}
 

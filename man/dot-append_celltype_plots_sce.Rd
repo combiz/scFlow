@@ -19,6 +19,7 @@ Helper function to plot celltypes in reduced dimensions
 }
 \seealso{
 Other helper functions: 
+\code{\link{.check_sce_for_liger}()},
 \code{\link{.read_rds_files_to_list}()}
 }
 \concept{helper functions}

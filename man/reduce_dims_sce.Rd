@@ -3,11 +3,12 @@
 \name{reduce_dims_sce}
 \alias{reduce_dims_sce}
 \title{Calculate dimensionality reductions for a SingleCellExperiment object
-or merged SingleCellExperiment objects using PCA, tSNE, UMAP, UMAP3D, Liger}
+or merged SingleCellExperiment objects using tSNE, UMAP, UMAP3D}
 \usage{
 reduce_dims_sce(
   sce,
-  reduction_methods = c("PCA", "tSNE", "UMAP", "UMAP3D", "Liger"),
+  input_reduced_dim = c("PCA", "Liger"),
+  reduction_methods = c("tSNE", "UMAP", "UMAP3D"),
   vars_to_regress_out = NULL,
   pca_dims = 20,
   ...
@@ -16,7 +17,9 @@ reduce_dims_sce(
 \arguments{
 \item{sce}{a SingleCellExperiment object or merged sce objects}
 
-\item{reduction_methods}{one or more of "PCA","tSNE","UMAP","UMAP3D","Liger"}
+\item{input_reduced_dim}{the input reducedDim}
+
+\item{reduction_methods}{one or more of "tSNE","UMAP","UMAP3D"}
 
 \item{pca_dims}{the number of pca dimensions used}
 
@@ -27,7 +30,7 @@ sce SingleCellExperiment object annotated with reducedDims
 }
 \description{
 Calculate dimensionality reductions for a SingleCellExperiment object
-or merged SingleCellExperiment objects using PCA, tSNE, UMAP, UMAP3D, Liger
+or merged SingleCellExperiment objects using tSNE, UMAP, UMAP3D
 }
 \seealso{
 Other clustering and dimensionality reduction: 

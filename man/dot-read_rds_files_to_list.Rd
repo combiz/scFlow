@@ -17,7 +17,8 @@ Helper function to read rds files into a list
 }
 \seealso{
 Other helper functions: 
-\code{\link{.append_celltype_plots_sce}()}
+\code{\link{.append_celltype_plots_sce}()},
+\code{\link{.check_sce_for_liger}()}
 }
 \concept{helper functions}
 \keyword{internal}
