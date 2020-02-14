@@ -19,7 +19,9 @@ and 'matrix.mtx.gz' file.
 }
 \seealso{
 Other import and export functions: 
+\code{\link{read_celltype_mappings}()},
 \code{\link{read_sce}()},
+\code{\link{write_celltype_mappings}()},
 \code{\link{write_sce}()},
 \code{\link{write_sparse_matrix}()}
 }
