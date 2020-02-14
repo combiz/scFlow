@@ -425,7 +425,7 @@ enrichment_result_rontotools <- readRDS(
   paste(system.file("extdata/vignette_data", package = "scFlowData"), "/", "res_rontotools.rds", sep = ""))
 ```
 
-```{r eval=TRUE, message=TRUE}
+```{r eval=TRUE, message=TRUE, fig.width=6, fig.height=4}
 enrichment_result_webgestaltr$pathway_KEGG[1:5, c(1,2,8,9)]
 
 enrichment_result_webgestaltr$plot$pathway_KEGG
@@ -443,7 +443,7 @@ enrichment_result_rontotools <- pathway_analysis_rontotools(
 )
 ```
 
-```{r eval=TRUE, message=TRUE}
+```{r eval=TRUE, message=TRUE, fig.width=6, fig.height=4}
 enrichment_result_rontotools$kegg[1:5, c(1,2,6,7)]
 
 enrichment_result_rontotools$plot$kegg
