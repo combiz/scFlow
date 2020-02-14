@@ -19,6 +19,7 @@
 #' @importFrom dplyr rename inner_join
 #' @importFrom plyr adply
 #' @importFrom magrittr %>%
+#' @importFrom purrr map_chr
 #' @export
 map_celltypes_sce <- function(sce,
                               ctd_folder,
@@ -89,27 +90,16 @@ map_celltypes_sce <- function(sce,
   mappings_lookup$Cluster <- as.factor(mappings_lookup$Cluster)
 
   # rename Cluster column
-  mappings_lookup <- mappings_lookup %>%
+  mappings_df <- mappings_lookup %>%
     dplyr::rename(!!clusters_colname := Cluster)
 
-  sce@metadata$mappings <- mappings_lookup
+  sce@metadata$mappings <- mappings_df
 
-  #update sce
-  new_coldata <- dplyr::inner_join(as.data.frame(colData(sce)),
-                                   mappings_lookup, by = clusters_colname)
-
-  sce <- SingleCellExperiment(
-    assays = list(counts = counts(sce)),
-    colData = new_coldata,
-    rowData = as.data.frame(rowData(sce)),
-    reducedDims = reducedDims(sce),
-    metadata = sce@metadata
-  )
+  sce <- map_custom_celltypes(sce, mappings_df, cols = "cluster_celltype")
 
   sce <- .append_celltype_plots_sce(sce)
 
   return(sce)
-
 
 }
 
@@ -374,5 +364,4 @@ map_celltypes_sce <- function(sce,
 
   return(sce)
 }
-
 

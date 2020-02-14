@@ -36,8 +36,10 @@ Write a \linkS4class{SingleCellExperiment} into a folder: -
 }
 \seealso{
 Other import and export functions: 
+\code{\link{read_celltype_mappings}()},
 \code{\link{read_sce}()},
 \code{\link{read_sparse_matrix}()},
+\code{\link{write_celltype_mappings}()},
 \code{\link{write_sparse_matrix}()}
 }
 \concept{import and export functions}
