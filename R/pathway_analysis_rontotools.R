@@ -11,8 +11,6 @@
 #' that were used as input for differential expression.
 #' column name should be gene. If not provided the human protein-coding genome
 #' will be used as background genes.
-#' @param project_name Logical. If TRUE, the gene_file name will be used in
-#' ouput. If FALSE the name will be generate with the timestamp. Default TRUE.
 #' @param enrichment_database Name of the database for enrichment. User can
 #' specify one or more database names. Default kegg.
 #' @param is_output If TRUE a folder will be created and results of enrichment
@@ -25,10 +23,11 @@
 #' and a list of plots of top 10 significant genesets.
 #'
 #' @family Functional enrichment and impacted pathway analysis
-#' @importfrom cli cli_alert_danger rule cli_alert_info
+#' @importFrom cli cli_alert_danger rule cli_alert_info
 #' @importFrom ROntoTools setNodeWeights alphaMLG pe Summary
 #' @importFrom ggplot2 ggplot ggsave
 #' @importFrom cowplot theme_cowplot background_grid
+#' @importFrom stringr str_wrap
 #'
 #' @export
 #'
@@ -39,14 +38,16 @@
 #'     "de_result_table.tsv",
 #'     sep = ""
 #'   ),
-#'   project_name = TRUE,
 #'   enrichment_database = "kegg",
 #'   is_output = FALSE
 #' )
 pathway_analysis_rontotools <- function(gene_file = NULL,
                                         reference_file = NULL,
-                                        project_name = TRUE,
-                                        enrichment_database = "kegg",
+                                        enrichment_database = c(
+                                          "kegg",
+                                          "nci",
+                                          "panther",
+                                          "reactome"),
                                         is_output = FALSE,
                                         output_dir = ".") {
   library(ggplot2)
@@ -91,16 +92,18 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
     reference_gene <- paste("SYMBOL:", reference_gene$gene, sep = "")
   }
 
-
+  enrichment_database <- tolower(gsub("pathway_", "", enrichment_database))
   enrichment_result <- vector("list", length = length(enrichment_database))
   names(enrichment_result) <- enrichment_database
 
   for (database_name in enrichment_database) {
     pathway_graph <- readRDS(
       file = paste(system.file(
-        "extdata/pathway_database", package = "scFlowData"),
-        "/", database_name, "_graphNEL.rds",
-        sep = ""
+        "extdata/pathway_database",
+        package = "scFlowData"
+      ),
+      "/", database_name, "_graphNEL.rds",
+      sep = ""
       )
     )
 
@@ -112,9 +115,11 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
 
     pathway_id <- readRDS(
       file = paste(system.file(
-        "extdata/pathway_database", package = "scFlowData"),
-        "/", database_name, "_pathway_id.rds",
-        sep = ""
+        "extdata/pathway_database",
+        package = "scFlowData"
+      ),
+      "/", database_name, "_pathway_id.rds",
+      sep = ""
       )
     )
     pathway_id <- unlist(pathway_id)
@@ -126,22 +131,21 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
       nboot = 200,
       verbose = FALSE
     )
+
     res_summary <- ROntoTools::Summary(
       res,
       pathNames = pathway_id,
       totalAcc = FALSE,
-      totalAccNorm = FALSE,
       pAcc = FALSE,
-      pAcc.fdr = FALSE,
-      comb.pv = NULL,
-      order.by = "pPert"
+      comb.pv = c("pPert", "pORA"),
+      order.by = "pComb"
     )
 
     res_summary <- na.omit(res_summary)
 
 
     res_table <- data.frame(
-      geneSet = res_summary$pathNames,
+      geneSet = gsub(":", "", res_summary$pathNames),
       description = rownames(res_summary),
       size = sapply(
         res@pathways, function(x) length(x@ref)
@@ -149,11 +153,15 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
       overlap = sapply(
         res@pathways, function(x) length(x@input)
       )[rownames(res_summary)],
-      perturbation = res_summary$totalPert,
-      pValue = res_summary$pPert,
-      FDR = res_summary$pPert.fdr,
-      pValue_ORA = res_summary$pORA,
-      FDR_ORA = res_summary$pORA.fdr,
+      perturbation = round(res_summary$totalPertNorm, 2),
+      pValue = as.numeric(format(
+        res_summary$pComb,
+        format = "e", digits = 2
+      )),
+      FDR = as.numeric(format(
+        res_summary$pComb.fdr,
+        format = "e", digits = 2
+      )),
       overlapID = .get_overlap_id(res = res, res_summary = res_summary),
       database = rep(database_name)
     )
@@ -170,29 +178,18 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
   )
 
 
+  project_name <- .generate_project_name(
+    gene_file = gene_file
+  )
+
   output_dir <- output_dir
   sub_dir <- "ROntoTools.Output"
   output_dir_path <- file.path(output_dir, sub_dir)
+  project_dir <- file.path(output_dir_path, paste(project_name, sep = ""))
 
   if (isTRUE(is_output)) {
     dir.create(output_dir_path, showWarnings = FALSE)
-  } else {
-    cli::cli_alert_info("Outout is returned as a list!")
-  }
-
-  if (isTRUE(project_name) && is.data.frame(gene_file)) {
-    project_name <- paste(deparse(substitute(gene_file)), sep = "")
-  } else if (isTRUE(project_name) && !is.data.frame(gene_file)) {
-    project_name <- paste(gsub("\\.tsv$", "", basename(gene_file)), sep = "")
-    project_name <- gsub("-", "_", project_name)
-  } else {
-    project_name <- as.character(as.integer(Sys.time()))
-  }
-
-  project_dir <- file.path(output_dir_path, paste(project_name, sep = ""))
-  dir.create(project_dir, showWarnings = FALSE)
-
-  if (isTRUE(is_output)) {
+    dir.create(project_dir, showWarnings = FALSE)
     lapply(
       names(enrichment_result)[names(enrichment_result) != "plot"],
       function(dt) {
@@ -216,7 +213,14 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
         )
       }
     )
+  } else {
+    cli::cli_alert_info("Output is returned as a list!")
   }
+
+  enrichment_result$metadata$gene_file <- gsub(
+    "\\.tsv$", "", basename(gene_file)
+  )
+  enrichment_result$metadata$enrichment_database <- enrichment_database
 
   return(enrichment_result)
 }
@@ -239,6 +243,17 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
   return(overlapid_list$collapsed)
 }
 
+#' Generating project name
+#' @keywords internal
+
+.generate_project_name <- function(gene_file = NULL) {
+  if (is.data.frame(gene_file)) {
+    project_name <- paste(deparse(substitute(gene_file)), sep = "")
+  } else if (!is.data.frame(gene_file)) {
+    project_name <- paste(gsub("\\.tsv$", "", basename(gene_file)), sep = "")
+    project_name <- gsub("-", "_", project_name)
+  }
+}
 
 
 #' dotplot for ORA. x axis perturbation, y axis description
@@ -246,16 +261,18 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
 
 
 .dotplot_pe <- function(dt) {
-  plot_title <- dt$database[1]
+  plot_title <- as.character(dt$database[1])
   dt <- dt[1:10, ]
   dt <- na.omit(dt)
+  dt$description <- stringr::str_wrap(dt$description, 40)
 
   ggplot2::ggplot(dt, aes(
     x = perturbation,
     y = reorder(description, perturbation)
   )) +
     geom_point(aes(fill = FDR, size = overlap),
-               shape = 21, alpha = 0.7, color = "black") +
+      shape = 21, alpha = 0.7, color = "black"
+    ) +
     scale_size(name = "Size", range = c(3, 8)) +
     xlab("Total perturbation") +
     ylab("") +

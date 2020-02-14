@@ -1,0 +1,4 @@
+name: Impacted Pathway Analysis
+description: >
+   scflow - impacted pathway analysis report for a SingleCellExperiment
+create_dir: FALSE
