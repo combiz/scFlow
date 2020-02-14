@@ -36,15 +36,15 @@ plot_reduced_dim(sce, feature_dim = "cluster_celltype", reduced_dim = "UMAP_PCA"
 plot_reduced_dim(sce, feature_dim = "cluster_celltype", reduced_dim = "UMAP_Liger", alpha = 1, size = 1)
 
 plot_reduced_dim(sce, feature_dim = "manifest", reduced_dim = "tSNE_PCA", alpha = 1, size = 1)
-plot_reduced_dim(sce, feature_dim = "manifest", reduced_dim = "tSNE_Liger", alpha = 1, size = 1)
+plot_reduced_dim(sce, feature_dim = "clusters", reduced_dim = "tSNE_Liger", alpha = 1, size = 1)
 
 plot_reduced_dim(sce, feature_dim = "cluster_celltype", reduced_dim = "tSNE_Liger", alpha = 1, size = 1)
 
 sce_bck <- sce
 
 sce <- cluster_sce(sce, reduction_method = "UMAP_Liger")
-sce <- cluster_sce(sce, reduction_method = "tSNE_Liger", resolution = 0.01)
+sce <- cluster_sce(sce, reduction_method = "tSNE_Liger", resolution = 0.01, k = 20)
 
-
+sce <- map_celltypes_sce(sce, ctd_folder = ctd_fp)
 reduction_methods = c("tSNE", "UMAP", "UMAP3D")
 
