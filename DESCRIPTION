@@ -89,7 +89,7 @@ Remotes:
     bioc::release/IRanges,
     bioc::release/GenomicRanges,
     bioc::release/DelayedArray,
-    bioc::release/WebGestaltR,
+    bzhanglab/WebGestaltR,
     bioc::release/graphite,
     bioc::release/ROntoTools
 VignetteBuilder: knitr
