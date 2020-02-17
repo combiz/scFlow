@@ -25,6 +25,7 @@ Imports:
     purrr,
     Matrix,
     utils,
+    RANN.L1,
     biomaRt,
     SingleCellExperiment,
     stringr,
@@ -71,12 +72,11 @@ Imports:
     WebGestaltR,
     graphite,
     uniftest,
-    liger,
     batchelor,
     DelayedMatrixStats,
     Matrix.utils,
     monocle3,
-    RANN.L1
+    liger
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,
