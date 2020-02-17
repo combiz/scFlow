@@ -1,6 +1,6 @@
 Package: scflow
 Title: A Single-Cell/Nuclei Analysis Toolkit
-Version: 0.4.0
+Version: 0.4.0.9000
 Authors@R: 
     person(given = "Combiz",
            family = "Khozoie",
@@ -61,7 +61,18 @@ Imports:
     methods,
     paletteer,
     scater,
-    leaflet
+    leaflet,
+    ROntoTools,
+    BiocGenerics,
+    S4Vectors,
+    IRanges,
+    GenomicRanges,
+    DelayedArray,
+    gdtools,
+    WebGestaltR,
+    graphite,
+    uniftest,
+    liger
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,
@@ -71,5 +82,14 @@ Remotes:
     bioc::release/SummarizedExperiment,
     cole-trapnell-lab/monocle3,
     ropensci/plotly,
-    NathanSkene/EWCE
+    NathanSkene/EWCE,
+    MacoskoLab/liger,
+    bioc::release/BiocGenerics,
+    bioc::release/S4Vectors,
+    bioc::release/IRanges,
+    bioc::release/GenomicRanges,
+    bioc::release/DelayedArray,
+    bioc::release/WebGestaltR,
+    bioc::release/graphite,
+    bioc::release/ROntoTools
 VignetteBuilder: knitr
