@@ -75,7 +75,8 @@ Imports:
     batchelor,
     DelayedMatrixStats,
     Matrix.utils,
-    monocle3
+    monocle3,
+    RANN.L1
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,
@@ -98,5 +99,6 @@ Remotes:
     bioc::release/DelayedMatrixStats,
     bioc::release/limma,
     cvarrichio/Matrix.utils,
-    cole-trapnell-lab/monocle3
+    cole-trapnell-lab/monocle3,
+    jefferis/RANN@master-L1
 VignetteBuilder: knitr
