@@ -49,7 +49,6 @@ Imports:
     future.apply,
     RcppParallel,
     plotly,
-    monocle3,
     threejs,
     EWCE,
     plyr,
@@ -75,7 +74,8 @@ Imports:
     liger,
     batchelor,
     DelayedMatrixStats,
-    Matrix.utils
+    Matrix.utils,
+    monocle3
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,
@@ -83,7 +83,6 @@ Remotes:
     bioc::release/biomaRt,
     bioc::release/SingleCellExperiment,
     bioc::release/SummarizedExperiment,
-    cole-trapnell-lab/monocle3,
     ropensci/plotly,
     NathanSkene/EWCE,
     MacoskoLab/liger,
@@ -98,5 +97,6 @@ Remotes:
     bioc::devel/batchelor,
     bioc::release/DelayedMatrixStats,
     bioc::release/limma,
-    cvarrichio/Matrix.utils
+    cvarrichio/Matrix.utils,
+    cole-trapnell-lab/monocle3
 VignetteBuilder: knitr
