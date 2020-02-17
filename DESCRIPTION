@@ -1,6 +1,6 @@
 Package: scflow
 Title: A Single-Cell/Nuclei Analysis Toolkit
-Version: 0.4.0.9000
+Version: 0.4.0.9001
 Authors@R: 
     person(given = "Combiz",
            family = "Khozoie",
@@ -89,7 +89,7 @@ Remotes:
     bioc::release/IRanges,
     bioc::release/GenomicRanges,
     bioc::release/DelayedArray,
-    bioc::release/WebGestaltR,
+    bzhanglab/WebGestaltR,
     bioc::release/graphite,
     bioc::release/ROntoTools
 VignetteBuilder: knitr
