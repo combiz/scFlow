@@ -1,5 +1,5 @@
 ---
-title: "<b>scflow</b> - Merged Multi-Sample Quality-Control Report"
+title: "<b>scFlow</b> - Merged Multi-Sample Quality-Control Report"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
@@ -36,7 +36,7 @@ knitr::knit_hooks$set(wrap = function(before, options, envir){
 
 ```{r load_data, results='hide', include=FALSE}
 metadata <- readRDS(params$metadata_path)
-#metadata <- readRDS("/home/ckhozoie/Documents/scflow/scemetadata_newest.rds")
+#metadata <- readRDS("/home/ckhozoie/Documents/scFlow/scemetadata_newest.rds")
 ```
 
 ## Sample Pseudobulking Plots
@@ -83,11 +83,11 @@ show_plot <- function(plot_object) {
 out <- NULL
 for(plot_var in names(metadata$merged_plots)) {
   for(plot in names(metadata$merged_plots[[plot_var]])) {
-    out <- c(out, knit_child('/home/ckhozoie/Documents/scflow/inst/rmarkdown/templates/merged-quality-control/skeleton/plot_table_template.Rmd'))
+    out <- c(out, knit_child('/home/ckhozoie/Documents/scFlow/inst/rmarkdown/templates/merged-quality-control/skeleton/plot_table_template.Rmd'))
   }
 }
 ```
 
 `r paste(out, collapse='\n')`
 
-<br>scflow v`r utils::packageVersion("scflow")` -- `r Sys.time()`
+<br>scFlow v`r utils::packageVersion("scFlow")` -- `r Sys.time()`

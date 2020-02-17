@@ -1,17 +1,17 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-scflow
+scFlow
 ======
 
 <!-- badges: start -->
 [![Travis build
-status](https://travis-ci.org/combiz/scflow.svg?branch=master)](https://travis-ci.org/combiz/scflow)
+status](https://travis-ci.org/combiz/scFlow.svg?branch=master)](https://travis-ci.org/combiz/scFlow)
 [![Codecov test
-coverage](https://codecov.io/gh/combiz/scflow/branch/master/graph/badge.svg)](https://codecov.io/gh/combiz/scflow?branch=master)
+coverage](https://codecov.io/gh/combiz/scFlow/branch/master/graph/badge.svg)](https://codecov.io/gh/combiz/scFlow?branch=master)
 [![AppVeyor build
-status](https://ci.appveyor.com/api/projects/status/github/combiz/scflow?branch=master&svg=true)](https://ci.appveyor.com/project/combiz/scflow)
+status](https://ci.appveyor.com/api/projects/status/github/combiz/scFlow?branch=master&svg=true)](https://ci.appveyor.com/project/combiz/scFlow)
 <!-- badges: end -->
 
-The goal of scflow is to provide tools in R to build a complete analysis
+The goal of scFlow is to provide tools in R to build a complete analysis
 workflow for single-cell/nuclei RNA sequencing data.
 
 -   Quality control of gene-cell matrices
@@ -62,12 +62,12 @@ Installation
 You must have hdf5 setup on your system to run this. If using linux, run
 “sudo apt-get install libhdf5-dev”.
 
-You can install the development version of scflow from
+You can install the development version of scFlow from
 [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("combiz/scflow")
+devtools::install_github("combiz/scFlow")
 ```
 
 An additional data package `scFlowData` will be needed which contains
@@ -82,18 +82,18 @@ devtools::install_github("combiz/scFlowData")
 Developers
 ----------
 
-You may need to install scflow using a Personal Access Token
+You may need to install scFlow using a Personal Access Token
 (Github-&gt;Settings-&gt;Developer Settings): -
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("combiz/scflow", auth_token = "YOURTOKEN")
+devtools::install_github("combiz/scFlow", auth_token = "YOURTOKEN")
 ```
 
 See [this page on the
-wiki](https://github.com/combiz/scflow/wiki/Installing-scflow-from-a-private-github-repo)
+wiki](https://github.com/combiz/scFlow/wiki/Installing-scFlow-from-a-private-github-repo)
 for a full explanation. For dependecy related issues check this
-[link](https://github.com/combiz/scflow/wiki).
+[link](https://github.com/combiz/scFlow/wiki).
 
 Preprocessing example dataset
 -----------------------------
@@ -120,7 +120,7 @@ devtools::install_github("NathanSkene/One2One")
 devtools::install_github("neurogenomics/scFlowExample")
 ```
 
-### Preparing data for *scflow*
+### Preparing data for *scFlow*
 
 ``` r
 library(scFlowExamples)
@@ -151,7 +151,7 @@ for (i in 1:length(indvExp)) {
 }
 ```
 
-### Create the manifesto file for *scflow*
+### Create the manifesto file for *scFlow*
 
 ``` r
 y <- ids::proquint(n = length(indvExp), n_words = 1L, use_cache = TRUE, use_openssl = FALSE)
@@ -159,7 +159,7 @@ z <- data.frame(key = y, filepath = sprintf("%s/%s", output_path, list.files(out
 write.table(z, file = sprintf("%s/Manifest.txt", output_path), row.names = FALSE, col.names = TRUE, quote = FALSE, sep = "\t")
 ```
 
-### Create the sample sheet for *scflow*
+### Create the sample sheet for *scFlow*
 
 ``` r
 dx <- unlist(lapply(indvExp, FUN = function(x) {
@@ -174,18 +174,18 @@ write.table(sample_sheet, file = sprintf("%s/SampleSheet.tsv", output_path), row
 For a detailed explanation on how `scFlowExample` dataset was generated,
 visit this [link](https://github.com/neurogenomics/scFlowExample).
 
-Running *scflow*
+Running *scFlow*
 ----------------
 
-The `scflow` pipeline requires three main input: a folder containing
+The `scFlow` pipeline requires three main input: a folder containing
 `matrix.mtx.gz`, `features.tsv.gz`, `barcodes.tsv.gz` for individual
 samples, a SampleSheet.tsv file which is a tab-separated-variable file
 with sample metadata and a Manifest.txt file is a tab-separated-variable
 file with two columns: `key` and `filepath`. Details of how to generate
 the files is given in this
-[page](https://github.com/combiz/scflow/wiki/Generating-a-Manifest-File-and-SampleSheet-for-scflow)
+[page](https://github.com/combiz/scFlow/wiki/Generating-a-Manifest-File-and-SampleSheet-for-scFlow)
 
-The basic `scflow` workflow for sample QC begins with the import of the
+The basic `scFlow` workflow for sample QC begins with the import of the
 feature-barcode sparse matrix with `read_sparse_matrix`. The metadata
 for the sample is then imported from a sample sheet with
 `read_metadata`. A SingleCellExperiment object is created from the
@@ -207,7 +207,7 @@ ensembl_fp <- paste(system.file("extdata", package = "scFlowData"), "/", "ensemb
 ```
 
 ``` r
-library(scflow)
+library(scFlow)
 mat <- read_sparse_matrix(matrix_fp)
 ```
 
@@ -263,7 +263,7 @@ proceed with annotation.
 
 ### Step two – Annotate the SingleCellExperiment
 
-In `scflow` we specify all of our QC preferences and cutoffs with the
+In `scFlow` we specify all of our QC preferences and cutoffs with the
 `annotate_sce` command. This will also produce plots in the
 `sce@metadata` slot allowing rapid revision and optimization of QC
 parameters. Let’s start with the default parameters by simply providing
@@ -300,7 +300,7 @@ sce <- filter_sce(sce)
 ### Step three – Finding singlets and discarding multiplets
 
 At this stage we may wish to identify singlets in the
-`SingleCellExperiment` and discard any multiplets. In `scflow` we simply
+`SingleCellExperiment` and discard any multiplets. In `scFlow` we simply
 run `find_singlets` and specify our preferred multiplet identification
 algorithm. Here we will use `doubletfinder` (This will take a while
 depending on the cell numbers):-

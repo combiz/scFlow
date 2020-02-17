@@ -1,5 +1,5 @@
 ---
-title: "scflow: Guided Tutorial for Sample QC"
+title: "scFlow: Guided Tutorial for Sample QC"
 output: 
   prettydoc::html_pretty:
     theme: cayman
@@ -12,7 +12,7 @@ vignette: >
 
 ```{r, echo = FALSE}
 library(httr)
-library(scflow)
+library(scFlow)
 knitr::opts_chunk$set(comment = "#>", collapse = TRUE)
 ```
 
@@ -68,7 +68,7 @@ sce
 
 ## Step two -- Annotate the SingleCellExperiment
 
-In *scflow* we specify all of our QC preferences and cutoffs with the `annotate_sce` command.  This will also produce plots in the sce@metadata slot allowing rapid revision and optimization of QC parameters.  Let's start with the default parameters by simply providing the SingleCellExperiment object to the `annotate_sce` function: -
+In *scFlow* we specify all of our QC preferences and cutoffs with the `annotate_sce` command.  This will also produce plots in the sce@metadata slot allowing rapid revision and optimization of QC parameters.  Let's start with the default parameters by simply providing the SingleCellExperiment object to the `annotate_sce` function: -
 
 ```{r, results = 'asis', echo = TRUE, include = TRUE}
 sce <- annotate_sce(
@@ -93,7 +93,7 @@ sce <- filter_sce(sce)
 
 ## Finding singlets and discarding multiplets
 
-At this stage we may wish to identify singlets in the SingleCellExperiment and discard any multiplets.  In *scflow* we simply run `find_singlets` and specify our preferred multiplet identification algorithm.  Here we will use `doubletfinder`: -
+At this stage we may wish to identify singlets in the SingleCellExperiment and discard any multiplets.  In *scFlow* we simply run `find_singlets` and specify our preferred multiplet identification algorithm.  Here we will use `doubletfinder`: -
 
 ```{r, results = 'asis', eval = FALSE, include = TRUE}
 knitr::opts_chunk$set(echo = FALSE)

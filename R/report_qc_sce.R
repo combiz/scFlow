@@ -56,7 +56,7 @@ report_qc_sce <- function(sce,
     # "inst/rmarkdown/templates/quality-control/skeleton/skeleton.Rmd")
     system.file(
       "rmarkdown/templates/quality-control/skeleton/skeleton.Rmd",
-      package = "scflow"),
+      package = "scFlow"),
     params = list(
       metadata_path = metadata_tmp_path
     ),

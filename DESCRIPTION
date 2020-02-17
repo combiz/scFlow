@@ -1,6 +1,6 @@
-Package: scflow
+Package: scFlow
 Title: A Single-Cell/Nuclei Analysis Toolkit
-Version: 0.4.0
+Version: 0.4.1
 Authors@R: 
     person(given = "Combiz",
            family = "Khozoie",
@@ -12,8 +12,8 @@ Roxygen: list(markdown = TRUE)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-URL: https://github.com/combiz/scflow
-BugReports: https://github.com/combiz/scflow/issues
+URL: https://github.com/combiz/scFlow
+BugReports: https://github.com/combiz/scFlow/issues
 Suggests: 
     testthat (>= 2.1.0),
     spelling,
@@ -61,7 +61,21 @@ Imports:
     methods,
     paletteer,
     scater,
-    leaflet
+    leaflet,
+    ROntoTools,
+    BiocGenerics,
+    S4Vectors,
+    IRanges,
+    GenomicRanges,
+    DelayedArray,
+    gdtools,
+    WebGestaltR,
+    graphite,
+    uniftest,
+    liger,
+    batchelor,
+    DelayedMatrixStats,
+    Matrix.utils
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,
@@ -71,5 +85,18 @@ Remotes:
     bioc::release/SummarizedExperiment,
     cole-trapnell-lab/monocle3,
     ropensci/plotly,
-    NathanSkene/EWCE
+    NathanSkene/EWCE,
+    MacoskoLab/liger,
+    bioc::release/BiocGenerics,
+    bioc::release/S4Vectors,
+    bioc::release/IRanges,
+    bioc::release/GenomicRanges,
+    bioc::release/DelayedArray,
+    bzhanglab/WebGestaltR,
+    bioc::release/graphite,
+    bioc::release/ROntoTools,
+    bioc::devel/batchelor,
+    bioc::release/DelayedMatrixStats,
+    bioc::release/limma,
+    cvarrichio/Matrix.utils
 VignetteBuilder: knitr

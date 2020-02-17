@@ -28,6 +28,8 @@ addons:
   apt:
     packages:
       - libssl1.0.0
+      - libcairo2-dev
+      - libudunits2-dev
 r_packages:
   - covr
   - lintr
