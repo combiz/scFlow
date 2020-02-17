@@ -1,5 +1,5 @@
 ---
-title: "<b>scflow</b> - Quality Control Report"
+title: "<b>scFlow</b> - Quality Control Report"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
@@ -125,4 +125,4 @@ knitr::opts_chunk$set(echo = FALSE)
 cat(apply(metadata$citations, 1, .print_citation_html))
 ```
 
-<br>scflow v`r utils::packageVersion("scflow")` -- `r Sys.time()`
+<br>scFlow v`r utils::packageVersion("scFlow")` -- `r Sys.time()`

@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>scflow: Guided Tutorial for Sample QC • scflow</title>
+<title>scFlow: Guided Tutorial for Sample QC • scFlow</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="scflow: Guided Tutorial for Sample QC">
+<script src="../pkgdown.js"></script><meta property="og:title" content="scFlow: Guided Tutorial for Sample QC">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -30,7 +30,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">scflow</a>
+        <a class="navbar-link" href="../index.html">scFlow</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.0</span>
       </span>
     </div>
@@ -54,14 +54,14 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/basic-qc.html">scflow: Guided Tutorial for Sample QC</a>
+      <a href="../articles/basic-qc.html">scFlow: Guided Tutorial for Sample QC</a>
     </li>
   </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/combiz/scflow">
+  <a href="https://github.com/combiz/scFlow">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -79,10 +79,10 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>scflow: Guided Tutorial for Sample QC</h1>
+      <h1>scFlow: Guided Tutorial for Sample QC</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/combiz/scflow/blob/master/vignettes/basic-qc.Rmd"><code>vignettes/basic-qc.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/combiz/scFlow/blob/master/vignettes/basic-qc.Rmd"><code>vignettes/basic-qc.Rmd</code></a></small>
       <div class="hidden name"><code>basic-qc.Rmd</code></div>
 
     </div>
@@ -92,7 +92,7 @@
 <div id="overview" class="section level2">
 <h2 class="hasAnchor">
 <a href="#overview" class="anchor"></a>Overview</h2>
-<p>The basic <em>scflow</em> workflow for sample QC begins with the import of the feature-barcode sparse matrix with <code>read_feature_barcode_matrix</code>. The metadata for the sample is then imported from a sample sheet with <code>read_metadata</code>. A SingleCellExperiment object is created from the matrix and the metadata using <code>generate_sce</code> which is then annotated with both gene and cell-level data using <code>annotate_sce</code>. We then filter the SingleCellExperiment to select only cells and genes meeting our QC criteria using <code>filter_sce</code>. We can then optionally find singlets in our filtered SingleCellExperiment using <code>find_singlets</code> before filtering them out again with <code>filter_sce</code>. A complete QC report can then be generated using <code>report_qc_sce</code> before saving the filtered and quality-controlled SingleCellExperiment with <code>write_sce</code>.</p>
+<p>The basic <em>scFlow</em> workflow for sample QC begins with the import of the feature-barcode sparse matrix with <code>read_feature_barcode_matrix</code>. The metadata for the sample is then imported from a sample sheet with <code>read_metadata</code>. A SingleCellExperiment object is created from the matrix and the metadata using <code>generate_sce</code> which is then annotated with both gene and cell-level data using <code>annotate_sce</code>. We then filter the SingleCellExperiment to select only cells and genes meeting our QC criteria using <code>filter_sce</code>. We can then optionally find singlets in our filtered SingleCellExperiment using <code>find_singlets</code> before filtering them out again with <code>filter_sce</code>. A complete QC report can then be generated using <code>report_qc_sce</code> before saving the filtered and quality-controlled SingleCellExperiment with <code>write_sce</code>.</p>
 </div>
 <div id="step-one---import-the-matrix-and-metadata" class="section level2">
 <h2 class="hasAnchor">
@@ -222,7 +222,7 @@ Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad f
 <div id="step-two-annotate-the-singlecellexperiment" class="section level2">
 <h2 class="hasAnchor">
 <a href="#step-two-annotate-the-singlecellexperiment" class="anchor"></a>Step two – Annotate the SingleCellExperiment</h2>
-<p>In <em>scflow</em> we specify all of our QC preferences and cutoffs with the <code>annotate_sce</code> command. This will also produce plots in the <a href="mailto:sce@metadata" class="email">sce@metadata</a> slot allowing rapid revision and optimization of QC parameters. Let’s start with the default parameters by simply providing the SingleCellExperiment object to the <code>annotate_sce</code> function: -</p>
+<p>In <em>scFlow</em> we specify all of our QC preferences and cutoffs with the <code>annotate_sce</code> command. This will also produce plots in the <a href="mailto:sce@metadata" class="email">sce@metadata</a> slot allowing rapid revision and optimization of QC parameters. Let’s start with the default parameters by simply providing the SingleCellExperiment object to the <code>annotate_sce</code> function: -</p>
 <div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb52-1" data-line-number="1">sce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/annotate_sce.html">annotate_sce</a></span>(</a>
 <a class="sourceLine" id="cb52-2" data-line-number="2">  sce,</a>
 <a class="sourceLine" id="cb52-3" data-line-number="3">  <span class="dt">ensembl_mapping_file =</span> <span class="st">"~/Documents/ms-sc/src/ensembl-ids/ensembl_mappings.tsv"</span></a>
@@ -295,7 +295,7 @@ Error in mycall(sym_write, fd, data) : Cannot write to fd (system error 9, Bad f
 <div id="finding-singlets-and-discarding-multiplets" class="section level2">
 <h2 class="hasAnchor">
 <a href="#finding-singlets-and-discarding-multiplets" class="anchor"></a>Finding singlets and discarding multiplets</h2>
-<p>At this stage we may wish to identify singlets in the SingleCellExperiment and discard any multiplets. In <em>scflow</em> we simply run <code>find_singlets</code> and specify our preferred multiplet identification algorithm. Here we will use <code>doubletfinder</code>: -</p>
+<p>At this stage we may wish to identify singlets in the SingleCellExperiment and discard any multiplets. In <em>scFlow</em> we simply run <code>find_singlets</code> and specify our preferred multiplet identification algorithm. Here we will use <code>doubletfinder</code>: -</p>
 <div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb71-1" data-line-number="1">knitr<span class="op">::</span>opts_chunk<span class="op">$</span><span class="kw">set</span>(<span class="dt">echo =</span> <span class="ot">FALSE</span>)</a>
 <a class="sourceLine" id="cb71-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb71-3" data-line-number="3">sce &lt;-<span class="st"> </span><span class="kw"><a href="../reference/find_singlets.html">find_singlets</a></span>(sce, <span class="st">"doubletfinder"</span>, <span class="dt">pK =</span> <span class="fl">0.005</span>, <span class="dt">vars_to_regress_out =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"nCount_RNA"</span>, <span class="st">"pc_mito"</span>))</a></code></pre></div>

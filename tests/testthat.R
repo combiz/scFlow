@@ -1,4 +1,4 @@
 library(testthat)
-library(scflow)
+library(scFlow)
 
-test_check("scflow")
+test_check("scFlow")

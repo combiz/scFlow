@@ -49,7 +49,7 @@ report_impacted_pathway <- function(res,
     # "inst/rmarkdown/templates/impacted-pathway/skeleton/skeleton.Rmd")
     system.file(
       "rmarkdown/templates/impacted-pathway/skeleton/skeleton.Rmd",
-      package = "scflow"),
+      package = "scFlow"),
     params = list(
       metadata_path = metadata_tmp_path
     ),
