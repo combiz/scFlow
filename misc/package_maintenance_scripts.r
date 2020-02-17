@@ -104,6 +104,10 @@ use_package("WebGestaltR")
 use_package("graphite")
 use_package("uniftest")
 use_package("liger")
+use_package("batchelor")
+use_package("DelayedMatrixStats")
+use_package("limma")
+use_package("Matrix.utils")
 
 use_vignette("basic-qc", title = "Guided tutorial for sample quality control")
 

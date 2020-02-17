@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">scFlow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0.9001</span>
       </span>
     </div>
 
@@ -78,9 +78,9 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="scFlow" class="section level1">
+<div id="scflow" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#scFlow" class="anchor"></a>scFlow</h1></div>
+<a href="#scflow" class="anchor"></a>scFlow</h1></div>
 <!-- badges: start -->
 
 <p>The goal of scFlow is to provide tools in R to build a complete analysis workflow for single-cell/nuclei RNA sequencing data.</p>
@@ -175,9 +175,9 @@
 <a href="#install-the-dataset-repository" class="anchor"></a>Install the dataset repository</h3>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"neurogenomics/scFlowExample"</span>)</a></code></pre></div>
 </div>
-<div id="preparing-data-for-scFlow" class="section level3">
+<div id="preparing-data-for-scflow" class="section level3">
 <h3 class="hasAnchor">
-<a href="#preparing-data-for-scFlow" class="anchor"></a>Preparing data for <em>scFlow</em>
+<a href="#preparing-data-for-scflow" class="anchor"></a>Preparing data for <em>scFlow</em>
 </h3>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(scFlowExamples)</a>
 <a class="sourceLine" id="cb6-2" data-line-number="2">indvExp &lt;-<span class="st"> </span>scFlowExamples<span class="op">::</span>indvExp</a>
@@ -206,17 +206,17 @@
 <a class="sourceLine" id="cb6-25" data-line-number="25">  )</a>
 <a class="sourceLine" id="cb6-26" data-line-number="26">}</a></code></pre></div>
 </div>
-<div id="create-the-manifesto-file-for-scFlow" class="section level3">
+<div id="create-the-manifesto-file-for-scflow" class="section level3">
 <h3 class="hasAnchor">
-<a href="#create-the-manifesto-file-for-scFlow" class="anchor"></a>Create the manifesto file for <em>scFlow</em>
+<a href="#create-the-manifesto-file-for-scflow" class="anchor"></a>Create the manifesto file for <em>scFlow</em>
 </h3>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">y &lt;-<span class="st"> </span>ids<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ids/man/proquint.html">proquint</a></span>(<span class="dt">n =</span> <span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(indvExp), <span class="dt">n_words =</span> 1L, <span class="dt">use_cache =</span> <span class="ot">TRUE</span>, <span class="dt">use_openssl =</span> <span class="ot">FALSE</span>)</a>
 <a class="sourceLine" id="cb7-2" data-line-number="2">z &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">key =</span> y, <span class="dt">filepath =</span> <span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"%s/%s"</span>, output_path, <span class="kw"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(output_path, <span class="dt">pattern =</span> <span class="st">"individual"</span>)), <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
 <a class="sourceLine" id="cb7-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span>(z, <span class="dt">file =</span> <span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"%s/Manifest.txt"</span>, output_path), <span class="dt">row.names =</span> <span class="ot">FALSE</span>, <span class="dt">col.names =</span> <span class="ot">TRUE</span>, <span class="dt">quote =</span> <span class="ot">FALSE</span>, <span class="dt">sep =</span> <span class="st">"</span><span class="ch">\t</span><span class="st">"</span>)</a></code></pre></div>
 </div>
-<div id="create-the-sample-sheet-for-scFlow" class="section level3">
+<div id="create-the-sample-sheet-for-scflow" class="section level3">
 <h3 class="hasAnchor">
-<a href="#create-the-sample-sheet-for-scFlow" class="anchor"></a>Create the sample sheet for <em>scFlow</em>
+<a href="#create-the-sample-sheet-for-scflow" class="anchor"></a>Create the sample sheet for <em>scFlow</em>
 </h3>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">dx &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(indvExp, <span class="dt">FUN =</span> <span class="cf">function</span>(x) {</a>
 <a class="sourceLine" id="cb8-2" data-line-number="2">  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span>(x<span class="op">$</span>dx)</a>
@@ -228,9 +228,9 @@
 <p>For a detailed explanation on how <code>scFlowExample</code> dataset was generated, visit this <a href="https://github.com/neurogenomics/scFlowExample">link</a>.</p>
 </div>
 </div>
-<div id="running-scFlow" class="section level2">
+<div id="running-scflow" class="section level2">
 <h2 class="hasAnchor">
-<a href="#running-scFlow" class="anchor"></a>Running <em>scFlow</em>
+<a href="#running-scflow" class="anchor"></a>Running <em>scFlow</em>
 </h2>
 <p>The <code>scFlow</code> pipeline requires three main input: a folder containing <code>matrix.mtx.gz</code>, <code>features.tsv.gz</code>, <code>barcodes.tsv.gz</code> for individual samples, a SampleSheet.tsv file which is a tab-separated-variable file with sample metadata and a Manifest.txt file is a tab-separated-variable file with two columns: <code>key</code> and <code>filepath</code>. Details of how to generate the files is given in this <a href="https://github.com/combiz/scFlow/wiki/Generating-a-Manifest-File-and-SampleSheet-for-scFlow">page</a></p>
 <p>The basic <code>scFlow</code> workflow for sample QC begins with the import of the feature-barcode sparse matrix with <code>read_sparse_matrix</code>. The metadata for the sample is then imported from a sample sheet with <code>read_metadata</code>. A SingleCellExperiment object is created from the matrix and the metadata using <code>generate_sce</code> which is then annotated with both gene and cell-level data using <code>annotate_sce</code>. We then filter the SingleCellExperiment to select only cells and genes meeting our QC criteria using <code>filter_sce</code>. We can then optionally find singlets in our filtered SingleCellExperiment using <code>find_singlets</code> before filtering them out again with <code>filter_sce</code>. A complete QC report can then be generated using <code>report_qc_sce</code> before saving the filtered and quality-controlled SingleCellExperiment with <code>write_sce</code>.</p>
