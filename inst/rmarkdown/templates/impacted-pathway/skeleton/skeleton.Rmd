@@ -1,5 +1,5 @@
 ---
-title: "<b>scflow</b> - Impacted Pathway Enrichment Report"
+title: "<b>scFlow</b> - Impacted Pathway Enrichment Report"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
@@ -147,4 +147,4 @@ metadata$ROntoTools$plot$reactome
 </div>
 
 
-<br>scflow v`r utils::packageVersion("scflow")` -- `r Sys.time()`
+<br>scFlow v`r utils::packageVersion("scFlow")` -- `r Sys.time()`

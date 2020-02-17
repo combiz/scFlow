@@ -18,7 +18,7 @@
                                  verbose = TRUE) {
 
   bib <- bib2df::bib2df(
-    system.file("bibtex/references.bib", package = "scflow")
+    system.file("bibtex/references.bib", package = "scFlow")
     )
 
   assertthat::assert_that(

@@ -155,7 +155,7 @@ annotate_sce <- function(sce,
 
   # generate plots - run all functions starting with .qc_plot_ on sce
   cli::cli_text("Generating QC plots and appending to metadata.")
-  all_scflow_fns <- ls(getNamespace("scflow"), all.names = TRUE)
+  all_scflow_fns <- ls(getNamespace("scFlow"), all.names = TRUE)
   qc_plot_fns <- all_scflow_fns[startsWith(all_scflow_fns, ".qc_plot_")]
   for (fn in qc_plot_fns) {
     sce <- get(fn)(sce)

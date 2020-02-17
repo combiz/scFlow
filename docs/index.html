@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>A Single-Cell/Nuclei Analysis Toolkit • scflow</title>
+<title>A Single-Cell/Nuclei Analysis Toolkit • scFlow</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
@@ -30,7 +30,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">scflow</a>
+        <a class="navbar-link" href="index.html">scFlow</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2</span>
       </span>
     </div>
@@ -54,14 +54,14 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/basic-qc.html">scflow: Guided Tutorial for Sample QC</a>
+      <a href="articles/basic-qc.html">scFlow: Guided Tutorial for Sample QC</a>
     </li>
   </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/combiz/scflow">
+  <a href="https://github.com/combiz/scFlow">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -78,12 +78,12 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="scflow" class="section level1">
+<div id="scFlow" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#scflow" class="anchor"></a>scflow</h1></div>
+<a href="#scFlow" class="anchor"></a>scFlow</h1></div>
 <!-- badges: start -->
 
-<p>The goal of scflow is to provide tools in R to build a complete analysis workflow for single-cell/nuclei RNA sequencing data.</p>
+<p>The goal of scFlow is to provide tools in R to build a complete analysis workflow for single-cell/nuclei RNA sequencing data.</p>
 <ul>
 <li>Quality control of gene-cell matrices
 <ul>
@@ -139,9 +139,9 @@
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>You must have hdf5 setup on your system to run this. If using linux, run “sudo apt-get install libhdf5-dev”.</p>
-<p>You can install the development version of scflow from <a href="https://github.com/">GitHub</a> with:</p>
+<p>You can install the development version of scFlow from <a href="https://github.com/">GitHub</a> with:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># install.packages("devtools")</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"combiz/scflow"</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb1-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"combiz/scFlow"</span>)</a></code></pre></div>
 <p>An additional data package <code>scFlowData</code> will be needed which contains supplimentary data required for gene annotaion, cell type annotation, pathway analysis. Install that with:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># install.packages("devtools")</span></a>
 <a class="sourceLine" id="cb2-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"combiz/scFlowData"</span>)</a></code></pre></div>
@@ -149,10 +149,10 @@
 <div id="developers" class="section level2">
 <h2 class="hasAnchor">
 <a href="#developers" class="anchor"></a>Developers</h2>
-<p>You may need to install scflow using a Personal Access Token (Github-&gt;Settings-&gt;Developer Settings): -</p>
+<p>You may need to install scFlow using a Personal Access Token (Github-&gt;Settings-&gt;Developer Settings): -</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># install.packages("devtools")</span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"combiz/scflow"</span>, <span class="dt">auth_token =</span> <span class="st">"YOURTOKEN"</span>)</a></code></pre></div>
-<p>See <a href="https://github.com/combiz/scflow/wiki/Installing-scflow-from-a-private-github-repo">this page on the wiki</a> for a full explanation. For dependecy related issues check this <a href="https://github.com/combiz/scflow/wiki">link</a>.</p>
+<a class="sourceLine" id="cb3-2" data-line-number="2">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"combiz/scFlow"</span>, <span class="dt">auth_token =</span> <span class="st">"YOURTOKEN"</span>)</a></code></pre></div>
+<p>See <a href="https://github.com/combiz/scFlow/wiki/Installing-scFlow-from-a-private-github-repo">this page on the wiki</a> for a full explanation. For dependecy related issues check this <a href="https://github.com/combiz/scFlow/wiki">link</a>.</p>
 </div>
 <div id="preprocessing-example-dataset" class="section level2">
 <h2 class="hasAnchor">
@@ -175,9 +175,9 @@
 <a href="#install-the-dataset-repository" class="anchor"></a>Install the dataset repository</h3>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"neurogenomics/scFlowExample"</span>)</a></code></pre></div>
 </div>
-<div id="preparing-data-for-scflow" class="section level3">
+<div id="preparing-data-for-scFlow" class="section level3">
 <h3 class="hasAnchor">
-<a href="#preparing-data-for-scflow" class="anchor"></a>Preparing data for <em>scflow</em>
+<a href="#preparing-data-for-scFlow" class="anchor"></a>Preparing data for <em>scFlow</em>
 </h3>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(scFlowExamples)</a>
 <a class="sourceLine" id="cb6-2" data-line-number="2">indvExp &lt;-<span class="st"> </span>scFlowExamples<span class="op">::</span>indvExp</a>
@@ -206,17 +206,17 @@
 <a class="sourceLine" id="cb6-25" data-line-number="25">  )</a>
 <a class="sourceLine" id="cb6-26" data-line-number="26">}</a></code></pre></div>
 </div>
-<div id="create-the-manifesto-file-for-scflow" class="section level3">
+<div id="create-the-manifesto-file-for-scFlow" class="section level3">
 <h3 class="hasAnchor">
-<a href="#create-the-manifesto-file-for-scflow" class="anchor"></a>Create the manifesto file for <em>scflow</em>
+<a href="#create-the-manifesto-file-for-scFlow" class="anchor"></a>Create the manifesto file for <em>scFlow</em>
 </h3>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">y &lt;-<span class="st"> </span>ids<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ids/man/proquint.html">proquint</a></span>(<span class="dt">n =</span> <span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(indvExp), <span class="dt">n_words =</span> 1L, <span class="dt">use_cache =</span> <span class="ot">TRUE</span>, <span class="dt">use_openssl =</span> <span class="ot">FALSE</span>)</a>
 <a class="sourceLine" id="cb7-2" data-line-number="2">z &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="dt">key =</span> y, <span class="dt">filepath =</span> <span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"%s/%s"</span>, output_path, <span class="kw"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(output_path, <span class="dt">pattern =</span> <span class="st">"individual"</span>)), <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
 <a class="sourceLine" id="cb7-3" data-line-number="3"><span class="kw"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span>(z, <span class="dt">file =</span> <span class="kw"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"%s/Manifest.txt"</span>, output_path), <span class="dt">row.names =</span> <span class="ot">FALSE</span>, <span class="dt">col.names =</span> <span class="ot">TRUE</span>, <span class="dt">quote =</span> <span class="ot">FALSE</span>, <span class="dt">sep =</span> <span class="st">"</span><span class="ch">\t</span><span class="st">"</span>)</a></code></pre></div>
 </div>
-<div id="create-the-sample-sheet-for-scflow" class="section level3">
+<div id="create-the-sample-sheet-for-scFlow" class="section level3">
 <h3 class="hasAnchor">
-<a href="#create-the-sample-sheet-for-scflow" class="anchor"></a>Create the sample sheet for <em>scflow</em>
+<a href="#create-the-sample-sheet-for-scFlow" class="anchor"></a>Create the sample sheet for <em>scFlow</em>
 </h3>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">dx &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(indvExp, <span class="dt">FUN =</span> <span class="cf">function</span>(x) {</a>
 <a class="sourceLine" id="cb8-2" data-line-number="2">  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span>(x<span class="op">$</span>dx)</a>
@@ -228,19 +228,19 @@
 <p>For a detailed explanation on how <code>scFlowExample</code> dataset was generated, visit this <a href="https://github.com/neurogenomics/scFlowExample">link</a>.</p>
 </div>
 </div>
-<div id="running-scflow" class="section level2">
+<div id="running-scFlow" class="section level2">
 <h2 class="hasAnchor">
-<a href="#running-scflow" class="anchor"></a>Running <em>scflow</em>
+<a href="#running-scFlow" class="anchor"></a>Running <em>scFlow</em>
 </h2>
-<p>The <code>scflow</code> pipeline requires three main input: a folder containing <code>matrix.mtx.gz</code>, <code>features.tsv.gz</code>, <code>barcodes.tsv.gz</code> for individual samples, a SampleSheet.tsv file which is a tab-separated-variable file with sample metadata and a Manifest.txt file is a tab-separated-variable file with two columns: <code>key</code> and <code>filepath</code>. Details of how to generate the files is given in this <a href="https://github.com/combiz/scflow/wiki/Generating-a-Manifest-File-and-SampleSheet-for-scflow">page</a></p>
-<p>The basic <code>scflow</code> workflow for sample QC begins with the import of the feature-barcode sparse matrix with <code>read_sparse_matrix</code>. The metadata for the sample is then imported from a sample sheet with <code>read_metadata</code>. A SingleCellExperiment object is created from the matrix and the metadata using <code>generate_sce</code> which is then annotated with both gene and cell-level data using <code>annotate_sce</code>. We then filter the SingleCellExperiment to select only cells and genes meeting our QC criteria using <code>filter_sce</code>. We can then optionally find singlets in our filtered SingleCellExperiment using <code>find_singlets</code> before filtering them out again with <code>filter_sce</code>. A complete QC report can then be generated using <code>report_qc_sce</code> before saving the filtered and quality-controlled SingleCellExperiment with <code>write_sce</code>.</p>
+<p>The <code>scFlow</code> pipeline requires three main input: a folder containing <code>matrix.mtx.gz</code>, <code>features.tsv.gz</code>, <code>barcodes.tsv.gz</code> for individual samples, a SampleSheet.tsv file which is a tab-separated-variable file with sample metadata and a Manifest.txt file is a tab-separated-variable file with two columns: <code>key</code> and <code>filepath</code>. Details of how to generate the files is given in this <a href="https://github.com/combiz/scFlow/wiki/Generating-a-Manifest-File-and-SampleSheet-for-scFlow">page</a></p>
+<p>The basic <code>scFlow</code> workflow for sample QC begins with the import of the feature-barcode sparse matrix with <code>read_sparse_matrix</code>. The metadata for the sample is then imported from a sample sheet with <code>read_metadata</code>. A SingleCellExperiment object is created from the matrix and the metadata using <code>generate_sce</code> which is then annotated with both gene and cell-level data using <code>annotate_sce</code>. We then filter the SingleCellExperiment to select only cells and genes meeting our QC criteria using <code>filter_sce</code>. We can then optionally find singlets in our filtered SingleCellExperiment using <code>find_singlets</code> before filtering them out again with <code>filter_sce</code>. A complete QC report can then be generated using <code>report_qc_sce</code> before saving the filtered and quality-controlled SingleCellExperiment with <code>write_sce</code>.</p>
 <div id="step-one---import-the-matrix-and-metadata" class="section level3">
 <h3 class="hasAnchor">
 <a href="#step-one---import-the-matrix-and-metadata" class="anchor"></a>Step one - import the matrix and metadata</h3>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">matrix_fp &lt;-<span class="st"> "path/to/matrix/file"</span></a>
 <a class="sourceLine" id="cb9-2" data-line-number="2">samplesheet_fp &lt;-<span class="st"> "path/to/SampleSheet.tsv"</span></a>
 <a class="sourceLine" id="cb9-3" data-line-number="3">ensembl_fp &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"extdata"</span>, <span class="dt">package =</span> <span class="st">"scFlowData"</span>), <span class="st">"/"</span>, <span class="st">"ensembl_mappings.tsv"</span>, <span class="dt">sep =</span> <span class="st">""</span>)</a></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(scflow)</a>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(scFlow)</a>
 <a class="sourceLine" id="cb10-2" data-line-number="2">mat &lt;-<span class="st"> </span><span class="kw"><a href="reference/read_sparse_matrix.html">read_sparse_matrix</a></span>(matrix_fp)</a></code></pre></div>
 <p>Next we retrieve the metadata by pointing to a Sample Sheet and specifying a unique identifier (unique_key) in a specific column (key_colname):</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">metadata &lt;-<span class="st"> </span><span class="kw"><a href="reference/read_metadata.html">read_metadata</a></span>(</a>
@@ -273,7 +273,7 @@
 <div id="step-two-annotate-the-singlecellexperiment" class="section level3">
 <h3 class="hasAnchor">
 <a href="#step-two-annotate-the-singlecellexperiment" class="anchor"></a>Step two – Annotate the SingleCellExperiment</h3>
-<p>In <code>scflow</code> we specify all of our QC preferences and cutoffs with the <code>annotate_sce</code> command. This will also produce plots in the <code>sce@metadata</code> slot allowing rapid revision and optimization of QC parameters. Let’s start with the default parameters by simply providing the <code>SingleCellExperiment</code> object to the <code>annotate_sce</code> function:-</p>
+<p>In <code>scFlow</code> we specify all of our QC preferences and cutoffs with the <code>annotate_sce</code> command. This will also produce plots in the <code>sce@metadata</code> slot allowing rapid revision and optimization of QC parameters. Let’s start with the default parameters by simply providing the <code>SingleCellExperiment</code> object to the <code>annotate_sce</code> function:-</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">sce &lt;-<span class="st"> </span><span class="kw"><a href="reference/annotate_sce.html">annotate_sce</a></span>(</a>
 <a class="sourceLine" id="cb14-2" data-line-number="2">  sce,</a>
 <a class="sourceLine" id="cb14-3" data-line-number="3">  <span class="dt">ensembl_mapping_file =</span> ensembl_fp</a>
@@ -288,7 +288,7 @@
 <div id="step-three-finding-singlets-and-discarding-multiplets" class="section level3">
 <h3 class="hasAnchor">
 <a href="#step-three-finding-singlets-and-discarding-multiplets" class="anchor"></a>Step three – Finding singlets and discarding multiplets</h3>
-<p>At this stage we may wish to identify singlets in the <code>SingleCellExperiment</code> and discard any multiplets. In <code>scflow</code> we simply run <code>find_singlets</code> and specify our preferred multiplet identification algorithm. Here we will use <code>doubletfinder</code> (This will take a while depending on the cell numbers):-</p>
+<p>At this stage we may wish to identify singlets in the <code>SingleCellExperiment</code> and discard any multiplets. In <code>scFlow</code> we simply run <code>find_singlets</code> and specify our preferred multiplet identification algorithm. Here we will use <code>doubletfinder</code> (This will take a while depending on the cell numbers):-</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">sce &lt;-<span class="st"> </span><span class="kw"><a href="reference/find_singlets.html">find_singlets</a></span>(sce, <span class="st">"doubletfinder"</span>, <span class="dt">pK =</span> <span class="fl">0.005</span>, <span class="dt">vars_to_regress_out =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"nCount_RNA"</span>, <span class="st">"pc_mito"</span>))</a></code></pre></div>
 <p>Now we can filter out these multiplets with <code>filter_sce</code>:-</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">sce &lt;-<span class="st"> </span><span class="kw"><a href="reference/filter_sce.html">filter_sce</a></span>(sce)</a></code></pre></div>
@@ -429,9 +429,9 @@
     <div class="links">
 <h2>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/combiz/scflow">https://​github.com/​combiz/​scflow</a>
+<li>Browse source code at <br><a href="https://github.com/combiz/scFlow">https://​github.com/​combiz/​scFlow</a>
 </li>
-<li>Report a bug at <br><a href="https://github.com/combiz/scflow/issues">https://​github.com/​combiz/​scflow/​issues</a>
+<li>Report a bug at <br><a href="https://github.com/combiz/scFlow/issues">https://​github.com/​combiz/​scFlow/​issues</a>
 </li>
 </ul>
 </div>
@@ -452,9 +452,9 @@
   <div class="dev-status">
 <h2>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://travis-ci.org/combiz/scflow"><img src="https://travis-ci.org/combiz/scflow.svg?branch=master" alt="Travis build status"></a></li>
-<li><a href="https://codecov.io/gh/combiz/scflow?branch=master"><img src="https://codecov.io/gh/combiz/scflow/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
-<li><a href="https://ci.appveyor.com/project/combiz/scflow"><img src="https://ci.appveyor.com/api/projects/status/github/combiz/scflow?branch=master&amp;svg=true" alt="AppVeyor build status"></a></li>
+<li><a href="https://travis-ci.org/combiz/scFlow"><img src="https://travis-ci.org/combiz/scFlow.svg?branch=master" alt="Travis build status"></a></li>
+<li><a href="https://codecov.io/gh/combiz/scFlow?branch=master"><img src="https://codecov.io/gh/combiz/scFlow/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://ci.appveyor.com/project/combiz/scFlow"><img src="https://ci.appveyor.com/api/projects/status/github/combiz/scFlow?branch=master&amp;svg=true" alt="AppVeyor build status"></a></li>
 </ul>
 </div>
 </div>
