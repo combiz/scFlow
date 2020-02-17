@@ -72,7 +72,10 @@ Imports:
     WebGestaltR,
     graphite,
     uniftest,
-    liger
+    liger,
+    batchelor,
+    DelayedMatrixStats,
+    Matrix.utils
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,
@@ -91,5 +94,9 @@ Remotes:
     bioc::release/DelayedArray,
     bzhanglab/WebGestaltR,
     bioc::release/graphite,
-    bioc::release/ROntoTools
+    bioc::release/ROntoTools,
+    bioc::devel/batchelor,
+    bioc::release/DelayedMatrixStats,
+    bioc::release/limma,
+    cvarrichio/Matrix.utils
 VignetteBuilder: knitr
