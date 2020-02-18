@@ -26,6 +26,7 @@ Imports:
     Matrix,
     utils,
     RANN,
+    RANN.L1,
     biomaRt,
     SingleCellExperiment,
     stringr,
@@ -100,5 +101,6 @@ Remotes:
     bioc::release/limma,
     cvarrichio/Matrix.utils,
     cole-trapnell-lab/monocle3,
+    jefferis/RANN@master-L1,
     combiz/RANN.L1@master-L1
 VignetteBuilder: knitr
