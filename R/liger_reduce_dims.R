@@ -65,6 +65,7 @@
 #'
 #' @importFrom liger optimizeALS
 #' @importFrom liger quantileAlignSNF
+#' @importFrom cli cli_h2 cli_alert
 #'
 #' @family Data integration
 #'
@@ -129,6 +130,7 @@ liger_reduce_dims <- function(ligerex,
   ### Factorization
 
   # Perform iNMF on scaled datasets
+  cli::cli_alert("Performing iNMF")
   ligerex <- liger::optimizeALS(ligerex,
     k = k, lambda = lambda, thresh = thresh,
     max.iters = max_iters, nrep = nrep, H.init = h_init, W.init = w_init,
@@ -138,6 +140,7 @@ liger_reduce_dims <- function(ligerex,
   ### Quantile Alignment/Normalization
 
   # Quantile align (normalize) factor loadings
+  cli::cli_alert("Normalizing factor loadings")
   ligerex <- liger::quantileAlignSNF(ligerex,
     knn_k = knn_k, k2 = k2, prune.thresh = prune_thresh,
     ref_dataset = ref_dataset, min_cells = min_cells, quantiles = quantiles,
@@ -147,7 +150,6 @@ liger_reduce_dims <- function(ligerex,
     small.clust.thresh = small_clust_thresh, id.number = id_number,
     print.mod = print_mod, print.align.summary = print_align_summary
   )
-
 
   return(ligerex)
 }
