@@ -5,7 +5,7 @@
 ##  Initialize                                                              ####
 #options(mc.cores = parallel::detectCores())
 #library(parallel)
-library(scflow)
+library(scFlow)
 
 # v2 chemistry
 matpath <- "~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix"

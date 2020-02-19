@@ -40,8 +40,27 @@ reduce_dims_sce <- function(sce,
     repulsion_strength = 1,
     negative_sample_rate = 5,
     fast_sgd = FALSE,
-    n_threads = max(1, RcppParallel::defaultNumThreads() - 2)
+    n_threads = max(1, RcppParallel::defaultNumThreads() - 2),
+    # Rtsne
+    dims = 2,
+    initial_dims = 50,
+    perplexity = 30,
+    theta = 0.5,
+    check_duplicates = FALSE,
+    partial_pca = FALSE,
+    max_iter = 1000,
+    is_distance = FALSE,
+    Y_init = NULL,
+    pca_center = TRUE,
+    pca_scale = FALSE,
+    normalize = TRUE,
+    momentum = 0.5,
+    final_momentum = 0.8,
+    eta = 200,
+    exaggeration_factor = 12,
+    num_threads = max(1, RcppParallel::defaultNumThreads() - 2)
   )
+
   inargs <- list(...)
   fargs[names(inargs)] <- inargs
 
@@ -100,29 +119,17 @@ reduce_dims_sce <- function(sce,
       # Reduce dimensions with tSNE
       if (reddim_method == "tSNE") {
 
-        if (input_rd == "Liger") { # temporary hack
-        SingleCellExperiment::reducedDim(cds, "PCA_BACKUP") <-
-          SingleCellExperiment::reducedDim(cds, "PCA")
+        mat <- as.matrix(SingleCellExperiment::reducedDim(cds, input_rd))
 
-        SingleCellExperiment::reducedDim(cds, "PCA") <-
-          SingleCellExperiment::reducedDim(cds, "Liger")
-        }
+        tsne_res <- do.call(Rtsne::Rtsne, c(list(X = mat, pca = FALSE), fargs))
 
-        cds <- monocle3::reduce_dimension(
-          cds,
-          preprocess_method = "PCA",
-          reduction_method = "tSNE"
-        )
+        tsne_data <- tsne_res$Y[, 1:fargs$dims]
+        row.names(tsne_data) <- colnames(tsne_data)
 
         rd_name <- paste(reddim_method, input_rd, sep = "_")
 
-        SingleCellExperiment::reducedDim(sce, rd_name) <-
-          SingleCellExperiment::reducedDim(cds, "tSNE")
+        SingleCellExperiment::reducedDim(sce, rd_name) <- tsne_data
 
-        if (input_rd == "Liger") { # restore
-          SingleCellExperiment::reducedDim(cds, "PCA") <-
-            SingleCellExperiment::reducedDim(cds, "PCA_BACKUP")
-        }
         cli::cli_alert_success(c(
           "{.strong {reddim_method}} was computed successfully ",
           "with {.strong {input_rd}} input"))
