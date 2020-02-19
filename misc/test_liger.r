@@ -12,6 +12,7 @@ sce <- integrate_sce(sce, unique_id_var = "manifest")
 # sce <- read_sce("~/Documents/liger_test")
 
 sce <- reduce_dims_sce(sce, input_reduced_dim = c("PCA", "Liger"), unique_id_var = "manifest")
+sce <- reduce_dims_sce(sce, input_reduced_dim = c("PCA", "Liger"), unique_id_var = "manifest")
 
 umap_res <- do.call(
   uwot::umap,
