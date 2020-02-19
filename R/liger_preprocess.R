@@ -78,7 +78,7 @@ liger_preprocess <- function(sce,
     "use_cols"
   )]
 
-  do.call(.check_sce_for_liger, c(sce = sce, fargs))
+  do.call(.check_sce_for_liger, c(list(sce = sce), fargs))
 
   # Split merged sce object into multiple objects and extract sparse matrices
   dataset_list <- list()
