@@ -37,13 +37,13 @@ integrate_sce <- function(sce,
 
     # Preprocess with Liger
     cli::cli_h3("Pre-processing SingleCellExperiment for LIGER")
-    ligerex <- liger_preprocess(sce, ...)
+    ligerex <- do.call(liger_preprocess, c(list(sce = sce), fargs))
     sce@metadata$liger_params$liger_preprocess <-
       ligerex@parameters$liger_params$liger_preprocess
 
     # Reduce dimensions with Liger
     cli::cli_h3("Computing integrated factors with LIGER")
-    ligerex <- liger_reduce_dims(ligerex, ...)
+    ligerex <- do.call(liger_reduce_dims, c(list(ligerex = ligerex), fargs))
     sce@metadata$liger_params$liger_reduce_dims <-
       ligerex@parameters$liger_params$liger_reduce_dims
 

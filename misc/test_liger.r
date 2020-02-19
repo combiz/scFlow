@@ -7,7 +7,7 @@ sce <- sce_all[, idx]
 
 sce <- sce[, sce$manifest != "kurus"]
 
-sce <- integrate_sce(sce, unique_id_var = "manifest")
+sce <- integrate_sce(sce, unique_id_var = "manifest", k = 20)
 
 # sce <- read_sce("~/Documents/liger_test")
 
