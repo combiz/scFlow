@@ -87,9 +87,9 @@ liger_preprocess <- function(sce,
   for (mnft in manifests) {
     dataset_name <- paste0("dataset_", mnft)
     dataset_list[[dataset_name]] <-
-      sce[, sce@colData$manifest == mnft]
+      sce[, sce[[unique_id_var]] == mnft]
     mat_list[[dataset_name]] <-
-      sce@assays$data$counts[, sce@colData$manifest == mnft]
+      SingleCellExperiment::counts(sce[, sce[[unique_id_var]] == mnft])
   }
 
   # Make a Liger object. Pass in the sparse matrix.
@@ -99,7 +99,6 @@ liger_preprocess <- function(sce,
   )
 
   ligerex@parameters$liger_params$liger_preprocess <- fargs
-
 
   ### preprocessing steps
 
@@ -143,7 +142,7 @@ liger_preprocess <- function(sce,
   assertthat::assert_that(
     fargs$unique_id_var %in% names(SummarizedExperiment::colData(sce)))
 
-  min_cells_per_id <- 5
+  min_cells_per_id <- 50
   assertthat::assert_that(
     min(table(droplevels(sce[[fargs$unique_id_var]]))) >= min_cells_per_id,
     msg = sprintf("Need at least %s cells per id.", min_cells_per_id))
