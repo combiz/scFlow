@@ -75,6 +75,13 @@ reduce_dims_sce <- function(sce,
     stop("reduction methods must be from: tSNE, UMAP, UMAP3D")
   }
 
+  if ("Liger" %in% input_reduced_dim) {
+    assertthat::assert_that(
+      "Liger" %in% SingleCellExperiment::reducedDimNames(sce),
+      msg = paste0("Liger reducedDim not found. ",
+                   "To use Liger as an input first run integrate_sce()"))
+  }
+
   before_rd_names <- SingleCellExperiment::reducedDimNames(sce)
 
   cli::cli_h1("Starting Dimensionality Reduction")
