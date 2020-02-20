@@ -33,6 +33,8 @@ addons:
 r_packages:
   - covr
   - lintr
+r_github_packages:
+  - combiz/RANN.L1
 after_script:
   - R CMD INSTALL $PKG_TARBALL
   - Rscript -e 'lintr::lint_package()'
