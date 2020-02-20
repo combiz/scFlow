@@ -6,6 +6,21 @@ Authors@R:
            family = "Khozoie",
            role = c("aut", "cre"),
            email = "c.khozoie@imperial.ac.uk",
+           comment = c(ORCID = "0000-0002-1634-5287"))
+    person(given = "Nurun",
+           family = "Fancy",
+           role = c("aut"),
+           email = "n.fancy@imperial.ac.uk",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+    person(given = "Mahdi",
+           family = "Marjaneh",
+           role = c("aut"),
+           email = "m.moradi@imperial.ac.uk",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+    person(given = "Nathan",
+           family = "Skene",
+           role = c("aut"),
+           email = "n.skene@imperial.ac.uk",
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: Single-cell/nuclei RNA-seq analysis tools in R to build a complete analysis workflow.
 Roxygen: list(markdown = TRUE)
@@ -88,6 +103,7 @@ Remotes:
     ropensci/plotly,
     NathanSkene/EWCE,
     MacoskoLab/liger,
+    bioc::release/scater,
     bioc::release/BiocGenerics,
     bioc::release/S4Vectors,
     bioc::release/IRanges,
