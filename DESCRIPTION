@@ -100,7 +100,7 @@ Remotes:
     bioc::release/DelayedMatrixStats,
     bioc::release/limma,
     cvarrichio/Matrix.utils,
-    cole-trapnell-lab/monocle3,
-    jefferis/RANN@master-L1,
-    combiz/RANN.L1@master-L1
+    jefferis/RANN,
+    combiz/RANN.L1,
+    cole-trapnell-lab/monocle3
 VignetteBuilder: knitr
