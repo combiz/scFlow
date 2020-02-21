@@ -30,6 +30,10 @@ addons:
       - libssl1.0.0
       - libcairo2-dev
       - libudunits2-dev
+      - gdal-bin
+      - proj-bin
+      - libgdal-dev
+      - libproj-dev
 r_packages:
   - covr
   - lintr
