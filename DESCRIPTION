@@ -120,5 +120,7 @@ Remotes:
     cvarrichio/Matrix.utils,
     jefferis/RANN,
     combiz/RANN.L1,
-    cole-trapnell-lab/monocle3
+    cole-trapnell-lab/monocle3,
+    bioc::release/MAST,
+    bioc::release/multtest
 VignetteBuilder: knitr
