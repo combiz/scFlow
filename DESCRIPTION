@@ -112,7 +112,7 @@ Remotes:
     bzhanglab/WebGestaltR,
     bioc::release/graphite,
     bioc::release/ROntoTools,
-    bioc::devel/batchelor,
+    bioc::release/batchelor,
     bioc::release/DelayedMatrixStats,
     bioc::release/limma,
     cvarrichio/Matrix.utils,
