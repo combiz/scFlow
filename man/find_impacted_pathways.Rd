@@ -57,6 +57,7 @@ enrichment_result <- find_impacted_pathways(
 }
 \seealso{
 Other Impacted pathway analysis: 
+\code{\link{pathway_analysis_enrichr}()},
 \code{\link{pathway_analysis_rontotools}()},
 \code{\link{pathway_analysis_webgestaltr}()},
 \code{\link{pathway_to_graph}()}
