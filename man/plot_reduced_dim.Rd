@@ -24,11 +24,19 @@ plot_reduced_dim(
 \item{highlight_feature}{highlights a feature}
 
 \item{label_clusters}{prints cluster labels}
+
+\item{size}{point size}
+
+\item{alpha}{point alpha}
 }
 \value{
 p a ggplot object
 }
 \description{
 Generates a 2d plot of cells with feature highlighting
+}
+\seealso{
+Other plotting functions: 
+\code{\link{plot_reduced_dim_gene}()}
 }
 \concept{plotting functions}

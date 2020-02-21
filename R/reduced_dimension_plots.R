@@ -8,6 +8,8 @@
 #' @param reduced_dim the reducedDim slot for plotting
 #' @param highlight_feature highlights a feature
 #' @param label_clusters prints cluster labels
+#' @param size point size
+#' @param alpha point alpha
 #'
 #' @return p a ggplot object
 #'
@@ -33,7 +35,7 @@ plot_reduced_dim <- function(sce,
     feature_dim %in% names(SummarizedExperiment::colData(sce)),
     msg = sprintf(
       "The feature_dim %s is not present in colData(sce)", feature_dim)
-    )
+  )
 
   assertthat::assert_that(
     reduced_dim %in% SingleCellExperiment::reducedDimNames(sce),
@@ -46,7 +48,7 @@ plot_reduced_dim <- function(sce,
     cbind(colData(sce),
           "dim1" = SingleCellExperiment::reducedDim(sce, reduced_dim)[, 1],
           "dim2" = SingleCellExperiment::reducedDim(sce, reduced_dim)[, 2])
-    )
+  )
   if (is.na(highlight_feature)) {
     dt$feature_dim <- dt[[feature_dim]]
   } else {
@@ -114,7 +116,7 @@ plot_reduced_dim <- function(sce,
       dplyr::select(dim1, dim2, feature_dim) %>%
       dplyr::group_by(feature_dim) %>%
       dplyr::summarize(mean_dim1 = mean(dim1),
-                mean_dim2 = mean(dim2))
+                       mean_dim2 = mean(dim2))
 
     p <- p +
       ggplot2::geom_text(
@@ -122,8 +124,8 @@ plot_reduced_dim <- function(sce,
         ggplot2::aes(x = mean_dim1,
                      y = mean_dim2,
                      label = feature_dim)
-        ) +
-        ggplot2::theme(legend.position = "none")
+      ) +
+      ggplot2::theme(legend.position = "none")
   }
 
   p$plot_env$sce <- NULL
@@ -131,43 +133,86 @@ plot_reduced_dim <- function(sce,
 
 }
 
-PlotUMAPWithGene <- function(sce, gene = "PLP1"){
-  # UMAP with gene expression highlighted in red
+################################################################################
+#' Plot Cells Reduced Dimensions With Gene Expression
+#'
+#' Plots the cells in reduced dimensionality space with log10 expression values
+#' for a specified gene.
+#'
+#' Generates a 2d plot of cells with gene expression
+#'
+#' @param sce a SingleCellExperiment object
+#' @param reduced_dim the reducedDim slot for plotting
+#' @param gene the gene of interest
+#' @param size point size
+#' @param alpha point alpha
+#' @param palette off and on colours
+#'
+#' @return p a ggplot object
+#'
+#' @family plotting functions
+#' @import ggplot2
+#' @importFrom dplyr select group_by summarize
+#' @importFrom assertthat assert_that
+#' @importFrom paletteer paletteer_d
+#' @importFrom SingleCellExperiment reducedDim reducedDimNames
+#' @importFrom magrittr %>%
+#' @importFrom grDevices colorRampPalette
+#' @importFrom SummarizedExperiment rowData colData
+#'
+#' @export
+plot_reduced_dim_gene <- function(sce,
+                                  reduced_dim = "UMAP",
+                                  gene = "PLP1",
+                                  size = 0.1,
+                                  alpha = 0.2,
+                                  palette = c("grey80", "red")) {
 
-  if (!(gene %in% rowData(sce)$gene)) {
-    message(sprintf(
-      "Error: Gene %s is absent from the matrix.  Try another gene.", gene))
-    return((ggplot() + theme_void()))
-  }
+  assertthat::assert_that(
+    reduced_dim %in% SingleCellExperiment::reducedDimNames(sce),
+    msg = sprintf(
+      "Invalid reducedDim (%s) specified.", reduced_dim)
+    )
 
-  message(sprintf("Plotting umap with gene expression for %s", gene))
+  assertthat::assert_that(
+    all(gene %in% SummarizedExperiment::rowData(sce)$gene),
+    msg = sprintf(
+      "Gene %s is absent from the matrix.  Try another gene.", gene)
+  )
+
+  assertthat::assert_that(
+    length(palette) == 2,
+    msg = "Palette should contain exactly two colours."
+    )
+
+  cli::cli_alert(sprintf(
+    "Plotting {.strong %s} with gene expression for {.var %s}",
+    reduced_dim, gene)
+    )
 
   # prepare data
   dt <- data.frame(
-    umap_dim1 = reducedDim(sce, "UMAP")[, 1],
-    umap_dim2 = reducedDim(sce, "UMAP")[, 2],
-    gene = counts(sce)[which(rowData(sce)$gene == gene)[1], ]
-    )
+    "dim1" = SingleCellExperiment::reducedDim(sce, reduced_dim)[, 1],
+    "dim2" = SingleCellExperiment::reducedDim(sce, reduced_dim)[, 2],
+    "gene" = SingleCellExperiment::counts(sce)[which(
+      SingleCellExperiment::rowData(sce)$gene == gene)[1], ]
+  )
 
-  # this if block is slow and should be removed in the final version
-  if (length(sce$Size_Factor) != 0) {
-    dt$gene <- dt$gene * colData(sce)$Size_Factor
-  } else {
-    message("Using total_counts as size factor")
-    dt$gene <- dt$gene * colData(sce)$total_counts
-  }
+  dt$gene <- log10(dt$gene) + 1
+
+  med_counts <- median(dt[dt$gene > 0,]$gene)
+  med_total_counts <- median(sce$total_counts)
 
   p <- ggplot(data = dt) +
-    geom_point(aes(x = dt$umap_dim1, y = dt$umap_dim2,
+    geom_point(aes(x = dt$dim1, y = dt$dim2,
                    colour = dt$gene),
-               shape = 16, size = .1, alpha = .2) +
-    #scale_colour_gradientn(limits = c(0, mean(dt$gene)),
-    scale_colour_gradientn(limits = c(0, 1),
-                           colours=c("grey80", "red"),
-                           na.value="red")+
+               shape = 16, size = size, alpha = alpha) +
+    scale_colour_gradientn(#limits = c(0, 1),
+                           colours = c(palette[1], palette[2]),
+                           na.value = palette[1])+
     ggtitle(gene)+
-    ylab(dt$umap_dim1) +
-    xlab(dt$umap_dim2) +
+    ylab(dt$dim1) +
+    xlab(dt$dim2) +
     theme_bw() +
     theme(
       panel.border = element_blank(),
