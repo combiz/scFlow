@@ -1,5 +1,5 @@
 library(caret)
-library(scflow)
+library(scFlow)
 #sce_all <- read_sce("~/Documents/Amy_Glia_Expt/sce") # not working
 sce_all <- read_sce("~/Documents/nf-sc/results/celltype_mapped_sce/celltype_mapped_sce")
 idx <- as.numeric(createDataPartition(sce_all$manifest, p = .03, list = FALSE)) # 15% subset
@@ -12,7 +12,8 @@ sce <- integrate_sce(sce, unique_id_var = "manifest", k = 20)
 # sce <- read_sce("~/Documents/liger_test")
 
 sce <- reduce_dims_sce(sce, input_reduced_dim = c("PCA", "Liger"), unique_id_var = "manifest")
-sce <- reduce_dims_sce(sce, input_reduced_dim = c("PCA", "Liger"), unique_id_var = "manifest")
+
+#write_sce(sce, "~/Documents/liger_test2")
 
 umap_res <- do.call(
   uwot::umap,
