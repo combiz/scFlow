@@ -116,6 +116,7 @@ Remotes:
     bioc::release/ROntoTools,
     bioc::release/batchelor,
     bioc::release/DelayedMatrixStats,
+    bioc::release/DropletUtils,
     bioc::release/limma,
     cvarrichio/Matrix.utils,
     jefferis/RANN,
