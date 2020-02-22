@@ -79,6 +79,7 @@ Imports:
     limma,
     methods,
     paletteer,
+    prettydoc,
     scater,
     leaflet,
     ROntoTools,
