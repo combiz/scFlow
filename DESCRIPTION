@@ -58,6 +58,7 @@ Imports:
     english,
     Seurat,
     DoubletFinder,
+    ggpubr,
     ggplot2,
     DT,
     rmarkdown,
