@@ -5,6 +5,8 @@
 #'
 #' @param sce a SingleCellExperiment object or merged sce objects
 #' @param method the integration method to use
+#' @param k Inner dimension of factorization (number of factors).
+#'   Set to k=30 as default.
 #'
 #' @return sce SingleCellExperiment object annotated with reducedDims
 #'
@@ -16,6 +18,7 @@
 
 integrate_sce <- function(sce,
                           method = "Liger",
+                          k,
                           ...) {
 
   fargs <- list(...)
