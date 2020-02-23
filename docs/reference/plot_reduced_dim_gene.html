@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Append a citation to a SingleCellExperiment — .append_citation_sce • scFlow</title>
+<title>Plot Cells Reduced Dimensions With Gene Expression — plot_reduced_dim_gene • scFlow</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,9 @@
 
 
 
-<meta property="og:title" content="Append a citation to a SingleCellExperiment — .append_citation_sce" />
-<meta property="og:description" content="Append a citation to a SingleCellExperiment" />
+<meta property="og:title" content="Plot Cells Reduced Dimensions With Gene Expression — plot_reduced_dim_gene" />
+<meta property="og:description" content="Plots the cells in reduced dimensionality space with log10 expression values
+for a specified gene." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -120,16 +121,24 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Append a citation to a SingleCellExperiment</h1>
-    <small class="dont-index">Source: <a href='https://github.com/combiz/scFlow/blob/master/R/citations.R'><code>R/citations.R</code></a></small>
-    <div class="hidden name"><code>dot-append_citation_sce.Rd</code></div>
+    <h1>Plot Cells Reduced Dimensions With Gene Expression</h1>
+    <small class="dont-index">Source: <a href='https://github.com/combiz/scFlow/blob/master/R/plot_reduced_dim_gene.R'><code>R/plot_reduced_dim_gene.R</code></a></small>
+    <div class="hidden name"><code>plot_reduced_dim_gene.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Append a citation to a SingleCellExperiment</p>
+    <p>Plots the cells in reduced dimensionality space with log10 expression values
+for a specified gene.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>.append_citation_sce</span>(<span class='no'>sce</span>, <span class='kw'>key_var</span> <span class='kw'>=</span> <span class='st'>"MENDELEY.TAGS"</span>, <span class='no'>key</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>plot_reduced_dim_gene</span>(
+  <span class='no'>sce</span>,
+  <span class='kw'>reduced_dim</span> <span class='kw'>=</span> <span class='st'>"UMAP"</span>,
+  <span class='kw'>gene</span> <span class='kw'>=</span> <span class='st'>"PLP1"</span>,
+  <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
+  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.2</span>,
+  <span class='kw'>palette</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"grey80"</span>, <span class='st'>"#440154FF"</span>)
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -139,23 +148,38 @@
       <td><p>a SingleCellExperiment object</p></td>
     </tr>
     <tr>
-      <th>key_var</th>
-      <td><p>the key variable (e.g. "MENDELEY.TAGS")</p></td>
+      <th>reduced_dim</th>
+      <td><p>the reducedDim slot for plotting</p></td>
     </tr>
     <tr>
-      <th>key</th>
-      <td><p>the value(s) for the key_var (e.g. "doubletfinder")</p></td>
+      <th>gene</th>
+      <td><p>the gene of interest</p></td>
+    </tr>
+    <tr>
+      <th>size</th>
+      <td><p>point size</p></td>
+    </tr>
+    <tr>
+      <th>alpha</th>
+      <td><p>point alpha</p></td>
+    </tr>
+    <tr>
+      <th>palette</th>
+      <td><p>off and on colours</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>sce a SingleCellExperiment object</p>
+    <p>p a ggplot object</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Generates a 2d plot of cells with gene expression</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other citation functions: 
-<code><a href='dot-print_citation_html.html'>.print_citation_html</a>()</code>,
-<code><a href='dot-print_citation.html'>.print_citation</a>()</code></p></div>
+    <div class='dont-index'><p>Other plotting functions: 
+<code><a href='plot_reduced_dim.html'>plot_reduced_dim</a>()</code>,
+<code><a href='plot_violin.html'>plot_violin</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -163,6 +187,7 @@
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
+      <li><a href="#details">Details</a></li>
       <li><a href="#see-also">See also</a></li>
     </ul>
 

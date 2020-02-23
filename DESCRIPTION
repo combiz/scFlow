@@ -35,7 +35,9 @@ Suggests:
     testthat (>= 2.1.0),
     spelling,
     covr,
-    knitr
+    knitr,
+    scFlowData,
+    scFlowExample
 Language: en-US
 RoxygenNote: 7.0.2
 Imports: 
@@ -126,5 +128,7 @@ Remotes:
     combiz/RANN.L1,
     cole-trapnell-lab/monocle3,
     bioc::release/MAST,
-    bioc::release/multtest
+    bioc::release/multtest,
+    neurogenomics/scFlowExample,
+    combiz/scFlowData
 VignetteBuilder: knitr

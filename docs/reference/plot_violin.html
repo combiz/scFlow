@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Append a citation to a SingleCellExperiment — .append_citation_sce • scFlow</title>
+<title>Plot Gene Expression Violin Plots Stratified by Group — plot_violin • scFlow</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,9 @@
 
 
 
-<meta property="og:title" content="Append a citation to a SingleCellExperiment — .append_citation_sce" />
-<meta property="og:description" content="Append a citation to a SingleCellExperiment" />
+<meta property="og:title" content="Plot Gene Expression Violin Plots Stratified by Group — plot_violin" />
+<meta property="og:description" content="Plots the cells in reduced dimensionality space with log10 expression values
+for a specified gene." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -120,16 +121,28 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Append a citation to a SingleCellExperiment</h1>
-    <small class="dont-index">Source: <a href='https://github.com/combiz/scFlow/blob/master/R/citations.R'><code>R/citations.R</code></a></small>
-    <div class="hidden name"><code>dot-append_citation_sce.Rd</code></div>
+    <h1>Plot Gene Expression Violin Plots Stratified by Group</h1>
+    <small class="dont-index">Source: <a href='https://github.com/combiz/scFlow/blob/master/R/plot_violin.R'><code>R/plot_violin.R</code></a></small>
+    <div class="hidden name"><code>plot_violin.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Append a citation to a SingleCellExperiment</p>
+    <p>Plots the cells in reduced dimensionality space with log10 expression values
+for a specified gene.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>.append_citation_sce</span>(<span class='no'>sce</span>, <span class='kw'>key_var</span> <span class='kw'>=</span> <span class='st'>"MENDELEY.TAGS"</span>, <span class='no'>key</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>plot_violin</span>(
+  <span class='no'>sce</span>,
+  <span class='kw'>group_var</span> <span class='kw'>=</span> <span class='st'>"group"</span>,
+  <span class='kw'>subset_var</span> <span class='kw'>=</span> <span class='st'>"cluster_celltype"</span>,
+  <span class='kw'>subset_group</span> <span class='kw'>=</span> <span class='st'>"Oligo"</span>,
+  <span class='kw'>gene</span> <span class='kw'>=</span> <span class='st'>"PLP1"</span>,
+  <span class='kw'>var_order</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>palette</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
+  <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>0.01</span>,
+  <span class='kw'>label_angle</span> <span class='kw'>=</span> <span class='fl'>0</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -139,23 +152,54 @@
       <td><p>a SingleCellExperiment object</p></td>
     </tr>
     <tr>
-      <th>key_var</th>
-      <td><p>the key variable (e.g. "MENDELEY.TAGS")</p></td>
+      <th>group_var</th>
+      <td><p>The colData variable for x-axis groups</p></td>
     </tr>
     <tr>
-      <th>key</th>
-      <td><p>the value(s) for the key_var (e.g. "doubletfinder")</p></td>
+      <th>subset_var</th>
+      <td><p>The colData variable to subset on</p></td>
+    </tr>
+    <tr>
+      <th>subset_group</th>
+      <td><p>The specific subset_var group to subset</p></td>
+    </tr>
+    <tr>
+      <th>gene</th>
+      <td><p>The gene of interest</p></td>
+    </tr>
+    <tr>
+      <th>var_order</th>
+      <td><p>Optional re-ordering of subset_group factor levels</p></td>
+    </tr>
+    <tr>
+      <th>palette</th>
+      <td><p>Optional custom palette</p></td>
+    </tr>
+    <tr>
+      <th>alpha</th>
+      <td><p>point alpha</p></td>
+    </tr>
+    <tr>
+      <th>size</th>
+      <td><p>point size</p></td>
+    </tr>
+    <tr>
+      <th>label_angle</th>
+      <td><p>The angle of x-axis labels (e.g. 0, 45)</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>sce a SingleCellExperiment object</p>
+    <p>p a ggplot object</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Generates a 2d plot of cells with gene expression</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other citation functions: 
-<code><a href='dot-print_citation_html.html'>.print_citation_html</a>()</code>,
-<code><a href='dot-print_citation.html'>.print_citation</a>()</code></p></div>
+    <div class='dont-index'><p>Other plotting functions: 
+<code><a href='plot_reduced_dim_gene.html'>plot_reduced_dim_gene</a>()</code>,
+<code><a href='plot_reduced_dim.html'>plot_reduced_dim</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -163,6 +207,7 @@
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
+      <li><a href="#details">Details</a></li>
       <li><a href="#see-also">See also</a></li>
     </ul>
 

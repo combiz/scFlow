@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Append a citation to a SingleCellExperiment — .append_citation_sce • scFlow</title>
+<title>Functional enrichment analysis using enrichR — pathway_analysis_enrichr • scFlow</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Append a citation to a SingleCellExperiment — .append_citation_sce" />
-<meta property="og:description" content="Append a citation to a SingleCellExperiment" />
+<meta property="og:title" content="Functional enrichment analysis using enrichR — pathway_analysis_enrichr" />
+<meta property="og:description" content="Performs impacted pathway analysis with a list of genes." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -120,43 +120,81 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Append a citation to a SingleCellExperiment</h1>
-    <small class="dont-index">Source: <a href='https://github.com/combiz/scFlow/blob/master/R/citations.R'><code>R/citations.R</code></a></small>
-    <div class="hidden name"><code>dot-append_citation_sce.Rd</code></div>
+    <h1>Functional enrichment analysis using enrichR</h1>
+    <small class="dont-index">Source: <a href='https://github.com/combiz/scFlow/blob/master/R/pathway_analysis_enrichr.R'><code>R/pathway_analysis_enrichr.R</code></a></small>
+    <div class="hidden name"><code>pathway_analysis_enrichr.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Append a citation to a SingleCellExperiment</p>
+    <p>Performs impacted pathway analysis with a list of genes.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>.append_citation_sce</span>(<span class='no'>sce</span>, <span class='kw'>key_var</span> <span class='kw'>=</span> <span class='st'>"MENDELEY.TAGS"</span>, <span class='no'>key</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>pathway_analysis_enrichr</span>(
+  <span class='kw'>gene_file</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>reference_file</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>enrichment_database</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"GO_Molecular_Function_2018"</span>, <span class='st'>"GO_Cellular_Component_2018"</span>,
+    <span class='st'>"GO_Biological_Process_2018"</span>, <span class='st'>"MGI_Mammalian_Phenotype_2017"</span>,
+    <span class='st'>"MGI_Mammalian_Phenotype_Level_3"</span>, <span class='st'>"MGI_Mammalian_Phenotype_Level_4"</span>, <span class='st'>"ChEA_2016"</span>,
+    <span class='st'>"ENCODE_and_ChEA_Consensus_TFs_from_ChIP-X"</span>, <span class='st'>"KEGG_2019_Human"</span>,
+    <span class='st'>"WikiPathways_2019_Human"</span>, <span class='st'>"Reactome_2016"</span>, <span class='st'>"Allen_Brain_Atlas_down"</span>,
+    <span class='st'>"Allen_Brain_Atlas_up"</span>),
+  <span class='kw'>is_output</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>output_dir</span> <span class='kw'>=</span> <span class='st'>"."</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>sce</th>
-      <td><p>a SingleCellExperiment object</p></td>
+      <th>gene_file</th>
+      <td><p>A data frame or the path of a .tsv file containing
+a list of genes, their fold-change, p-value and adjusted p-value.
+Column names should be gene, logFC, pval and padj respectively.</p></td>
     </tr>
     <tr>
-      <th>key_var</th>
-      <td><p>the key variable (e.g. "MENDELEY.TAGS")</p></td>
+      <th>enrichment_database</th>
+      <td><p>Name of the database for enrichment. User can
+specify one or more database names from <code>enrichR::listEnrichDbs()</code>.</p></td>
     </tr>
     <tr>
-      <th>key</th>
-      <td><p>the value(s) for the key_var (e.g. "doubletfinder")</p></td>
+      <th>is_output</th>
+      <td><p>If TRUE a folder will be created and results of enrichment
+analysis will be saved otherwise a R list will be returned. Default FALSE</p></td>
+    </tr>
+    <tr>
+      <th>output_dir</th>
+      <td><p>Path for the output directory. Default is current dir.</p></td>
+    </tr>
+    <tr>
+      <th>plot_output</th>
+      <td><p>If TRUE plots will be saved as .png file otherwise
+returned as a R list. Default FALSE.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>sce a SingleCellExperiment object</p>
+    <p>enrichment_result a list of data.frames containing enrichment output
+and a list of plots of top 10 significant genesets.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other citation functions: 
-<code><a href='dot-print_citation_html.html'>.print_citation_html</a>()</code>,
-<code><a href='dot-print_citation.html'>.print_citation</a>()</code></p></div>
+    <div class='dont-index'><p>Other Impacted pathway analysis: 
+<code><a href='find_impacted_pathways.html'>find_impacted_pathways</a>()</code>,
+<code><a href='pathway_analysis_rontotools.html'>pathway_analysis_rontotools</a>()</code>,
+<code><a href='pathway_analysis_webgestaltr.html'>pathway_analysis_webgestaltr</a>()</code>,
+<code><a href='pathway_to_graph.html'>pathway_to_graph</a>()</code></p></div>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>1234</span>)
+<span class='no'>enrichment_result</span> <span class='kw'>&lt;-</span> <span class='fu'>pathway_analysis_enrichr</span>(
+  <span class='kw'>gene_file</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"extdata"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"scFlowData"</span>), <span class='st'>"/"</span>,
+    <span class='st'>"de_result_table.tsv"</span>,
+    <span class='kw'>sep</span> <span class='kw'>=</span> <span class='st'>""</span>
+  ),
+  <span class='kw'>enrichment_database</span> <span class='kw'>=</span> <span class='st'>"GO_Molecular_Function_2018"</span>,
+  <span class='kw'>is_output</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)</div><div class='output co'>#&gt; <span class='message'>Welcome to enrichR</span>
+#&gt; <span class='message'>Checking connection ... </span></div><div class='output co'>#&gt; <span class='message'>Connection is Live!</span></div><div class='output co'>#&gt; <span class='error'>Error: File not found.</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -164,6 +202,7 @@
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
       <li><a href="#see-also">See also</a></li>
+      <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>
