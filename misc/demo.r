@@ -12,7 +12,7 @@ matpath <- "~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix"
 # v3 chemistry, enriched
 #matpath <- "~/Documents/testmatrices/enriched"
 
-ensembl_fp <- "~/Documents/ms-sc/src/ensembl-ids/ensembl_mappings.tsv"
+ensembl_fp <- "~/Documents/nf-sc/src/ensembl-ids/ensembl_mappings.tsv"
 samplesheet_fp <- "~/Documents/nf-sc/refs/SampleSheet.tsv"
 ctd_fp <- "~/Documents/nf-sc/refs/ctd/"
 
@@ -63,3 +63,38 @@ totaltime <- Sys.time() - x
 
 print(totaltime)
 alarm()
+
+
+## with piping
+
+
+metadata <- read_metadata(
+  unique_key = "hajov",
+  key_colname = "manifest",
+  samplesheet_path = samplesheet_fp)
+
+sce <- read_sparse_matrix(matpath) %>%
+  generate_sce(metadata) %>%
+  find_cells() %>%
+  annotate_sce() %>%
+  filter_sce() %>%
+  find_singlets() %>%
+  filter_sce() %>%
+  report_qc_sce()
+
+write_sce()
+
+sce <- merge_sce() %>%
+  report_merged_sce() %>%
+  integrate_sce() %>%
+  reduce_dims_sce() %>%
+  cluster_sce()
+
+write_sce()
+
+de_res <- perform_de(sce)
+ip_res <- find_impacted_pathways(de_res)
+
+
+
+
