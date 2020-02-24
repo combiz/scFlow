@@ -1,4 +1,58 @@
+################################################################################
+#' Preprocessing steps for Liger dimensionality reduction
+#'
+#'
+#' Split merged object into multiple sce objects and extract sparse matrices:
+#' @param sce SingleCellExperiment object or merged objects
+#' 
+#' @param k Inner dimension of factorization (number of factors).
+#'
+#' Make a Liger object:
+#' @param raw.data List of expression matrices (gene by cell)
+#'   each from an sce object.
+#' @param take.gene.union Whether to fill out raw.data matrices with union
+#'   of genes across all datasets (filling in 0 for missing data)
+#'   (requires make.sparse=T) (default FALSE).
+#' @param remove.missing Whether to remove cells not expressing any
+#'   measured genes, and genes not
+#'   expressed in any cells (if take.gene.union = T, removes only genes
+#'   not expressed in any dataset) (default TRUE).
+#'
+#'  Select informative genes:
+#' @param num.genes Number of genes to find for each dataset.
+#'   Set to 3000 as default.
+#' @param combine How to combine variable genes across experiments.
+#'   Either "union" or "intersect".
+#'   (default "union")
+#' @param keep.unique Keep genes that occur (i.e., there is a
+#'   corresponding column in raw.data) only in one dataset (default FALSE)
+#' @param capitalize Capitalize gene names to match homologous genes
+#'   (ie. across species)
+#'   (default FALSE)
+#' @param do.plot Display log plot of gene variance vs. gene expression
+#'   for each dataset.
+#'   Selected genes are plotted in green. (default FALSE)
+#' @param cex.use Point size for plot.
+#'
+#'  Scale genes by root-mean-square across cells:
+#' @param remove.missing Whether to remove cells from scale.data
+#'   with no gene expression (default TRUE)
+#'
+#' Remove cells/genes with no expression across any genes/cells:
+#' @param use.cols Treat each column as a cell (default TRUE)
+#'
+#' @return liger preprocessed object.
+#'
+#' @importFrom liger createLiger
+#' @importFrom liger normalize
+#' @importFrom liger selectGenes
+#' @importFrom liger scaleNotCenter
+#' @importFrom liger removeMissingObs
+#'
+#' @export
+
 liger_preprocess <- function(sce,
+                             k,
                              unique_id_var = "manifest",
                              take_gene_union = F,
                              remove.missing = T,
@@ -12,6 +66,7 @@ liger_preprocess <- function(sce,
                              ...) {
   fargs <- as.list(environment())
   fargs <- fargs[fargs = c(
+    "k",
     "unique_id_var",
     "take_gene_union",
     "remove.missing",
@@ -23,7 +78,7 @@ liger_preprocess <- function(sce,
     "cex_use",
     "use_cols"
   )]
-
+  
   do.call(.check_sce_for_liger, c(sce = sce, fargs))
   # Split merged sce object into multiple objects and extract sparse matrices
   cli::cli_alert("Splitting merged sce object and extracting sparse matrices")
@@ -37,38 +92,38 @@ liger_preprocess <- function(sce,
     mat_list[[dataset_name]] <-
       sce@assays@data$counts[, sce@colData$manifest == mnft]
   }
-
+  
   # Make a Liger object. Pass in the sparse matrix.
   cli::cli_alert("Creating LIGER object")
   ligerex <- createLiger(
     raw.data = mat_list, take.gene.union = take_gene_union,
     remove.missing = remove.missing
   )
-
+  
   ligerex@parameters$liger_params$liger_preprocess <- fargs
-
+  
   ### preprocessing steps
-
+  
   # Normalize the data to control for different numbers of UMIs per cell
   cli::cli_alert("Normalizing data")
   ligerex <- liger::normalize(ligerex)
-
+  
   # Select variable (informative) genes
   cli::cli_alert("Selecting variable (informative) genes")
   ligerex <- liger::selectGenes(ligerex,
-    num.genes = num_genes, combine = combine, keep.unique = keep_unique,
-    capitalize = capitalize, do.plot = do_plot, cex.use = cex_use
+                                num.genes = num_genes, combine = combine, keep.unique = keep_unique,
+                                capitalize = capitalize, do.plot = do_plot, cex.use = cex_use
   )
-
+  
   # Scale the data by root-mean-square across cells
   cli::cli_alert("Scaling data")
   ligerex <- liger::scaleNotCenter(ligerex, remove.missing = remove.missing)
-
+  
   # Remove cells/genes with no expression across any genes/cells
   cli::cli_alert("Removing non-expressed genes")
   ligerex <- liger::removeMissingObs(ligerex, use.cols = use_cols)
-
-
+  
+  
   return(ligerex)
 }
 
@@ -85,18 +140,18 @@ liger_preprocess <- function(sce,
 #' @keywords internal
 .check_sce_for_liger <- function(sce, ...) {
   fargs <- list(...)
-
+  
   assertthat::is.scalar(fargs$unique_id_var)
-
+  
   assertthat::assert_that(
     fargs$unique_id_var %in% names(SummarizedExperiment::colData(sce))
   )
-
+  
   min_cells_per_id <- 5
   assertthat::assert_that(
     min(table(droplevels(sce[[fargs$unique_id_var]]))) >= min_cells_per_id,
     msg = sprintf("Need at least %s cells per id.", min_cells_per_id)
   )
-
+  
   return(1)
 }
