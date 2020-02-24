@@ -52,7 +52,6 @@
 #' @export
 
 liger_preprocess <- function(sce,
-                             k,
                              unique_id_var = "manifest",
                              take_gene_union = F,
                              remove.missing = T,
@@ -63,6 +62,7 @@ liger_preprocess <- function(sce,
                              do_plot = F,
                              cex_use = 0.3,
                              use_cols = T,
+                             k,
                              ...) {
   fargs <- as.list(environment())
   fargs <- fargs[fargs = c(
