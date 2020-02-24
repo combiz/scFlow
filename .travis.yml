@@ -10,12 +10,15 @@ env:
     - R_CHECK_ARGS="--no-manual --as-cran"
 
 matrix:
+  before_install:
+    - echo -e "machine github.com\n  login $CI_USER_TOKEN" > ~/.netrc
   include:
     - os: linux
       r: release
       before_deploy:
-        - Rscript -e 'remotes::install_github("combiz/scflow")'
+        - Rscript -e 'remotes::install_github("combiz/scFlow")'
         - Rscript -e 'install.packages("pkgdown")'
+        - Rscript -e 'remotes::install_github("combiz/scFlowData")'
       deploy:
         provider: script
         script: Rscript -e 'pkgdown::deploy_site_github(verbose = TRUE)'
