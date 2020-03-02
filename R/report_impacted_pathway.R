@@ -1,26 +1,25 @@
 ################################################################################
-#' Generate plots and a QC report for a imppacted pathway analysis
+#' Generate a report for impacted pathway analysis
 #'
-#' @param res Pahtway enrichment result
-#' @param report_folder_path folder path to save the report
-#' @param report_file filename for report (without an extension)
+#' @param res Pathway enrichment result from find_impacted_pathway() function.
+#' @param report_folder_path folder path to save the report.
+#' @param report_file filename for report (without an extension).
 #'
-#' @family annotation functions
-#' @import cli Matrix dplyr purrr
+#' @family Impacted pathway analysis
+#'
 #' @import ggplot2
+#' @importFrom cli cli_h2 cli_text col_green
 #' @importFrom rmarkdown render
 #' @importFrom tools file_path_sans_ext
+#'
 #' @export
 #'
 report_impacted_pathway <- function(res,
-                          report_folder_path = getwd(),
-                          report_file = "impacted_pathway_report_scflow") {
-
+                                    report_folder_path = getwd(),
+                                    report_file = "ipa_report_scflow") {
   report_file <- tools::file_path_sans_ext(report_file)
 
-  cat(cli::rule(
-    "Generating report for impacted pathway", line = 2),
-    "\r\n")
+  cli::cli_h2("Generating report for impacted pathway")
 
   metadata_tmp_path <- file.path(tempdir(), "metadata.rds")
 
@@ -43,13 +42,12 @@ report_impacted_pathway <- function(res,
   dir.create(krd, showWarnings = FALSE)
   dir.create(intd, showWarnings = FALSE)
 
-  cli::cli_text("Generating QC report...")
+  cli::cli_text("Generating impacted pathway analysis report...")
   rmarkdown::render(
-    # for dev use file.path(getwd(),
-    # "inst/rmarkdown/templates/impacted-pathway/skeleton/skeleton.Rmd")
     system.file(
       "rmarkdown/templates/impacted-pathway/skeleton/skeleton.Rmd",
-      package = "scFlow"),
+      package = "scFlow"
+    ),
     params = list(
       metadata_path = metadata_tmp_path
     ),
@@ -62,8 +60,7 @@ report_impacted_pathway <- function(res,
 
   cli::cli_text(c(
     "{cli::col_green(symbol$tick)} Report succesfully generated: ",
-    "{.file {file.path(report_folder_path, 'impacted_pathway_report_scflow.html')}}")
-  )
-
+    "{.file {file.path(report_folder_path,
+    'impacted_pathway_report_scflow.html')}}"
+  ))
 }
-
