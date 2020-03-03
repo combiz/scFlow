@@ -160,7 +160,7 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
   }
 
   output_dir <- output_dir
-  sub_dir <- "WebGestalt.Output"
+  sub_dir <- "webgestaltr_output"
   output_dir_path <- file.path(output_dir, sub_dir)
   project_dir <- file.path(output_dir_path, paste(project_name, sep = ""))
 
@@ -344,4 +344,3 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     theme_cowplot() +
     background_grid()
 }
-

@@ -207,7 +207,7 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
   }
 
   output_dir <- output_dir
-  sub_dir <- "ROntoTools.Output"
+  sub_dir <- "rontotools_output"
   output_dir_path <- file.path(output_dir, sub_dir)
   project_dir <- file.path(output_dir_path, paste(project_name, sep = ""))
 

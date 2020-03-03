@@ -81,6 +81,7 @@ find_impacted_pathways <- function(gene_file = NULL,
       names(res$WebGestaltR$metadata$enrichment_database_link) <- tolower(
         temp_dbs$WebGestaltR$db_alias[
           temp_dbs$WebGestaltR$db_alias %in% enrichment_database])
+      cli_alert_success("WebGestaltR analysis completed")
     }
   }
 
@@ -99,6 +100,7 @@ find_impacted_pathways <- function(gene_file = NULL,
     names(res$ROntoTools$metadata$enrichment_database_link) <- tolower(
       temp_dbs$ROntoTools$db_alias[
         temp_dbs$ROntoTools$db_alias %in% enrichment_database])
+    cli_alert_success("ROntoTools analysis completed")
   }
 
   if ("enrichR" %in% enrichment_tool) {
@@ -115,6 +117,7 @@ find_impacted_pathways <- function(gene_file = NULL,
     names(res$enrichR$metadata$enrichment_database_link) <- tolower(
       temp_dbs$enrichR$db_alias[
         temp_dbs$enrichR$db_alias %in% enrichment_database])
+    cli_alert_success("enrichR analysis completed")
   }
 
   return(res)

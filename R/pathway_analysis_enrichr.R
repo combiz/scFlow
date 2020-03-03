@@ -110,7 +110,7 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
   }
 
   output_dir <- output_dir
-  sub_dir <- "enrichR.Output"
+  sub_dir <- "enrichr_output"
   output_dir_path <- file.path(output_dir, sub_dir)
   project_dir <- file.path(output_dir_path, paste(project_name, sep = ""))
 

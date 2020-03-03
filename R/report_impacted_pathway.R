@@ -58,7 +58,7 @@ report_impacted_pathway <- function(res,
     quiet = TRUE
   )
 
-  report_file_name = paste(report_file, ".html", sep = "")
+  report_file_name <- paste(report_file, ".html", sep = "")
 
   cli::cli_text(c(
     "{cli::col_green(symbol$tick)} Report succesfully generated: ",
