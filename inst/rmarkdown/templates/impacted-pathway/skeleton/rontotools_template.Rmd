@@ -19,7 +19,7 @@ cat("</div>")
 ```
 
 ```{r include = FALSE}
-datatable(metadata_table)
+datatable(NULL)
 ```
 
 

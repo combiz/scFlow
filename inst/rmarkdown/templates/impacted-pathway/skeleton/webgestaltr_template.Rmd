@@ -19,10 +19,10 @@ for(plot in names(metadata$WebGestaltR$plot)) {
 cat("</div>")
 ```
 
-```{r include = FALSE}
-datatable(metadata_table)
-```
 
+```{r include = FALSE}
+datatable(NULL)
+```
 
 ```{r results = 'asis'}
 for(table in setdiff(names(metadata$WebGestaltR), c("plot", "metadata"))){ 
