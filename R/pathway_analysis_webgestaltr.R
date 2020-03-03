@@ -146,10 +146,18 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     )
   }
 
-  project_name <- .generate_project_name(
-    gene_file = gene_file,
-    enrichment_method = enrichment_method
-  )
+  if (is.data.frame(gene_file)) {
+    project_name <- paste(
+      deparse(substitute(gene_file)), enrichment_method,
+      sep = "_"
+    )
+  } else if (!is.data.frame(gene_file)) {
+    project_name <- paste(
+      gsub("\\.tsv$", "", basename(gene_file)), enrichment_method,
+      sep = "_"
+    )
+    project_name <- gsub("-", "_", project_name)
+  }
 
   output_dir <- output_dir
   sub_dir <- "WebGestalt.Output"
@@ -277,27 +285,6 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
   return(res_table)
 }
 
-#' Generate project name
-#' @keywords internal
-
-
-.generate_project_name <- function(gene_file = NULL,
-                                   enrichment_method = NULL) {
-  if (is.data.frame(gene_file)) {
-    project_name <- paste(
-      deparse(substitute(gene_file)), enrichment_method,
-      sep = "_"
-    )
-  } else if (!is.data.frame(gene_file)) {
-    project_name <- paste(
-      gsub("\\.tsv$", "", basename(gene_file)), enrichment_method,
-      sep = "_"
-    )
-    project_name <- gsub("-", "_", project_name)
-  }
-}
-
-
 #' dotplot for ORA. x axis enrichment_ratio, y axis description
 #' @keywords internal
 
@@ -357,3 +344,4 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     theme_cowplot() +
     background_grid()
 }
+

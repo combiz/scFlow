@@ -102,10 +102,12 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
     function(dt) .dotplot_enrichr(dt)
   )
 
-
-  project_name <- .generate_project_name(
-    gene_file = gene_file
-  )
+  if (is.data.frame(gene_file)) {
+    project_name <- paste(deparse(substitute(gene_file)), sep = "")
+  } else if (!is.data.frame(gene_file)) {
+    project_name <- gsub("\\.tsv$", "", basename(gene_file))
+    project_name <- gsub("-", "_", project_name)
+  }
 
   output_dir <- output_dir
   sub_dir <- "enrichR.Output"
@@ -192,19 +194,6 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
   )
   geneset <- gsub(")", "", geneset, fixed = TRUE)
   return(geneset)
-}
-
-
-#' Generating project name
-#' @keywords internal
-
-.generate_project_name <- function(gene_file = NULL) {
-  if (is.data.frame(gene_file)) {
-    project_name <- paste(deparse(substitute(gene_file)), sep = "")
-  } else if (!is.data.frame(gene_file)) {
-    project_name <- gsub("\\.tsv$", "", basename(gene_file))
-    project_name <- gsub("-", "_", project_name)
-  }
 }
 
 #' dotplot for ORA. x axis perturbation, y axis description

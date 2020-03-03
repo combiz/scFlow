@@ -199,9 +199,12 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
   )
 
 
-  project_name <- .generate_project_name(
-    gene_file = gene_file
-  )
+  if (is.data.frame(gene_file)) {
+    project_name <- paste(deparse(substitute(gene_file)), sep = "")
+  } else if (!is.data.frame(gene_file)) {
+    project_name <- gsub("\\.tsv$", "", basename(gene_file))
+    project_name <- gsub("-", "_", project_name)
+  }
 
   output_dir <- output_dir
   sub_dir <- "ROntoTools.Output"
@@ -280,18 +283,6 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
   )
   overlapid_list$collapsed <- gsub("SYMBOL:", "", overlapid_list$collapsed)
   return(overlapid_list$collapsed)
-}
-
-#' Generating project name
-#' @keywords internal
-
-.generate_project_name <- function(gene_file = NULL) {
-  if (is.data.frame(gene_file)) {
-    project_name <- paste(deparse(substitute(gene_file)), sep = "")
-  } else if (!is.data.frame(gene_file)) {
-    project_name <- gsub("\\.tsv$", "", basename(gene_file))
-    project_name <- gsub("-", "_", project_name)
-  }
 }
 
 
