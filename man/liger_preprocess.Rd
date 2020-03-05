@@ -8,7 +8,7 @@ liger_preprocess(
   sce,
   unique_id_var = "manifest",
   take_gene_union = F,
-  remove_missing = T,
+  remove.missing = T,
   num_genes = 3000,
   combine = "union",
   keep_unique = F,
@@ -16,49 +16,52 @@ liger_preprocess(
   do_plot = F,
   cex_use = 0.3,
   use_cols = T,
+  k,
   ...
 )
 }
 \arguments{
-\item{sce}{merged SingleCellExperiment objects
+\item{sce}{SingleCellExperiment object or merged objects}
 
-Make a Liger object:}
-
-\item{take_gene_union}{Whether to fill out raw.data matrices with union
-of genes across all datasets (filling in 0 for missing data)
-(requires make.sparse=T) (default FALSE).}
-
-\item{remove_missing}{Whether to remove cells from scale.data
+\item{remove.missing}{Whether to remove cells from scale.data
 with no gene expression (default TRUE)
 
 Remove cells/genes with no expression across any genes/cells:}
-
-\item{num_genes}{Number of genes to find for each dataset.
-Set to 3000 as default.}
 
 \item{combine}{How to combine variable genes across experiments.
 Either "union" or "intersect".
 (default "union")}
 
-\item{keep_unique}{Keep genes that occur (i.e., there is a
-corresponding column in raw.data) only in one dataset (default FALSE)}
-
 \item{capitalize}{Capitalize gene names to match homologous genes
 (ie. across species)
 (default FALSE)}
 
-\item{do_plot}{Display log plot of gene variance vs. gene expression
-for each dataset.
-Selected genes are plotted in green. (default FALSE)}
+\item{k}{Inner dimension of factorization (number of factors).
 
-\item{cex_use}{Point size for plot.
-
-Scale genes by root-mean-square across cells:}
-
-\item{use_cols}{Treat each column as a cell (default TRUE)}
+Make a Liger object:}
 
 \item{raw.data}{List of expression matrices (gene by cell)
 each from an sce object.}
+
+\item{take.gene.union}{Whether to fill out raw.data matrices with union
+of genes across all datasets (filling in 0 for missing data)
+(requires make.sparse=T) (default FALSE).}
+
+\item{num.genes}{Number of genes to find for each dataset.
+Set to 3000 as default.}
+
+\item{keep.unique}{Keep genes that occur (i.e., there is a
+corresponding column in raw.data) only in one dataset (default FALSE)}
+
+\item{do.plot}{Display log plot of gene variance vs. gene expression
+for each dataset.
+Selected genes are plotted in green. (default FALSE)}
+
+\item{cex.use}{Point size for plot.
+
+Scale genes by root-mean-square across cells:}
+
+\item{use.cols}{Treat each column as a cell (default TRUE)}
 }
 \value{
 liger preprocessed object.
@@ -66,9 +69,3 @@ liger preprocessed object.
 \description{
 Split merged object into multiple sce objects and extract sparse matrices:
 }
-\seealso{
-Other Data integration: 
-\code{\link{integrate_sce}()},
-\code{\link{liger_reduce_dims}()}
-}
-\concept{Data integration}

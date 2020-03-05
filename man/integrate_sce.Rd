@@ -10,6 +10,9 @@ integrate_sce(sce, method = "Liger", ...)
 \item{sce}{a SingleCellExperiment object or merged sce objects}
 
 \item{method}{the integration method to use}
+
+\item{k}{Inner dimension of factorization (number of factors).
+Set to k=30 as default.}
 }
 \value{
 sce SingleCellExperiment object annotated with reducedDims
@@ -19,7 +22,6 @@ Produces a reducedDim slot representing common factors across samples
 }
 \seealso{
 Other Data integration: 
-\code{\link{liger_preprocess}()},
 \code{\link{liger_reduce_dims}()}
 }
 \concept{Data integration}
