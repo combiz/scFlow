@@ -202,6 +202,7 @@ annotate_merged_sce <- function(sce,
 
   pbsce <- reduce_dims_sce(
     pbsce,
+    input_reduced_dim = "PCA",
     vars_to_regress_out = c("n_cells"),
     pca_dims = 5,
     n_neighbors = 2,
