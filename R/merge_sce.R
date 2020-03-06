@@ -94,6 +94,9 @@ merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
   n_merged <- tools::toTitleCase(english::words(length(sce_l)))
   cli::cli_alert_success("{.val {n_merged}} SingleCellExperiment were merged.")
 
+  sce@metadata$scflow_steps <- list()
+  sce@metadata$scflow_steps$merged <- 1
+
   return(sce)
 
 }
