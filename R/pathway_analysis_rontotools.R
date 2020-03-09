@@ -29,6 +29,7 @@
 #' @importFrom stringr str_wrap
 #' @importFrom assertthat assert_that
 #' @importFrom dplyr mutate
+#' @importFrom purrr discard
 #'
 #' @export
 #'
@@ -159,6 +160,9 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
 
     res_summary <- na.omit(res_summary)
 
+    if (dim(res_summary)[1] == 0 ) {
+      enrichment_result[[database_name]] <- NULL
+    } else {
 
     res_table <- data.frame(
       geneset = gsub(":", "", res_summary$pathNames),
@@ -192,7 +196,18 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
     rownames(res_table) <- NULL
 
     enrichment_result[[database_name]] <- res_table
+
+    }
+
   }
+
+  enrichment_result <- purrr::discard(enrichment_result, function(x) {is.null(x)})
+
+  if (length(enrichment_result) == 0) {
+    cli::cli_text(
+      "{.strong No significant impacted pathways found at FDR <= 0.05! }")
+    enrichment_result <- NULL
+  } else {
 
   enrichment_result$plot <- lapply(
     enrichment_result, function(dt) .dotplot_pe(dt)
@@ -250,6 +265,8 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
   }
 
   enrichment_result$metadata$enrichment_database <- enrichment_database
+
+  }
 
   return(enrichment_result)
 }
@@ -313,6 +330,6 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
     guides(size = guide_legend(
       override.aes = list(fill = "violetred", color = "violetred")
     )) +
-    theme_cowplot() +
-    background_grid()
+    cowplot::theme_cowplot() +
+    cowplot::background_grid()
 }

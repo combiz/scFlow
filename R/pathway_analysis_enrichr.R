@@ -24,7 +24,7 @@
 #' @importFrom stringr str_wrap
 #' @importFrom assertthat assert_that
 #' @importFrom dplyr %>% mutate
-#' @importFrom purrr map map_chr
+#' @importFrom purrr map map_chr discard
 #'
 #' @export
 #'
@@ -82,7 +82,7 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
 
   assertthat::assert_that(
     all(enrichment_database %in% as.character(dbs$libraryName)),
-    msg = "Invalid databases specified.  See enrichR::listEnrichrDbs()."
+    msg = "Invalid databases specified. See enrichR::listEnrichrDbs()."
   )
 
 
@@ -96,6 +96,14 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
     ~ .format_res_table_enrichr(.)
   )
 
+  enrichr_res <- purrr::discard(enrichr_res, function(x) {
+    dim(x)[1] == 0})
+
+  if (length(enrichr_res) == 0) {
+    cli::cli_text(
+      "{.strong No significant impacted pathways found at FDR <= 0.05! }")
+    enrichr_res <- NULL
+  } else {
 
   enrichr_res$plot <- lapply(
     enrichr_res,
@@ -154,6 +162,8 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
   }
 
   enrichr_res$metadata$enrichment_database <- enrichment_database
+
+  }
 
   return(enrichr_res)
 }
@@ -224,6 +234,6 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
     guides(size = guide_legend(
       override.aes = list(fill = "violetred", color = "violetred")
     )) +
-    theme_cowplot() +
-    background_grid()
+    cowplot::theme_cowplot() +
+    cowplot::background_grid()
 }

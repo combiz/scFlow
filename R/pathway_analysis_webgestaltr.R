@@ -14,12 +14,11 @@
 #' @param enrichment_method Method of enrichment analysis.
 #' Either over-representation analysis (ORA) or (Gene set enrichment analysis)
 #' GSEA.
-#' @param enrichment_database Name of the database for enrichment. If NULL
-#' then multiple databases will be used or user can specify one or more
-#' database names.Default NULL. User can specify one or more database names
-#' from [WebGestaltR::listGeneSet()]
+#' @param enrichment_database Name of the database for enrichment. If not
+#' provided then multiple databases will be used or user can specify one or more
+#' database names from [WebGestaltR::listGeneSet()]
 #' @param is_output If TRUE a folder will be created and results of enrichment
-#' analysis will be saved otherwise a R list will be returned. Default FALSE
+#' analysis will be saved otherwise a R list will be returned. Default FALSE.
 #' @param output_dir Path for the output directory. Default is current
 #' directory.
 #'
@@ -114,7 +113,7 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
 
   assertthat::assert_that(
     all(enrichment_database %in% as.character(dbs$name)),
-    msg = "Invalid databases specified.  See WebGestaltR::listGeneSet()."
+    msg = "Invalid databases specified. See WebGestaltR::listGeneSet()."
   )
 
   res <- WebGestaltR::WebGestaltR(
@@ -131,6 +130,12 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     outputDirectory = getwd(),
     projectName = NULL
   )
+
+  if (is.null(res)) {
+    cli::cli_text(
+      "{.strong No significant impacted pathways found at FDR <= 0.05! }")
+    enrichment_result <- NULL
+  } else {
 
   if (enrichment_method == "ORA") {
     enrichment_result <- .format_res_table_ORA(res, enrichment_database)
@@ -205,6 +210,7 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
   enrichment_result$metadata$enrichment_method <- enrichment_method
   enrichment_result$metadata$enrichment_database <- enrichment_database
 
+  }
 
   return(enrichment_result)
 }
@@ -312,8 +318,8 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     ) +
     guides(size = guide_legend(
       override.aes = list(fill = "violetred", color = "violetred")
-    )) + theme_cowplot() +
-    background_grid()
+    )) + cowplot::theme_cowplot() +
+    cowplot::background_grid()
 }
 
 
@@ -341,6 +347,6 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
       guide = guide_colorbar(reverse = TRUE), limits = c(0, 0.05)
     ) +
     coord_flip() +
-    theme_cowplot() +
-    background_grid()
+    cowplot::theme_cowplot() +
+    cowplot::background_grid()
 }
