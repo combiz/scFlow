@@ -2,11 +2,11 @@
 % Please edit documentation in R/pathway_analysis_webgestaltr.R
 \name{.dotplot_ora}
 \alias{.dotplot_ora}
-\title{dotplot for ORA. x axis enrichmentRatio, y axis description}
+\title{dotplot for ORA. x axis enrichment_ratio, y axis description}
 \usage{
 .dotplot_ora(dt)
 }
 \description{
-dotplot for ORA. x axis enrichmentRatio, y axis description
+dotplot for ORA. x axis enrichment_ratio, y axis description
 }
 \keyword{internal}
