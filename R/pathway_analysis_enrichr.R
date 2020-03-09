@@ -97,72 +97,72 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
   )
 
   enrichr_res <- purrr::discard(enrichr_res, function(x) {
-    dim(x)[1] == 0})
+    dim(x)[1] == 0
+  })
 
   if (length(enrichr_res) == 0) {
     cli::cli_text(
-      "{.strong No significant impacted pathways found at FDR <= 0.05! }")
+      "{.strong No significant impacted pathways found at FDR <= 0.05! }"
+    )
     enrichr_res <- NULL
   } else {
-
-  enrichr_res$plot <- lapply(
-    enrichr_res,
-    function(dt) .dotplot_enrichr(dt)
-  )
-
-  if (is.data.frame(gene_file)) {
-    project_name <- paste(deparse(substitute(gene_file)), sep = "")
-  } else if (!is.data.frame(gene_file)) {
-    project_name <- gsub("\\.tsv$", "", basename(gene_file))
-    project_name <- gsub("-", "_", project_name)
-  }
-
-  output_dir <- output_dir
-  sub_dir <- "enrichr_output"
-  output_dir_path <- file.path(output_dir, sub_dir)
-  project_dir <- file.path(output_dir_path, paste(project_name, sep = ""))
-
-  if (isTRUE(is_output)) {
-    dir.create(output_dir_path, showWarnings = FALSE)
-    dir.create(project_dir, showWarnings = FALSE)
-    lapply(
-      names(enrichr_res)[names(enrichr_res) != "plot"],
-      function(dt) {
-        write.table(enrichr_res[dt],
-                    file = paste(project_dir, "/", dt, ".tsv", sep = ""),
-                    row.names = FALSE,
-                    col.names = gsub(
-                      dt, "", colnames(enrichr_res[[dt]])
-                    ), sep = "\t"
-        )
-      }
+    enrichr_res$plot <- lapply(
+      enrichr_res,
+      function(dt) .dotplot_enrichr(dt)
     )
 
-    lapply(
-      names(enrichr_res$plot),
-      function(p) {
-        ggplot2::ggsave(paste(project_dir, "/", p, ".png", sep = ""),
-                        enrichr_res$plot[[p]],
-                        device = "png", height = 8,
-                        width = 10, units = "in", dpi = 300
-        )
-      }
-    )
-  } else {
-    cli::cli_alert_info("Output is returned as a list!")
-  }
+    if (is.data.frame(gene_file)) {
+      project_name <- paste(deparse(substitute(gene_file)), sep = "")
+    } else if (!is.data.frame(gene_file)) {
+      project_name <- gsub("\\.tsv$", "", basename(gene_file))
+      project_name <- gsub("-", "_", project_name)
+    }
+
+    output_dir <- output_dir
+    sub_dir <- "enrichr_output"
+    output_dir_path <- file.path(output_dir, sub_dir)
+    project_dir <- file.path(output_dir_path, paste(project_name, sep = ""))
+
+    if (isTRUE(is_output)) {
+      dir.create(output_dir_path, showWarnings = FALSE)
+      dir.create(project_dir, showWarnings = FALSE)
+      lapply(
+        names(enrichr_res)[names(enrichr_res) != "plot"],
+        function(dt) {
+          write.table(enrichr_res[dt],
+            file = paste(project_dir, "/", dt, ".tsv", sep = ""),
+            row.names = FALSE,
+            col.names = gsub(
+              dt, "", colnames(enrichr_res[[dt]])
+            ), sep = "\t"
+          )
+        }
+      )
+
+      lapply(
+        names(enrichr_res$plot),
+        function(p) {
+          ggplot2::ggsave(paste(project_dir, "/", p, ".png", sep = ""),
+            enrichr_res$plot[[p]],
+            device = "png", height = 8,
+            width = 10, units = "in", dpi = 300
+          )
+        }
+      )
+    } else {
+      cli::cli_alert_info("Output is returned as a list!")
+    }
 
 
-  if (is.data.frame(gene_file)) {
-    enrichr_res$metadata$gene_file <- deparse(substitute(gene_file))
-  } else if (!is.data.frame(gene_file)) {
-    enrichr_res$metadata$gene_file <- gsub(
-      "\\.tsv$", "", basename(gene_file)
-    )
-  }
+    if (is.data.frame(gene_file)) {
+      enrichr_res$metadata$gene_file <- deparse(substitute(gene_file))
+    } else if (!is.data.frame(gene_file)) {
+      enrichr_res$metadata$gene_file <- gsub(
+        "\\.tsv$", "", basename(gene_file)
+      )
+    }
 
-  enrichr_res$metadata$enrichment_database <- enrichment_database
-
+    enrichr_res$metadata$enrichment_database <- enrichment_database
   }
 
   return(enrichr_res)
@@ -184,11 +184,13 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
   )
 
   res_table$geneset <- ifelse(is.na(res_table$geneset),
-                              res_table$description,
-                              res_table$geneset)
+    res_table$description,
+    res_table$geneset
+  )
 
   res_table <- res_table %>% dplyr::mutate("-Log10(FDR)" = as.numeric(
-    format(-log10(FDR), format = "e", digits = 2)))
+    format(-log10(FDR), format = "e", digits = 2)
+  ))
 
   res_table$genes <- res$Genes
 
@@ -220,7 +222,7 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
     y = reorder(description, odds_ratio)
   )) +
     geom_point(aes(fill = FDR, size = overlap),
-               shape = 21, alpha = 0.7, color = "black"
+      shape = 21, alpha = 0.7, color = "black"
     ) +
     scale_size(name = "Overlap", range = c(3, 8)) +
     xlab("Total Odds Ratio") +
