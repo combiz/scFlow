@@ -29,6 +29,7 @@
 #' @importFrom stringr str_wrap
 #' @importFrom assertthat assert_that
 #' @importFrom dplyr mutate
+#' @importFrom purrr discard
 #'
 #' @export
 #'
@@ -159,97 +160,112 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
 
     res_summary <- na.omit(res_summary)
 
+    if (dim(res_summary)[1] == 0) {
+      enrichment_result[[database_name]] <- NULL
+    } else {
+      res_table <- data.frame(
+        geneset = gsub(":", "", res_summary$pathNames),
+        description = rownames(res_summary),
+        size = sapply(
+          res@pathways, function(x) length(x@ref)
+        )[rownames(res_summary)],
+        overlap = sapply(
+          res@pathways, function(x) length(x@input)
+        )[rownames(res_summary)],
+        perturbation = round(res_summary$totalPertNorm, 2),
+        pval = as.numeric(format(
+          res_summary$pComb,
+          format = "e", digits = 2
+        )),
+        FDR = as.numeric(format(
+          res_summary$pComb.fdr,
+          format = "e", digits = 2
+        ))
+      )
 
-    res_table <- data.frame(
-      geneset = gsub(":", "", res_summary$pathNames),
-      description = rownames(res_summary),
-      size = sapply(
-        res@pathways, function(x) length(x@ref)
-      )[rownames(res_summary)],
-      overlap = sapply(
-        res@pathways, function(x) length(x@input)
-      )[rownames(res_summary)],
-      perturbation = round(res_summary$totalPertNorm, 2),
-      pval = as.numeric(format(
-        res_summary$pComb,
-        format = "e", digits = 2
-      )),
-      FDR = as.numeric(format(
-        res_summary$pComb.fdr,
-        format = "e", digits = 2
+      res_table <- res_table %>% dplyr::mutate("-Log10(FDR)" = as.numeric(
+        format(-log10(FDR), format = "e", digits = 2)
       ))
-    )
 
-    res_table <- res_table %>% dplyr::mutate("-Log10(FDR)" = as.numeric(
-      format(-log10(FDR), format = "e", digits = 2)))
+      res_table$genes <- .get_overlap_id(res = res, res_summary = res_summary)
 
-    res_table$genes <- .get_overlap_id(res = res, res_summary = res_summary)
+      res_table$database <- rep(database_name)
 
-    res_table$database <- rep(database_name)
+      res_table <- res_table[res_table$FDR <= 0.05, ]
 
-    res_table <- res_table[res_table$FDR <= 0.05, ]
+      rownames(res_table) <- NULL
 
-    rownames(res_table) <- NULL
-
-    enrichment_result[[database_name]] <- res_table
+      enrichment_result[[database_name]] <- res_table
+    }
   }
 
-  enrichment_result$plot <- lapply(
-    enrichment_result, function(dt) .dotplot_pe(dt)
-  )
+  enrichment_result <- purrr::discard(enrichment_result, function(x) {
+    is.null(x)
+  })
 
-
-  if (is.data.frame(gene_file)) {
-    project_name <- paste(deparse(substitute(gene_file)), sep = "")
-  } else if (!is.data.frame(gene_file)) {
-    project_name <- gsub("\\.tsv$", "", basename(gene_file))
-    project_name <- gsub("-", "_", project_name)
-  }
-
-  output_dir <- output_dir
-  sub_dir <- "rontotools_output"
-  output_dir_path <- file.path(output_dir, sub_dir)
-  project_dir <- file.path(output_dir_path, paste(project_name, sep = ""))
-
-  if (isTRUE(is_output)) {
-    dir.create(output_dir_path, showWarnings = FALSE)
-    dir.create(project_dir, showWarnings = FALSE)
-    lapply(
-      names(enrichment_result)[names(enrichment_result) != "plot"],
-      function(dt) {
-        write.table(enrichment_result[dt],
-                    file = paste(project_dir, "/", dt, ".tsv", sep = ""),
-                    row.names = FALSE,
-                    col.names = gsub(
-                      dt, "", colnames(enrichment_result[[dt]])
-                    ), sep = "\t"
-        )
-      }
+  if (length(enrichment_result) == 0) {
+    cli::cli_text(
+      "{.strong No significant impacted pathways found at FDR <= 0.05! }"
     )
-
-    lapply(
-      names(enrichment_result$plot),
-      function(p) {
-        ggplot2::ggsave(paste(project_dir, "/", p, ".png", sep = ""),
-                        enrichment_result$plot[[p]],
-                        device = "png", height = 8,
-                        width = 10, units = "in", dpi = 300
-        )
-      }
-    )
+    enrichment_result <- NULL
   } else {
-    cli::cli_alert_info("Output is returned as a list!")
-  }
-
-  if (is.data.frame(gene_file)) {
-    enrichment_result$metadata$gene_file <- deparse(substitute(gene_file))
-  } else if (!is.data.frame(gene_file)) {
-    enrichment_result$metadata$gene_file <- gsub(
-      "\\.tsv$", "", basename(gene_file)
+    enrichment_result$plot <- lapply(
+      enrichment_result, function(dt) .dotplot_pe(dt)
     )
-  }
 
-  enrichment_result$metadata$enrichment_database <- enrichment_database
+
+    if (is.data.frame(gene_file)) {
+      project_name <- paste(deparse(substitute(gene_file)), sep = "")
+    } else if (!is.data.frame(gene_file)) {
+      project_name <- gsub("\\.tsv$", "", basename(gene_file))
+      project_name <- gsub("-", "_", project_name)
+    }
+
+    output_dir <- output_dir
+    sub_dir <- "rontotools_output"
+    output_dir_path <- file.path(output_dir, sub_dir)
+    project_dir <- file.path(output_dir_path, paste(project_name, sep = ""))
+
+    if (isTRUE(is_output)) {
+      dir.create(output_dir_path, showWarnings = FALSE)
+      dir.create(project_dir, showWarnings = FALSE)
+      lapply(
+        names(enrichment_result)[names(enrichment_result) != "plot"],
+        function(dt) {
+          write.table(enrichment_result[dt],
+            file = paste(project_dir, "/", dt, ".tsv", sep = ""),
+            row.names = FALSE,
+            col.names = gsub(
+              dt, "", colnames(enrichment_result[[dt]])
+            ), sep = "\t"
+          )
+        }
+      )
+
+      lapply(
+        names(enrichment_result$plot),
+        function(p) {
+          ggplot2::ggsave(paste(project_dir, "/", p, ".png", sep = ""),
+            enrichment_result$plot[[p]],
+            device = "png", height = 8,
+            width = 10, units = "in", dpi = 300
+          )
+        }
+      )
+    } else {
+      cli::cli_alert_info("Output is returned as a list!")
+    }
+
+    if (is.data.frame(gene_file)) {
+      enrichment_result$metadata$gene_file <- deparse(substitute(gene_file))
+    } else if (!is.data.frame(gene_file)) {
+      enrichment_result$metadata$gene_file <- gsub(
+        "\\.tsv$", "", basename(gene_file)
+      )
+    }
+
+    enrichment_result$metadata$enrichment_database <- enrichment_database
+  }
 
   return(enrichment_result)
 }
@@ -260,7 +276,8 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
 .listdb <- function() {
   dbs <- data.frame(database = list.files(
     path = paste(system.file("extdata/pathway_database/",
-                             package = "scFlowData"), sep = ""),
+      package = "scFlowData"
+    ), sep = ""),
     pattern = "_graphNEL.rds"
   ))
   dbs$name <- gsub("_graphNEL.rds", "", dbs$database)
@@ -299,7 +316,7 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
     y = reorder(description, perturbation)
   )) +
     geom_point(aes(fill = FDR, size = overlap),
-               shape = 21, alpha = 0.7, color = "black"
+      shape = 21, alpha = 0.7, color = "black"
     ) +
     scale_size(name = "Overlap", range = c(3, 8)) +
     xlab("Total perturbation") +
@@ -313,6 +330,6 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
     guides(size = guide_legend(
       override.aes = list(fill = "violetred", color = "violetred")
     )) +
-    theme_cowplot() +
-    background_grid()
+    cowplot::theme_cowplot() +
+    cowplot::background_grid()
 }

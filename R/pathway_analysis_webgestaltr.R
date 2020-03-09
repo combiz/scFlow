@@ -14,12 +14,11 @@
 #' @param enrichment_method Method of enrichment analysis.
 #' Either over-representation analysis (ORA) or (Gene set enrichment analysis)
 #' GSEA.
-#' @param enrichment_database Name of the database for enrichment. If NULL
-#' then multiple databases will be used or user can specify one or more
-#' database names.Default NULL. User can specify one or more database names
-#' from [WebGestaltR::listGeneSet()]
+#' @param enrichment_database Name of the database for enrichment. If not
+#' provided then multiple databases will be used or user can specify one or more
+#' database names from [WebGestaltR::listGeneSet()]
 #' @param is_output If TRUE a folder will be created and results of enrichment
-#' analysis will be saved otherwise a R list will be returned. Default FALSE
+#' analysis will be saved otherwise a R list will be returned. Default FALSE.
 #' @param output_dir Path for the output directory. Default is current
 #' directory.
 #'
@@ -51,9 +50,9 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
                                          reference_file = NULL,
                                          enrichment_method = "ORA",
                                          enrichment_database = c(
-                                "geneontology_Biological_Process_noRedundant",
-                                "geneontology_Cellular_Component_noRedundant",
-                                "geneontology_Molecular_Function_noRedundant",
+                                  "geneontology_Biological_Process_noRedundant",
+                                  "geneontology_Cellular_Component_noRedundant",
+                                  "geneontology_Molecular_Function_noRedundant",
                                            "pathway_KEGG",
                                            "pathway_Panther",
                                            "pathway_Reactome",
@@ -114,7 +113,7 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
 
   assertthat::assert_that(
     all(enrichment_database %in% as.character(dbs$name)),
-    msg = "Invalid databases specified.  See WebGestaltR::listGeneSet()."
+    msg = "Invalid databases specified. See WebGestaltR::listGeneSet()."
   )
 
   res <- WebGestaltR::WebGestaltR(
@@ -132,79 +131,85 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     projectName = NULL
   )
 
-  if (enrichment_method == "ORA") {
-    enrichment_result <- .format_res_table_ORA(res, enrichment_database)
-    enrichment_result$plot <- lapply(
-      enrichment_result,
-      function(dt) .dotplot_ora(dt)
+  if (is.null(res)) {
+    cli::cli_text(
+      "{.strong No significant impacted pathways found at FDR <= 0.05! }"
     )
-  } else if (enrichment_method == "GSEA") {
-    enrichment_result <- .format_res_table_GSEA(res, enrichment_database)
-    enrichment_result$plot <- lapply(
-      enrichment_result,
-      function(dt) .barplot_gsea(dt)
-    )
-  }
-
-  if (is.data.frame(gene_file)) {
-    project_name <- paste(
-      deparse(substitute(gene_file)), enrichment_method,
-      sep = "_"
-    )
-  } else if (!is.data.frame(gene_file)) {
-    project_name <- paste(
-      gsub("\\.tsv$", "", basename(gene_file)), enrichment_method,
-      sep = "_"
-    )
-    project_name <- gsub("-", "_", project_name)
-  }
-
-  output_dir <- output_dir
-  sub_dir <- "webgestaltr_output"
-  output_dir_path <- file.path(output_dir, sub_dir)
-  project_dir <- file.path(output_dir_path, paste(project_name, sep = ""))
-
-  if (isTRUE(is_output)) {
-    dir.create(output_dir_path, showWarnings = FALSE)
-    dir.create(project_dir, showWarnings = FALSE)
-    lapply(
-      names(enrichment_result)[names(enrichment_result) != "plot"],
-      function(dt) {
-        write.table(enrichment_result[dt],
-                    file = paste(project_dir, "/", dt, ".tsv", sep = ""),
-                    row.names = FALSE,
-                    col.names = gsub(
-                      dt, "", colnames(enrichment_result[[dt]])
-                    ), sep = "\t"
-        )
-      }
-    )
-
-    lapply(
-      names(enrichment_result$plot),
-      function(p) {
-        ggplot2::ggsave(paste(project_dir, "/", p, ".png", sep = ""),
-                        enrichment_result$plot[[p]],
-                        device = "png", height = 8,
-                        width = 10, units = "in", dpi = 300
-        )
-      }
-    )
+    enrichment_result <- NULL
   } else {
-    cli::cli_alert_info("Output is returned as a list!")
+    if (enrichment_method == "ORA") {
+      enrichment_result <- .format_res_table_ORA(res, enrichment_database)
+      enrichment_result$plot <- lapply(
+        enrichment_result,
+        function(dt) .dotplot_ora(dt)
+      )
+    } else if (enrichment_method == "GSEA") {
+      enrichment_result <- .format_res_table_GSEA(res, enrichment_database)
+      enrichment_result$plot <- lapply(
+        enrichment_result,
+        function(dt) .barplot_gsea(dt)
+      )
+    }
+
+    if (is.data.frame(gene_file)) {
+      project_name <- paste(
+        deparse(substitute(gene_file)), enrichment_method,
+        sep = "_"
+      )
+    } else if (!is.data.frame(gene_file)) {
+      project_name <- paste(
+        gsub("\\.tsv$", "", basename(gene_file)), enrichment_method,
+        sep = "_"
+      )
+      project_name <- gsub("-", "_", project_name)
+    }
+
+    output_dir <- output_dir
+    sub_dir <- "webgestaltr_output"
+    output_dir_path <- file.path(output_dir, sub_dir)
+    project_dir <- file.path(output_dir_path, paste(project_name, sep = ""))
+
+    if (isTRUE(is_output)) {
+      dir.create(output_dir_path, showWarnings = FALSE)
+      dir.create(project_dir, showWarnings = FALSE)
+      lapply(
+        names(enrichment_result)[names(enrichment_result) != "plot"],
+        function(dt) {
+          write.table(enrichment_result[dt],
+            file = paste(project_dir, "/", dt, ".tsv", sep = ""),
+            row.names = FALSE,
+            col.names = gsub(
+              dt, "", colnames(enrichment_result[[dt]])
+            ), sep = "\t"
+          )
+        }
+      )
+
+      lapply(
+        names(enrichment_result$plot),
+        function(p) {
+          ggplot2::ggsave(paste(project_dir, "/", p, ".png", sep = ""),
+            enrichment_result$plot[[p]],
+            device = "png", height = 8,
+            width = 10, units = "in", dpi = 300
+          )
+        }
+      )
+    } else {
+      cli::cli_alert_info("Output is returned as a list!")
+    }
+
+
+    if (is.data.frame(gene_file)) {
+      enrichment_result$metadata$gene_file <- deparse(substitute(gene_file))
+    } else if (!is.data.frame(gene_file)) {
+      enrichment_result$metadata$gene_file <- gsub(
+        "\\.tsv$", "", basename(gene_file)
+      )
+    }
+    enrichment_result$metadata$enrichment_method <- enrichment_method
+    enrichment_result$metadata$enrichment_database <- enrichment_database
   }
-
-
-  if (is.data.frame(gene_file)) {
-    enrichment_result$metadata$gene_file <- deparse(substitute(gene_file))
-  } else if (!is.data.frame(gene_file)) {
-    enrichment_result$metadata$gene_file <- gsub(
-      "\\.tsv$", "", basename(gene_file)
-    )
-  }
-  enrichment_result$metadata$enrichment_method <- enrichment_method
-  enrichment_result$metadata$enrichment_database <- enrichment_database
-
 
   return(enrichment_result)
 }
@@ -227,7 +232,8 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
   )
 
   res_table <- res_table %>% dplyr::mutate("-Log10(FDR)" = as.numeric(
-    format(-log10(FDR), format = "e", digits = 2)))
+    format(-log10(FDR), format = "e", digits = 2)
+  ))
 
   res_table$genes <- res$userId
 
@@ -299,7 +305,7 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     y = reorder(description, enrichment_ratio)
   )) +
     geom_point(aes(fill = FDR, size = overlap),
-               shape = 21, alpha = 0.7, color = "black"
+      shape = 21, alpha = 0.7, color = "black"
     ) +
     scale_size(name = "Overlap", range = c(3, 8)) +
     xlab("Enrichment Ratio") +
@@ -312,8 +318,8 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     ) +
     guides(size = guide_legend(
       override.aes = list(fill = "violetred", color = "violetred")
-    )) + theme_cowplot() +
-    background_grid()
+    )) + cowplot::theme_cowplot() +
+    cowplot::background_grid()
 }
 
 
@@ -341,6 +347,6 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
       guide = guide_colorbar(reverse = TRUE), limits = c(0, 0.05)
     ) +
     coord_flip() +
-    theme_cowplot() +
-    background_grid()
+    cowplot::theme_cowplot() +
+    cowplot::background_grid()
 }
