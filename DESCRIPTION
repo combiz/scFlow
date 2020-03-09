@@ -1,6 +1,6 @@
 Package: scFlow
 Title: A Single-Cell/Nuclei Analysis Toolkit
-Version: 0.4.2
+Version: 0.4.3
 Authors@R: 
     c(
     person(given = "Combiz",
@@ -44,7 +44,6 @@ Imports:
     purrr,
     Matrix,
     utils,
-    RANN,
     RANN.L1,
     biomaRt,
     SingleCellExperiment,
@@ -124,7 +123,6 @@ Remotes:
     bioc::release/DropletUtils,
     bioc::release/limma,
     cvarrichio/Matrix.utils,
-    jefferis/RANN,
     combiz/RANN.L1,
     cole-trapnell-lab/monocle3,
     bioc::release/MAST,

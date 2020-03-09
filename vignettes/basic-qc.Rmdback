@@ -22,7 +22,7 @@ The basic _scflow_ workflow for sample QC begins with the import of the feature-
 ## Step one - import the matrix and metadata
 
 ```{r, results = 'asis', echo = TRUE, include = TRUE}
-mat <- read_sparse_matrix("~/Documents/nf-sc/data/raw/MS/BATCH1_outputs/C54/outs/raw_feature_bc_matrix")
+mat <- read_sparse_matrix("~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix")
 ```
 
 Next we retrieve the metadata by pointing to a Sample Sheet and specifying a unique identifier (`unique_id`) in a specific column (`id_colname`): -
