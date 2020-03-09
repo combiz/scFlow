@@ -50,7 +50,6 @@ Other annotation functions:
 \code{\link{generate_sce}()},
 \code{\link{merge_sce}()},
 \code{\link{read_metadata}()},
-\code{\link{report_impacted_pathway}()},
 \code{\link{report_merged_sce}()},
 \code{\link{report_qc_sce}()},
 \code{\link{run_doubletfinder}()},

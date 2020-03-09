@@ -6,13 +6,10 @@
 \usage{
 pathway_analysis_enrichr(
   gene_file = NULL,
-  reference_file = NULL,
   enrichment_database = c("GO_Molecular_Function_2018", "GO_Cellular_Component_2018",
-    "GO_Biological_Process_2018", "MGI_Mammalian_Phenotype_2017",
-    "MGI_Mammalian_Phenotype_Level_3", "MGI_Mammalian_Phenotype_Level_4", "ChEA_2016",
-    "ENCODE_and_ChEA_Consensus_TFs_from_ChIP-X", "KEGG_2019_Human",
-    "WikiPathways_2019_Human", "Reactome_2016", "Allen_Brain_Atlas_down",
-    "Allen_Brain_Atlas_up"),
+    "GO_Biological_Process_2018", "MGI_Mammalian_Phenotype_2017", "ChEA_2016",
+    "KEGG_2019_Human", "WikiPathways_2019_Human", "Reactome_2016",
+    "Allen_Brain_Atlas_down", "Allen_Brain_Atlas_up"),
   is_output = FALSE,
   output_dir = "."
 )
@@ -29,9 +26,6 @@ specify one or more database names from \code{\link[enrichR:listEnrichDbs]{enric
 analysis will be saved otherwise a R list will be returned. Default FALSE}
 
 \item{output_dir}{Path for the output directory. Default is current dir.}
-
-\item{plot_output}{If TRUE plots will be saved as .png file otherwise
-returned as a R list. Default FALSE.}
 }
 \value{
 enrichment_result a list of data.frames containing enrichment output
@@ -54,8 +48,10 @@ enrichment_result <- pathway_analysis_enrichr(
 \seealso{
 Other Impacted pathway analysis: 
 \code{\link{find_impacted_pathways}()},
+\code{\link{list_databases}()},
 \code{\link{pathway_analysis_rontotools}()},
 \code{\link{pathway_analysis_webgestaltr}()},
-\code{\link{pathway_to_graph}()}
+\code{\link{pathway_to_graph}()},
+\code{\link{report_impacted_pathway}()}
 }
 \concept{Impacted pathway analysis}

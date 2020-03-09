@@ -2,41 +2,31 @@
 % Please edit documentation in R/report_impacted_pathway.R
 \name{report_impacted_pathway}
 \alias{report_impacted_pathway}
-\title{Generate plots and a QC report for a imppacted pathway analysis}
+\title{Generate a report for impacted pathway analysis}
 \usage{
 report_impacted_pathway(
   res,
   report_folder_path = getwd(),
-  report_file = "impacted_pathway_report_scflow"
+  report_file = "ipa_report_scflow"
 )
 }
 \arguments{
-\item{res}{Pahtway enrichment result}
+\item{res}{Pathway enrichment result from find_impacted_pathway() function.}
 
-\item{report_folder_path}{folder path to save the report}
+\item{report_folder_path}{folder path to save the report.}
 
-\item{report_file}{filename for report (without an extension)}
+\item{report_file}{filename for report (without an extension).}
 }
 \description{
-Generate plots and a QC report for a imppacted pathway analysis
+Generate a report for impacted pathway analysis
 }
 \seealso{
-Other annotation functions: 
-\code{\link{.preprocess_seurat_object}()},
-\code{\link{annotate_merged_sce}()},
-\code{\link{annotate_sce_cells}()},
-\code{\link{annotate_sce_genes}()},
-\code{\link{annotate_sce}()},
-\code{\link{filter_sce}()},
-\code{\link{find_cells}()},
-\code{\link{find_singlets}()},
-\code{\link{generate_sce}()},
-\code{\link{map_ensembl_gene_id}()},
-\code{\link{merge_sce}()},
-\code{\link{read_metadata}()},
-\code{\link{report_merged_sce}()},
-\code{\link{report_qc_sce}()},
-\code{\link{run_doubletfinder}()},
-\code{\link{sce_to_seu}()}
+Other Impacted pathway analysis: 
+\code{\link{find_impacted_pathways}()},
+\code{\link{list_databases}()},
+\code{\link{pathway_analysis_enrichr}()},
+\code{\link{pathway_analysis_rontotools}()},
+\code{\link{pathway_analysis_webgestaltr}()},
+\code{\link{pathway_to_graph}()}
 }
-\concept{annotation functions}
+\concept{Impacted pathway analysis}

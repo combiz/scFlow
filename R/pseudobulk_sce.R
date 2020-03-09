@@ -23,8 +23,9 @@
 #' @importFrom purrr map_int map_df
 #' @importFrom future availableCores
 #' @importFrom assertthat are_equal
+#' @importFrom tidyselect all_of
 #' @importFrom scater librarySizeFactors normalize calculateQCMetrics
-#' @importFrom SingleCellExperiment SingleCellExperiment
+#' @importFrom SingleCellExperiment SingleCellExperiment counts
 #'
 #' @export
 pseudobulk_sce <- function(sce,
@@ -39,7 +40,7 @@ pseudobulk_sce <- function(sce,
   keep_vars <- unique(c(sample_var, keep_vars))
 
   sce_cd <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
-    dplyr::select(keep_vars) %>%
+    dplyr::select(tidyselect::all_of(keep_vars)) %>%
     dplyr::distinct()
 
   # generate individual/cluster factor on which to pseudobulk
@@ -57,7 +58,8 @@ pseudobulk_sce <- function(sce,
 
   pb_matrix_l <- parallel::mclapply(
     unique(sce$pseudobulk_id),
-    function(x) {Matrix::rowSums(sce[, sce$pseudobulk_id == x]@assays$data[[assay_name]])},
+    #function(x) {Matrix::rowSums(sce[, sce$pseudobulk_id == x]@assays[[assay_name]])},
+    function(x) {Matrix::rowSums(SingleCellExperiment::counts(sce[, sce$pseudobulk_id == x]))},
     mc.cores = future::availableCores())
 
   pb_matrix <- Reduce(cbind, pb_matrix_l)

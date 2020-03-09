@@ -29,9 +29,6 @@ specify one or more database names. Default kegg.}
 analysis will be saved otherwise a R list will be returned. Default FALSE}
 
 \item{output_dir}{Path for the output directory. Default is current dir.}
-
-\item{plot_output}{If TRUE plots will be saved as .png file otherwise
-returned as a R list. Default FALSE.}
 }
 \value{
 enrichment_result a list of data.frames containing enrichment output
@@ -55,8 +52,10 @@ enrichment_result <- pathway_analysis_rontotools(
 \seealso{
 Other Impacted pathway analysis: 
 \code{\link{find_impacted_pathways}()},
+\code{\link{list_databases}()},
 \code{\link{pathway_analysis_enrichr}()},
 \code{\link{pathway_analysis_webgestaltr}()},
-\code{\link{pathway_to_graph}()}
+\code{\link{pathway_to_graph}()},
+\code{\link{report_impacted_pathway}()}
 }
 \concept{Impacted pathway analysis}
