@@ -30,13 +30,12 @@ genes.}
 Either over-representation analysis (ORA) or (Gene set enrichment analysis)
 GSEA.}
 
-\item{enrichment_database}{Name of the database for enrichment. If NULL
-then multiple databases will be used or user can specify one or more
-database names.Default NULL. User can specify one or more database names
-from \code{\link[WebGestaltR:listGeneSet]{WebGestaltR::listGeneSet()}}}
+\item{enrichment_database}{Name of the database for enrichment. If not
+provided then multiple databases will be used or user can specify one or more
+database names from \code{\link[WebGestaltR:listGeneSet]{WebGestaltR::listGeneSet()}}}
 
 \item{is_output}{If TRUE a folder will be created and results of enrichment
-analysis will be saved otherwise a R list will be returned. Default FALSE}
+analysis will be saved otherwise a R list will be returned. Default FALSE.}
 
 \item{output_dir}{Path for the output directory. Default is current
 directory.}

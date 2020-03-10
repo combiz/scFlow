@@ -25,14 +25,14 @@ If not provided the human protein-coding genome will be used as background
 genes.}
 
 \item{enrichment_tool}{Enrichment tool to use. WebGestaltR, ROntoTools and
-enrichR is implemented.}
+enrichR is implemented. Use one or more of the tools.}
 
-\item{enrichment_database}{Name of the database for enrichment.
-If NULL then multiple databases will be used or user can specify one or more
-database names.Default NULL.}
+\item{enrichment_database}{Name of the database for enrichment. User can
+specify one or more database names. Check \code{\link[scFlow:list_databases]{scFlow::list_databases()}} for
+available database alias.}
 
 \item{is_output}{If TRUE a folder will be created and results of enrichment
-analysis will be saved otherwise a R list will be returned. Default FALSE}
+analysis will be saved otherwise a R list will be returned. Default FALSE.}
 
 \item{output_dir}{Path for the output directory. Default is current
 directory.}
