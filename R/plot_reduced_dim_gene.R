@@ -70,15 +70,15 @@ plot_reduced_dim_gene <- function(sce,
 
 
   p <- ggplot(data = dt) +
-    geom_point(aes(x = dt$dim1, y = dt$dim2,
+    geom_point(aes(x = dim1, y = dim2,
                    colour = dt$gene),
                shape = 16, size = size, alpha = alpha) +
     scale_colour_gradientn(#limits = c(0, 1),
       colours = c(palette[1], palette[2]),
       na.value = palette[1])+
     ggtitle(gene)+
-    ylab(dt$dim1) +
-    xlab(dt$dim2) +
+    ylab("") +
+    xlab("") +
     theme_bw() +
     theme(
       panel.border = element_blank(),

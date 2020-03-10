@@ -86,17 +86,17 @@ plot_reduced_dim <- function(sce,
 
   p <- ggplot2::ggplot(data = dt) +
     ggplot2::geom_point(
-      ggplot2::aes(x = dt$dim1,
-                   y = dt$dim2,
-                   colour = dt$feature_dim),
+      ggplot2::aes(x = dim1,
+                   y = dim2,
+                   colour = feature_dim),
       shape = 16, size = size, alpha = alpha) +
     ggplot2::guides(
       colour = ggplot2::guide_legend(
         override.aes = list(size = 6,
                             alpha = 1))) +
     scale_colours +
-    ggplot2::ylab(dt$dim1) +
-    ggplot2::xlab(dt$dim2) +
+    ggplot2::ylab("") +
+    ggplot2::xlab("") +
     ggplot2::theme_bw() +
     ggplot2::theme(
       panel.border = ggplot2::element_blank(),

@@ -83,7 +83,7 @@ show_plot <- function(plot_object) {
 out <- NULL
 for(plot_var in names(metadata$merged_plots)) {
   for(plot in names(metadata$merged_plots[[plot_var]])) {
-    out <- c(out, knit_child('/home/ckhozoie/Documents/scFlow/inst/rmarkdown/templates/merged-quality-control/skeleton/plot_table_template.Rmd'))
+    out <- c(out, knit_child("plot_table_template.Rmd"))
   }
 }
 ```
