@@ -7,7 +7,8 @@
 list_databases()
 }
 \value{
-Returns a list containing available database names and their alias for scFlow
+Returns a list containing available database names and
+their alias for scFlow
 }
 \description{
 Check available databases and their alias for scFlow

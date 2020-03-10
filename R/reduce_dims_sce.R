@@ -107,6 +107,15 @@ reduce_dims_sce <- function(sce,
     residual_model_formula_str = res_mod_formula_str
   )
 
+  #mat <- SingleCellExperiment::counts(sce)
+  #
+  #pca_res <- irlba::prcomp_irlba(
+  #  Matrix::t(SingleCellExperiment::counts(sce)),
+  #  n = min(pca_dims, dim(sce)[[1]] - 1),
+  #  center = TRUE,
+  #  scale. = TRUE
+  #)
+
   SingleCellExperiment::reducedDim(sce, "PCA") <-
     SingleCellExperiment::reducedDim(cds, "PCA")
   cli::cli_alert_success("{.strong PCA} was completed successfully")

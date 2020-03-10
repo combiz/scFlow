@@ -45,7 +45,7 @@ plot_reduced_dim <- function(sce,
 
   # prepare data
   dt <- as.data.frame(
-    cbind(colData(sce),
+    cbind(SingleCellExperiment::colData(sce),
           "dim1" = SingleCellExperiment::reducedDim(sce, reduced_dim)[, 1],
           "dim2" = SingleCellExperiment::reducedDim(sce, reduced_dim)[, 2])
   )
