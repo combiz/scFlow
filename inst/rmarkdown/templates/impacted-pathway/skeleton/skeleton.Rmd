@@ -42,7 +42,7 @@ metadata <- readRDS(params$metadata_path)
 ## Enrichment analysis by WebGestaltR
 
 `r if(is.null(metadata$WebGestaltR)){"Enrichment analysis using WebGestaltR was not performed"}`
-`r if(length(setdiff(names(enrichment_result$WebGestaltR), "metadata")) == 0){"No significant impacted pathways found at FDR <= 0.05!"}`
+`r if(length(setdiff(names(metadata$WebGestaltR), "metadata")) == 0){"No significant impacted pathways found at FDR <= 0.05!"}`
 
 ```{r conditional_webgestaltr_block, child='webgestaltr_template.Rmd', eval = !is.null(metadata$WebGestaltR) && length(setdiff(names(metadata$WebGestaltR), "metadata")) > 0}
 ```
