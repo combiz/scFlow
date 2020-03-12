@@ -13,7 +13,10 @@
 #' @keywords internal
 .sce_to_cds <- function(sce) {
 
-  phenoData = data.frame(colData(sce), stringsAsFactors = FALSE)
+  phenoData = data.frame(
+    SummarizedExperiment::colData(sce),
+    stringsAsFactors = FALSE
+    )
 
   featureData = data.frame(
     gene_short_name = SummarizedExperiment::rowData(sce)$gene,
@@ -23,9 +26,10 @@
 
   rownames(featureData) <- rownames(sce)
 
-  cds <- monocle3::new_cell_data_set(expression_data = counts(sce),
-                                     cell_metadata = phenoData,
-                                     gene_metadata = featureData
+  cds <- monocle3::new_cell_data_set(
+    expression_data = SingleCellExperiment::counts(sce),
+    cell_metadata = phenoData,
+    gene_metadata = featureData
   )
 
   SingleCellExperiment::reducedDims(cds) <-
