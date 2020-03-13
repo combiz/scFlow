@@ -1,0 +1,38 @@
+### Analysis summary
+
+**Analysis name:** `r metadata$WebGestaltR$metadata$gene_file`  
+**Enrichment method for WebGestaltR:** `r metadata$WebGestaltR$metadata$enrichment_method`  
+**Enrichment database:** `r metadata$WebGestaltR$metadata$enrichment_database`  
+
+
+### Dot plots for top 10 enriched pathway
+
+```{r, results='asis'}
+knitr::opts_chunk$set(echo = FALSE)
+cat("<div class = \"row\">")
+for(plot in names(metadata$WebGestaltR$plot)) {
+  cat("<div>")
+  cat(sprintf("<p><h3 align=\"center\">%s</h3></p>", plot))
+  print(metadata$WebGestaltR$plot[[plot]])
+  cat("</div>")
+}
+cat("</div>")
+```
+
+
+```{r include = FALSE}
+datatable(NULL)
+```
+
+```{r results = 'asis'}
+for(table in setdiff(names(metadata$WebGestaltR), c("plot", "metadata"))){ 
+        metadata_table.table <- metadata$WebGestaltR[[table]]
+        index <- which(setdiff(names(metadata$WebGestaltR), c("plot", "metadata")) %in% table)
+        link <- metadata$WebGestaltR$metadata$enrichment_database_link[index]
+        link <- unname(link)
+        metadata_table.table$geneset <- sapply(metadata_table.table$geneset, function(geneset) sprintf("<a href=\"%s%s\">%s</a>", link, geneset, geneset))
+        cat(paste("\n\n### Result Table: ", table, "###\n\n"))
+        print( htmltools::tagList(datatable(metadata_table.table, rownames = FALSE, options = list(pageLength = 5, scrollX=T, autoWidth = TRUE, columnDefs = list(list(width = '500px', targets = 1))), escape = FALSE )))
+}
+```
+

@@ -1,0 +1,71 @@
+---
+title: "<b>scFlow</b> - Differential Expression Analysis Report"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    theme: "flatly"
+    toc: false
+    fig_caption: true
+    keep_md: false
+    css: style.css
+    includes:
+      after_body: footer.html
+params:
+  metadata_path: false
+---
+
+```{r setup, results='hide', include=FALSE}
+library(DT)
+library(utils)
+library(knitr)
+library(htmltools)
+
+knitr::opts_chunk$set(echo = FALSE)
+
+knitr::knit_hooks$set(wrap = function(before, options, envir){
+  if (before){
+    paste0('<', options$wrap, ' align="center">')
+  } else {
+    paste0('</', options$wrap, '>')
+  }
+})
+```
+
+```{r, load_data, results='hide', include=FALSE}
+metadata <- readRDS(params$metadata_path)
+```
+
+
+# Pathway enrichment analysis {.tabset .tabset-dropdown}
+
+
+## Enrichment analysis by WebGestaltR
+
+`r if(is.null(metadata$WebGestaltR)){"Enrichment analysis using WebGestaltR was not performed"}`
+`r if(length(setdiff(names(metadata$WebGestaltR), "metadata")) == 0){"No significant impacted pathways found at FDR <= 0.05!"}`
+
+```{r conditional_webgestaltr_block, child='webgestaltr_template.Rmd', eval = !is.null(metadata$WebGestaltR) && length(setdiff(names(metadata$WebGestaltR), "metadata")) > 0}
+```
+
+
+## Enrichment analysis by ROntoTools
+
+`r if(is.null(metadata$ROntoTools)){"Enrichment analysis using ROntoTools was not performed"}`
+`r if(length(setdiff(names(metadata$ROntoTools), "metadata")) == 0){"No significant impacted pathways found at FDR <= 0.05!"}`
+
+```{r conditional_rontotools_block, child='rontotools_template.Rmd', eval = !is.null(metadata$ROntoTools) && length(setdiff(names(metadata$ROntoTools), "metadata")) > 0}
+```
+
+
+## Enrichment analysis by enrichR
+
+`r if(is.null(metadata$enrichR)){"Enrichment analysis using enrichR was not performed"}`
+`r if(length(setdiff(names(metadata$enrichR), "metadata")) == 0){"No significant impacted pathways found at FDR <= 0.05!"}`
+
+```{r conditional_enrichr_block, child='enrichr_template.Rmd', eval = !is.null(metadata$enrichR) && length(setdiff(names(metadata$enrichR), "metadata")) > 0}
+```
+
+
+
+
+<br>scFlow v`r utils::packageVersion("scFlow")` -- `r Sys.time()`
