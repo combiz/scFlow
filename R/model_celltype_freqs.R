@@ -22,7 +22,6 @@ model_celltype_freqs <- function(sce,
                                  ref_class = "Control",
                                  var_order = NULL,
                                  ...) {
-
   fargs <- c(as.list(environment()), list(...))
 
   cli::cli_h1("Modelling Cell-type Frequencies")
@@ -34,7 +33,8 @@ model_celltype_freqs <- function(sce,
   mat <- do.call(.tally_cells, fargs)
 
   cli::cli_alert(
-    "Cell frequencies calculated across {.val {dim(mat)[[2]]}} cell-types")
+    "Cell frequencies calculated across {.val {dim(mat)[[2]]}} cell-types"
+  )
 
   prop_mat <- prop.table(mat, margin = 1)
   df <- as.data.frame(prop_mat)
@@ -45,113 +45,215 @@ model_celltype_freqs <- function(sce,
   cli::cli_h2("Fitting Dirichlet Model")
   model_formula <- as.formula(sprintf("counts ~ %s", dependent_var))
   cli::cli_alert(
-    "Fitting model: {.var {scFlow:::.formula_to_char(model_formula)}}")
+    "Fitting model: {.var {scFlow:::.formula_to_char(model_formula)}}"
+  )
   fit <- do.call(
     DirichletReg::DirichReg,
     list(formula = model_formula, data = df)
-    )
+  )
 
   cli::cli_alert("Post-processing model")
-  pvals <- do.call(.process_dirichlet_fit,
-                   c(list(fit = fit),
-                     fargs))
+  pvals <- do.call(
+    .process_dirichlet_fit,
+    c(
+      list(fit = fit),
+      fargs
+    )
+  )
 
   cli::cli_alert_success("Dirichlet Model fit successfully.")
 
   results <- list()
   results$counts_mat <- mat
   results$prop_counts_mat <- prop_mat
+  results$DR_data_df <- df
   df$counts <- NULL
-  results$df <- df
-  results$fit <- fit
-  results$pvals <- pvals
+  results$dirichlet_fit <- fit
+  results$dirichlet_pvals <- pvals
 
-  results$plot_table <- do.call(.prepare_dirichlet_plot_table,
-                                c(list(
-                                  df = df,
-                                  celltypes = unique(sce[[celltype_var]])
-                                ), fargs))
-
-  results$plot <- do.call(
-    .plot_dirichlet_results,
-    c(list(
-      df = results$plot_table,
-      n_groups = length(unique(df[[dependent_var]]))
-      ), fargs)
+  results$dirichlet_plot_table <- do.call(
+    .prepare_dirichlet_plot_table,
+    c(
+      list(
+        df = df,
+        celltypes = unique(sce[[celltype_var]]),
+        pvals = pvals
+      ),
+      fargs
+    )
   )
 
-  return(results)
+  results$dirichlet_plot <- do.call(
+    .plot_dirichlet_results,
+    c(list(
+      df = results$dirichlet_plot_table,
+      n_groups = length(unique(df[[dependent_var]]))
+    ), fargs)
+  )
 
+  results$counts_df <- do.call(
+    .prepare_fisher_counts_table,
+    c(
+      list(
+        df = cbind(as.data.frame(mat), covariates),
+        celltypes = unique(sce[[celltype_var]]),
+        pvals = pvals
+      ),
+      fargs
+    )
+  )
+
+  results$fisher_df <- do.call(
+    .model_fisher_celltype,
+    c(
+      list(
+        counts_df = results$counts_df
+      ),
+      fargs
+    )
+  )
+
+
+
+  return(results)
 }
 
+################################################################################
+#' Prepare data for `.model_fisher_celltype`
+#'
+#' Sums absolute cell numbers by celltypes and groups
+#'
+#' @family helper
+#'
+#' @importFrom tidyr pivot_longer
+#' @importFrom dplyr mutate_if select group_by summarise_each left_join mutate
+#' @importFrom asserthat assert_that
+#'
+#' @keywords internal
+.prepare_fisher_counts_table <- function(df,
+                                         pvals,
+                                         celltypes,
+                                         celltype_var,
+                                         dependent_var,
+                                         var_order = NULL,
+                                         ...) {
+  x <- tidyr::pivot_longer(df,
+                           cols = all_of(celltypes),
+                           names_to = celltype_var) %>%
+    dplyr::mutate_if(is.factor, as.character) %>%
+    dplyr::select(!!dependent_var, !!celltype_var, value) %>%
+    dplyr::group_by(!!(as.name(dependent_var)),
+                    !!(as.name(celltype_var))) %>%
+    dplyr::summarise_each(list(sum = ~ sum(.))) %>%
+    dplyr::left_join(pvals, by = c(celltype_var, dependent_var))
+
+  if (!is.null(var_order)) {
+    assertthat::assert_that(all(var_order %in% x[[dependent_var]]))
+    x[[dependent_var]] <- factor(
+      x[[dependent_var]],
+      levels = var_order
+    )
+  }
+  return(x)
+}
+
+################################################################################
+#' Prepare data for `.plot_dirichlet_results`
+#'
+#' @family helper
+#'
+#' @importFrom tidyr pivot_longer
+#' @importFrom dplyr mutate_if select group_by summarise_each left_join mutate
+#' @importFrom asserthat assert_that
+#'
+#' @keywords internal
 .prepare_dirichlet_plot_table <- function(df,
+                                          pvals,
                                           celltypes,
                                           celltype_var,
                                           dependent_var,
                                           var_order = NULL,
                                           ...) {
-
-  x <- tidyr::pivot_longer(results$df, cols = all_of(celltypes), names_to = celltype_var) %>%
+  x <- tidyr::pivot_longer(df,
+                           cols = all_of(celltypes),
+                           names_to = celltype_var) %>%
     dplyr::mutate_if(is.factor, as.character) %>%
     dplyr::select(!!dependent_var, !!celltype_var, value) %>%
-    dplyr::group_by(!!(as.name(dependent_var)), !!(as.name(celltype_var))) %>%
-    dplyr::summarise_each(funs(mean, sd, se = sd(.) / sqrt(n()))) %>%
-    dplyr::left_join(pvals$pvals, by = c(celltype_var, dependent_var)) %>%
+    dplyr::group_by(!!(as.name(dependent_var)),
+                    !!(as.name(celltype_var))) %>%
+    dplyr::summarise_each(
+      list(~ mean(.), ~ sd(.), se = ~ sd(.) / sqrt(n()))
+      ) %>%
+    dplyr::left_join(pvals, by = c(celltype_var, dependent_var)) %>%
     dplyr::mutate(label = case_when(
       is.na(label) ~ "",
-      !is.na(label) ~ label))
+      !is.na(label) ~ label
+    ))
 
   if (!is.null(var_order)) {
     assertthat::assert_that(all(var_order %in% x[[dependent_var]]))
     x[[dependent_var]] <- factor(
-      x[[dependent_var]], levels = var_order)
+      x[[dependent_var]],
+      levels = var_order
+    )
   }
   return(x)
-
 }
 
-
-.plot_dirichlet_results <- function(df, n_groups, individual_plots = FALSE, ...) {
-
+################################################################################
+#' Plot relative celltype proportions with Dirichlet model significance
+#'
+#' @family helper
+#'
+#' @importFrom paletteer paletteer_d
+#'
+#' @keywords internal
+.plot_dirichlet_results <- function(df,
+                                    n_groups,
+                                    celltype_var,
+                                    dependent_var,
+                                    individual_plots = FALSE,
+                                    ...) {
   fargs <- list(...)
 
   if (is.null(fargs$palette)) {
-    if(n_groups <= 10) palette <- paletteer::paletteer_d("ggsci::default_aaas")
-    if(n_groups > 10) palette <- paletteer::paletteer_d("ggsci::default_igv")
+    if (n_groups <= 10) palette <- paletteer::paletteer_d("ggsci::default_aaas")
+    if (n_groups > 10) palette <- paletteer::paletteer_d("ggsci::default_igv")
   } else {
     palette <- fargs$palette
   }
 
   p <- ggplot(df, aes(x = group, y = mean)) +
     geom_col(aes(fill = .data[[dependent_var]]), colour = "black") +
-    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.2,
-                  position=position_dodge(.9)) +
-    geom_text(aes(y = (mean+se) * 1.05, label = label), size = 5) +
+    geom_errorbar(aes(ymin = mean - se, ymax = mean + se),
+      width = .2,
+      position = position_dodge(.9)
+    ) +
+    geom_text(aes(y = (mean + se) * 1.05, label = label), size = 5) +
     ylab("Relative Proportion") +
     xlab(NULL) +
     facet_grid(~ .data[[celltype_var]], scales = "free_y", switch = "x") +
     scale_fill_manual(values = palette) +
     theme_bw() +
-    theme(plot.title = element_text(hjust = 0.5, face = "italic", size = 20),
-          axis.title = element_text(size = 18),
-          axis.text.y = element_text(size = 16, colour = "black"),
-          axis.text.x = element_blank(),
-          legend.title = element_blank(),
-          legend.text = element_text(size = 16),
-          legend.position = "top",
-          legend.justification = "left",
-          panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          axis.ticks.x = element_blank(),
-          strip.text.x = element_text(size = 16),
-          strip.background = element_blank(),
-          panel.border = element_rect(colour = "black"))
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "italic", size = 20),
+      axis.title = element_text(size = 18),
+      axis.text.y = element_text(size = 16, colour = "black"),
+      axis.text.x = element_blank(),
+      legend.title = element_blank(),
+      legend.text = element_text(size = 16),
+      legend.position = "top",
+      legend.justification = "left",
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.ticks.x = element_blank(),
+      strip.text.x = element_text(size = 16),
+      strip.background = element_blank(),
+      panel.border = element_rect(colour = "black")
+    )
 
   return(p)
-
 }
-
-
 
 ################################################################################
 #' Tally the cells in each celltype for each unique sample
@@ -173,7 +275,6 @@ model_celltype_freqs <- function(sce,
                          unique_id_var = "manifest",
                          celltype_var = "cluster_celltype",
                          ...) {
-
   mat <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
     dplyr::select(!!unique_id_var, !!celltype_var) %>%
     dplyr::group_by(!!(as.name(unique_id_var))) %>%
@@ -181,14 +282,13 @@ model_celltype_freqs <- function(sce,
     tidyr::pivot_wider(names_from = !!(as.name(celltype_var)), values_from = "n") %>%
     as.data.frame()
 
-  mat <- mat[order(mat[[unique_id_var]]),]
+  mat <- mat[order(mat[[unique_id_var]]), ]
   rownames(mat) <- mat[[unique_id_var]]
   mat[[unique_id_var]] <- NULL
   mat[is.na(mat)] <- 0
   mat <- as.matrix(mat)
 
   return(mat)
-
 }
 
 
@@ -212,22 +312,20 @@ model_celltype_freqs <- function(sce,
                                  unique_id_var,
                                  dependent_var,
                                  ref_class,
-                                 ...
-                                 ) {
-
+                                 ...) {
   covariates <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
     dplyr::select(!!unique_id_var, !!dependent_var) %>%
     unique()
 
   rownames(covariates) <- covariates[[unique_id_var]]
-  covariates <- covariates[order(covariates[[unique_id_var]]),]
+  covariates <- covariates[order(covariates[[unique_id_var]]), ]
   covariates[[unique_id_var]] <- NULL
   covariates[[dependent_var]] <- relevel(
-    covariates[[dependent_var]], ref = ref_class
+    covariates[[dependent_var]],
+    ref = ref_class
   )
 
   return(covariates)
-
 }
 
 ################################################################################
@@ -246,7 +344,6 @@ model_celltype_freqs <- function(sce,
 #'
 #' @keywords internal
 .process_dirichlet_fit <- function(fit, dependent_var, celltype_var, ...) {
-
   u <- summary(fit)
   pvals <- u$coef.mat[grep("Intercept", rownames(u$coef.mat), invert = TRUE), 4]
   v <- names(pvals)
@@ -260,15 +357,74 @@ model_celltype_freqs <- function(sce,
       cols = rownames(pvals),
       names_to = dependent_var,
       values_to = "pval"
-      ) %>%
+    ) %>%
     dplyr::mutate(
       label = case_when(
         pval <= 0.001 ~ "***",
         pval <= 0.01 ~ "**",
         pval <= 0.05 ~ "*",
-        pval > 0.05 ~ "")) %>%
+        pval > 0.05 ~ "",
+        is.na(pval) ~ ""
+      )
+    ) %>%
     as.data.frame()
 
   return(pvals)
+}
 
+################################################################################
+#' Run a fisher exact test on absolute cell numbers for each celltype
+#'
+#' @param counts_df absolute cell number counts stratified
+#' @param dependent_var the name of the colData variable for contrasts
+#' @param celltype_var the colData variable specifying celltype or subtype
+#' @param ref_class the class of dependent_var used as reference
+#'
+#' @return df a data frame of cell numbers with fisher p values adjusted
+#'
+#' @family helper
+#'
+#' @importFrom  dplyr mutate
+#'
+#' @keywords internal
+.model_fisher_celltype <- function(counts_df,
+                                   dependent_var,
+                                   celltype_var,
+                                   ref_class,
+                                   ...) {
+  df <- NULL
+
+  for (celltype in unique(counts_df[[celltype_var]])) {
+    ct <- counts_df[counts_df[[celltype_var]] == celltype, ]
+    not_ct <- counts_df[counts_df[[celltype_var]] != celltype, ]
+    for (contrast_class in setdiff(ct[[dependent_var]], ref_class)) {
+      contab <- matrix(0, nrow = 2, ncol = 2)
+      contab[1, 1] <- ct[ct$group == ref_class, ]$sum
+      contab[1, 2] <- sum(not_ct[not_ct$group == ref_class, ]$sum)
+      contab[2, 1] <- ct[ct[[dependent_var]] == contrast_class, ]$sum
+      contab[2, 2] <- sum(not_ct[not_ct[[dependent_var]] == contrast_class, ]$sum)
+      rownames(contab) <- c(ref_class, contrast_class)
+      colnames(contab) <- c("cells", "other_cells")
+      res <- fisher.test(contab)
+      contab_df <- as.data.frame(contab)
+      contab_df[[dependent_var]] <- rownames(contab_df)
+      contab_df[[celltype_var]] <- celltype
+      contab_df$pval <- NA
+      contab_df[contab_df[[dependent_var]] == contrast_class, ]$pval <- res$p.value
+      df <- unique(rbind(df, contab_df))
+    }
+  }
+  df$pval <- p.adjust(df$pval, method = "bonferroni")
+  df <- df %>%
+    dplyr::mutate(
+      label = case_when(
+        pval <= 0.001 ~ "***",
+        pval <= 0.01 ~ "**",
+        pval <= 0.05 ~ "*",
+        pval > 0.05 ~ "",
+        is.na(pval) ~ ""
+      )
+    )
+  rownames(df) <- NULL
+  return(df)
 }
