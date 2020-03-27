@@ -166,7 +166,7 @@ model_celltype_freqs <- function(sce,
 #'
 #' @importFrom tidyr pivot_longer
 #' @importFrom magrittr %>%
-#' @importFrom asserthat assert_that
+#' @importFrom assertthat assert_that
 #'
 #' @keywords internal
 .prepare_unique_id_var_plot_table <- function(df,
@@ -264,7 +264,7 @@ model_celltype_freqs <- function(sce,
 #'
 #' @importFrom tidyr pivot_longer
 #' @importFrom dplyr mutate_if select group_by summarise_each left_join mutate
-#' @importFrom asserthat assert_that
+#' @importFrom assertthat assert_that
 #'
 #' @keywords internal
 .prepare_fisher_counts_table <- function(df,
@@ -301,7 +301,7 @@ model_celltype_freqs <- function(sce,
 #'
 #' @importFrom tidyr pivot_longer
 #' @importFrom dplyr mutate_if select group_by summarise_each left_join mutate
-#' @importFrom asserthat assert_that
+#' @importFrom assertthat assert_that
 #'
 #' @keywords internal
 .prepare_dirichlet_plot_table <- function(df,
