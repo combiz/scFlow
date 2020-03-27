@@ -83,13 +83,29 @@ model_celltype_freqs <- function(sce,
     )
   )
 
+  # combined plots with faceting
   results$dirichlet_plot <- do.call(
     .plot_dirichlet_results,
     c(list(
       df = results$dirichlet_plot_table,
-      n_groups = length(unique(df[[dependent_var]]))
+      n_groups = length(unique(df[[dependent_var]])),
+      facet_plots = TRUE
     ), fargs)
   )
+
+  # individual celltype plots for dirichlet
+  results$dirichlet_plots_by_celltype <- list()
+  for (celltype in unique(results$dirichlet_plot_table[[celltype_var]])) {
+    results$dirichlet_plots_by_celltype[[celltype]] <- do.call(
+      .plot_dirichlet_results,
+      c(list(
+        df = results$dirichlet_plot_table[
+          results$dirichlet_plot_table[[celltype_var]] == celltype,],
+        n_groups = length(unique(df[[dependent_var]])),
+        facet_plots = TRUE
+      ), fargs)
+    )
+  }
 
   results$counts_df <- do.call(
     .prepare_fisher_counts_table,
@@ -113,9 +129,130 @@ model_celltype_freqs <- function(sce,
     )
   )
 
+  results$unique_id_plot_table <- do.call(
+    .prepare_unique_id_var_plot_table,
+    c(
+      list(
+        df = results$DR_data_df
+      ),
+      fargs
+    )
+  )
+
+  results$unique_id_plots_by_celltype <- list()
+  for (celltype in unique(results$unique_id_plot_table[[celltype_var]])) {
+    results$unique_id_plots_by_celltype[[celltype]] <- do.call(
+      .plot_unique_id_var,
+      c(list(
+        df = results$unique_id_plot_table[
+          results$unique_id_plot_table[[celltype_var]] == celltype,],
+        n_groups = length(unique(df[[dependent_var]])),
+        facet_plots = FALSE
+      ), fargs)
+    )
+  }
 
 
   return(results)
+}
+
+
+################################################################################
+#' Prepare data
+#'
+#' Arrange proportional cell numbers by celltype, group, individual
+#'
+#' @family helper
+#'
+#' @importFrom tidyr pivot_longer
+#' @importFrom magrittr %>%
+#' @importFrom asserthat assert_that
+#'
+#' @keywords internal
+.prepare_unique_id_var_plot_table <- function(df,
+                                              celltype_var,
+                                              dependent_var,
+                                              unique_id_var,
+                                              var_order = NULL,
+                                              ...) {
+
+  x <- df
+  x$counts <- NULL
+
+  if (!is.null(var_order)) {
+    assertthat::assert_that(all(var_order %in% x[[dependent_var]]))
+    x[[dependent_var]] <- factor(
+      x[[dependent_var]],
+      levels = var_order
+    )
+  }
+
+  x <- x[order(x[[dependent_var]]), ]
+  x[[unique_id_var]] <- factor(x[[unique_id_var]], levels = x[[unique_id_var]])
+  x <- x %>% tidyr::pivot_longer(
+    cols = setdiff(colnames(x),
+                   c(dependent_var, unique_id_var)),
+    names_to = celltype_var,
+    values_to = "cells_pc"
+  )
+  return(x)
+}
+
+
+################################################################################
+#' Plot relative celltype proportions by sample
+#'
+#' @family helper
+#'
+#' @importFrom paletteer paletteer_d
+#'
+#' @keywords internal
+.plot_unique_id_var <- function(df,
+                                n_groups,
+                                celltype_var,
+                                dependent_var,
+                                unique_id_var,
+                                facet_plots = FALSE,
+                                ...) {
+  fargs <- list(...)
+
+  if (is.null(fargs$palette)) {
+    if (n_groups <= 10) palette <- paletteer::paletteer_d("ggsci::default_aaas")
+    if (n_groups > 10) palette <- paletteer::paletteer_d("ggsci::default_igv")
+  } else {
+    palette <- fargs$palette
+  }
+
+  p <- ggplot(df, aes(x = .data[[unique_id_var]], y = cells_pc)) +
+    geom_col(aes(fill = .data[[dependent_var]]), colour = "black") +
+    ylab("Relative Proportion") +
+    xlab(NULL) +
+    scale_fill_manual(values = palette) +
+    theme_bw() +
+    theme(
+      plot.title = element_text(hjust = 0.5, face = "italic", size = 20),
+      axis.title = element_text(size = 18),
+      axis.text.y = element_text(size = 16, colour = "black"),
+      axis.text.x = element_text(size = 16, colour = "black", angle = 45, hjust = 1),
+      legend.title = element_blank(),
+      legend.text = element_text(size = 16),
+      legend.position = "top",
+      legend.justification = "left",
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.ticks.x = element_blank(),
+      strip.text.x = element_text(size = 16),
+      strip.background = element_blank(),
+      panel.border = element_rect(colour = "black")
+    )
+
+
+  if(facet_plots == TRUE) {
+    p <- p +
+      facet_wrap(~ .data[[celltype_var]], ncol = 3)
+  }
+
+  return(p)
 }
 
 ################################################################################
@@ -212,7 +349,7 @@ model_celltype_freqs <- function(sce,
                                     n_groups,
                                     celltype_var,
                                     dependent_var,
-                                    individual_plots = FALSE,
+                                    facet_plots = FALSE,
                                     ...) {
   fargs <- list(...)
 
@@ -232,7 +369,6 @@ model_celltype_freqs <- function(sce,
     geom_text(aes(y = (mean + se) * 1.05, label = label), size = 5) +
     ylab("Relative Proportion") +
     xlab(NULL) +
-    facet_grid(~ .data[[celltype_var]], scales = "free_y", switch = "x") +
     scale_fill_manual(values = palette) +
     theme_bw() +
     theme(
@@ -251,6 +387,11 @@ model_celltype_freqs <- function(sce,
       strip.background = element_blank(),
       panel.border = element_rect(colour = "black")
     )
+
+  if(facet_plots == TRUE) {
+    p <- p +
+      facet_grid(~ .data[[celltype_var]], scales = "free_y", switch = "x")
+  }
 
   return(p)
 }
