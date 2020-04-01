@@ -50,18 +50,6 @@ report_de <- function(res,
     quiet = TRUE
   )
 
-  rmarkdown::render(
-    "inst/rmarkdown/templates/differential-expression/skeleton/skeleton.Rmd",
-    params = list(
-      metadata_path = metadata_tmp_path
-    ),
-    output_dir = report_folder_path,
-    output_file = report_file,
-    knit_root_dir = krd,
-    intermediates_dir = intd,
-    quiet = TRUE
-  )
-
   report_file_name <- paste(report_file, ".html", sep = "")
 
   cli::cli_text(c(
