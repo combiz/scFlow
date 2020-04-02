@@ -19,6 +19,7 @@
 #'
 #' @importFrom cli cli_text rule
 #'
+#'
 #' @export
 perform_de <- function(sce,
                        de_method = "MASTZLM",
@@ -29,7 +30,8 @@ perform_de <- function(sce,
                        ref_class = "Control",
                        confounding_vars = c("individual",
                                             "cngeneson",
-                                            "sex", "age",
+                                            "sex",
+                                            "age",
                                             "PMI",
                                             "RIN",
                                             "seqdate",
@@ -278,16 +280,16 @@ perform_de <- function(sce,
 
     fcHurdle <- merge(fcHurdle, ensembl_res, by = "ensembl_gene_id")
 
-    fcHurdle$padj <- p.adjust(fcHurdle$pval, "fdr",
-                              n = dim(sca)[[1]])
+    fcHurdle$padj <- p.adjust(
+      fcHurdle$pval, "fdr", n = dim(sca)[[1]])
 
     fcHurdle$contrast <- ctrast
     fcHurdle$reference <- fargs$ref_class
 
     model_formula_string <- .formula_to_char(model_formula)
-    fcHurdle$model <- gsub(" ", "", model_formula_string, fixed = TRUE) # no whitespace
+    fcHurdle$model <- gsub(" ", "", model_formula_string,
+                           fixed = TRUE) # no whitespace
 
-    # generate volcano plot
     p <- .volcano_plot(
       dt = fcHurdle,
       fc_threshold = fargs$fc_threshold,
@@ -301,9 +303,9 @@ perform_de <- function(sce,
       dplyr::filter(abs(logFC) > log2(fargs$fc_threshold)) %>%
       dplyr::arrange(-logFC)
 
-    # calculate result summary
-    dge_summary <- c(sum(results$logFC > 0), sum(results$logFC < 0))
-    names(dge_summary) <- c("Up", "Down")
+
+    DGEs <- c(sum(results$logFC > 0), sum(results$logFC < 0))
+    names(DGEs) <- c("Up", "Down")
 
     element_name <- paste(fargs$ref_class, ctrast, sep = "_vs_")
 
@@ -320,8 +322,8 @@ perform_de <- function(sce,
       random_effects_var = fargs$random_effects_var,
       fc_threshold = fargs$fc_threshold,
       pval_cutoff = fargs$pval_cutoff,
-      cells_per_group = table(SingleCellExperiment::colData(
-        fargs$sce)[fargs$dependent_var]),
+      cells_per_group = table(
+        SingleCellExperiment::colData(fargs$sce)[fargs$dependent_var]),
       n_genes = dim(sce)[[1]],
       model = gsub(" ", "", model_formula_string, fixed = TRUE),
       model_full_rank = is_full_rank,
@@ -336,7 +338,7 @@ perform_de <- function(sce,
 
     attr(results, "de_parameters") <- de_params
 
-    attr(results, "de_result") <- dge_summary
+    attr(results, "de_result") <- DGEs
 
     attr(results, "plot") <- p
 
@@ -498,10 +500,9 @@ perform_de <- function(sce,
 }
 
 
-
 #' volcano plot
 #'
-#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 ggplot geom_point aes coord_cartesian
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom dplyr %>% filter top_n
 #'
@@ -530,13 +531,11 @@ perform_de <- function(sce,
 
 
   ggplot2::ggplot(dt) +
-    geom_point(
-      aes(x = logFC, y = -log10(padj), fill = de, colour = de),
-      show.legend = T, alpha = 0.5) +
+    geom_point(aes(x = logFC, y = -log10(padj), fill = de, colour = de),
+               show.legend = T, alpha = 0.5) +
     ggrepel::geom_text_repel(
       data = dt,
-      aes(logFC, y = -log10(padj),
-          label = ifelse(label == "Yes", gene, "")),
+      aes(logFC, y = -log10(padj), label = ifelse(label == "Yes", gene, "")),
       max.iter = 1000, size = 3, na.rm = TRUE
     ) +
     xlab("log2 fold change") +
@@ -545,8 +544,7 @@ perform_de <- function(sce,
                linetype = 2, size = 0.2, alpha = 0.5) +
     geom_hline(yintercept = pval_cutoff,
                linetype = 2, size = 0.2, alpha = 0.5) +
-    scale_colour_manual(name = NULL,
-                        aesthetics = c("colour", "fill"),
+    scale_colour_manual(name = NULL, aesthetics = c("colour", "fill"),
                         values = c("red", "blue", "grey"),
                         label = c("Up", "Down", "Not sig")) +
     guides(colour = guide_legend(override.aes = list(size = 3))) +
@@ -561,6 +559,6 @@ perform_de <- function(sce,
       legend.key = element_blank(),
       plot.margin = margin(c(1, 1, 1, 1), unit = "cm")
     ) +
-    coord_cartesian(xlim = c(-6, 6),
-                    ylim = c(0, 150), expand = TRUE, clip = "on")
+    coord_cartesian(xlim = c(-6, 6), ylim = c(0, 150),
+                    expand = TRUE, clip = "on")
 }

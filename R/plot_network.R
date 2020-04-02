@@ -10,13 +10,13 @@
 #'
 #' @family Impacted pathway analysis
 #'
-#' @importFrom igraph V plot.igraph graph.data.frame
+#' @importFrom igraph V plot.igraph graph.data.frame layout_with_kk
 #'
 #' @export
 #'
 #'
 
-networkplot <- function(enrichment_result,
+plot_network <- function(enrichment_result,
                         de_table = NULL,
                         show_category = 5,
                         ...) {
@@ -88,7 +88,7 @@ networkplot <- function(enrichment_result,
     enrichment_result$geneset
   )
 
-  genesets <- genesets[enrichment_result$geneset]
+  #genesets <- genesets[enrichment_result$geneset]
   names(genesets) <- enrichment_result$description
 
   if (is.numeric(show_category)) {

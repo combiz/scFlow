@@ -37,7 +37,7 @@ report_de <- function(res,
   cli::cli_text("Generating differential expression analysis report...")
   rmarkdown::render(
     system.file(
-      "rmarkdown/templates/impacted-pathway/skeleton/skeleton.Rmd",
+      "rmarkdown/templates/differential-expression/skeleton/skeleton.Rmd",
       package = "scFlow"
     ),
     params = list(
