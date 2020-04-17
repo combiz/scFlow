@@ -152,6 +152,8 @@ model_celltype_freqs <- function(sce,
     )
   }
 
+  results$fargs <- fargs
+  results$fargs$sce <- NULL
 
   return(results)
 }
@@ -195,6 +197,9 @@ model_celltype_freqs <- function(sce,
     names_to = celltype_var,
     values_to = "cells_pc"
   )
+
+  x <- as.data.frame(x)
+
   return(x)
 }
 
@@ -252,6 +257,10 @@ model_celltype_freqs <- function(sce,
       facet_wrap(~ .data[[celltype_var]], ncol = 3)
   }
 
+  #p$plot_env <- new.env()
+  p$plot_env$sce <- NULL
+  p$plot_env$... <- NULL
+  p$plot_env$fargs$sce <- NULL
   return(p)
 }
 
@@ -291,6 +300,9 @@ model_celltype_freqs <- function(sce,
       levels = var_order
     )
   }
+
+  x <- as.data.frame(x)
+
   return(x)
 }
 
@@ -334,6 +346,9 @@ model_celltype_freqs <- function(sce,
       levels = var_order
     )
   }
+
+  x <- as.data.frame(x)
+
   return(x)
 }
 
@@ -366,7 +381,7 @@ model_celltype_freqs <- function(sce,
       width = .2,
       position = position_dodge(.9)
     ) +
-    geom_text(aes(y = (mean + se) * 1.05, label = label), size = 5) +
+    geom_text(aes(y = (mean + se) * 1.05, label = label), size = 6) +
     ylab("Relative Proportion") +
     xlab(NULL) +
     scale_fill_manual(values = palette) +
@@ -393,6 +408,10 @@ model_celltype_freqs <- function(sce,
       facet_grid(~ .data[[celltype_var]], scales = "free_y", switch = "x")
   }
 
+  #p$plot_env <- new.env()
+  p$plot_env$sce <- NULL
+  p$plot_env$... <- NULL
+  p$plot_env$fargs$sce <- NULL
   return(p)
 }
 
@@ -567,5 +586,6 @@ model_celltype_freqs <- function(sce,
       )
     )
   rownames(df) <- NULL
+  df <- as.data.frame(df)
   return(df)
 }

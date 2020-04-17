@@ -99,7 +99,8 @@ Imports:
     monocle3,
     liger,
     DropletUtils,
-    formattable
+    formattable,
+    qs
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,
