@@ -1,7 +1,7 @@
 ################################################################################
-#' Integrate samples within a SingleCellExperiment Object
+#' Integrate datasets within a SingleCellExperiment Object
 #'
-#' Produces a reducedDim slot representing common factors across samples
+#' Produces a reducedDim slot representing common factors across datasets
 #'
 #' @param sce a SingleCellExperiment object or merged sce objects
 #' @param method the integration method to use
@@ -16,9 +16,9 @@
 #'
 #' @export
 
-integrate_sce <- function(sce,
-                          method = "Liger",
-                          ...) {
+integrate_sce_test2 <- function(sce,
+                                method = "Liger",
+                                ...) {
   
   fargs <- list(...)
   
@@ -30,7 +30,7 @@ integrate_sce <- function(sce,
       paste0(integration_methods, collapse = ",")
     ))
   
-  cli::cli_h1("Integrating Samples")
+  cli::cli_h1("Integrating Datasets")
   # Reduce dimensions with Liger
   if (method == "Liger") {
     
@@ -39,9 +39,13 @@ integrate_sce <- function(sce,
     
     # Preprocess with Liger
     cli::cli_h3("Pre-processing SingleCellExperiment for LIGER")
-    ligerex <- do.call(liger_preprocess, c(list(sce = sce), fargs))
+    ligerex <- do.call(liger_preprocess_test2, c(list(sce = sce), fargs))
     sce@metadata$liger_params$liger_preprocess <-
       ligerex@parameters$liger_params$liger_preprocess
+    sce@metadata$liger_var.genes <-
+      ligerex@var.genes
+    sce@metadata$var.genes_per_dataset <-
+      ligerex@agg.data$var.genes_per_dataset
     
     # Reduce dimensions with Liger
     cli::cli_h3("Computing integrated factors with LIGER")
