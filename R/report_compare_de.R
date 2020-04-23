@@ -1,5 +1,5 @@
 ################################################################################
-#' Generate a report for differential expression analysis
+#' Generate a report to collate multiple differential expression report
 #'
 #' @param res paths for multiple differential expression result file.
 #' @param alias DE table alias.
