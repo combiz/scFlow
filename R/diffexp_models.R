@@ -92,6 +92,7 @@ perform_de <- function(sce,
 #' @importFrom SingleCellExperiment counts
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom scater librarySizeFactors normalize
+#' @importFrom Matrix colSums
 #' @importFrom cli cli_text
 #'
 #' @keywords internal
@@ -116,7 +117,7 @@ perform_de <- function(sce,
   }
 
   # from MAST tutorial
-  cdr2 <- colSums(SingleCellExperiment::counts(sce) > 0)
+  cdr2 <- Matrix::colSums(SingleCellExperiment::counts(sce) > 0)
   sce$cngeneson <- as.numeric(scale(cdr2))
 
   cli::cli_text(c(
