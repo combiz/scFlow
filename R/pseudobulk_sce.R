@@ -126,8 +126,8 @@ pseudobulk_sce <- function(sce,
   pb_sce <- scater::normalize(pb_sce, return_log = FALSE)
   pb_sce <- scater::calculateQCMetrics(pb_sce)
 
-  sce@metadata$scflow_steps <- list()
-  sce@metadata$scflow_steps$pseudobulk <- TRUE
+  pb_sce@metadata$scflow_steps <- list()
+  pb_sce@metadata$scflow_steps$pseudobulk <- TRUE
 
   return(pb_sce)
 }
