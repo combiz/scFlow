@@ -57,17 +57,11 @@ Integration method: **Linked Inference of Genomic Experimental Relationships (LI
 
 <div class = "row">
 <div class = "col-md-12">
-```{r, fig.align="center", fig.width=20, fig.height=6}
+```{r, fig.align="center", fig.width=30, fig.height=20, eval=length(metadata$var.genes_per_dataset) < 11}
 knitr::opts_chunk$set(echo = FALSE)
-tmp <- tempfile()
-venn_sets <- metadata$var.genes_per_dataset
-my_nv <- nVennR::plotVenn(venn_sets)
-my_nv <- nVennR::plotVenn(nVennObj = my_nv)
-nVennR::showSVG(my_nv, outFile = tmp)
-rsvg::rsvg_png(tmp, "./venn.png", width = 3000, height = 2000)
-if (length(metadata$var.genes_per_dataset) < 11) {
-  knitr::include_graphics("./venn.png")
-  }
+my_nv <- metadata$dataset_integration$var.genes_plots$venn
+nVennR::showSVG(my_nv)
+nVennR::showSVG(my_nv)
 ```
 `r if(length(metadata$var.genes_per_dataset) < 11 ){sprintf("**Venn diagram of selected variable genes**: The large numbers indicate how many variable genes are common between datasets. The datasets are represented by the numbers in the parentheses.")}`
 </div>
@@ -76,10 +70,7 @@ if (length(metadata$var.genes_per_dataset) < 11) {
 <div class = "col-md-12">
 ```{r, fig.align="center", fig.width=10, fig.height=6}
 knitr::opts_chunk$set(echo = FALSE)
-upset_sets <- metadata$var.genes_per_dataset
-my_upset <- UpSetR::upset(fromList(upset_sets), nsets = length(upset_sets),
-sets.x.label = "Variable genes per dataset",
-text.scale = c(1.5, 1.5, 1.5, 1.5, 1.5, 1))
+my_upset <- metadata$dataset_integration$var.genes_plots$upset
 print(my_upset)
 ```
 `r if(!is.null(metadata$var.genes_per_dataset)){sprintf("**Upset chart of selected variable genes**: The first **%s** vertical bar charts show the sizes of isolated dataset participation to the total variable genes used for integration.", paste("<i>",length(metadata$var.genes_per_dataset),"</i>", collapse = ", "))}`
@@ -123,66 +114,25 @@ cat("\n \n")
 cat(paste("### • Covariate:", variable, sep = " "), "\n\n")
 cat("\n \n")
 cat("\n")
-plot_pca <- plot_reduced_dim(sce, feature_dim = variable,
-  reduced_dim = "tSNE_PCA", size = 1, alpha = 0.3)
-p <- plot_pca + ggtitle("tSNE using PCA data") +
-  theme(plot.title = element_text(size = 15, face = "bold", hjust = 1.1))
-print(p)
+tsne_pca <-
+  metadata$dataset_integration$batch_correction_plots$pca_tsne_plots[[variable]]
+print(tsne_pca)
 
 plot_liger <- plot_reduced_dim(sce, feature_dim = variable,
   reduced_dim = "tSNE_Liger", size = 0.75, alpha = 0.3)
-p <- plot_liger + ggtitle("tSNE using LIGER data") +
-  theme(plot.title = element_text(size = 15, face = "bold", hjust = 1.1))
-print(p)
+tsne_liger <-
+  metadata$dataset_integration$batch_correction_plots$liger_tsne_plots[[variable]]
+print(tsne_liger)
 cat("\n")
 cat("\n \n")
 
-data <- SingleCellExperiment::reducedDim(sce, "PCA")
-batch <- SummarizedExperiment::colData(sce)[[variable]]
-subset_id <- sample.int(n = length(batch), size = floor(0.1 * length(batch)),
-  replace = FALSE)
-batch_estimate_pca <- kBET::kBET(data[subset_id, ], batch[subset_id],
-  plot = FALSE)
-plot.data <- data.frame(class = rep(c("observed", "expected"),
-  each = length(batch_estimate_pca$stats$kBET.observed)),
-  data =  c(batch_estimate_pca$stats$kBET.observed,
-  batch_estimate_pca$stats$kBET.expected))
-x_label <- sprintf("P-value = %s",
-  formatC(batch_estimate_pca$summary$kBET.signif[1], format = "e", digits = 2))
-kbet_plot_pca <- ggplot(plot.data, aes(class, data)) + geom_boxplot() +
-  labs(x = x_label, y = "Rejection rate") + theme_bw() +
-  scale_y_continuous(limits = c(0, 1)) +
-  theme(axis.text = element_text(size = 13),
-  axis.title = element_text(size = 13),
-  axis.line = element_line(colour = "black"),
-  panel.grid.minor = element_blank(), panel.background = element_blank()) +
-  ggtitle("kBET test results - PCA") +
-  theme(plot.title = element_text(hjust = 0.5, size = 15, face = "bold"))
-print(kbet_plot_pca)
+kbet_pca <-
+  metadata$dataset_integration$batch_correction_plots$pca_kbet_plots[[variable]]
+print(kbet_pca)
 
-data <- SingleCellExperiment::reducedDim(sce, "Liger")
-batch <- SummarizedExperiment::colData(sce)[[variable]]
-subset_id <- sample.int(n = length(batch), size = floor(0.1 * length(batch)),
-  replace = FALSE)
-batch_estimate_liger <- kBET::kBET(data[subset_id, ], batch[subset_id],
-  plot = FALSE)
-plot.data <- data.frame(class = rep(c("observed", "expected"),
-  each = length(batch_estimate_liger$stats$kBET.observed)),
-  data = c(batch_estimate_liger$stats$kBET.observed,
-  batch_estimate_liger$stats$kBET.expected))
-x_label <- sprintf("P-value = %s",
-  formatC(batch_estimate_liger$summary$kBET.signif[1], format = "e",
-  digits = 2))
-kbet_plot_liger <- ggplot(plot.data, aes(class, data)) + geom_boxplot() +
-  labs(x = x_label, y = "Rejection rate") + theme_bw() +
-  scale_y_continuous(limits = c(0, 1)) +
-  theme(axis.text = element_text(size = 13),
-  axis.title = element_text(size = 13),
-  axis.line = element_line(colour = "black"),
-  panel.grid.minor = element_blank(), panel.background = element_blank()) +
-  ggtitle("kBET test results - LIGER") +
-  theme(plot.title = element_text(hjust = 0.5, size = 15, face = "bold"))
-print(kbet_plot_liger)
+kbet_liger <-
+  metadata$dataset_integration$batch_correction_plots$liger_kbet_plots[[variable]]
+print(kbet_liger)
 
 cat("\n")
 }
@@ -203,17 +153,12 @@ cat("\n")
 ```{r, results='asis', fig.hold='hold', out.width = "50%", fig.width=5, fig.height=4}
 cat("\n \n")
 cat("\n")
-plot_pca <- plot_reduced_dim(sce, feature_dim = "clusters",
-  reduced_dim = "UMAP_PCA", size = 0.75, alpha = 0.3)
-p <- plot_pca + ggtitle("UMAP using PCA data (colored by cluster)") +
-  theme(plot.title = element_text(size = 15, face = "bold"))
-print(p)
 
-plot_liger <- plot_reduced_dim(sce, feature_dim = "clusters",
-  reduced_dim = "UMAP_Liger", size = 0.75, alpha = 0.3)
-p <- plot_liger + ggtitle("UMAP using LIGER data (colored by cluster)") +
-  theme(plot.title = element_text(size = 15, face = "bold"))
-print(p)
+umap_pca <- metadata$dataset_integration$clustering_plots$umap_pca
+print(umap_pca)
+
+umap_liger <- metadata$dataset_integration$clustering_plots$umap_liger
+print(umap_liger)
 cat("\n")
 cat("\n \n")
 ```

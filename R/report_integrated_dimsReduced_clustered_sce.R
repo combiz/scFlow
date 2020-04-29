@@ -4,6 +4,7 @@
 #' @param sce a SingleCellExperiment object
 #' @param report_folder_path folder path to save the report
 #' @param report_file filename for report (without an extension)
+#' @param categorical_covariates list of categorical variables
 #' 
 #' @return sce SingleCellExperiment object annotated with reducedDims
 #'
@@ -49,9 +50,7 @@ report_integrated_dimsReduced_clustered_sce <- function(sce,
   
   cli::cli_text("Generating Dataset Integration, Dimension Reduction, and Clustering report...")
   rmarkdown::render(
-    system.file(
-      "rmarkdown/templates/integrate_reduceDims_cluster/skeleton/skeleton.Rmd",
-      package = "scFlow"),
+    "~/ZeiselSCFLOW/report/skeleton.Rmd",
     params = list(
       metadata_path = metadata_tmp_path,
       categorical_covariates = categorical_covariates

@@ -16,7 +16,7 @@
 #'
 #' @export
 
-integrate_sce_test2 <- function(sce,
+integrate_sce <- function(sce,
                                 method = "Liger",
                                 ...) {
   
@@ -39,7 +39,7 @@ integrate_sce_test2 <- function(sce,
     
     # Preprocess with Liger
     cli::cli_h3("Pre-processing SingleCellExperiment for LIGER")
-    ligerex <- do.call(liger_preprocess_test2, c(list(sce = sce), fargs))
+    ligerex <- do.call(liger_preprocess, c(list(sce = sce), fargs))
     sce@metadata$liger_params$liger_preprocess <-
       ligerex@parameters$liger_params$liger_preprocess
     sce@metadata$liger_var.genes <-
