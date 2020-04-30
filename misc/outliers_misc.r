@@ -48,7 +48,12 @@ table(badsce$cluster_celltype)
 table(badsce_ct$cluster_celltype)
 
 
-
+z <- scater::isOutlier(
+  sce$total_counts,
+  nmads = 4.5,
+  type = "both",
+  log = TRUE)
+z
 
 data.frame(cluster_celltype = sce$cluster_celltype, pc_mito = sce$pc_mito) %>%
   group_by(cluster_celltype) %>%

@@ -1,0 +1,121 @@
+<div class = "row">
+<div class = "col-md-4">
+### Post-QC Summary
+<ul class="list-group">
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    Cells
+    <span class="badge badge-success badge-pill">
+    `r prettyNum(metadata$qc_summary$qc_cells_n_cells_passed, big.mark = ",")`
+    </span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    Genes
+    <span class="badge badge-success badge-pill">
+    `r prettyNum(metadata$qc_summary$qc_genes_n_genes_passed, big.mark = ",")`
+    </span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    Total counts (M)
+    <span class="badge badge-primary badge-pill">
+    `r metadata$qc_summary$qc_cells_median_total_counts`
+    </span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    Total features (M)
+    <span class="badge badge-primary badge-pill">
+    `r metadata$qc_summary$qc_cells_median_total_features_by_counts`
+    </span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    Mitochondrial counts (M%)
+    <span class="badge badge-primary badge-pill">
+    `r scales::percent(metadata$qc_summary$qc_cells_median_pc_mito, accuracy = 0.01)`
+    </span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    Ribosomal counts (M%)
+    <span class="badge badge-primary badge-pill">
+    `r scales::percent(metadata$qc_summary$qc_cells_median_pc_ribo, accuracy = 0.01)`
+    </span>
+  </li>
+</ul>
+<p><small>* M is the median for QC-passed cells</small></p>
+</div>
+
+<div class = "col-md-4">
+### Key Parameters
+<ul class="list-group">
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    Library size
+    <span class="badge badge-primary badge-pill">
+    `r sprintf("%s – %s", metadata$qc_params$min_library_size, prettyNum(metadata$qc_params$max_library_size, big.mark = ","))`
+    </span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    Features/Genes
+    <span class="badge badge-primary badge-pill">
+    `r sprintf("%s – %s", metadata$qc_params$min_features, prettyNum(metadata$qc_params$max_features, big.mark = ","))`
+    </span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    Max. Mito. Counts
+    <span class="badge badge-primary badge-pill">
+    `r scales::percent(metadata$qc_params$max_mito, accuracy = 0.1)`
+    </span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    Ribo. Counts
+    <span class="badge badge-primary badge-pill">
+    `r sprintf("%s – %s", scales::percent(metadata$qc_params$min_ribo, accuracy = 0.1), scales::percent(metadata$qc_params$max_ribo, accuracy = 0.1))`
+    </span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    Drop Mito. Genes
+    <span class="badge badge-primary badge-pill">
+    `r ifelse(metadata$qc_params$drop_mito, "Yes", "No")`
+    </span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    Drop Ribo. Genes
+    <span class="badge badge-primary badge-pill">
+    `r ifelse(metadata$qc_params$drop_ribo, "Yes", "No")`
+    </span>
+  </li>
+</ul>
+</div>
+
+<div class = "col-md-4">
+### Steps
+<div class="list-group">
+  <a href="#" class="list-group-item list-group-item-action">
+    Metadata Imported 
+    <span class="badge badge-pill badge-light">
+    ✔️
+    </span>
+  </a>
+  <a href="#" class="list-group-item list-group-item-action">
+    Ambient RNA / EmptyDrops Run
+    <span class="badge badge-light">
+    `r ifelse(metadata$scflow_steps$emptydrops_annotated, "✔️", "❌")`
+    </span>
+  </a>
+  <a href="#" class="list-group-item list-group-item-action">
+    Thresholding
+    <span class="badge badge-light">
+    ✔️
+    </span>️
+  </a>
+  <a href="#" class="list-group-item list-group-item-action">
+    Gene/Cell QC Metric Annotation
+    <span class="badge badge-light">
+    ✔️
+    </span>️
+  </a>
+  <a href="#" class="list-group-item list-group-item-action">
+    Doublets/Multiplets Identified
+    <span class="badge badge-light">
+    `r ifelse(metadata$scflow_steps$singlets_annotated, sprintf("(%s) ✔️" , metadata$scflow_steps$singlets_method), "❌")`
+    </span>
+  </a>
+</div>
+</div>

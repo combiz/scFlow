@@ -38,8 +38,10 @@
 #'
 #' @param sce a SingleCellExperiment object
 #' @param min_library_size the minimum number of counts per cell
+#' @param max_library_size the maximum number of counts per cell or "adaptive"
 #' @param min_features the minimum number of features per cell (i.e. the minimum
 #'   number of genes with >0 counts)
+#' @param max_features the maximum number of features per cell or "adaptive"
 #' @param max_mito the maximum proportion of counts mapping to
 #'   mitochondrial genes (0 - 1)
 #' @param min_ribo the minimum proportion of counts mapping to
@@ -54,7 +56,6 @@
 #' @param ensembl_mapping_file a local tsv file with ensembl_gene_id and
 #'   additional columns for mapping ensembl_gene_id to gene info.  If
 #'   not provided, the biomaRt db is queried (slower).
-#' @param annotate_ed optionally skip emptyDrops annotation with FALSE
 #' @param annotate_genes optionally skip gene annotation with FALSE
 #' @param annotate_cells optionally skip cell annotation with FALSE
 #'
@@ -71,7 +72,9 @@
 #' @export
 annotate_sce <- function(sce,
                          min_library_size = 300,
+                         max_library_size = "adaptive",
                          min_features = 100,
+                         max_features = "adaptive",
                          max_mito = 0.10,
                          min_ribo = 0.00,
                          max_ribo = 1.00,
@@ -82,6 +85,7 @@ annotate_sce <- function(sce,
                          drop_ribo = FALSE,
                          annotate_genes = TRUE,
                          annotate_cells = TRUE,
+                         nmads = 3.5,
                          ensembl_mapping_file = NULL) {
 
   if (class(sce) != "SingleCellExperiment") {
@@ -102,6 +106,11 @@ annotate_sce <- function(sce,
   qc_params_l <- purrr::set_names(qc_params_l, qc_params)
   sce@metadata[["qc_params"]] <- qc_params_l
 
+  if(("adaptive" %in% sce@metadata$qc_params) &
+     !sce@metadata$scflow_steps$emptydrops_annotated) {
+    cli::cli_alert_warning("To improve adaptive thresholding, first run emptyDrops!")
+  }
+
   if (annotate_genes) {
     sce <- annotate_sce_genes(
       sce,
@@ -114,12 +123,15 @@ annotate_sce <- function(sce,
     sce <- annotate_sce_cells(
       sce,
       min_library_size = min_library_size,
+      max_library_size = max_library_size,
       min_features = min_features,
+      max_features = max_features,
       max_mito = max_mito,
       min_ribo = min_ribo,
       max_ribo = max_ribo,
       min_counts = min_counts,
-      min_cells = min_cells
+      min_cells = min_cells,
+      nmads = nmads
     )
   } else {
     if (!annotate_genes) {
@@ -187,7 +199,6 @@ annotate_sce <- function(sce,
     sum(SummarizedExperiment::rowData(sce)$qc_metric_is_ribo, na.rm = T)
   genes_qc$n_unmapped <-
     sum(!SummarizedExperiment::rowData(sce)$qc_metric_ensembl_mapped, na.rm = T)
-
   genes_qc$n_expressive <- sum(
     SummarizedExperiment::rowData(sce)$qc_metric_is_expressive, na.rm = T)
 
@@ -215,22 +226,63 @@ annotate_sce <- function(sce,
 
   cells_qc <- list()
   cells_qc$n_cells <- dim(sce)[[2]]
-  cells_qc$n_library_size_passed <-
+  # min/max counts
+  cells_qc$n_min_library_size_passed <-
     sum(sce$qc_metric_min_library_size, na.rm = T)
-  cells_qc$n_library_size_failed <-
+  cells_qc$n_min_library_size_failed <-
     sum(!sce$qc_metric_min_library_size, na.rm = T)
+  cells_qc$n_max_library_size_passed <-
+    sum(sce$qc_metric_max_library_size, na.rm = T)
+  cells_qc$n_max_library_size_failed <-
+    sum(!sce$qc_metric_max_library_size, na.rm = T)
+  # counts summary
+  cells_qc$median_total_counts <-
+    median(sce$total_counts[sce$qc_metric_passed], na.rm = T)
+  cells_qc$mean_total_counts <-
+    mean(sce$total_counts[sce$qc_metric_passed], na.rm = T)
+  cells_qc$sd_total_counts <-
+    sd(sce$total_counts[sce$qc_metric_passed], na.rm = T)
+  # min/max features
   cells_qc$n_min_features_passed <-
     sum(sce$qc_metric_min_features, na.rm = T)
   cells_qc$n_min_features_failed <-
     sum(!sce$qc_metric_min_features, na.rm = T)
+  cells_qc$n_max_features_passed <-
+    sum(sce$qc_metric_max_features, na.rm = T)
+  cells_qc$n_max_features_failed <-
+    sum(!sce$qc_metric_max_features, na.rm = T)
+  # features summary
+  cells_qc$median_total_features_by_counts <-
+    median(sce$total_features_by_counts[sce$qc_metric_passed], na.rm = T)
+  cells_qc$mean_total_features_by_counts <-
+    mean(sce$total_features_by_counts[sce$qc_metric_passed], na.rm = T)
+  cells_qc$sd_total_features_by_counts <-
+    sd(sce$total_features_by_counts[sce$qc_metric_passed], na.rm = T)
+  # pc mito
   cells_qc$n_mito_fraction_passed <-
     sum(sce$qc_metric_pc_mito_ok, na.rm = T)
   cells_qc$n_mito_fraction_failed <-
     sum(!sce$qc_metric_pc_mito_ok, na.rm = T)
+  # pc mito summary
+  cells_qc$median_pc_mito <-
+    median(sce$pc_mito[sce$qc_metric_passed], na.rm = T)
+  cells_qc$mean_pc_mito <-
+    mean(sce$pc_mito[sce$qc_metric_passed], na.rm = T)
+  cells_qc$sd_pc_mito <-
+    sd(sce$pc_mito[sce$qc_metric_passed], na.rm = T)
+  #pc ribo
   cells_qc$n_ribo_fraction_passed <-
     sum(sce$qc_metric_pc_ribo_ok, na.rm = T)
   cells_qc$n_ribo_fraction_failed <-
     sum(!sce$qc_metric_pc_ribo_ok, na.rm = T)
+  # pc ribo summary
+  cells_qc$median_pc_ribo <-
+    median(sce$pc_ribo[sce$qc_metric_passed], na.rm = T)
+  cells_qc$mean_pc_ribo <-
+    mean(sce$pc_ribo[sce$qc_metric_passed], na.rm = T)
+  cells_qc$sd_pc_ribo <-
+    sd(sce$pc_ribo[sce$qc_metric_passed], na.rm = T)
+  # overall cells
   cells_qc$n_cells_passed <-
     sum(sce$qc_metric_passed, na.rm = T)
   cells_qc$n_cells_failed <-
@@ -369,6 +421,21 @@ annotate_sce <- function(sce,
           legend.text=element_text(size=10),
           plot.title = element_text(size = 18, hjust = 0.5))
 
+  if (!is.null(sce@metadata$qc_params$max_library_size)) {
+    p <- p +
+      geom_vline(
+      xintercept = sce@metadata$qc_params$max_library_size,
+      linetype = "solid",
+      color = "red")
+  }
+  if (!is.null(sce@metadata$qc_params$max_features)) {
+    p <- p +
+      geom_hline(
+        yintercept = sce@metadata$qc_params$max_features,
+        linetype = "solid",
+        color = "red")
+  }
+
   sce@metadata$qc_plots$number_genes_vs_count_depth <- p
   sce@metadata$qc_plot_data$number_genes_vs_count_depth <- dt
 
@@ -405,6 +472,14 @@ annotate_sce <- function(sce,
           axis.title=element_text(size=16),
           legend.text=element_text(size=10),
           plot.title = element_text(size = 18, hjust = 0.5))
+
+  if (!is.null(sce@metadata$qc_params$max_library_size)) {
+    p <- p +
+      geom_vline(
+        xintercept = sce@metadata$qc_params$max_library_size,
+        linetype = "solid",
+        color = "red")
+  }
 
   sce@metadata$qc_plots$count_depth_histogram <- p
   sce@metadata$qc_plot_data$count_depth_histogram <- dt
@@ -444,6 +519,14 @@ annotate_sce <- function(sce,
           legend.text=element_text(size=10),
           plot.title = element_text(size = 18, hjust = 0.5))
 
+  if (!is.null(sce@metadata$qc_params$max_features)) {
+    p <- p +
+      geom_vline(
+        xintercept = sce@metadata$qc_params$max_features,
+        linetype = "solid",
+        color = "red")
+  }
+
   sce@metadata$qc_plots$number_genes_histogram <- p
   sce@metadata$qc_plot_data$number_genes_histogram <- dt
 
@@ -459,7 +542,7 @@ annotate_sce <- function(sce,
 
   dt <- dplyr::as_tibble(data.frame(
     pc_mito = sce$pc_mito)) %>%
-    filter(pc_mito > 0 )
+    dplyr::filter(pc_mito > 0)
 
   p <- ggplot2::ggplot(dt) +
     geom_histogram(aes(x = pc_mito), bins = 100) +
@@ -491,7 +574,7 @@ annotate_sce <- function(sce,
 
   dt <- dplyr::as_tibble(data.frame(
     pc_ribo = sce$pc_ribo)) %>%
-    filter(pc_ribo > 0 )
+    dplyr::filter(pc_ribo > 0)
 
   p <- ggplot2::ggplot(dt) +
     geom_histogram(aes(x = pc_ribo), bins = 100) +
