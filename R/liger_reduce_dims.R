@@ -124,32 +124,34 @@ liger_reduce_dims <- function(ligerex,
     "print_mod",
     "print_align_summary"
   )]
-  
   ligerex@parameters$liger_params$liger_reduce_dims <- fargs
-  
   ### Factorization
-  
   # Perform iNMF on scaled datasets
   cli::cli_alert("Performing integrative non-negative matrix factorization (iNMF)")
   ligerex <- liger::optimizeALS(ligerex,
                                 k = k, lambda = lambda, thresh = thresh,
-                                max.iters = max_iters, nrep = nrep, H.init = h_init, W.init = w_init,
-                                V.init = v_init, rand.seed = rand_seed, print.obj = print_obj
+                                max.iters = max_iters, nrep = nrep,
+                                H.init = h_init, W.init = w_init,
+                                V.init = v_init, rand.seed = rand_seed,
+                                print.obj = print_obj
   )
-  
   ### Quantile Alignment/Normalization
-  
+
   # Quantile align (normalize) factor loadings
   cli::cli_alert("Normalizing factor loadings")
   ligerex <- liger::quantileAlignSNF(ligerex,
-                                     knn_k = knn_k, k2 = k2, prune.thresh = prune_thresh,
-                                     ref_dataset = ref_dataset, min_cells = min_cells, quantiles = quantiles,
+                                     knn_k = knn_k, k2 = k2,
+                                     prune.thresh = prune_thresh,
+                                     ref_dataset = ref_dataset,
+                                     min_cells = min_cells,
+                                     quantiles = quantiles,
                                      nstart = nstart, resolution = resolution,
                                      dims.use = seq_len(ncol(ligerex@H[[1]])),
                                      dist.use = dist_use, center = center,
-                                     small.clust.thresh = small_clust_thresh, id.number = id_number,
-                                     print.mod = print_mod, print.align.summary = print_align_summary
+                                     small.clust.thresh = small_clust_thresh,
+                                     id.number = id_number,
+                                     print.mod = print_mod,
+                                     print.align.summary = print_align_summary
   )
-  
   return(ligerex)
 }
