@@ -39,7 +39,7 @@ integrate_sce <- function(sce,
       ligerex@parameters$liger_params$liger_preprocess
     sce@metadata$liger_var.genes <-
       ligerex@var.genes
-    sce@metadata$var.genes_per_dataset <-
+    sce@metadata$dataset_integration$var.genes_per_dataset <-
       ligerex@agg.data$var.genes_per_dataset
     # Reduce dimensions with Liger
     cli::cli_h3("Computing integrated factors with LIGER")
