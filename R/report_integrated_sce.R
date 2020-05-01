@@ -18,10 +18,10 @@
 #' @importFrom formattable formattable icontext
 #' @export
 #'
-report_integrated_dimsReduced_clustered_sce <- function(sce,
-                                                        report_folder_path = getwd(),
-                                                        report_file = "integrate_reduceDims_cluster_report_scflow",
-                                                        categorical_covariates = list()) {
+report_integrated_sce <- function(sce,
+                                  report_folder_path = getwd(),
+                                  report_file = "integrate_reduceDims_cluster_report_scflow",
+                                  categorical_covariates = list()) {
   
   
   if(!class(sce) == "SingleCellExperiment"){
