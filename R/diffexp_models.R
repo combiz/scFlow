@@ -347,10 +347,6 @@ perform_de <- function(sce,
     results_l[[element_name]] <- results
   }
 
-  merged_name <- paste0(fargs$ref_class, "_Merged_Results")
-  message("Merging results")
-  results_l[[merged_name]] <- Reduce(rbind, results_l)
-
   message("Done!  Returning results")
 
   return(results_l)
