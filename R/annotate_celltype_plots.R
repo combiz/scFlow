@@ -10,6 +10,10 @@ annotate_celltype_plots <- function(sce,
   sce@metadata$celltype_annotations <- list()
   sce@metadata$celltype_annotations$reddim_plots <- list()
   sce@metadata$celltype_annotations$prop_plots <- list()
+  sce@metadata$celltype_annotations$metric_plots <- list()
+
+  sce@metadata$celltype_annotations$params <- c(as.list(environment()), list(...))
+  sce@metadata$celltype_annotations$params$sce <- NULL
 
   # input validation checks
   var_present <- purrr::map_lgl(
@@ -75,38 +79,46 @@ annotate_celltype_plots <- function(sce,
     )
   }
 
-  # geom_col relative and absolute plots
-  for (group_by_var in unique(c(facet_vars, unique_id_var, "All"))) {
-    sce <- do.call(
-      .append_celltype_prop_plots_sce,
-      list(sce = sce,
-           cluster_var = cluster_var,
-           celltype_var = celltype_var,
-           unique_id_var = unique_id_var,
-           facet_var = facet_var,
-           group_by_var = group_by_var)
-    )
+  # proportion of cell types (rel/abs) by groups
+  for (var in c(cluster_var, celltype_var)) {
+    for (group_by_var in unique(c(facet_vars, unique_id_var, "All"))) {
+      sce <- do.call(
+        .append_celltype_prop_plots_sce,
+        list(sce = sce,
+             cluster_var = cluster_var,
+             celltype_var = var,
+             unique_id_var = unique_id_var,
+             facet_var = facet_var,
+             group_by_var = group_by_var)
+      )
+      sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[var]] <-
+        lapply(sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[var]], .clean_ggplot_plot_env)
+    }
   }
 
-  for (metric_var in metric_vars) {
-    sce <- do.call(
-      .append_celltype_metric_plots_sce,
-      list(sce = sce,
-           cluster_var = cluster_var,
-           celltype_var = celltype_var,
-           unique_id_var = unique_id_var,
-           facet_var = facet_var,
-           group_by_var = group_by_var,
-           metric_var = metric_var)
-    )
+
+  for (var in c(cluster_var, celltype_var)) {
+    for (metric_var in metric_vars) {
+      sce <- do.call(
+        .append_celltype_metric_plots_sce,
+        list(sce = sce,
+             celltype_var = var,
+             unique_id_var = unique_id_var,
+             facet_var = facet_var,
+             group_by_var = group_by_var,
+             metric_var = metric_var)
+      )
+      sce@metadata$celltype_annotations$metric_plots[[metric_var]][[var]] <-
+        lapply(sce@metadata$celltype_annotations$metric_plots[[metric_var]][[var]], .clean_ggplot_plot_env)
+    }
   }
 
+  if (is.null(sce@metadata$scflow_steps) sce@metadata$scflow_steps <- list())
+  sce@metadata$scflow_steps$celltype_report_plots_annotated <- TRUE
 
   return(sce)
 
 }
-
-
 
 .append_celltype_prop_plots_sce <- function(...) {
 
@@ -141,6 +153,7 @@ annotate_celltype_plots <- function(sce,
                    axis.title = ggplot2::element_text(size = 18),
                    legend.text = ggplot2::element_text(size = 10)
     )
+  #p$plot_env$p <- NULL
 
   # relative counts (pc)
   p2 <- ggplot2::ggplot(dt,
@@ -160,17 +173,13 @@ annotate_celltype_plots <- function(sce,
                    axis.title = ggplot2::element_text(size = 18),
                    legend.text = ggplot2::element_text(size = 10)
     )
+  #p2$plot_env$p <- NULL
+  #p2$plot_env$p2 <- NULL
 
-  results_l <- list()
-  results_l[[group_by_var]] <- list()
-  results_l[[group_by_var]]$celltype_prop_plots <- list()
-
-  results_l[[group_by_var]]$celltype_prop_data <- dt
-  results_l[[group_by_var]]$celltype_prop_plots$absolute_cell_numbers <- p
-  results_l[[group_by_var]]$celltype_prop_plots$relative_cell_numbers <- p2
-
-  sce@metadata$celltype_annotations$prop_plots <- c(
-    sce@metadata$celltype_annotations$prop_plots, results_l)
+  sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[celltype_var]] <- list()
+  sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[celltype_var]]$prop_data <- dt
+  sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[celltype_var]]$absolute_cell_numbers <- p
+  sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[celltype_var]]$relative_cell_numbers <- p2
 
   if(group_by_var == "All"){ sce$All <- NULL }
 
@@ -178,30 +187,25 @@ annotate_celltype_plots <- function(sce,
 
 }
 
-.get_d_palette <- function(pal_name = "ggsci::nrc_npg", n_colours = NULL) {
-  palette_choice <- paletteer::paletteer_d("ggsci::nrc_npg")
-  getPalette <- grDevices::colorRampPalette(palette_choice)
-  if (n_colours <= length(palette_choice)) {
-    pal_values <- palette_choice[1:n_colours]
-  } else {
-    pal_values <- getPalette(n_colours)
+.clean_ggplot_plot_env <- function(p,
+                                   drop_classes = c("SingleCellExperiment",
+                                                    "ggplot")) {
+  if ("ggplot" %in% class(p)) {
+    env_classes <- lapply(p$plot_env, class)
+    drop_idx <- purrr::map_lgl(env_classes, ~ any(drop_classes %in% .))
+    drop_names <- names(drop_idx)
+    for (drop_name in drop_names) {
+      p$plot_env[[eval(drop_name)]] <- NULL
+    }
+    p$plot_env$... <- NULL
   }
-  return(pal_values)
+  return(p)
 }
-
-
-# plot_reduced_dim(sce, feature_dim = "Cluster", reduced_dim = "UMAP", highlight_feature = NA, label_clusters = TRUE)
-library(magrittr)
-sce$age <- as.factor(sce$age)
-sce$Cluster <- as.factor(sce$Cluster)
-x <- annotate_celltype_plots(sce, cluster_var = "Cluster", unique_id_var = "individual", facet_var = c("age", "sex", "group"), metric_vars = c("pc_mito", "total_counts", "total_features_by_counts"))
 
 .append_celltype_metric_plots_sce <- function(...) {
 
   # metric_var is pc_mito, total_counts, etc.
   list2env(list(...), environment())
-
-  crit_z <- qnorm(1-.05/2)
 
   dt <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
     dplyr::group_by(.data[[celltype_var]]) %>%
@@ -209,8 +213,7 @@ x <- annotate_celltype_plots(sce, cluster_var = "Cluster", unique_id_var = "indi
       mean = mean(.data[[metric_var]]),
       sd = sd(.data[[metric_var]]),
       se = sd(.data[[metric_var]]) / sqrt(dplyr::n()),
-      median = median(.data[[metric_var]]),
-      outlier = scale(.data[[metric_var]]) < -crit_z | scale(.data[[metric_var]]) > crit_z
+      median = median(.data[[metric_var]])
     )
 
   dt[[celltype_var]] <- forcats::fct_reorder(dt[[celltype_var]], -dt$mean)
@@ -236,17 +239,29 @@ x <- annotate_celltype_plots(sce, cluster_var = "Cluster", unique_id_var = "indi
                    legend.text = ggplot2::element_text(size = 10)
     )
 
-  results_l <- list()
-  results_l[[metric_var]] <- list()
-
-  results_l[[metric_var]]$celltype_metric_data <- dt
-  results_l[[metric_var]]$celltype_metric_plot <- p
-
-  sce@metadata$celltype_annotations$metric_plots <- c(
-    sce@metadata$celltype_annotations$metric_plots, results_l)
+  sce@metadata$celltype_annotations$metric_plots[[metric_var]][[celltype_var]] <- list()
+  sce@metadata$celltype_annotations$metric_plots[[metric_var]][[celltype_var]]$metric_data <- dt
+  sce@metadata$celltype_annotations$metric_plots[[metric_var]][[celltype_var]]$metric_plot <- p
 
   return(sce)
 
 }
+
+
+.get_d_palette <- function(pal_name = "ggsci::nrc_npg", n_colours = NULL) {
+  palette_choice <- paletteer::paletteer_d("ggsci::nrc_npg")
+  getPalette <- grDevices::colorRampPalette(palette_choice)
+  if (n_colours <= length(palette_choice)) {
+    pal_values <- palette_choice[1:n_colours]
+  } else {
+    pal_values <- getPalette(n_colours)
+  }
+  return(pal_values)
+}
+
+library(magrittr)
+sce$age <- as.factor(sce$age)
+sce$Cluster <- as.factor(sce$Cluster)
+x <- annotate_celltype_plots(sce, cluster_var = "Cluster", unique_id_var = "individual", facet_var = c("age", "sex", "group"), metric_vars = c("pc_mito", "total_counts", "total_features_by_counts"))
 
 

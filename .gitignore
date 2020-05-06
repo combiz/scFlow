@@ -5,4 +5,6 @@
 inst/doc
 doc
 Meta
-CellTypeData_ctd.rda
+*·rda
+*.rds
+*.qs
