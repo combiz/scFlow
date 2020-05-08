@@ -1,0 +1,63 @@
+---
+title: "<b>scFlow</b> - Cell-type and Cluster Overview Report"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    theme: "flatly"
+    toc: false
+    fig_caption: true
+    keep_md: false
+    css: style.css
+    includes:
+      after_body: footer.html
+params:
+  metadata_path: false
+---
+
+```{r setup, results='hide', include=FALSE}
+library(plotly)
+library(DT)
+library(dplyr)
+library(utils)
+library(formattable)
+library(htmltools)
+library(knitr)
+
+knitr::opts_chunk$set(echo = FALSE)
+
+knitr::knit_hooks$set(wrap = function(before, options, envir){
+  if (before){
+    paste0('<', options$wrap, ' align="center">')
+  } else {
+    paste0('</', options$wrap, '>')
+  }
+})
+```
+
+```{r load_data, results='hide', include=FALSE}
+#metadata <- readRDS(params$metadata_path)
+#metadata <- readRDS("/home/ckhozoie/Documents/scFlow/scemetadata_newest.rds")
+metadata <- qs::qread("/home/ckhozoie/Documents/scFlow/test.qs")
+```
+
+## Dimensionality Reduction Plots
+### Cell-types
+This two-dimensional embedding of cells should illustrate separation of cell-types into distinct clusters.  An optimal plot should demonstrate separation between different cell-types; if not, it may be useful to manually re-annotate cell-types with reference to cell-type associated marker genes.
+<div class = "zoomfig">
+```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: %s plot of cell-types.</b> Each cell is coloured by annotated cell-type.", metadata$celltype_annotations$params$input_reduced_dim)}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$celltype_annotations$reddim_plots$celltype_var
+```
+</div>
+
+### Clusters
+Optimal clustering parameters should provide a level of granularity sufficient to identify minority cell-types as distinct numbered clusters.  If any cluster encompasses an adjacent small, well-separated cluster, the clustering parameters should be revised to allow for the annotation of the potential minority cell-type.
+<div class = "zoomfig">
+```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: %s plot of clusters.</b> Each cell is coloured by annotated cluster.", metadata$celltype_annotations$params$input_reduced_dim)}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$celltype_annotations$reddim_plots$cluster_var
+```
+</div>
+
+
+<br>scFlow v`r utils::packageVersion("scFlow")` -- `r Sys.time()`
