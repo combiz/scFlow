@@ -108,6 +108,8 @@ use_package("batchelor")
 use_package("DelayedMatrixStats")
 use_package("limma")
 use_package("Matrix.utils")
+use_package("grDevices")
+use_package("ggridges")
 
 use_vignette("basic-qc", title = "Guided tutorial for sample quality control")
 

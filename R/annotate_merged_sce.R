@@ -6,7 +6,6 @@
 #' @param unique_id_var the colData variable identifying unique samples
 #' @param facet_vars the colData variable(s) to facet/subset by
 #' @param outlier_vars the colData variable(s) to apply adaptive thresholding
-#' @param outlier_mads the minimum median absolute deviations for thresholding
 #'
 #' @return sce a annotated SingleCellExperiment object
 #'
@@ -26,8 +25,7 @@ annotate_merged_sce <- function(sce,
                                 unique_id_var = "manifest",
                                 facet_vars = NULL,
                                 outlier_vars = c("total_features_by_counts",
-                                                 "total_counts"),
-                                outlier_mads = 3) {
+                                                 "total_counts")) {
 
   assertthat::assert_that(length(unique(sce[[unique_id_var]])) >= 3,
                                  msg = "A minimum of 3 samples required.")

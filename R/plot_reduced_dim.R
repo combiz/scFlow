@@ -75,9 +75,9 @@ plot_reduced_dim <- function(sce,
 
   if (is.double(dt$feature_dim) | is.integer(dt$feature_dim)){
     scale_colours <- ggplot2::scale_colour_gradientn(
-      limits = c(0, mean(feature_dim)),
-      colours=c("grey80", "red"),
-      na.value="red"
+      limits = c(0, length(feature_dim)),
+      colours = c("grey80", "red"),
+      na.value = "red"
     )
 
   } else {

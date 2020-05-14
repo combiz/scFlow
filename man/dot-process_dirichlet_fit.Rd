@@ -21,6 +21,11 @@ Process the fit model to generate an accessible summary data.frame
 }
 \seealso{
 Other helper: 
+\code{\link{.append_cell_metric_plots_sce}()},
+\code{\link{.append_cell_prop_plots_sce}()},
+\code{\link{.clean_ggplot_plot_env}()},
+\code{\link{.fancy_scientific}()},
+\code{\link{.get_d_palette}()},
 \code{\link{.model_fisher_celltype}()},
 \code{\link{.plot_dirichlet_results}()},
 \code{\link{.plot_unique_id_var}()},

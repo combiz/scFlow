@@ -1,0 +1,61 @@
+```{r results='asis', echo=FALSE}
+  plot_caption <- sprintf(
+    "<b>Figure: %s by individual sample (%s).</b>", 
+    plot_var, metadata$merge_qc_params$unique_id_var)
+```
+
+<div class = "basicfig">
+```{r results='asis', fig.align="center", fig.width=10, fig.height=4.5, fig.cap = plot_caption,  echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+if (plot_var == plot) {
+  #cat("<div class=\"border border-dark\">")
+  cat(sprintf("<a name=\"%s\"></a>", plot_var))
+  cat(sprintf("<h2 class=\"display-3\">%s</h2>", plot_var))
+} else {
+  cat(sprintf("<h3>%s</h3>", plot))
+}
+print(metadata$merged_plots[[plot_var]][[plot]])
+```
+</div>
+
+<div class = "formattable">
+```{r results='asis', echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+cat(paste0(
+  "<p class=\"caption\">", sub("Figure", "Table", plot_caption), "</p>"))
+
+crit_z_2sd <- qnorm(1-.05/2)
+crit_z_3sd <- qnorm(1-.003/2)
+
+div(show_plot(print(formattable::formattable(
+  metadata$merged_plots_data[[plot_var]][[plot]], 
+     list(
+       "mean_avg" = color_bar("#71CA97"), 
+       "stdev_mean" = formatter("span", style = ~ style(color = "grey")),
+       "median_avg" = color_bar("#71CA97"),
+       "mad" = formatter("span", style = ~ style(color = "grey")),
+        "z" = formatter(
+          "span", 
+          x ~ formattable::icontext(
+            ifelse(abs(x) <= crit_z_2sd, "ok", ifelse(abs(x) >= crit_z_3sd, "remove", "exclamation-sign")),
+            ifelse(abs(x) <= crit_z_2sd, "OK", ifelse(abs(x) >= crit_z_3sd, "Alert! (>3σ)", "Warning! (>2σ)"))),
+            style = x ~ style(
+              color = ifelse(abs(x) <= crit_z_2sd, "green", ifelse(abs(x) >= crit_z_3sd, "red", "orange")))
+        )),
+  col.names = metadata$merged_plots_data[[plot_var]][[plot]] %>% dplyr::rename(QC = z) %>% colnames()
+       ))))
+```
+</div>
+
+```{r results='asis', echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+if (plot == tail(names(metadata$merged_plots[[plot_var]]), 1)) {
+  #cat("</div>")
+  cat("<hr>")
+}
+```
+
+

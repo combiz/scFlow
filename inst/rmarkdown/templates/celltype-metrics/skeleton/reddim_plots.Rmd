@@ -1,0 +1,8 @@
+### `r Hmisc::capitalize(plot_var)`
+
+<div class = "zoomfig">
+```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: %s plot of cells by %s.</b>", metadata$celltype_annotations$params$input_reduced_dim, plot_var)}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$celltype_annotations$reddim_plots[[plot_var]]
+```
+</div>

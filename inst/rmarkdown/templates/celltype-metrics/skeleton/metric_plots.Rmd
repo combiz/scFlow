@@ -1,0 +1,20 @@
+### `r metric_var`
+
+<div class = "row">
+<div class = "col-md-6">
+<div class = "basicfig">
+```{r, fig.align="center", fig.width=4.5, fig.height=6, fig.cap = sprintf("<b>Figure: Average %s by cell-type</b>.  Bars represent mean average +/- SEM.", metric_var)}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$celltype_annotations$metric_plots[[metric_var]][[celltype_var]]$metric_plot
+```
+</div>
+</div>
+<div class = "col-md-6">
+<div class = "basicfig">
+```{r, fig.align="center", fig.width=4.5, fig.height=6, fig.cap = sprintf("<b>Figure: Distributions of %s by cell-type</b>.", metric_var), message=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$celltype_annotations$metric_plots[[metric_var]][[celltype_var]]$ridge_plot
+```
+</div>
+</div>
+</div>

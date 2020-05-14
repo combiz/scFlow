@@ -9,8 +9,7 @@ annotate_merged_sce(
   plot_vars = c("total_features_by_counts", "total_counts", "pc_mito", "pc_ribo"),
   unique_id_var = "manifest",
   facet_vars = NULL,
-  outlier_vars = c("total_features_by_counts", "total_counts"),
-  outlier_mads = 3
+  outlier_vars = c("total_features_by_counts", "total_counts")
 )
 }
 \arguments{
@@ -23,8 +22,6 @@ annotate_merged_sce(
 \item{facet_vars}{the colData variable(s) to facet/subset by}
 
 \item{outlier_vars}{the colData variable(s) to apply adaptive thresholding}
-
-\item{outlier_mads}{the minimum median absolute deviations for thresholding}
 }
 \value{
 sce a annotated SingleCellExperiment object
@@ -35,6 +32,7 @@ Annotate a post-merge SingleCellExperiment with plots
 \seealso{
 Other annotation functions: 
 \code{\link{.preprocess_seurat_object}()},
+\code{\link{annotate_celltype_metrics}()},
 \code{\link{annotate_sce_cells}()},
 \code{\link{annotate_sce_genes}()},
 \code{\link{annotate_sce}()},
@@ -45,6 +43,7 @@ Other annotation functions:
 \code{\link{map_ensembl_gene_id}()},
 \code{\link{merge_sce}()},
 \code{\link{read_metadata}()},
+\code{\link{report_celltype_metrics}()},
 \code{\link{report_celltype_model}()},
 \code{\link{report_merged_sce}()},
 \code{\link{report_qc_sce}()},

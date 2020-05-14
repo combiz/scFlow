@@ -1,6 +1,6 @@
 Package: scFlow
 Title: A Single-Cell/Nuclei Analysis Toolkit
-Version: 0.4.6
+Version: 0.4.7
 Authors@R: 
     c(
     person(given = "Combiz",
@@ -100,7 +100,8 @@ Imports:
     liger,
     DropletUtils,
     formattable,
-    qs
+    qs,
+    ggridges
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,
