@@ -267,6 +267,7 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
     enrichment_result$metadata$enrichment_database <- enrichment_database
   }
 
+
   return(enrichment_result)
 }
 

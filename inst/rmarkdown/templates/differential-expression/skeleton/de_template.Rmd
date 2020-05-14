@@ -38,5 +38,10 @@ metadata_plot
 
 ```{r, results = 'asis', warning=FALSE}
 metadata_table <- metadata
+metadata_table$pval <- as.numeric(format(metadata_table$pval, format = "e", digits = 2))
+metadata_table$logFC <- as.numeric(format(metadata_table$logFC, format = "e", digits = 2))
+metadata_table$ci.hi <- as.numeric(format(metadata_table$ci.hi, format = "e", digits = 2))
+metadata_table$ci.lo <- as.numeric(format(metadata_table$ci.lo, format = "e", digits = 2))
+metadata_table$padj <- as.numeric(format(metadata_table$padj, format = "e", digits = 2))
 datatable(metadata_table, rownames = FALSE, options = list(pageLength = 10, scrollX=T, autoWidth = TRUE), escape = FALSE )
 ```
