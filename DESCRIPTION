@@ -100,7 +100,8 @@ Imports:
     liger,
     DropletUtils,
     formattable,
-    qs
+    qs,
+    ggridges
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,

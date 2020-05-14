@@ -1,0 +1,16 @@
+### `r Hmisc::capitalize(group_by_var)`
+
+<div class = "row">
+<div class = "col-md-6">
+```{r, fig.align="center", fig.width=4.5, fig.height=6, fig.cap = sprintf("<b>Figure: Absolute cell-type numbers by %s.</b>", group_by_var)}
+knitr::opts_chunk$set(echo = FALSE)
+plotly::ggplotly(metadata$celltype_annotations$prop_plots[[group_by_var]][[celltype_var]]$absolute_cell_numbers)
+```
+</div>
+<div class = "col-md-6">
+```{r, fig.align="center", fig.width=4.5, fig.height=6, fig.cap = sprintf("<b>Figure: Relative cell-type numbers by %s.</b>", group_by_var)}
+knitr::opts_chunk$set(echo = FALSE)
+plotly::ggplotly(metadata$celltype_annotations$prop_plots[[group_by_var]][[celltype_var]]$relative_cell_numbers)
+```
+</div>
+</div>

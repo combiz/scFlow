@@ -1,7 +1,8 @@
 ################################################################################
-#' Annotate a SingleCellExperiment With Celltype plots
+#' Annotate a SingleCellExperiment With Cell-type Metrics
 #'
 #' @param sce a SingleCellExperiment object
+#' @param cluster_var the colData variable with the cluster numbers
 #' @param celltype_var the colData variable with the celltype alias
 #' @param unique_id_var the colData variable with the unique sample name
 #' @param facet_vars the colData variable(s) for grouped analyses
@@ -17,7 +18,7 @@
 #' @importFrom cli cli_alert_danger cli_alert_success rule cli_text
 #' @importFrom SummarizedExperiment colData
 #' @export
-annotate_celltype_plots <- function(sce,
+annotate_celltype_metrics <- function(sce,
                                     cluster_var = "clusters",
                                     celltype_var = "cluster_celltype",
                                     unique_id_var = "manifest",
@@ -96,7 +97,7 @@ annotate_celltype_plots <- function(sce,
   )
 
   # reddim custom coldata variables
-  for (facet_var in facet_vars) {
+  for (facet_var in union(facet_vars, unique_id_var)) {
     sce@metadata$celltype_annotations$reddim_plots[[facet_var]] <- do.call(
       plot_reduced_dim,
       list(
@@ -211,7 +212,8 @@ annotate_celltype_plots <- function(sce,
       panel.grid.minor = ggplot2::element_blank(),
       text = ggplot2::element_text(size = 16),
       axis.title = ggplot2::element_text(size = 18),
-      legend.text = ggplot2::element_text(size = 10)
+      legend.text = ggplot2::element_text(size = 10),
+      legend.title = ggplot2::element_blank()
     )
 
   # relative counts (pc)
@@ -234,7 +236,8 @@ annotate_celltype_plots <- function(sce,
       panel.grid.minor = ggplot2::element_blank(),
       text = ggplot2::element_text(size = 16),
       axis.title = ggplot2::element_text(size = 18),
-      legend.text = ggplot2::element_text(size = 10)
+      legend.text = ggplot2::element_text(size = 10),
+      legend.title = ggplot2::element_blank()
     )
 
   sce@metadata$celltype_annotations$
@@ -309,12 +312,43 @@ annotate_celltype_plots <- function(sce,
       legend.text = ggplot2::element_text(size = 10)
     )
 
+  dt2 <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
+    dplyr::select(.data[[celltype_var]], .data[[metric_var]])
+
+  # reorder based on the dt means
+  dt2[[celltype_var]] <- factor(
+    dt2[[celltype_var]],
+    levels = levels(dt[[celltype_var]]) #from the previous dt
+  )
+
+  p2 <- ggplot2::ggplot(dt2,
+                        ggplot2::aes(x = .data[[metric_var]],
+                                     y = .data[[celltype_var]])) +
+    ggridges::geom_density_ridges_gradient(
+      scale = 3,
+      rel_min_height = 0.01,
+      colour = "white",
+      fill = "grey30"
+    ) +
+    ggplot2::theme_light() +
+    ggplot2::theme(
+      panel.border = ggplot2::element_blank(),
+      text = ggplot2::element_text(size = 16, colour = "black"),
+      axis.title = ggplot2::element_text(size = 18),
+      legend.text = ggplot2::element_text(size = 10),
+      legend.position = "none"
+    )
+
   sce@metadata$celltype_annotations$
     metric_plots[[metric_var]][[celltype_var]] <- list()
   sce@metadata$celltype_annotations$
     metric_plots[[metric_var]][[celltype_var]]$metric_data <- dt
   sce@metadata$celltype_annotations$
     metric_plots[[metric_var]][[celltype_var]]$metric_plot <- p
+  sce@metadata$celltype_annotations$
+  metric_plots[[metric_var]][[celltype_var]]$ridge_data <- dt2
+  sce@metadata$celltype_annotations$
+    metric_plots[[metric_var]][[celltype_var]]$ridge_plot <- p2
 
   return(sce)
 }
@@ -343,28 +377,42 @@ annotate_celltype_plots <- function(sce,
 
 
 ################################################################################
-#' Remove specific classes from a ggplot plot_env environment
+#' Remove objects from a ggplot plot_env
 #'
 #' Useful to remove large objects before writing to disk with qs or rds
 #'
 #' @family helper
 #'
-#' @importFrom purrr map_lgl
-#'
 #' @keywords internal
-.clean_ggplot_plot_env <- function(p,
-                                   drop_classes = c(
-                                     "SingleCellExperiment",
-                                     "ggplot"
-                                   )) {
+.clean_ggplot_plot_env <- function(p) {
   if ("ggplot" %in% class(p)) {
-    env_classes <- lapply(p$plot_env, class)
-    drop_idx <- purrr::map_lgl(env_classes, ~ any(drop_classes %in% .))
-    drop_names <- names(drop_idx)
-    for (drop_name in drop_names) {
+    #purrr::walk(names(p$plot_env), ~ p$plot_env[[eval(.)]] <- NULL)
+    for (drop_name in names(p$plot_env)) {
       p$plot_env[[eval(drop_name)]] <- NULL
     }
-    p$plot_env$... <- NULL
   }
   return(p)
+}
+
+################################################################################
+#' scale_y_continuous(labels=.fancy_scientific)
+#'
+#' @family helper
+#'
+#' @keywords internal
+.fancy_scientific <- function(l) {
+  # turn in to character string in scientific notation
+  l <- format(l, scientific = TRUE)
+  # prevent 0 x xx
+  l <- gsub("0e\\+00","0",l)
+  # quote the part before the exponent to keep all the digits
+  l <- gsub("^(.*)e", "'\\1'e", l)
+  # remove + after exponent, if exists. E.g.: (3x10^+2 -> 3x10^2)
+  l <- gsub("e\\+","e",l)
+  # turn the 'e+' into plotmath format
+  l <- gsub("e", "%*%10^", l)
+  # convert 1x10^ or 1.000x10^ -> 10^
+  l <- gsub("\\'1[\\.0]*\\'\\%\\*\\%", "", l)
+  # return this as an expression
+  parse(text=l)
 }

@@ -35,14 +35,13 @@ knitr::knit_hooks$set(wrap = function(before, options, envir){
 ```
 
 ```{r load_data, results='hide', include=FALSE}
-#metadata <- readRDS(params$metadata_path)
-#metadata <- readRDS("/home/ckhozoie/Documents/scFlow/scemetadata_newest.rds")
-metadata <- qs::qread("/home/ckhozoie/Documents/scFlow/test.qs")
+metadata <- qs::qread(params$metadata_path)
+#metadata <- qs::qread("/home/ckhozoie/Documents/scFlow/test.qs")
 ```
 
 ## Dimensionality Reduction Plots
 ### Cell-types
-This two-dimensional embedding of cells should illustrate separation of cell-types into distinct clusters.  An optimal plot should demonstrate separation between different cell-types; if not, it may be useful to manually re-annotate cell-types with reference to cell-type associated marker genes.
+This two-dimensional embedding of cells should demonstrate spatial separation of major cell-types; if not, it may be useful to manually re-annotate cell-types with reference to cell-type associated marker genes, and/or revise dimensionality reduction and/or clustering parameters.
 <div class = "zoomfig">
 ```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: %s plot of cell-types.</b> Each cell is coloured by annotated cell-type.", metadata$celltype_annotations$params$input_reduced_dim)}
 knitr::opts_chunk$set(echo = FALSE)
@@ -59,5 +58,61 @@ metadata$celltype_annotations$reddim_plots$cluster_var
 ```
 </div>
 
+
+```{r, results='asis', include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+show_plot <- function(plot_object) {
+  div(style="margin:auto;text-align:center", plot_object)
+}
+
+out <- NULL
+for(plot_var in union(metadata$celltype_annotations$params$facet_vars, metadata$celltype_annotations$params$unique_id_var)) {
+    out <- c(out, knit_child("reddim_plots.Rmd"))
+}
+paste(out, collapse='\n')
+```
+
+`r paste(out, collapse='\n')`
+
+## Cell-type Proportion Plots
+
+These plots illustrate the absolute cell numbers and relative proportions of cell-types in the overall experiment ("_all_"), and within the groups: _`r paste(union("all", names(metadata$celltype_annotations$prop_plots))[-1], collapse = ", ")`_.  To examine statistically significant differences in cell-type proportions, see the Dirichlet model results and report(s).
+
+```{r, results='asis', include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+celltype_var <- metadata$celltype_annotations$params$celltype_var
+
+show_plot <- function(plot_object) {
+  div(style="margin:auto;text-align:center", plot_object)
+}
+out <- NULL
+for(group_by_var in union("all", names(metadata$celltype_annotations$prop_plots))) {
+    out <- c(out, knit_child("prop_plots.Rmd"))
+}
+```
+
+`r paste(out, collapse='\n')`
+
+## Cell-type Metric Plots
+
+These plots summarize the distribution of various cell metrics (_`r paste(names(metadata$celltype_annotations$metric_plots), collapse = ", ")`_) for each cell-type.
+
+```{r, results='asis', include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+celltype_var <- metadata$celltype_annotations$params$celltype_var
+
+show_plot <- function(plot_object) {
+  div(style="margin:auto;text-align:center", plot_object)
+}
+out <- NULL
+for(metric_var in names(metadata$celltype_annotations$metric_plots)) {
+    out <- c(out, knit_child("metric_plots.Rmd"))
+}
+```
+
+`r paste(out, collapse='\n')`
 
 <br>scFlow v`r utils::packageVersion("scFlow")` -- `r Sys.time()`

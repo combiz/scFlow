@@ -23,6 +23,11 @@ Run a fisher exact test on absolute cell numbers for each celltype
 }
 \seealso{
 Other helper: 
+\code{\link{.append_cell_metric_plots_sce}()},
+\code{\link{.append_cell_prop_plots_sce}()},
+\code{\link{.clean_ggplot_plot_env}()},
+\code{\link{.fancy_scientific}()},
+\code{\link{.get_d_palette}()},
 \code{\link{.plot_dirichlet_results}()},
 \code{\link{.plot_unique_id_var}()},
 \code{\link{.prepare_dirichlet_plot_table}()},
