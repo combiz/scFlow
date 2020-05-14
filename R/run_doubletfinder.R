@@ -43,7 +43,8 @@ run_doubletfinder <- function(sce, ...) {
     vars_to_regress_out = "nCount_RNA",
     var_features = 2000,
     doublet_rate = 0,
-    dpk = 8 # estimated doublets per thousand cells
+    dpk = 8, # estimated doublets per thousand cells
+    num.cores = 1
   )
   inargs <- list(...)
   fargs[names(inargs)] <- inargs #override defaults if provided
@@ -134,7 +135,8 @@ run_doubletfinder <- function(sce, ...) {
       "Identifying optimal pK with parameter sweep", line = 1), "\r\n")
     sweep_res_list <- DoubletFinder::paramSweep_v3(
       seu,
-      PCs = 1:fargs$pca_dims, sct = FALSE
+      PCs = 1:fargs$pca_dims, sct = FALSE,
+      num.cores = fargs$num.cores
     )
     sweep_stats <- DoubletFinder::summarizeSweep(sweep_res_list, GT = FALSE)
     bcmvn <- DoubletFinder::find.pK(sweep_stats)

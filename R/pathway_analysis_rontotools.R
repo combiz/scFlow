@@ -271,6 +271,11 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
 }
 
 #' Getting the list of available database for ROntoTools
+#'
+#' @return Returns a data frame of available databases for ROntoTools
+#'
+#' @family Impacted pathway analysis
+#'
 #' @keywords internal
 
 .listdb <- function() {
@@ -286,6 +291,14 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
 
 
 #' Getting the overlapping IDs after enrichment analysis is done
+#'
+#' @return Returns the overlapping gene symbols after enrichment analysis
+#' is done
+#'
+#' @family Impacted pathway analysis
+#'
+#' @importFrom plyr ldply
+#'
 #' @keywords internal
 
 .get_overlap_id <- function(res, res_summary) {
@@ -304,6 +317,13 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
 
 
 #' dotplot for ORA. x axis perturbation, y axis description
+#'
+#' @family Impacted pathway analysis
+#'
+#' @importFrom stringr str_wrap
+#' @importFrom ggplot2 ggplot
+#' @importFrom cowplot theme_cowplot background_grid
+#'
 #' @keywords internal
 
 .dotplot_pe <- function(dt) {

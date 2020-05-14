@@ -1,4 +1,4 @@
 name: Impacted Pathway Analysis
 description: >
-   scflow - impacted pathway analysis report for a SingleCellExperiment
+   scflow - impacted pathway analysis report for a differential expression table
 create_dir: FALSE

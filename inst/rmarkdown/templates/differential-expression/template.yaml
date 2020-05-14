@@ -1,0 +1,4 @@
+name: Differential Expression Analysis
+description: >
+   scflow - differential expression analysis report for a SingleCellExperiment
+create_dir: FALSE
