@@ -50,19 +50,19 @@
 #'
 #' @export
 
-liger_preprocess_test2 <- function(sce,
-                                   k,
-                                   unique_id_var = "manifest",
-                                   take_gene_union = F,
-                                   remove.missing = T,
-                                   num_genes = 3000,
-                                   combine = "union",
-                                   keep_unique = F,
-                                   capitalize = F,
-                                   do_plot = F,
-                                   cex_use = 0.3,
-                                   use_cols = T,
-                                   ...) {
+liger_preprocess <- function(sce,
+                             k,
+                             unique_id_var = "manifest",
+                             take_gene_union = F,
+                             remove.missing = T,
+                             num_genes = 3000,
+                             combine = "union",
+                             keep_unique = F,
+                             capitalize = F,
+                             do_plot = F,
+                             cex_use = 0.3,
+                             use_cols = T,
+                             ...) {
   fargs <- as.list(environment())
   fargs <- fargs[fargs = c(
     "k",
