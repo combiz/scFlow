@@ -1,3 +1,5 @@
+# scFlow 0.4.8
+
 # scFlow 0.4.7
 
 # scFlow 0.4.6
