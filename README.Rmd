@@ -206,7 +206,7 @@ var_classes <- c(
 )
 
 metadata <- read_metadata(
-  unique_key = "lodut",
+  unique_key = "fonij",
   key_colname = "manifest",
   samplesheet_path = samplesheet_fp,
   col_classes = var_classes

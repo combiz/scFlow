@@ -1,0 +1,69 @@
+################################################################################
+#' Generate a report for a celltype proportion analysis
+#'
+#' @param sce a SingleCellExperiment object
+#' @param report_folder_path folder path to save the report
+#' @param report_file filename for report (without an extension)
+#'
+#' @return NULL
+#'
+#' @family annotation functions
+#' @import cli Matrix dplyr SingleCellExperiment purrr
+#' @import ggplot2
+#' @importFrom SummarizedExperiment rowData colData
+#' @importFrom rmarkdown render
+#' @importFrom tools file_path_sans_ext
+#' @importFrom qs qsave
+#' @export
+#'
+report_celltype_model <- function(results,
+                                  report_folder_path = getwd(),
+                                  report_file = "celltype_model_report_scflow") {
+
+  if(!class(results) == "list"){
+    stop("expecting results list from model_celltype_freqs function")
+  }
+
+  report_file <- tools::file_path_sans_ext(report_file)
+
+  cli::cli_h1("Generating Report of Cell-type Frequency Model")
+
+  results_tmp_path <- file.path(tempdir(), "results.qs")
+
+  cli::cli_text("Writing temp files for report...")
+  qs::qsave(results, results_tmp_path)
+
+  krd <- file.path(tempdir(), "krdqc")
+  intd <- file.path(tempdir(), "idqc")
+  dir.create(krd, showWarnings = FALSE)
+  dir.create(intd, showWarnings = FALSE)
+
+  cli::cli_text("Generating report...")
+  rmarkdown::render(
+     #for dev use
+    #file.path(getwd(), "inst/rmarkdown/templates/celltype-model/skeleton/skeleton.Rmd"),
+    #file.path(getwd(), "skeleton.Rmd"),
+    system.file(
+      "rmarkdown/templates/celltype-model/skeleton/skeleton.Rmd",
+      package = "scFlow"),
+    params = list(
+      results_path = results_tmp_path
+    ),
+    output_dir = report_folder_path,
+    output_file = report_file,
+    knit_root_dir = krd,
+    intermediates_dir = intd,
+    quiet = TRUE
+  )
+
+  file.remove(results_tmp_path)
+
+  cli::cli_text(c(
+    "{cli::col_green(cli::symbol$tick)} Report succesfully generated: ",
+    "{.file {file.path(report_folder_path, paste0(report_file, '.html'))}}")
+  )
+
+  return(invisible(NULL))
+
+}
+

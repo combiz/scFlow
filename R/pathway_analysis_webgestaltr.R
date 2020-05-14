@@ -136,7 +136,7 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
       "{.strong No significant impacted pathways found at FDR <= 0.05! }"
     )
     enrichment_result <- NULL
-  } else {
+     } else {
     if (enrichment_method == "ORA") {
       enrichment_result <- .format_res_table_ORA(res, enrichment_database)
       enrichment_result$plot <- lapply(
@@ -198,7 +198,6 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     } else {
       cli::cli_alert_info("Output is returned as a list!")
     }
-
 
     if (is.data.frame(gene_file)) {
       enrichment_result$metadata$gene_file <- deparse(substitute(gene_file))

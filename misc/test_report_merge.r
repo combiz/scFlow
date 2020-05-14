@@ -1,4 +1,4 @@
-library(scflow)
+library(scFlow)
 
 sce <- read_sce("~/Documents/nf-sc/results/celltype_mapped_sce/celltype_mapped_sce")
 

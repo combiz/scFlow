@@ -77,6 +77,7 @@ liger_preprocess_test2 <- function(sce,
     "cex_use",
     "use_cols"
   )]
+
   do.call(.check_sce_for_liger, c(sce = sce, fargs))
   # Split merged sce object into multiple objects and extract sparse matrices
   cli::cli_alert("Splitting merged sce object and extracting sparse matrices")
@@ -90,17 +91,20 @@ liger_preprocess_test2 <- function(sce,
     mat_list[[dataset_name]] <-
       sce@assays@data$counts[, sce@colData$manifest == mnft]
   }
+
   # Make a Liger object. Pass in the sparse matrix.
   cli::cli_alert("Creating LIGER object")
   ligerex <- createLiger(
     raw.data = mat_list, take.gene.union = take_gene_union,
     remove.missing = remove.missing
   )
+
   ligerex@parameters$liger_params$liger_preprocess <- fargs
   ### preprocessing steps
   # Normalize the data to control for different numbers of UMIs per cell
   cli::cli_alert("Normalizing data")
   ligerex <- liger::normalize(ligerex)
+
   # Select variable (informative) genes
   cli::cli_alert("Selecting variable (informative) genes")
   ligerex <- liger::selectGenes(ligerex,
@@ -109,6 +113,7 @@ liger_preprocess_test2 <- function(sce,
                                 capitalize = capitalize, do.plot = do_plot,
                                 cex.use = cex_use
   )
+
   # Scale the data by root-mean-square across cells
   cli::cli_alert("Scaling data")
   ligerex <- liger::scaleNotCenter(ligerex, remove.missing = remove.missing)
@@ -137,6 +142,7 @@ liger_preprocess_test2 <- function(sce,
     var.genes_per_dataset[[single_dataset]] <- single_ligerex@var.genes
   }
   ligerex@agg.data$var.genes_per_dataset <- var.genes_per_dataset
+
   return(ligerex)
 }
 
@@ -153,14 +159,17 @@ liger_preprocess_test2 <- function(sce,
 #' @keywords internal
 .check_sce_for_liger <- function(sce, ...) {
   fargs <- list(...)
+
   assertthat::is.scalar(fargs$unique_id_var)
   assertthat::assert_that(
     fargs$unique_id_var %in% names(SummarizedExperiment::colData(sce))
   )
+
   min_cells_per_id <- 5
   assertthat::assert_that(
     min(table(droplevels(sce[[fargs$unique_id_var]]))) >= min_cells_per_id,
     msg = sprintf("Need at least %s cells per id.", min_cells_per_id)
   )
+
   return(1)
 }

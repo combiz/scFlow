@@ -42,7 +42,7 @@ metadata <- readRDS(params$metadata_path)
 ## Enrichment analysis by WebGestaltR
 
 `r if(is.null(metadata$WebGestaltR)){"Enrichment analysis using WebGestaltR was not performed"}`
-`r if(length(setdiff(names(enrichment_result$WebGestaltR), "metadata")) == 0){"No significant impacted pathways found at FDR <= 0.05!"}`
+`r if(isFALSE(metadata$WebGestaltR$metadata$result)){"No significant impacted pathways found at FDR <= 0.05!"}`
 
 ```{r conditional_webgestaltr_block, child='webgestaltr_template.Rmd', eval = !is.null(metadata$WebGestaltR) && length(setdiff(names(metadata$WebGestaltR), "metadata")) > 0}
 ```
@@ -51,7 +51,7 @@ metadata <- readRDS(params$metadata_path)
 ## Enrichment analysis by ROntoTools
 
 `r if(is.null(metadata$ROntoTools)){"Enrichment analysis using ROntoTools was not performed"}`
-`r if(length(setdiff(names(enrichment_result$ROntoTools), "metadata")) == 0){"No significant impacted pathways found at FDR <= 0.05!"}`
+`r if(isFALSE(metadata$ROntoTools$metadata$result)){"No significant impacted pathways found at FDR <= 0.05!"}`
 
 ```{r conditional_rontotools_block, child='rontotools_template.Rmd', eval = !is.null(metadata$ROntoTools) && length(setdiff(names(metadata$ROntoTools), "metadata")) > 0}
 ```
@@ -60,7 +60,7 @@ metadata <- readRDS(params$metadata_path)
 ## Enrichment analysis by enrichR
 
 `r if(is.null(metadata$enrichR)){"Enrichment analysis using enrichR was not performed"}`
-`r if(length(setdiff(names(enrichment_result$enrichR), "metadata")) == 0){"No significant impacted pathways found at FDR <= 0.05!"}`
+`r if(isFALSE(metadata$enrichR$metadata$result)){"No significant impacted pathways found at FDR <= 0.05!"}`
 
 ```{r conditional_enrichr_block, child='enrichr_template.Rmd', eval = !is.null(metadata$enrichR) && length(setdiff(names(metadata$enrichR), "metadata")) > 0}
 ```
