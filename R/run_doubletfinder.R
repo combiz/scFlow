@@ -348,6 +348,7 @@ run_doubletfinder <- function(sce, ...) {
       plot.title = element_text(size = 18, hjust = 0.5)
     )
 
+  p <- .clean_ggplot_plot_env(p)
   sce@metadata$qc_plots$doublet_finder[[reduced_dim]] <- p
 
   return(sce)
@@ -379,6 +380,7 @@ run_doubletfinder <- function(sce, ...) {
       legend.position = "none",
       plot.title = element_text(size = 18, hjust = 0.5))
 
+  p <- .clean_ggplot_plot_env(p)
   sce@metadata$qc_plots$doublet_finder$param_sweep <- p
 
   return(sce)

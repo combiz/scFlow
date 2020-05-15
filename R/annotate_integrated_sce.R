@@ -14,6 +14,9 @@
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom tools file_path_sans_ext
 #' @importFrom formattable formattable icontext
+#' @importFrom nVennR plotVenn
+#' @importFrom UpSetR upset fromList
+#' @importFrom kBET kBET
 #' @export
 
 annotate_integrated_sce <- function(sce,
@@ -41,7 +44,8 @@ annotate_integrated_sce <- function(sce,
   cli::cli_text("Generating Upset chart for selected variable genes...")
 
   upset_sets <- sce@metadata$dataset_integration$var.genes_per_dataset
-  my_upset <- UpSetR::upset(fromList(upset_sets),
+  my_upset <- UpSetR::upset(
+    UpSetR::fromList(upset_sets),
     nsets = length(upset_sets),
     sets.x.label = "Variable genes per dataset",
     text.scale = c(1.5, 1.5, 1.5, 1.5, 1.5, 1)
@@ -68,17 +72,19 @@ annotate_integrated_sce <- function(sce,
       feature_dim = variable,
       reduced_dim = "tSNE_PCA", size = 1, alpha = 0.3
     )
-    tsne_pca <- plot_pca + ggtitle("tSNE using PCA data") +
-      theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.8))
-    pca_tsne_plots[[variable]] <- tsne_pca
+    #tsne_pca <- plot_pca + ggtitle("tSNE using PCA data") +
+    #  theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.8))
+    #pca_tsne_plots[[variable]] <- tsne_pca
+    pca_tsne_plots[[variable]] <- plot_pca
 
     plot_liger <- plot_reduced_dim(sce,
       feature_dim = variable,
       reduced_dim = "tSNE_Liger", size = 0.75, alpha = 0.3
     )
-    tsne_liger <- plot_liger + ggtitle("tSNE using LIGER data") +
-      theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.8))
-    liger_tsne_plots[[variable]] <- tsne_liger
+    #tsne_liger <- plot_liger + ggtitle("tSNE using LIGER data") +
+    #  theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.8))
+    #liger_tsne_plots[[variable]] <- tsne_liger
+    liger_tsne_plots[[variable]] <- plot_liger
 
     data <- SingleCellExperiment::reducedDim(sce, "PCA")
     batch <- SummarizedExperiment::colData(sce)[[variable]]
@@ -179,20 +185,22 @@ annotate_integrated_sce <- function(sce,
   cli::cli_text("Generating UMAP plots for PCA and LIGER data...")
   plot_pca <- plot_reduced_dim(sce,
     feature_dim = "clusters",
-    reduced_dim = "UMAP_PCA", size = 0.75, alpha = 0.3
+    reduced_dim = "UMAP_PCA", size = 0.75, alpha = 0.3, label_clusters = TRUE
   )
-  umap_pca <- plot_pca + ggtitle("UMAP using PCA data (colored by cluster)") +
-    theme(plot.title = element_text(size = 15, face = "bold"))
+  #umap_pca <- plot_pca + ggtitle("UMAP using PCA data (colored by cluster)") +
+  #  theme(plot.title = element_text(size = 15, face = "bold"))
 
+  umap_pca <- plot_pca
   sce@metadata$dataset_integration$clustering_plots$umap_pca <- umap_pca
 
   plot_liger <- plot_reduced_dim(sce,
     feature_dim = "clusters",
-    reduced_dim = "UMAP_Liger", size = 0.75, alpha = 0.3
+    reduced_dim = "UMAP_Liger", size = 0.75, alpha = 0.3, label_clusters = TRUE
   )
-  umap_liger <- plot_liger +
-    ggtitle("UMAP using LIGER data (colored by cluster)") +
-    theme(plot.title = element_text(size = 15, face = "bold"))
+  #umap_liger <- plot_liger +
+  #  ggtitle("UMAP using LIGER data (colored by cluster)") +
+  #  theme(plot.title = element_text(size = 15, face = "bold"))
+  umap_liger <- plot_liger
 
   sce@metadata$dataset_integration$clustering_plots$umap_liger <- umap_liger
   return(sce)

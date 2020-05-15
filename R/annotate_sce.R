@@ -170,6 +170,7 @@ annotate_sce <- function(sce,
   all_scflow_fns <- ls(getNamespace("scFlow"), all.names = TRUE)
   qc_plot_fns <- all_scflow_fns[startsWith(all_scflow_fns, ".qc_plot_")]
   for (fn in qc_plot_fns) {
+    #sce <- do.call(get(fn), list(sce = sce))
     sce <- get(fn)(sce)
   }
 
@@ -309,6 +310,8 @@ annotate_sce <- function(sce,
 #' @keywords internal
 .qc_plot_count_depth_distribution <- function(sce) {
 
+  assertthat::assert_that(class(sce) == "SingleCellExperiment")
+
   bcranks <- DropletUtils::barcodeRanks(SingleCellExperiment::counts(sce))
 
   knee <- attributes(bcranks)$metadata$knee
@@ -377,6 +380,7 @@ annotate_sce <- function(sce,
           legend.position = "none",
           plot.title = element_text(size = 18, hjust = 0.5))
 
+  p <- .clean_ggplot_plot_env(p)
   sce@metadata$qc_plots$count_depth_distribution <- p
   sce@metadata$qc_plot_data$count_depth_distribution <- dt
 
@@ -387,6 +391,8 @@ annotate_sce <- function(sce,
 #' x axis count depth, y axis number of genes
 #' @keywords internal
 .qc_plot_features_vs_count_depth <- function(sce) {
+
+  assertthat::assert_that(class(sce) == "SingleCellExperiment")
 
   dt <- dplyr::as_tibble(data.frame(
     total_features = sce$total_features_by_counts,
@@ -436,6 +442,7 @@ annotate_sce <- function(sce,
         color = "red")
   }
 
+  p <- .clean_ggplot_plot_env(p)
   sce@metadata$qc_plots$number_genes_vs_count_depth <- p
   sce@metadata$qc_plot_data$number_genes_vs_count_depth <- dt
 
@@ -447,6 +454,8 @@ annotate_sce <- function(sce,
 #' x axis count depth, y axis number of genes
 #' @keywords internal
 .qc_plot_count_depth_histogram <- function(sce) {
+
+  assertthat::assert_that(class(sce) == "SingleCellExperiment")
 
   counts_cutoff <- ceiling(
     mean(sce[, sce$total_counts > 0]$total_counts) +
@@ -481,6 +490,7 @@ annotate_sce <- function(sce,
         color = "red")
   }
 
+  p <- .clean_ggplot_plot_env(p)
   sce@metadata$qc_plots$count_depth_histogram <- p
   sce@metadata$qc_plot_data$count_depth_histogram <- dt
 
@@ -492,6 +502,8 @@ annotate_sce <- function(sce,
 #' x axis count depth, y axis number of genes
 #' @keywords internal
 .qc_plot_number_genes_histogram <- function(sce) {
+
+  assertthat::assert_that(class(sce) == "SingleCellExperiment")
 
   features_cutoff <- ceiling(
     mean(sce[, sce$total_features_by_counts > 0]$total_features_by_counts) +
@@ -526,7 +538,7 @@ annotate_sce <- function(sce,
         linetype = "solid",
         color = "red")
   }
-
+  p <- .clean_ggplot_plot_env(p)
   sce@metadata$qc_plots$number_genes_histogram <- p
   sce@metadata$qc_plot_data$number_genes_histogram <- dt
 
@@ -539,6 +551,8 @@ annotate_sce <- function(sce,
 #' x axis count depth, y axis number of genes
 #' @keywords internal
 .qc_plot_mito_fraction_histogram <- function(sce) {
+
+  assertthat::assert_that(class(sce) == "SingleCellExperiment")
 
   dt <- dplyr::as_tibble(data.frame(
     pc_mito = sce$pc_mito)) %>%
@@ -560,6 +574,7 @@ annotate_sce <- function(sce,
           legend.text=element_text(size=10),
           plot.title = element_text(size = 18, hjust = 0.5))
 
+  p <- .clean_ggplot_plot_env(p)
   sce@metadata$qc_plots$mito_fraction_histogram <- p
   sce@metadata$qc_plot_data$mito_fraction_histogram <- dt
 
@@ -571,6 +586,8 @@ annotate_sce <- function(sce,
 #' x axis count depth, y axis number of genes
 #' @keywords internal
 .qc_plot_ribo_fraction_histogram <- function(sce) {
+
+  assertthat::assert_that(class(sce) == "SingleCellExperiment")
 
   dt <- dplyr::as_tibble(data.frame(
     pc_ribo = sce$pc_ribo)) %>%
@@ -596,6 +613,7 @@ annotate_sce <- function(sce,
           legend.text=element_text(size=10),
           plot.title = element_text(size = 18, hjust = 0.5))
 
+  p <- .clean_ggplot_plot_env(p)
   sce@metadata$qc_plots$ribo_fraction_histogram <- p
   sce@metadata$qc_plot_data$ribo_fraction_histogram <- dt
 

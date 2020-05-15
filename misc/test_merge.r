@@ -1,4 +1,5 @@
 library(scFlow)
+library(SingleCellExperiment)
 
 #sce_l <- list.dirs("~/Documents/scFlowExample/tmp_Zeisel2015_scflow")[-1]
 a <- "~/Documents/nf-sc/results/qc/sce/nivir_sce"

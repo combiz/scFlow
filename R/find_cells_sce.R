@@ -194,6 +194,7 @@ find_cells <- function(sce,
       axis.text.y = element_text(hjust = 0.5, vjust = 0.5)
     )
 
+  p <- .clean_ggplot_plot_env(p)
   return(p)
 }
 
@@ -224,5 +225,6 @@ find_cells <- function(sce,
       plot.title = element_text(size = 18, hjust = 0.5)
     )
 
+  p <- .clean_ggplot_plot_env(p)
   return(p)
 }

@@ -1,4 +1,0 @@
-name: Integrate, Reduce Dimension, and Cluster
-description: >
-   scFlow - dataset integration, dimension reduction, and clustering report for a merged SingleCellExperiment
-create_dir: FALSE

@@ -91,7 +91,7 @@ plot_reduced_dim_gene <- function(sce,
       plot.title = element_text(size = 18, hjust = 0.5, colour = "black")
     )
 
-  p$plot_env$sce <- NULL
+  p <- .clean_ggplot_plot_env(p)
   return(p)
 
 }

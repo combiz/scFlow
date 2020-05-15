@@ -61,6 +61,8 @@ pseudobulk_sce <- function(sce,
   # fast matrix multiplication method
   mm <- model.matrix(~ 0 + sce$pseudobulk_id)
   pb_matrix <- SingleCellExperiment::counts(sce) %*% mm
+  pb_matrix <- Matrix::Matrix(pb_matrix, sparse = TRUE)
+  pb_matrix <- edgeR::cpm(pb_matrix, log = F)
   colnames(pb_matrix) <- unique(sce$pseudobulk_id)
 
   #rownames(pb_matrix) <- SummarizedExperiment::rowData(sce)$ensembl_gene_id
@@ -95,6 +97,9 @@ pseudobulk_sce <- function(sce,
 
   n_samples <- nrow(pb_cd)
 
+  pb_cd[[sample_var]] <- as.character(pb_cd[[sample_var]])
+  sce_cd[[sample_var]] <- as.character(sce_cd[[sample_var]])
+
   # append the rest of the sample information
   pb_cd <- dplyr::left_join(
     pb_cd, sce_cd,
@@ -122,8 +127,8 @@ pseudobulk_sce <- function(sce,
   names(SummarizedExperiment::assays(pb_sce)) <- assay_name
 
   # size factors are set to the number of cells
-  pb_sce@int_colData$size_factor <- scater::librarySizeFactors(pb_sce)
-  pb_sce <- scater::normalize(pb_sce, return_log = FALSE)
+  #pb_sce@int_colData$size_factor <- scater::librarySizeFactors(pb_sce)
+  #pb_sce <- scater::normalize(pb_sce, return_log = FALSE)
   pb_sce <- scater::calculateQCMetrics(pb_sce)
 
   pb_sce@metadata$scflow_steps <- list()
