@@ -82,6 +82,55 @@ annotate_sce_cells <- function(sce, ...) {
     sce$qc_metric_passed <- sce$qc_metric_passed & !sce$is_empty_drop
   }
 
+  # max counts outlier thresholding on passed cells
+  if (args$max_library_size == "adaptive") {
+    outliers <- scater::isOutlier(
+      sce$total_counts,
+      nmads = args$nmads,
+      subset = sce$qc_metric_passed,
+      type = "both",
+      log = FALSE)
+    higher = as.integer(attributes(outliers)$thresholds["higher"])
+    args$max_library_size <- higher
+    sce$qc_metric_max_library_size <- sce$total_counts <= higher #set flag
+    sce@metadata[["qc_params"]]$max_library_size <- higher
+    sce@metadata[["qc_params"]]$max_library_size_method <- "adaptive"
+  } else if (!is.null(sce@metadata$qc_params$max_library_size)) {
+    sce@metadata[["qc_params"]]$max_library_size_method <- "fixed"
+    sce$qc_metric_max_library_size <- sce$total_counts <= args$max_library_size #set flag
+  } else {
+    sce@metadata[["qc_params"]]$max_library_size_method <- NA
+    sce$qc_metric_max_library_size <- 1
+  }
+
+  # max features outlier thresholding on passed cells
+  if (args$max_features == "adaptive") {
+    outliers <- scater::isOutlier(
+      sce$total_features_by_counts,
+      nmads = args$nmads,
+      subset = sce$qc_metric_passed,
+      type = "both",
+      log = FALSE)
+    higher = as.integer(attributes(outliers)$thresholds["higher"])
+    args$max_features <- higher
+    sce$qc_metric_max_features <- sce$total_features_by_counts <= higher #set flag
+    sce@metadata[["qc_params"]]$max_features <- higher
+    sce@metadata[["qc_params"]]$max_features_method <- "adaptive"
+  } else if (!is.null(sce@metadata$qc_params$max_library_size)) {
+    sce$qc_metric_max_features <- sce$total_features_by_counts <= args$max_features #set flag
+    sce@metadata[["qc_params"]]$max_features_method <- "fixed"
+  } else {
+    sce@metadata[["qc_params"]]$max_features_method <- NA
+    sce$qc_metric_max_features <- 1
+  }
+
+  # update pass flag after adaptive thresholding
+  sce$qc_metric_passed <- and_list_fn(
+    sce$qc_metric_passed,
+    sce$qc_metric_max_library_size,
+    sce$qc_metric_max_features
+  )
+
   # fast qc for expressive genes with counts from only qc passed cells
   mat <- SingleCellExperiment::counts(sce)
   mat <- mat >= args$min_counts

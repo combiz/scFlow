@@ -35,6 +35,10 @@ knitr::knit_hooks$set(wrap = function(before, options, envir){
 metadata <- readRDS(params$metadata_path)
 ```
 
+## Overview
+```{r overview, child='overview.Rmd'}
+```
+
 ## Sample metadata
 
 A total of `r length(metadata$metadata)` metadata variables were imported from the sample sheet for this sample: -
@@ -64,16 +68,17 @@ metadata$qc_plots$count_depth_distribution
 </div>
 
 ## Number of counts / features per cellular barcode
+`r if(metadata$qc_params$max_library_size_method == "adaptive"){sprintf("The maximum number of counts per cell threshold was determined adaptively for this sample as >=%s median average deviations (MADs), or %s total counts per cell.", metadata$qc_params$nmads, metadata$qc_params$max_library_size)}` `r if(metadata$qc_params$max_features_method == "adaptive"){sprintf("The maximum number of features per cell threshold was determined adaptively for this sample as >=%s median average deviations (MADs), or %s total features per cell.", metadata$qc_params$nmads, metadata$qc_params$max_features)}`
 <div class = "row">
 <div class = "col-md-6">
-```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of count depth per cell.</b> A lower-limit threshold of %s was applied (red line). ", metadata$qc_params$min_library_size)}
+```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of count depth per cell.</b> A lower-limit threshold of %s%s was applied (red line).", metadata$qc_params$min_library_size, ifelse(!is.null(metadata$qc_params$max_library_size), sprintf(" and an upper-limit threshold of %s", metadata$qc_params$max_library_size), ""))}
 knitr::opts_chunk$set(echo = FALSE)
 ggplotly(metadata$qc_plots$count_depth_histogram)
 ```
 </div>
 
 <div class = "col-md-6">
-```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of number of genes per cell.</b> A lower-limit threshold of %s was applied (red line). ", metadata$qc_params$min_features)}
+```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of number of genes per cell.</b> A lower-limit threshold of %s%s was applied (red line). ", metadata$qc_params$min_features, ifelse(!is.null(metadata$qc_params$max_features), sprintf(" and an upper-limit threshold of %s", metadata$qc_params$max_features), ""))}
 knitr::opts_chunk$set(echo = FALSE)
 ggplotly(metadata$qc_plots$number_genes_histogram)
 ```
@@ -84,7 +89,7 @@ ggplotly(metadata$qc_plots$number_genes_histogram)
 ## Number of genes versus count depth 
 <div class = "row">
 <div class = "zoomfig">
-```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Number of genes versus count depth coloured by relative mitochondrial counts.</b> The count-depth threshold of %s counts and the number of genes threshold of %s genes are indicated with vertical and horizontal red lines, respectively. Cells with high mitochondrial counts are typically in cells with relatively lower count depth. Cells with fractional mitochondrial counts higher than %s (i.e. %1.2f%%) were filtered.", metadata$qc_params$min_library_size, metadata$qc_params$min_features, metadata$qc_params$max_mito, metadata$qc_params$max_mito * 100)}
+```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Number of genes versus count depth coloured by relative mitochondrial counts.</b> The count-depth threshold of %s%s counts and the number of genes threshold of %s%s genes are indicated with vertical and horizontal red lines, respectively. Cells with high mitochondrial counts are typically in cells with relatively lower count depth. Cells with fractional mitochondrial counts higher than %s (i.e. %1.2f%%) were filtered.", metadata$qc_params$min_library_size, ifelse(!is.null(metadata$qc_params$max_library_size), sprintf(" – %s", metadata$qc_params$max_library_size), ""), metadata$qc_params$min_features, ifelse(!is.null(metadata$qc_params$max_features), sprintf(" – %s", metadata$qc_params$max_features), ""), metadata$qc_params$max_mito, metadata$qc_params$max_mito * 100)}
 knitr::opts_chunk$set(echo = FALSE)
 metadata$qc_plots$number_genes_vs_count_depth
 ```

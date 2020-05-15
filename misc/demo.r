@@ -3,8 +3,8 @@
 
 ##  ............................................................................
 ##  Initialize                                                              ####
-#options(mc.cores = parallel::detectCores())
-#library(parallel)
+options(mc.cores = future::availableCores())
+library(parallel)
 library(scFlow)
 
 # v2 chemistry
@@ -30,13 +30,13 @@ metadata <- read_metadata(
 
 sce <- generate_sce(mat, metadata)
 
-sce <- find_cells(sce, lower = 100)
+sce <- find_cells(sce, lower = 100, retain = 300)
 
-sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 100)
+sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 100, max_library_size = "adaptive")
 
 sce <- filter_sce(sce)
 
-sce <- find_singlets(sce, "doubletfinder", pK = 0.005, vars_to_regress_out = NULL)
+#sce <- find_singlets(sce, "doubletfinder", pK = 0.005, vars_to_regress_out = NULL)
 
 sce <- filter_sce(sce)
 

@@ -7,7 +7,9 @@
 annotate_sce(
   sce,
   min_library_size = 300,
+  max_library_size = "adaptive",
   min_features = 100,
+  max_features = "adaptive",
   max_mito = 0.1,
   min_ribo = 0,
   max_ribo = 1,
@@ -18,6 +20,7 @@ annotate_sce(
   drop_ribo = FALSE,
   annotate_genes = TRUE,
   annotate_cells = TRUE,
+  nmads = 3.5,
   ensembl_mapping_file = NULL
 )
 }
@@ -26,8 +29,12 @@ annotate_sce(
 
 \item{min_library_size}{the minimum number of counts per cell}
 
+\item{max_library_size}{the maximum number of counts per cell or "adaptive"}
+
 \item{min_features}{the minimum number of features per cell (i.e. the minimum
 number of genes with >0 counts)}
+
+\item{max_features}{the maximum number of features per cell or "adaptive"}
 
 \item{max_mito}{the maximum proportion of counts mapping to
 mitochondrial genes (0 - 1)}
@@ -55,8 +62,6 @@ ribosomal genes (0 - 1)}
 \item{ensembl_mapping_file}{a local tsv file with ensembl_gene_id and
 additional columns for mapping ensembl_gene_id to gene info.  If
 not provided, the biomaRt db is queried (slower).}
-
-\item{annotate_ed}{optionally skip emptyDrops annotation with FALSE}
 }
 \value{
 sce a annotated SingleCellExperiment object
