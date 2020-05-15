@@ -6,6 +6,7 @@
 \usage{
 liger_preprocess(
   sce,
+  k,
   unique_id_var = "manifest",
   take_gene_union = F,
   remove.missing = T,
@@ -16,12 +17,15 @@ liger_preprocess(
   do_plot = F,
   cex_use = 0.3,
   use_cols = T,
-  k,
   ...
 )
 }
 \arguments{
 \item{sce}{SingleCellExperiment object or merged objects}
+
+\item{k}{Inner dimension of factorization (number of factors).
+
+Make a Liger object:}
 
 \item{remove.missing}{Whether to remove cells from scale.data
 with no gene expression (default TRUE)
@@ -35,10 +39,6 @@ Either "union" or "intersect".
 \item{capitalize}{Capitalize gene names to match homologous genes
 (ie. across species)
 (default FALSE)}
-
-\item{k}{Inner dimension of factorization (number of factors).
-
-Make a Liger object:}
 
 \item{raw.data}{List of expression matrices (gene by cell)
 each from an sce object.}

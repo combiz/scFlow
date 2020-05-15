@@ -2,7 +2,7 @@
 % Please edit documentation in R/integrate_sce.R
 \name{integrate_sce}
 \alias{integrate_sce}
-\title{Integrate samples within a SingleCellExperiment Object}
+\title{Integrate datasets within a SingleCellExperiment Object}
 \usage{
 integrate_sce(sce, method = "Liger", ...)
 }
@@ -18,7 +18,7 @@ Set to k=30 as default.}
 sce SingleCellExperiment object annotated with reducedDims
 }
 \description{
-Produces a reducedDim slot representing common factors across samples
+Produces a reducedDim slot representing common factors across datasets
 }
 \seealso{
 Other Data integration: 

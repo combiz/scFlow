@@ -22,7 +22,8 @@ Other differential gene expression:
 \code{\link{.perform_de_with_mast}()},
 \code{\link{.preprocess_sce_for_de}()},
 \code{\link{perform_de}()},
-\code{\link{pseudobulk_sce}()}
+\code{\link{pseudobulk_sce}()},
+\code{\link{report_de}()}
 }
 \concept{differential gene expression}
 \keyword{internal}

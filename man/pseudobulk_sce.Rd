@@ -37,6 +37,7 @@ Other differential gene expression:
 \code{\link{.generate_model_from_vars}()},
 \code{\link{.perform_de_with_mast}()},
 \code{\link{.preprocess_sce_for_de}()},
-\code{\link{perform_de}()}
+\code{\link{perform_de}()},
+\code{\link{report_de}()}
 }
 \concept{differential gene expression}
