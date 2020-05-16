@@ -110,6 +110,9 @@ use_package("limma")
 use_package("Matrix.utils")
 use_package("grDevices")
 use_package("ggridges")
+use_package("UpSetR")
+use_package("nVennR")
+use_package("kBET")
 
 use_vignette("basic-qc", title = "Guided tutorial for sample quality control")
 

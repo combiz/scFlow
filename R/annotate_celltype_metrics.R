@@ -384,12 +384,19 @@ annotate_celltype_metrics <- function(sce,
 #' @family helper
 #'
 #' @keywords internal
-.clean_ggplot_plot_env <- function(p) {
+.clean_ggplot_plot_env <- function(p,
+                                   drop_classes = c(
+                                     "SingleCellExperiment",
+                                     "ggplot"
+                                   )) {
   if ("ggplot" %in% class(p)) {
-    #purrr::walk(names(p$plot_env), ~ p$plot_env[[eval(.)]] <- NULL)
-    for (drop_name in names(p$plot_env)) {
+    env_classes <- lapply(p$plot_env, class)
+    drop_idx <- purrr::map_lgl(env_classes, ~ any(drop_classes %in% .))
+    drop_names <- names(drop_idx[drop_idx])
+    for (drop_name in drop_names) {
       p$plot_env[[eval(drop_name)]] <- NULL
     }
+    p$plot_env$... <- NULL
   }
   return(p)
 }

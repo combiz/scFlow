@@ -5,7 +5,7 @@ qc_table <- as.data.frame(attr(metadata, "de_parameters"))
 datatable(qc_table, colnames = "", options = list(pageLength = 5))
 ```
 
-Differential gene expression was performed on a total of `r as.numeric(attr(metadata, "de_parameters")["n_genes"])` genes which expressed a minimum of `r as.numeric(attr(metadata, "de_parameters")["min_counts"])` count in at least `r as.numeric(attr(metadata, "de_parameters")["min_cells_pc"])*100` percent of the cells. DGEs were detected at a fold-change threshold of `r as.numeric(attr(metadata, "de_parameters")["fc_threshold"])` and an adjusted p-value cut-off of `r as.numeric(attr(metadata, "de_parameters")["pval_cutoff"])` was applied. 
+Differential gene expression was performed on a total of `r prettyNum(as.numeric(attr(metadata, "de_parameters")["n_genes"]),big.mark=",",scientific=FALSE)` genes which expressed a minimum of `r as.numeric(attr(metadata, "de_parameters")["min_counts"])` count in at least `r as.numeric(attr(metadata, "de_parameters")["min_cells_pc"])*100` percent of the cells. DGEs were detected at a fold-change threshold of `r as.numeric(attr(metadata, "de_parameters")["fc_threshold"])` and an adjusted p-value cut-off of `r as.numeric(attr(metadata, "de_parameters")["pval_cutoff"])` was applied. 
 
 ### Result summary
 

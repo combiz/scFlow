@@ -18,7 +18,7 @@
 #'
 report_integrated_sce <- function(sce,
                                   report_folder_path = getwd(),
-                                  report_file = "integrate_reduceDims_cluster_report_scflow",
+                                  report_file = "integrate_scFlow",
                                   categorical_covariates = list()) {
   if (!class(sce) == "SingleCellExperiment") {
     stop("expecting singlecellexperiment")
@@ -28,9 +28,9 @@ report_integrated_sce <- function(sce,
     "Generating Report for Dataset Integration, Dimension Reduction, and Clustering",
     line = 2),
     "\r\n")
-  metadata_tmp_path <- file.path(tempdir(), "metadata.rds")
+  metadata_tmp_path <- file.path(tempdir(), "metadata.qs")
   cli::cli_text("Writing temp files for report...")
-  saveRDS(
+  qs::qsave(
     sce@metadata,
     metadata_tmp_path
   )
@@ -40,7 +40,9 @@ report_integrated_sce <- function(sce,
   dir.create(intd, showWarnings = FALSE)
   cli::cli_text("Generating Dataset Integration, Dimension Reduction, and Clustering report...")
   rmarkdown::render(
-    "~/ZeiselSCFLOW/report/skeleton.Rmd",
+    system.file(
+      "rmarkdown/templates/integrate/skeleton/skeleton.Rmd",
+      package = "scFlow"),
     params = list(
       metadata_path = metadata_tmp_path,
       categorical_covariates = categorical_covariates
@@ -52,8 +54,8 @@ report_integrated_sce <- function(sce,
     quiet = TRUE
   )
   cli::cli_text(c(
-    "Report succesfully generated: ",
-    "{.file {file.path(report_folder_path, 'integration_dimsReduction_clustering_report_scFlow.html')}}")
+    "Report successfully generated: ",
+    "{.file {file.path(report_folder_path, 'integrate_scFlow.html')}}")
   )
   return(sce)
 }

@@ -21,10 +21,10 @@ report_de <- function(res,
 
   cli::cli_h2("Generating report for differential expression analysis")
 
-  metadata_tmp_path <- file.path(tempdir(), "metadata.rds")
+  metadata_tmp_path <- file.path(tempdir(), "metadata.qs")
 
   cli::cli_text("Writing temp files for report...")
-  saveRDS(
+  qs::qsave(
     res,
     metadata_tmp_path
   )

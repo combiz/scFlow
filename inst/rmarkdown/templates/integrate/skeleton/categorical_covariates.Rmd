@@ -1,0 +1,39 @@
+## `r variable`
+
+<div class = "row">
+<div class="col-md-6">
+<div class = "zoomfig">
+```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Figure: tSNE by %s</b>", variable)}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$dataset_integration$batch_correction_plots$pca_tsne_plots[[variable]]
+```
+</div>
+</div>
+<div class="col-md-6">
+<div class = "zoomfig">
+```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Figure: tSNE (Liger) by %s</b>", variable)}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$dataset_integration$batch_correction_plots$liger_tsne_plots[[variable]]
+```
+</div>
+</div>
+</div>
+
+<div class = "row">
+<div class="col-md-6">
+<div class = "basicfig">
+```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Figure: kBET by %s</b>", variable)}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$dataset_integration$batch_correction_plots$pca_kbet_plots[[variable]]
+```
+</div>
+</div>
+<div class="col-md-6">
+<div class = "basicfig">
+```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Figure: kBET (Liger) by %s</b>", variable)}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$dataset_integration$batch_correction_plots$liger_kbet_plots[[variable]]
+```
+</div>
+</div>
+</div>

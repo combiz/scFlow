@@ -17,7 +17,7 @@
 #'
 #' @family differential gene expression
 #'
-#' @importFrom cli cli_text rule
+#' @importFrom cli cli_text rule cli_h1 cli_h2 cli_h3
 #'
 #'
 #' @export
@@ -42,28 +42,16 @@ perform_de <- function(sce,
                        ...) {
   fargs <- c(as.list(environment()), list(...))
 
-  cat(cli::rule(
-    "Starting Differential Gene Expression",
-    line = 2
-  ))
-  cat("\r\n")
+  cli::cli_h1("Starting Differential Gene Expression")
 
-  cat(cli::rule(
-    "Pre-processing SingleCellExperiment",
-    line = 1
-  ))
-  cat("\r\n")
+  cli::cli_h2("Pre-processing SingleCellExperiment")
 
   # preprocess
   fargs$sce <- do.call(.preprocess_sce_for_de, fargs)
 
   # select method
   if (de_method == "MASTZLM") {
-    cat(cli::rule(
-      "MAST Zero-inflated Linear Model",
-      line = 1
-    ))
-    cat("\r\n")
+    cli::cli_h2("MAST Zero-inflated Linear Model")
     de_fn <- .perform_de_with_mast
   } else {
     stop("Invalid method specified.")
@@ -156,6 +144,7 @@ perform_de <- function(sce,
 .perform_de_with_mast <- function(...) {
   fargs <- list(
     mast_method = "bayesglm",
+    ebayes = FALSE,
     force_run = FALSE
   )
   inargs <- list(...)
@@ -205,18 +194,17 @@ perform_de <- function(sce,
 
   # fit model
   message("Fitting model\n")
+
   # options(warn=-1) #temporary silencing
   x <- Sys.time()
   zlmCond <- MAST::zlm(
     formula = model_formula,
     sca = sca,
     method = fargs$mast_method, # note: glmer requires a random effects var
-    ebayes = FALSE,
+    ebayes = fargs$ebayes,
     parallel = TRUE
   )
   message(Sys.time() - x)
-
-  gc()
 
   ## test each contrast separately
   # obtain the group names for non-controls
@@ -235,6 +223,7 @@ perform_de <- function(sce,
 
   for (ctrast in contrasts) {
     message(sprintf("Running DE for %s\n", ctrast))
+    gc()
 
     # only test the condition coefficient.
     summaryCond <- suppressWarnings(summary(zlmCond, doLRT = ctrast))
@@ -325,7 +314,7 @@ perform_de <- function(sce,
       fc_threshold = fargs$fc_threshold,
       pval_cutoff = fargs$pval_cutoff,
       cells_per_group = table(
-        SingleCellExperiment::colData(fargs$sce)[fargs$dependent_var]),
+        as.data.frame(SingleCellExperiment::colData(fargs$sce))[[fargs$dependent_var]]),
       n_genes = dim(sce)[[1]],
       model = gsub(" ", "", model_formula_string, fixed = TRUE),
       model_full_rank = is_full_rank,
@@ -517,16 +506,24 @@ perform_de <- function(sce,
   dt$de[dt$padj <= pval_cutoff & dt$logFC > log2(fc_threshold)] <- "Up"
   dt$de[dt$padj <= pval_cutoff & dt$logFC < -log2(fc_threshold)] <- "Down"
   dt$de <- factor(dt$de, levels = c("Up", "Down", "Not sig"))
-  top_up <- dt %>%
-    dplyr::filter(de == "Up" & gene_biotype == "protein_coding") %>%
-    dplyr::top_n(n_label, wt = -padj)
-  top_down <- dt %>%
-    dplyr::filter(de == "Down" & gene_biotype == "protein_coding") %>%
-    dplyr::top_n(n_label, wt = -padj)
-  top_de <- rbind(top_up, top_down)
-  dt$label <- NA
-  dt$label[dt$gene %in% top_de$gene] <- "Yes"
+  n_up <- sum(dt$de == "Up" & dt$gene_biotype == "protein_coding")
+  n_down <- sum(dt$de == "Down" & dt$gene_biotype == "protein_coding")
 
+  dt$label <- NA
+  if (n_up > 0) {
+      top_up <- dt %>%
+        dplyr::filter(de == "Up" & gene_biotype == "protein_coding") %>%
+        dplyr::top_n(min(n_up, n_label), wt = -padj)
+      dt$label[dt$gene %in% top_up$gene] <- "Yes"
+      print(top_up)
+  }
+  if (n_down > 0) {
+    top_down <- dt %>%
+      dplyr::filter(de == "Down" & gene_biotype == "protein_coding") %>%
+      dplyr::top_n(min(n_down, n_label), wt = -padj)
+      dt$label[dt$gene %in% top_down$gene] <- "Yes"
+      print(top_down)
+  }
 
   ggplot2::ggplot(dt) +
     geom_point(aes(x = logFC, y = -log10(padj), fill = de, colour = de),

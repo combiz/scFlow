@@ -101,7 +101,10 @@ Imports:
     DropletUtils,
     formattable,
     qs,
-    ggridges
+    ggridges,
+    UpSetR,
+    nVennR,
+    kBET
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,
@@ -130,6 +133,7 @@ Remotes:
     cole-trapnell-lab/monocle3,
     bioc::release/MAST,
     bioc::release/multtest,
+    theislab/kBET,
     neurogenomics/scFlowExample,
     combiz/scFlowData
 VignetteBuilder: knitr

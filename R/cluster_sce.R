@@ -29,6 +29,8 @@ cluster_sce <- function(sce, ...) {
   inargs <- list(...)
   fargs[names(inargs)] <- inargs
 
+  rd_method_bck <- NULL
+
   assertthat::assert_that(
     fargs$reduction_method %in% names(SingleCellExperiment::reducedDims(sce))
   )
@@ -52,7 +54,7 @@ cluster_sce <- function(sce, ...) {
   sce$partitions <-
     as.factor(cds@clusters[[fargs$reduction_method]]$partitions)
 
-  if (!(is.null(rd_method_bck))) fargs$reduction_method <- rd_method_bck
+  if (!is.null(rd_method_bck)) { fargs$reduction_method <- rd_method_bck }
   sce@metadata$cluster_params <- fargs
 
   return(sce)
