@@ -34,7 +34,7 @@ knitr::knit_hooks$set(wrap = function(before, options, envir){
 ```
 
 ```{r, load_data, results='hide', include=FALSE}
-metadata <- readRDS(params$metadata_path)
+metadata <- qs::qread(params$metadata_path)
 ```
 
 

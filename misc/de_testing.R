@@ -3,7 +3,7 @@ sce <- read_sce("~/Documents/junk/mergedsce")
 
 sce_subset <- sce[, sce$cluster_celltype == "Micro"]
 
-sce_pb <- pseudobulk_sce_test(
+sce_pb <- pseudobulk_sce(
   sce_subset,
   keep_vars = c("individual", "group", "sex", "age", "PMI", "RIN", "seqdate"),
   assay_name = "counts",
@@ -15,3 +15,5 @@ de_results <- perform_de(
   sce_pb,
   confounding_vars = c("cngeneson", "sex", "age", "PMI", "RIN", "seqdate")
 )
+
+report_de(de_results[[1]])
