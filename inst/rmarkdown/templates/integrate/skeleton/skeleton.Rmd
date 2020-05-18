@@ -90,7 +90,7 @@ show_plot <- function(plot_object) {
 
 out <- NULL
 for(variable in names(metadata$dataset_integration$batch_correction_plots[[1]])) {
-    out <- c(out, knit_child("categorical_covariates.Rmd"))
+    out <- c(out, knitr::knit_child("categorical_covariates.Rmd"))
 }
 paste(out, collapse='\n')
 ```
