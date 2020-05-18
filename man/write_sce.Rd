@@ -4,7 +4,7 @@
 \alias{write_sce}
 \title{Write a SingleCellExperiment to a folder}
 \usage{
-write_sce(sce, folder_path, overwrite = TRUE)
+write_sce(sce, folder_path, write_metadata = FALSE, overwrite = TRUE)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment Object}

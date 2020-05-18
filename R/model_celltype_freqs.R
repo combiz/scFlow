@@ -559,8 +559,8 @@ model_celltype_freqs <- function(sce,
     not_ct <- counts_df[counts_df[[celltype_var]] != celltype, ]
     for (contrast_class in setdiff(ct[[dependent_var]], ref_class)) {
       contab <- matrix(0, nrow = 2, ncol = 2)
-      contab[1, 1] <- ct[ct$group == ref_class, ]$sum
-      contab[1, 2] <- sum(not_ct[not_ct$group == ref_class, ]$sum)
+      contab[1, 1] <- ct[ct[[dependent_var]] == ref_class, ]$sum
+      contab[1, 2] <- sum(not_ct[not_ct[[dependent_var]] == ref_class, ]$sum)
       contab[2, 1] <- ct[ct[[dependent_var]] == contrast_class, ]$sum
       contab[2, 2] <- sum(not_ct[not_ct[[dependent_var]] == contrast_class, ]$sum)
       rownames(contab) <- c(ref_class, contrast_class)

@@ -68,7 +68,7 @@ show_plot <- function(plot_object) {
 
 out <- NULL
 for(plot_var in union(metadata$celltype_annotations$params$facet_vars, metadata$celltype_annotations$params$unique_id_var)) {
-    out <- c(out, knit_child("reddim_plots.Rmd"))
+    out <- c(out, knitr::knit_child("reddim_plots.Rmd"))
 }
 paste(out, collapse='\n')
 ```
@@ -89,7 +89,7 @@ show_plot <- function(plot_object) {
 }
 out <- NULL
 for(group_by_var in union("all", names(metadata$celltype_annotations$prop_plots))) {
-    out <- c(out, knit_child("prop_plots.Rmd"))
+    out <- c(out, knitr::knit_child("prop_plots.Rmd"))
 }
 ```
 
@@ -109,7 +109,7 @@ show_plot <- function(plot_object) {
 }
 out <- NULL
 for(metric_var in names(metadata$celltype_annotations$metric_plots)) {
-    out <- c(out, knit_child("metric_plots.Rmd"))
+    out <- c(out, knitr::knit_child("metric_plots.Rmd"))
 }
 ```
 

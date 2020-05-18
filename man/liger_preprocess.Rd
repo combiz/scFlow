@@ -10,6 +10,7 @@ liger_preprocess(
   unique_id_var = "manifest",
   take_gene_union = F,
   remove.missing = T,
+  make.sparse = T,
   num_genes = 3000,
   combine = "union",
   keep_unique = F,

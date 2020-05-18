@@ -20,15 +20,17 @@
 #' @family import and export functions
 #'
 #' @importFrom SingleCellExperiment SingleCellExperiment reducedDim
-#' @importFrom cli rule cli_alert_danger col_green cli_alert_info cli_alert_success cli_text
+#' @importFrom cli rule cli_alert_danger col_green cli_alert_info cli_alert_success cli_text cli_h1
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom R.utils gzip
 #' @importFrom tools file_path_sans_ext
+#' @importFrom qs qread
+#' @importFrom future availableCores
 #'
 #' @export
-read_sce <- function(folder_path) {
+read_sce <- function(folder_path, read_metadata = FALSE) {
 
-  cat(cli::rule("Reading SingleCellExperiment", line = 2), "\r\n")
+  cli::cli_h1("Reading SingleCellExperiment")
 
   ## Check core files are present
   paths_l <- list()
@@ -38,6 +40,11 @@ read_sce <- function(folder_path) {
   paths_l[["barcodes_path"]] <-  file.path(folder_path, "barcodes.tsv.gz")
   paths_l[["features_path"]] <-  file.path(folder_path, "features.tsv.gz")
   paths_l[["matrix_path"]] <-  file.path(folder_path, "matrix.mtx.gz")
+  if(read_metadata) {
+    paths_l[["metadata_path"]] <-  file.path(folder_path, "metadata.qs")
+    assertthat::assert_that(file.exists(paths_l[["metadata_path"]]),
+                            msg = "Metadata was not found.")
+  }
 
   # check all files exist or throw error
   if (!(all(purrr::map_lgl(paths_l, file.exists)))) {
@@ -46,6 +53,7 @@ read_sce <- function(folder_path) {
 
   all_counts <- read_sparse_matrix(folder_path)
 
+  cli::cli_h2("Reading colData/rowData")
   cli::cli_text("Reading: {.path {paths_l$all_rowdata}}")
   all_rowdata <- read.delim(
     file = paths_l$all_rowdata
@@ -84,6 +92,16 @@ read_sce <- function(folder_path) {
       SingleCellExperiment::reducedDim(sce, rdname) <- as.matrix(read.delim(
         file = file.path(folder_path, rd_file)), nrow = ncol(sce))
     }
+  }
+
+  if(read_metadata){
+    cli::cli_h2("Appending metadata")
+    metadata_path <- paths_l[["metadata_path"]]
+    cli::cli_text("Reading: {.path {metadata_path}}")
+    metadata <- qs::qread(
+      metadata_path,
+      nthreads = max(1, future::availableCores()-1))
+    sce@metadata <- metadata
   }
 
   cli::cli_alert_success("Imported SingleCellExperiment.")
