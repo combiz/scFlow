@@ -19,17 +19,20 @@
 #'
 #' @family import and export functions
 #'
-#' @import cli Matrix dplyr
+#' @importFrom cli cli_h1 cli_h2 cli_alert_warning cli_text cli_alert_success
 #' @importFrom SingleCellExperiment counts reducedDim reducedDims
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom R.utils gzip
+#' @importFrom qs qsave
+#' @importFrom future availableCores
 #'
 #' @export
 write_sce <- function(sce,
                       folder_path,
+                      write_metadata = FALSE,
                       overwrite = TRUE) {
 
-  cat(cli::rule("Writing SingleCellExperiment", line = 2), "\r\n")
+  cli::cli_h1("Writing SingleCellExperiment")
 
   if (class(sce) != "SingleCellExperiment") {
     stop(cli::cli_alert_danger(
@@ -51,7 +54,8 @@ write_sce <- function(sce,
     }
   }
 
-  # write metadata to tsv files
+  cli::cli_h2("Writing colData/rowData")
+  # write rowdata to tsv file
   cli::cli_text("Writing: {.path sce-rowdata.tsv}")
   write.table(
     as.data.frame(SummarizedExperiment::rowData(sce)),
@@ -62,7 +66,8 @@ write_sce <- function(sce,
     row.names = FALSE
   )
 
-  cli::cli_text("Writing: {.path 'scecoldata.tsv'}")
+  # write coldata to tsv file
+  cli::cli_text("Writing: {.path scecoldata.tsv}")
   write.table(
     as.data.frame(SummarizedExperiment::colData(sce)),
     file = file.path(folder_path, "sce-coldata.tsv"),
@@ -72,7 +77,8 @@ write_sce <- function(sce,
     row.names = FALSE
   )
 
-  cli::cli_text("Writing: {.path 'scecoldata_classes.tsv'}")
+  # write coldata classes to tsv file
+  cli::cli_text("Writing: {.path scecoldata_classes.tsv}")
   col_classes <- sapply(SummarizedExperiment::colData(sce), class)
   write.table(
     col_classes,
@@ -98,6 +104,17 @@ write_sce <- function(sce,
     SingleCellExperiment::counts(sce),
     folder_path
   )
+
+  if(write_metadata) {
+    cli::cli_h2("Writing metadata")
+    metadata_fp <- file.path(folder_path, "metadata.qs")
+    cli::cli_text("Writing: {.path {metadata_fp}}")
+    qs::qsave(
+      sce@metadata,
+      metadata_fp,
+      nthreads = max(1, future::availableCores()-1)
+      )
+  }
 
   cli::cli_alert_success(
     "Saved SingleCellExperiment to {.file {folder_path}}"

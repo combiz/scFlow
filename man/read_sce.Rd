@@ -4,7 +4,7 @@
 \alias{read_sce}
 \title{Read a SingleCellExperiment from a folder}
 \usage{
-read_sce(folder_path)
+read_sce(folder_path, read_metadata = FALSE)
 }
 \arguments{
 \item{folder_path}{path to save the SingleCellExperiment}
