@@ -12,7 +12,6 @@ pathway_analysis_webgestaltr(
     "geneontology_Cellular_Component_noRedundant",
     "geneontology_Molecular_Function_noRedundant", "pathway_KEGG", "pathway_Panther",
     "pathway_Reactome", "pathway_Wikipathway"),
-  additional_enrichment_databse = FALSE,
   is_output = FALSE,
   output_dir = "."
 )
@@ -31,15 +30,12 @@ genes.}
 Either over-representation analysis (ORA) or (Gene set enrichment analysis)
 GSEA.}
 
-\item{enrichment_database}{Name of the database for enrichment.
-If NULL then multiple databases will be used or user can specify one or more
-database names.Default NULL.}
-
-\item{additional_enrichment_databse}{Logical. If TRUE additional databases
-will be loaded. If FALSE only default databases will be used. Default TRUE.}
+\item{enrichment_database}{Name of the database for enrichment. If not
+provided then multiple databases will be used or user can specify one or more
+database names from \code{\link[WebGestaltR:listGeneSet]{WebGestaltR::listGeneSet()}}}
 
 \item{is_output}{If TRUE a folder will be created and results of enrichment
-analysis will be saved otherwise a R list will be returned. Default FALSE}
+analysis will be saved otherwise a R list will be returned. Default FALSE.}
 
 \item{output_dir}{Path for the output directory. Default is current
 directory.}
@@ -59,14 +55,20 @@ enrichment_result <- pathway_analysis_webgestaltr(
     sep = ""
   ),
   enrichment_method = "ORA",
-  additional_enrichment_databse = FALSE,
   is_output = TRUE
 )
 }
 \seealso{
 Other Impacted pathway analysis: 
+\code{\link{.dotplot_pe}()},
+\code{\link{.get_overlap_id}()},
+\code{\link{.listdb}()},
 \code{\link{find_impacted_pathways}()},
+\code{\link{list_databases}()},
+\code{\link{pathway_analysis_enrichr}()},
 \code{\link{pathway_analysis_rontotools}()},
-\code{\link{pathway_to_graph}()}
+\code{\link{pathway_to_graph}()},
+\code{\link{plot_network}()},
+\code{\link{report_impacted_pathway}()}
 }
 \concept{Impacted pathway analysis}

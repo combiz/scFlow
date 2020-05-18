@@ -35,7 +35,7 @@ cat(paste0(
 crit_z_2sd <- qnorm(1-.05/2)
 crit_z_3sd <- qnorm(1-.003/2)
 
-div(show_plot(print(formattable(
+div(show_plot(print(formattable::formattable(
   metadata$merged_plots_data[[plot_var]][[plot]], 
      list(
        "mean_avg" = color_bar("#71CA97"), 

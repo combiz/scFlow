@@ -17,6 +17,7 @@
 #' @importFrom purrr map_lgl
 #' @importFrom threejs scatterplot3js
 #' @importFrom plotly plot_ly
+#' @importFrom Rtsne Rtsne
 #'
 #' @export
 
@@ -40,18 +41,45 @@ reduce_dims_sce <- function(sce,
     repulsion_strength = 1,
     negative_sample_rate = 5,
     fast_sgd = FALSE,
-    n_threads = max(1, RcppParallel::defaultNumThreads() - 2)
+    n_threads = max(1, RcppParallel::defaultNumThreads() - 2),
+    # Rtsne
+    dims = 2,
+    initial_dims = 50,
+    perplexity = 30,
+    theta = 0.5,
+    check_duplicates = FALSE,
+    partial_pca = FALSE,
+    max_iter = 1000,
+    is_distance = FALSE,
+    Y_init = NULL,
+    pca_center = TRUE,
+    pca_scale = FALSE,
+    normalize = TRUE,
+    momentum = 0.5,
+    final_momentum = 0.8,
+    eta = 200,
+    exaggeration_factor = 12,
+    num_threads = max(1, RcppParallel::defaultNumThreads() - 2)
   )
+
   inargs <- list(...)
   fargs[names(inargs)] <- inargs
 
   sce@metadata$reduced_dim_plots <- list()
+  sce@metadata$reduced_dim_params <- list()
 
   if (!all(purrr::map_lgl(
     reduction_methods,
     ~ . %in% c("tSNE", "UMAP", "UMAP3D")
   ))) {
     stop("reduction methods must be from: tSNE, UMAP, UMAP3D")
+  }
+
+  if ("Liger" %in% input_reduced_dim) {
+    assertthat::assert_that(
+      "Liger" %in% SingleCellExperiment::reducedDimNames(sce),
+      msg = paste0("Liger reducedDim not found. ",
+                   "To use Liger as an input first run integrate_sce()"))
   }
 
   before_rd_names <- SingleCellExperiment::reducedDimNames(sce)
@@ -79,6 +107,15 @@ reduce_dims_sce <- function(sce,
     residual_model_formula_str = res_mod_formula_str
   )
 
+  #mat <- SingleCellExperiment::counts(sce)
+  #
+  #pca_res <- irlba::prcomp_irlba(
+  #  Matrix::t(SingleCellExperiment::counts(sce)),
+  #  n = min(pca_dims, dim(sce)[[1]] - 1),
+  #  center = TRUE,
+  #  scale. = TRUE
+  #)
+
   SingleCellExperiment::reducedDim(sce, "PCA") <-
     SingleCellExperiment::reducedDim(cds, "PCA")
   cli::cli_alert_success("{.strong PCA} was completed successfully")
@@ -100,29 +137,23 @@ reduce_dims_sce <- function(sce,
       # Reduce dimensions with tSNE
       if (reddim_method == "tSNE") {
 
-        if (input_rd == "Liger") { # temporary hack
-        SingleCellExperiment::reducedDim(cds, "PCA_BACKUP") <-
-          SingleCellExperiment::reducedDim(cds, "PCA")
+        mat <- as.matrix(SingleCellExperiment::reducedDim(cds, input_rd))
 
-        SingleCellExperiment::reducedDim(cds, "PCA") <-
-          SingleCellExperiment::reducedDim(cds, "Liger")
-        }
+        tsne_args <- fargs[names(fargs) %in%
+                             names(as.list(args(Rtsne:::Rtsne.default)))]
 
-        cds <- monocle3::reduce_dimension(
-          cds,
-          preprocess_method = "PCA",
-          reduction_method = "tSNE"
-        )
+        tsne_res <- do.call(
+          Rtsne::Rtsne, c(list(X = mat, pca = FALSE), tsne_args)
+          )
+
+        tsne_data <- tsne_res$Y[, 1:fargs$dims]
+        row.names(tsne_data) <- colnames(tsne_data)
 
         rd_name <- paste(reddim_method, input_rd, sep = "_")
 
-        SingleCellExperiment::reducedDim(sce, rd_name) <-
-          SingleCellExperiment::reducedDim(cds, "tSNE")
+        SingleCellExperiment::reducedDim(sce, rd_name) <- tsne_data
+        sce@metadata$reduced_dim_params[[rd_name]] <- tsne_args
 
-        if (input_rd == "Liger") { # restore
-          SingleCellExperiment::reducedDim(cds, "PCA") <-
-            SingleCellExperiment::reducedDim(cds, "PCA_BACKUP")
-        }
         cli::cli_alert_success(c(
           "{.strong {reddim_method}} was computed successfully ",
           "with {.strong {input_rd}} input"))
@@ -133,31 +164,25 @@ reduce_dims_sce <- function(sce,
 
         mat <- as.matrix(SingleCellExperiment::reducedDim(cds, input_rd))
 
+        umap_args <- fargs[names(fargs) %in%
+                             names(as.list(args(uwot::umap)))]
+
         if (reddim_method == "UMAP3D") {
-          bckfargs <- fargs
-          fargs$n_components <- 3
+          umap_args$n_components <- 3
         }
 
         umap_res <- do.call(
-          uwot::umap,
-          c(
-            list(X = mat),
-            fargs[names(fargs) %in%
-              names(as.list(args(uwot::umap)))]
-          )
+          uwot::umap, c(list(X = mat), umap_args)
         )
 
         cli::cli_alert_success(c(
           "{.strong {reddim_method}} was computed successfully ",
           "with {.strong {input_rd}} input"))
 
-        if (reddim_method == "UMAP3D") {
-          fargs <- bckfargs
-        }
-
         row.names(umap_res) <- colnames(cds)
         rd_name <- paste(reddim_method, input_rd, sep = "_")
         SingleCellExperiment::reducedDim(sce, rd_name) <- umap_res
+        sce@metadata$reduced_dim_params[[rd_name]] <- umap_args
 
         if (reddim_method == "UMAP3D") {
           sce@metadata$reduced_dim_plots$umap3d_plot_ly <-
@@ -185,7 +210,6 @@ reduce_dims_sce <- function(sce,
       }
     }
   }
-
 
   new_reddims <- dplyr::setdiff(
     SingleCellExperiment::reducedDimNames(sce),

@@ -1,12 +1,29 @@
 Package: scFlow
 Title: A Single-Cell/Nuclei Analysis Toolkit
-Version: 0.4.1
+Version: 0.5.0
 Authors@R: 
+    c(
     person(given = "Combiz",
            family = "Khozoie",
            role = c("aut", "cre"),
            email = "c.khozoie@imperial.ac.uk",
+           comment = c(ORCID = "0000-0002-1634-5287")),
+    person(given = "Nurun",
+           family = "Fancy",
+           role = c("aut"),
+           email = "n.fancy@imperial.ac.uk",
+           comment = c(ORCID = "YOUR-ORCID-ID")),
+    person(given = "Mahdi",
+           family = "Marjaneh",
+           role = c("aut"),
+           email = "m.moradi@imperial.ac.uk",
+           comment = c(ORCID = "YOUR-ORCID-ID")),
+    person(given = "Nathan",
+           family = "Skene",
+           role = c("aut"),
+           email = "n.skene@imperial.ac.uk",
            comment = c(ORCID = "YOUR-ORCID-ID"))
+    )
 Description: Single-cell/nuclei RNA-seq analysis tools in R to build a complete analysis workflow.
 Roxygen: list(markdown = TRUE)
 License: MIT + file LICENSE
@@ -18,13 +35,16 @@ Suggests:
     testthat (>= 2.1.0),
     spelling,
     covr,
-    knitr
+    knitr,
+    scFlowData,
+    scFlowExample
 Language: en-US
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Imports: 
     purrr,
     Matrix,
     utils,
+    RANN.L1,
     biomaRt,
     SingleCellExperiment,
     stringr,
@@ -39,6 +59,7 @@ Imports:
     english,
     Seurat,
     DoubletFinder,
+    ggpubr,
     ggplot2,
     DT,
     rmarkdown,
@@ -49,7 +70,6 @@ Imports:
     future.apply,
     RcppParallel,
     plotly,
-    monocle3,
     threejs,
     EWCE,
     plyr,
@@ -60,6 +80,7 @@ Imports:
     limma,
     methods,
     paletteer,
+    prettydoc,
     scater,
     leaflet,
     ROntoTools,
@@ -72,10 +93,20 @@ Imports:
     WebGestaltR,
     graphite,
     uniftest,
-    liger,
     batchelor,
     DelayedMatrixStats,
-    Matrix.utils
+    Matrix.utils,
+    monocle3,
+    liger,
+    DropletUtils,
+    formattable,
+    qs,
+    ggdendro,
+    ggridges,
+    UpSetR,
+    nVennR,
+    kBET,
+    DirichletReg
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,
@@ -83,10 +114,10 @@ Remotes:
     bioc::release/biomaRt,
     bioc::release/SingleCellExperiment,
     bioc::release/SummarizedExperiment,
-    cole-trapnell-lab/monocle3,
     ropensci/plotly,
     NathanSkene/EWCE,
     MacoskoLab/liger,
+    bioc::release/scater,
     bioc::release/BiocGenerics,
     bioc::release/S4Vectors,
     bioc::release/IRanges,
@@ -95,8 +126,17 @@ Remotes:
     bzhanglab/WebGestaltR,
     bioc::release/graphite,
     bioc::release/ROntoTools,
-    bioc::devel/batchelor,
+    bioc::release/batchelor,
     bioc::release/DelayedMatrixStats,
+    bioc::release/DropletUtils,
     bioc::release/limma,
-    cvarrichio/Matrix.utils
+    cvarrichio/Matrix.utils,
+    combiz/RANN.L1,
+    cole-trapnell-lab/monocle3,
+    bioc::release/MAST,
+    bioc::release/multtest,
+    theislab/kBET,
+    neurogenomics/scFlowExample,
+    combiz/scFlowData,
+    cran/DirichletReg
 VignetteBuilder: knitr

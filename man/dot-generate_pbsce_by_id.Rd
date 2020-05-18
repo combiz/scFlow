@@ -4,7 +4,7 @@
 \alias{.generate_pbsce_by_id}
 \title{helper fn to generate a pseudobulk sce for post-merge qc}
 \usage{
-.generate_pbsce_by_id(sce, unique_id_var = "manifest")
+.generate_pbsce_by_id(sce, unique_id_var = "manifest", pca_dims = 5)
 }
 \arguments{
 \item{sce}{a singlecellexperiment object}

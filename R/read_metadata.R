@@ -13,7 +13,7 @@
 #' @return metadata the metadata for the specified sample#'
 #'
 #' @family annotation functions
-#' @importFrom cli rule cli_alert_danger col_green cli_alert_danger cli_text
+#' @importFrom cli cli_alert_danger col_green cli_alert_danger cli_text cli_h1
 #' @importFrom tools toTitleCase
 #' @importFrom english words
 #' @export
@@ -26,7 +26,7 @@ read_metadata <- function(unique_key,
   inargs <- list(...)
   args[names(inargs)] <- inargs
 
-  cat(cli::rule("Retrieving sample metadata", line = 2), "\r\n")
+  cli::cli_h1("Reading sample metadata")
 
   if (!file.exists(samplesheet_path)) {
     stop(cli::cli_alert_danger("Samplesheet not found.\

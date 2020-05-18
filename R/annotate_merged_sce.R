@@ -6,7 +6,6 @@
 #' @param unique_id_var the colData variable identifying unique samples
 #' @param facet_vars the colData variable(s) to facet/subset by
 #' @param outlier_vars the colData variable(s) to apply adaptive thresholding
-#' @param outlier_mads the minimum median absolute deviations for thresholding
 #'
 #' @return sce a annotated SingleCellExperiment object
 #'
@@ -26,9 +25,10 @@ annotate_merged_sce <- function(sce,
                                 unique_id_var = "manifest",
                                 facet_vars = NULL,
                                 outlier_vars = c("total_features_by_counts",
-                                                 "total_counts"),
-                                outlier_mads = 3) {
+                                                 "total_counts")) {
 
+  assertthat::assert_that(length(unique(sce[[unique_id_var]])) >= 3,
+                                 msg = "A minimum of 3 samples required.")
   cat(cli::rule("Annotating Merged SingleCellExperiment", line = 2), "\r\n")
   cat(cli::rule("Appending Merge Summary Plots", line = 1), "\r\n")
 
@@ -63,7 +63,7 @@ annotate_merged_sce <- function(sce,
         median_avg = round(median(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
         mad = round(mad(!!rlang::sym(pv), na.rm = TRUE), digits = 3)
         ) %>%
-      mutate(z = scale(mean_avg)[, 1])
+      dplyr::mutate(z = scale(mean_avg)[, 1])
 
     merged_plots_data_l[[pv]][[pv]] <- dt
 
@@ -111,7 +111,8 @@ annotate_merged_sce <- function(sce,
   message(sprintf("Performing Pseudobulking of Cells by %s", unique_id_var))
   pbsce <- .generate_pbsce_by_id(
     sce,
-    unique_id_var = unique_id_var
+    unique_id_var = unique_id_var,
+    pca_dims = 5
     )
   time_taken <- difftime(Sys.time(), x, units = "mins")
   cli::cli_alert_success(sprintf(
@@ -185,7 +186,8 @@ annotate_merged_sce <- function(sce,
 #' @param unique_id_var the colData variable identifying unique samples
 #' @keywords internal
 .generate_pbsce_by_id <- function(sce,
-                                  unique_id_var = "manifest") {
+                                  unique_id_var = "manifest",
+                                  pca_dims = 5) {
 
   pbsce <- pseudobulk_sce(
     sce,
@@ -202,10 +204,11 @@ annotate_merged_sce <- function(sce,
 
   pbsce <- reduce_dims_sce(
     pbsce,
+    input_reduced_dim = "PCA",
     vars_to_regress_out = c("n_cells"),
-    pca_dims = 5,
+    pca_dims = pca_dims,
     n_neighbors = 2,
-    reduction_methods = c("PCA", "UMAP")
+    reduction_methods = c("UMAP")
   )
 
   return(pbsce)
@@ -306,7 +309,7 @@ annotate_merged_sce <- function(sce,
 
   vars_to_keep <- unique(c(plot_var, unique_id_var, facet_var))
   dt <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
-    select(vars_to_keep)
+    dplyr::select(vars_to_keep)
   dt$plot_var <- dt[[plot_var]]
   if (!is.null(facet_var)) dt$facet_var <- as.factor(dt[[facet_var]])
 

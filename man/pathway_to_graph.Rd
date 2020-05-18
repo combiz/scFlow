@@ -22,8 +22,15 @@ pathway_to_graph("kegg")
 }
 \seealso{
 Other Impacted pathway analysis: 
+\code{\link{.dotplot_pe}()},
+\code{\link{.get_overlap_id}()},
+\code{\link{.listdb}()},
 \code{\link{find_impacted_pathways}()},
+\code{\link{list_databases}()},
+\code{\link{pathway_analysis_enrichr}()},
 \code{\link{pathway_analysis_rontotools}()},
-\code{\link{pathway_analysis_webgestaltr}()}
+\code{\link{pathway_analysis_webgestaltr}()},
+\code{\link{plot_network}()},
+\code{\link{report_impacted_pathway}()}
 }
 \concept{Impacted pathway analysis}

@@ -13,6 +13,7 @@
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom rmarkdown render
 #' @importFrom tools file_path_sans_ext
+#' @importFrom formattable formattable icontext
 #' @export
 #'
 report_merged_sce <- function(sce,

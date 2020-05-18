@@ -12,13 +12,13 @@
 #'
 #' @family import and export functions
 #'
-#' @import Matrix
-#' @import cli
+#' @importFrom Matrix Matrix
+#' @importFrom cli cli_h1 cli_h2
 #'
 #' @export
 read_sparse_matrix <- function(folder_path) {
 
-  cat(cli::rule("Reading feature-barcode matrix", line = 2), "\r\n")
+  cli::cli_h2("Reading feature-barcode matrix")
 
   paths_l <- list()
   paths_l[["barcodes_path"]] <-  file.path(folder_path, "barcodes.tsv.gz")

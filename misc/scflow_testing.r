@@ -3,7 +3,7 @@
 #options("mc.cores")
 #library(parallel)
 #library(future)
-library(scflow)
+library(scFlow)
 #library(devtools)
 x <- Sys.time()
 #plan(list(multiprocess, sequential))

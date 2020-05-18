@@ -23,8 +23,9 @@
 #' @importFrom purrr map_int map_df
 #' @importFrom future availableCores
 #' @importFrom assertthat are_equal
+#' @importFrom tidyselect all_of
 #' @importFrom scater librarySizeFactors normalize calculateQCMetrics
-#' @importFrom SingleCellExperiment SingleCellExperiment
+#' @importFrom SingleCellExperiment SingleCellExperiment counts
 #'
 #' @export
 pseudobulk_sce <- function(sce,
@@ -39,7 +40,7 @@ pseudobulk_sce <- function(sce,
   keep_vars <- unique(c(sample_var, keep_vars))
 
   sce_cd <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
-    dplyr::select(keep_vars) %>%
+    dplyr::select(tidyselect::all_of(keep_vars)) %>%
     dplyr::distinct()
 
   # generate individual/cluster factor on which to pseudobulk
@@ -49,18 +50,19 @@ pseudobulk_sce <- function(sce,
     sep = "_"
   )
 
-  #pb_matrix <- scater::sumCountsAcrossCells(
-  #  sce,
-  #  sce$pseudobulk_id,
-  #  exprs_values = assay_name
-  #)
+  # original working
+  #pb_matrix_l <- parallel::mclapply(
+  #  unique(sce$pseudobulk_id),
+  #  function(x) {Matrix::rowSums(SingleCellExperiment::counts(sce[, sce$pseudobulk_id == x]))},
+  #  mc.cores = future::availableCores())
+  #pb_matrix <- Reduce(cbind, pb_matrix_l)
+  #colnames(pb_matrix) <- unique(sce$pseudobulk_id)
 
-  pb_matrix_l <- parallel::mclapply(
-    unique(sce$pseudobulk_id),
-    function(x) {Matrix::rowSums(sce[, sce$pseudobulk_id == x]@assays$data[[assay_name]])},
-    mc.cores = future::availableCores())
-
-  pb_matrix <- Reduce(cbind, pb_matrix_l)
+  # fast matrix multiplication method
+  mm <- model.matrix(~ 0 + sce$pseudobulk_id)
+  pb_matrix <- SingleCellExperiment::counts(sce) %*% mm
+  pb_matrix <- Matrix::Matrix(pb_matrix, sparse = TRUE)
+  pb_matrix <- edgeR::cpm(pb_matrix, log = F)
   colnames(pb_matrix) <- unique(sce$pseudobulk_id)
 
   #rownames(pb_matrix) <- SummarizedExperiment::rowData(sce)$ensembl_gene_id
@@ -95,6 +97,9 @@ pseudobulk_sce <- function(sce,
 
   n_samples <- nrow(pb_cd)
 
+  pb_cd[[sample_var]] <- as.character(pb_cd[[sample_var]])
+  sce_cd[[sample_var]] <- as.character(sce_cd[[sample_var]])
+
   # append the rest of the sample information
   pb_cd <- dplyr::left_join(
     pb_cd, sce_cd,
@@ -122,9 +127,12 @@ pseudobulk_sce <- function(sce,
   names(SummarizedExperiment::assays(pb_sce)) <- assay_name
 
   # size factors are set to the number of cells
-  pb_sce@int_colData$size_factor <- scater::librarySizeFactors(pb_sce)
-  pb_sce <- scater::normalize(pb_sce, return_log = FALSE)
+  #pb_sce@int_colData$size_factor <- scater::librarySizeFactors(pb_sce)
+  #pb_sce <- scater::normalize(pb_sce, return_log = FALSE)
   pb_sce <- scater::calculateQCMetrics(pb_sce)
+
+  pb_sce@metadata$scflow_steps <- list()
+  pb_sce@metadata$scflow_steps$pseudobulk <- TRUE
 
   return(pb_sce)
 }

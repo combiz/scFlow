@@ -1,0 +1,48 @@
+```{r results='asis', echo=FALSE}
+plot_caption <- sprintf(
+  "<b>Figure: Relative proportion of %s by %s.</b>", 
+  celltype, results$fargs$unique_id_var)
+
+if(celltype %in% sig_celltypes) { 
+  tick_or_cross <- "✅"
+} else {
+  tick_or_cross <- "❌"
+}    
+    
+```
+
+<div class = "basicfig">
+```{r results='asis', fig.align="center", fig.width=10, fig.height=4.5, fig.cap = plot_caption,  echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+cat(sprintf("<a name=\"%s\"></a>", celltype))
+cat(sprintf("<h2 class=\"display-3\">%s %s</h2>", celltype, tick_or_cross))
+#plotly::ggplotly(results$unique_id_plots_by_celltype[[celltype]])
+if(celltype %in% sig_celltypes) {
+  cat(sprintf("Statistically significant differences in the proportion of %s cells were observed between classes of <i>%s</i> (vs %s) using a Dirichlet model.", celltype, results$fargs$dependent_var, results$fargs$ref_class))
+  } else { 
+    cat(sprintf("No statistically significant differences were observed in the proportion of %s cells between classes of <i>%s</i> (vs %s) using a Dirichlet model.", celltype, results$fargs$dependent_var, results$fargs$ref_class))
+  }
+print(results$unique_id_plots_by_celltype[[celltype]])
+```
+</div>
+
+```{r results='asis', echo=FALSE}
+plot_caption <- sprintf(
+  "<b>Figure: Relative proportion of %s by %s.</b>  (Dirichlet-multinomial regression, `*`adjusted p ≤ 0.05, `**`adjusted p ≤ 0.01, `***`adjusted p ≤ 0.001); error bars: SEM.", 
+  celltype, results$fargs$dependent_var)
+```
+
+<div class = "basicfig">
+```{r results='asis', fig.align="center", fig.width=10, fig.height=4.5, fig.cap = plot_caption,  echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+#plotly::ggplotly(results$dirichlet_plots_by_celltype[[celltype]])
+print(results$dirichlet_plots_by_celltype[[celltype]])
+```
+</div>
+
+### Table: Dirichlet model p-values for `r celltype` (vs `r results$fargs$ref_class`)
+```{r, fig.align = "center"}
+DT::datatable(results$dirichlet_pvals[results$dirichlet_pvals[[results$fargs$celltype_var]] == celltype,], rownames = FALSE, options = list(dom = 't', pageLength = 10, scrollX=T, columnDefs = list(list(className = 'dt-left', targets = "_all"))), escape = FALSE ) %>% DT::formatRound(columns = "pval", digits = 5)
+```

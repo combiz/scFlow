@@ -1,5 +1,6 @@
 library(dplyr)
-
+library(ggplot2)
+sce$manifest <- sce$individual
 dt <- as.data.frame(table(sce$manifest, sce$cluster_celltype) / rowSums((table(sce$manifest, sce$cluster_celltype))) * 100)
 
 crit_z <- qnorm(1-.05/2)

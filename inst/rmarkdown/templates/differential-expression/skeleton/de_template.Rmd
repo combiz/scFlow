@@ -1,0 +1,47 @@
+### Analysis summary
+
+```{r, fig.align = "center"}
+qc_table <- as.data.frame(attr(metadata, "de_parameters"))
+datatable(qc_table, colnames = "", options = list(pageLength = 5))
+```
+
+Differential gene expression was performed on a total of `r prettyNum(as.numeric(attr(metadata, "de_parameters")["n_genes"]),big.mark=",",scientific=FALSE)` genes which expressed a minimum of `r as.numeric(attr(metadata, "de_parameters")["min_counts"])` count in at least `r as.numeric(attr(metadata, "de_parameters")["min_cells_pc"])*100` percent of the cells. DGEs were detected at a fold-change threshold of `r as.numeric(attr(metadata, "de_parameters")["fc_threshold"])` and an adjusted p-value cut-off of `r as.numeric(attr(metadata, "de_parameters")["pval_cutoff"])` was applied. 
+
+### Result summary
+
+```{r, echo=FALSE, results="hide"}
+Up <- as.numeric(attr(metadata, "de_result")["Up"])
+Down <- as.numeric(attr(metadata, "de_result")["Down"])
+Total_gene <- as.numeric(attr(metadata, "de_parameters")["n_genes"])
+Up_percent <- Up/Total_gene*100
+Down_percent <- Down/Total_gene*100
+```
+
+
+`r sprintf("\n\n**Up-regulated:** %g (%g%%) \n\n", Up, Up_percent)`  
+`r sprintf("\n\n**Down-regulated:** %g (%g%%) \n\n", Down, Down_percent)` 
+
+### Volcano plot
+
+```{r, echo=FALSE}
+metadata_plot <- attr(metadata, "plot")
+```
+
+<div class = "zoomfig">
+```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Volcano plot for differentially expressed gene.</b> Top %s up and down-regulated protein-coding genes are labelled.", dim(metadata_plot$plot_env$top_de)[1])}
+metadata_plot
+```
+</div>
+
+
+### List of differentially expressed gene
+
+```{r, results = 'asis', warning=FALSE}
+metadata_table <- metadata
+metadata_table$pval <- as.numeric(format(metadata_table$pval, format = "e", digits = 2))
+metadata_table$logFC <- as.numeric(format(metadata_table$logFC, format = "e", digits = 2))
+metadata_table$ci.hi <- as.numeric(format(metadata_table$ci.hi, format = "e", digits = 2))
+metadata_table$ci.lo <- as.numeric(format(metadata_table$ci.lo, format = "e", digits = 2))
+metadata_table$padj <- as.numeric(format(metadata_table$padj, format = "e", digits = 2))
+datatable(metadata_table, rownames = FALSE, options = list(pageLength = 10, scrollX=T, autoWidth = TRUE), escape = FALSE )
+```

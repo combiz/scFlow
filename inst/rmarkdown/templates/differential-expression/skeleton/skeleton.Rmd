@@ -1,0 +1,49 @@
+---
+title: "<b>scFlow</b> - Differential Expression Analysis Report"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    theme: "flatly"
+    toc: false
+    fig_caption: true
+    keep_md: false
+    css: style.css
+    includes:
+      after_body: footer.html
+params:
+  metadata_path: false
+---
+
+```{r setup, results='hide', include=FALSE}
+library(DT)
+library(utils)
+library(knitr)
+library(htmltools)
+library(plotly)
+
+
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
+
+knitr::knit_hooks$set(wrap = function(before, options, envir){
+  if (before){
+    paste0('<', options$wrap, ' align="center">')
+  } else {
+    paste0('</', options$wrap, '>')
+  }
+})
+```
+
+```{r, load_data, results='hide', include=FALSE}
+metadata <- qs::qread(params$metadata_path)
+```
+
+
+`r if(dim(metadata)[1] == 0){"No gene found to be differentially expressed at FDR 0.05"}`
+
+```{r conditional_de_block, child='de_template.Rmd', eval = !is.null(metadata$cluster_params)}
+```
+
+
+
+
+<br>scFlow v`r utils::packageVersion("scFlow")` -- `r Sys.time()`

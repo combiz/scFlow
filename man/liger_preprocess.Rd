@@ -6,9 +6,11 @@
 \usage{
 liger_preprocess(
   sce,
+  k,
   unique_id_var = "manifest",
   take_gene_union = F,
   remove.missing = T,
+  make.sparse = T,
   num_genes = 3000,
   combine = "union",
   keep_unique = F,
@@ -20,7 +22,9 @@ liger_preprocess(
 )
 }
 \arguments{
-\item{sce}{merged SingleCellExperiment objects
+\item{sce}{SingleCellExperiment object or merged objects}
+
+\item{k}{Inner dimension of factorization (number of factors).
 
 Make a Liger object:}
 
@@ -66,9 +70,3 @@ liger preprocessed object.
 \description{
 Split merged object into multiple sce objects and extract sparse matrices:
 }
-\seealso{
-Other Data integration: 
-\code{\link{integrate_sce}()},
-\code{\link{liger_reduce_dims}()}
-}
-\concept{Data integration}

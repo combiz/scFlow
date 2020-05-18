@@ -1,0 +1,81 @@
+---
+title: "<b>scFlow</b> - Cell-type Proportion Modeling Report"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    theme: "flatly"
+    toc: false
+    fig_caption: true
+    keep_md: false
+    css: style.css
+    includes:
+      after_body: footer.html
+params:
+  results_path: false
+---
+
+```{r setup, results='hide', include=FALSE}
+library(plotly)
+library(DT)
+library(dplyr)
+library(utils)
+library(magrittr)
+
+knitr::opts_chunk$set(echo = FALSE)
+
+knitr::knit_hooks$set(wrap = function(before, options, envir){
+  if (before){
+    paste0('<', options$wrap, ' align="center">')
+  } else {
+    paste0('</', options$wrap, '>')
+  }
+})
+```
+
+```{r load_data, results='hide', include=FALSE}
+results <- qs::qread(params$results_path)
+sig_celltypes <- results$dirichlet_pvals %>% dplyr::filter(pval <= 0.05) %>% dplyr::select(!!results$fargs$celltype_var) %>% unique() %>% as.character()
+```
+
+## Analysis summary
+
+Relative differences in the proportions of `r length(results$unique_id_plots_by_celltype)` different cell-types (_`r results$fargs$celltype_var`_) across `r nrow(results$counts_mat)` samples (_`r results$fargs$unique_id_var`_) in `r length(unique(results$dirichlet_plot_table[[1]]))` experimental groups (_`r paste0(results$fargs$dependent_var, ":")`_ `r paste(unique(results$dirichlet_plot_table[, results$fargs$dependent_var]), collapse = ", ")`) were examined using a Dirichlet model.  This model allows differences in cell-type composition to be tested while accounting for the proportions of all of the other cell-types.
+
+`r if(nrow(results$dirichlet_pvals %>% dplyr::filter(pval <= 0.05)) > 0) {sprintf("Statistically significant differences in cell-type composition were observed in the following cell-types: %s", paste("<i>", sig_celltypes,"</i>", collapse = ", "))} else { print("No statistically significant differences in cell-type composition were observed.") }`
+
+```{r, results='asis', include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+show_plot <- function(plot_object) {
+  div(style="margin:auto;text-align:center", plot_object)
+}
+
+out <- NULL
+celltypes <- unique(results$dirichlet_pvals[order(results$dirichlet_pvals$pval),][[results$fargs$celltype_var]]) #ordered by pvalue
+for(celltype in celltypes) {
+    out <- c(out, suppressWarnings(knitr::knit_child("celltype_chunks.Rmd")))
+}
+```
+
+`r paste(out, collapse='\n')`
+
+## Supplementary data tables
+### Table: Absolute cell numbers matrix
+```{r, fig.align = "center"}
+DT::datatable(results$counts_mat, rownames = TRUE, options = list(pageLength = nrow(results$counts_mat), scrollX=T, columnDefs = list(list(className = 'dt-left', targets = "_all"))), escape = FALSE )
+```
+
+### Table: Relative cell proportions matrix
+```{r, fig.align = "center"}
+
+DT::datatable(results$prop_counts_mat, rownames = TRUE, options = list(pageLength = nrow(results$prop_counts_mat), scrollX=T, columnDefs = list(list(className = 'dt-left', targets = "_all"))), escape = FALSE) %>% DT::formatRound(columns = colnames(results$prop_counts_mat), digits = 3)
+```
+
+### Table: Normalized relative cell proportion table
+```{r, fig.align = "center", fig.cap = "Note: These are the final cell-type proportions and associated metadata used as inputs in the Dirichlet model.  Differences in cell-type proportion values between this table and the previous relative proportions table may arise from the transformation of variables to cause the values to shrink away from extreme values of 0 and 1.  See the _DirichletRegData_ function in the DirichletReg package for more details."}
+DR_data <- results$DR_data_df
+DR_data$counts <- NULL
+DT::datatable(DR_data, rownames = TRUE, options = list(pageLength = nrow(DR_data), scrollX=T, columnDefs = list(list(className = 'dt-left', targets = "_all"))), escape = FALSE) %>% DT::formatRound(columns = colnames(DR_data), digits = 3)
+```
+
+<br>scFlow v`r utils::packageVersion("scFlow")` -- `r Sys.time()`

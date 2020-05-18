@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scFlow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
       </span>
     </div>
 
@@ -95,6 +95,9 @@
       <a href="../articles/basic-qc.html">scFlow: Guided Tutorial for Sample QC</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -130,7 +133,7 @@
   <span class='no'>sce</span>,
   <span class='kw'>unique_id_var</span> <span class='kw'>=</span> <span class='st'>"manifest"</span>,
   <span class='kw'>take_gene_union</span> <span class='kw'>=</span> <span class='no'>F</span>,
-  <span class='kw'>remove.missing</span> <span class='kw'>=</span> <span class='no'>T</span>,
+  <span class='kw'>remove_missing</span> <span class='kw'>=</span> <span class='no'>T</span>,
   <span class='kw'>num_genes</span> <span class='kw'>=</span> <span class='fl'>3000</span>,
   <span class='kw'>combine</span> <span class='kw'>=</span> <span class='st'>"union"</span>,
   <span class='kw'>keep_unique</span> <span class='kw'>=</span> <span class='no'>F</span>,
@@ -150,10 +153,21 @@
 <p>Make a Liger object:</p></td>
     </tr>
     <tr>
-      <th>remove.missing</th>
+      <th>take_gene_union</th>
+      <td><p>Whether to fill out raw.data matrices with union
+of genes across all datasets (filling in 0 for missing data)
+(requires make.sparse=T) (default FALSE).</p></td>
+    </tr>
+    <tr>
+      <th>remove_missing</th>
       <td><p>Whether to remove cells from scale.data
 with no gene expression (default TRUE)</p>
 <p>Remove cells/genes with no expression across any genes/cells:</p></td>
+    </tr>
+    <tr>
+      <th>num_genes</th>
+      <td><p>Number of genes to find for each dataset.
+Set to 3000 as default.</p></td>
     </tr>
     <tr>
       <th>combine</th>
@@ -162,46 +176,35 @@ Either "union" or "intersect".
 (default "union")</p></td>
     </tr>
     <tr>
+      <th>keep_unique</th>
+      <td><p>Keep genes that occur (i.e., there is a
+corresponding column in raw.data) only in one dataset (default FALSE)</p></td>
+    </tr>
+    <tr>
       <th>capitalize</th>
       <td><p>Capitalize gene names to match homologous genes
 (ie. across species)
 (default FALSE)</p></td>
     </tr>
     <tr>
-      <th>raw.data</th>
-      <td><p>List of expression matrices (gene by cell)
-each from an sce object.</p></td>
-    </tr>
-    <tr>
-      <th>take.gene.union</th>
-      <td><p>Whether to fill out raw.data matrices with union
-of genes across all datasets (filling in 0 for missing data)
-(requires make.sparse=T) (default FALSE).</p></td>
-    </tr>
-    <tr>
-      <th>num.genes</th>
-      <td><p>Number of genes to find for each dataset.
-Set to 3000 as default.</p></td>
-    </tr>
-    <tr>
-      <th>keep.unique</th>
-      <td><p>Keep genes that occur (i.e., there is a
-corresponding column in raw.data) only in one dataset (default FALSE)</p></td>
-    </tr>
-    <tr>
-      <th>do.plot</th>
+      <th>do_plot</th>
       <td><p>Display log plot of gene variance vs. gene expression
 for each dataset.
 Selected genes are plotted in green. (default FALSE)</p></td>
     </tr>
     <tr>
-      <th>cex.use</th>
+      <th>cex_use</th>
       <td><p>Point size for plot.</p>
 <p>Scale genes by root-mean-square across cells:</p></td>
     </tr>
     <tr>
-      <th>use.cols</th>
+      <th>use_cols</th>
       <td><p>Treat each column as a cell (default TRUE)</p></td>
+    </tr>
+    <tr>
+      <th>raw.data</th>
+      <td><p>List of expression matrices (gene by cell)
+each from an sce object.</p></td>
     </tr>
     </table>
 
@@ -229,7 +232,7 @@ Selected genes are plotted in green. (default FALSE)</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Combiz Khozoie.</p>
+  <p>Developed by Combiz Khozoie, Nurun Fancy, Mahdi Marjaneh, Nathan Skene.</p>
 </div>
 
 <div class="pkgdown">

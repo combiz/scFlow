@@ -1,0 +1,118 @@
+---
+title: "<b>scFlow</b> - Cell-type and Cluster Overview Report"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    theme: "flatly"
+    toc: false
+    fig_caption: true
+    keep_md: false
+    css: style.css
+    includes:
+      after_body: footer.html
+params:
+  metadata_path: false
+---
+
+```{r setup, results='hide', include=FALSE}
+library(plotly)
+library(DT)
+library(dplyr)
+library(utils)
+library(formattable)
+library(htmltools)
+library(knitr)
+
+knitr::opts_chunk$set(echo = FALSE)
+
+knitr::knit_hooks$set(wrap = function(before, options, envir){
+  if (before){
+    paste0('<', options$wrap, ' align="center">')
+  } else {
+    paste0('</', options$wrap, '>')
+  }
+})
+```
+
+```{r load_data, results='hide', include=FALSE}
+metadata <- qs::qread(params$metadata_path)
+#metadata <- qs::qread("/home/ckhozoie/Documents/scFlow/test.qs")
+```
+
+## Dimensionality Reduction Plots
+### Cell-types
+This two-dimensional embedding of cells should demonstrate spatial separation of major cell-types; if not, it may be useful to manually re-annotate cell-types with reference to cell-type associated marker genes, and/or revise dimensionality reduction and/or clustering parameters.
+<div class = "zoomfig">
+```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: %s plot of cell-types.</b> Each cell is coloured by annotated cell-type.", metadata$celltype_annotations$params$input_reduced_dim)}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$celltype_annotations$reddim_plots$celltype_var
+```
+</div>
+
+### Clusters
+Optimal clustering parameters should provide a level of granularity sufficient to identify minority cell-types as distinct numbered clusters.  If any cluster encompasses an adjacent small, well-separated cluster, the clustering parameters should be revised to allow for the annotation of the potential minority cell-type.
+<div class = "zoomfig">
+```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: %s plot of clusters.</b> Each cell is coloured by annotated cluster.", metadata$celltype_annotations$params$input_reduced_dim)}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$celltype_annotations$reddim_plots$cluster_var
+```
+</div>
+
+
+```{r, results='asis', include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+show_plot <- function(plot_object) {
+  div(style="margin:auto;text-align:center", plot_object)
+}
+
+out <- NULL
+for(plot_var in union(metadata$celltype_annotations$params$facet_vars, metadata$celltype_annotations$params$unique_id_var)) {
+    out <- c(out, knitr::knit_child("reddim_plots.Rmd"))
+}
+paste(out, collapse='\n')
+```
+
+`r paste(out, collapse='\n')`
+
+## Cell-type Proportion Plots
+
+These plots illustrate the absolute cell numbers and relative proportions of cell-types in the overall experiment ("_all_"), and within the groups: _`r paste(union("all", names(metadata$celltype_annotations$prop_plots))[-1], collapse = ", ")`_.  To examine statistically significant differences in cell-type proportions, see the Dirichlet model results and report(s).
+
+```{r, results='asis', include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+celltype_var <- metadata$celltype_annotations$params$celltype_var
+
+show_plot <- function(plot_object) {
+  div(style="margin:auto;text-align:center", plot_object)
+}
+out <- NULL
+for(group_by_var in union("all", names(metadata$celltype_annotations$prop_plots))) {
+    out <- c(out, knitr::knit_child("prop_plots.Rmd"))
+}
+```
+
+`r paste(out, collapse='\n')`
+
+## Cell-type Metric Plots
+
+These plots summarize the distribution of various cell metrics (_`r paste(names(metadata$celltype_annotations$metric_plots), collapse = ", ")`_) for each cell-type.
+
+```{r, results='asis', include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+celltype_var <- metadata$celltype_annotations$params$celltype_var
+
+show_plot <- function(plot_object) {
+  div(style="margin:auto;text-align:center", plot_object)
+}
+out <- NULL
+for(metric_var in names(metadata$celltype_annotations$metric_plots)) {
+    out <- c(out, knitr::knit_child("metric_plots.Rmd"))
+}
+```
+
+`r paste(out, collapse='\n')`
+
+<br>scFlow v`r utils::packageVersion("scFlow")` -- `r Sys.time()`

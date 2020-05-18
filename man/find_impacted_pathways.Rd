@@ -7,8 +7,8 @@
 find_impacted_pathways(
   gene_file = NULL,
   reference_file = NULL,
-  enrichment_tool = c("WebgestaltR", "ROntoTools"),
-  enrichment_database = c("pathway_KEGG", "pathway_Panther", "pathway_Reactome"),
+  enrichment_tool = c("WebGestaltR", "ROntoTools", "enrichR"),
+  enrichment_database = c("KEGG", "Panther", "Reactome"),
   is_output = FALSE,
   output_dir = ".",
   ...
@@ -25,21 +25,21 @@ If not provided the human protein-coding genome will be used as background
 genes.}
 
 \item{enrichment_tool}{Enrichment tool to use. WebGestaltR, ROntoTools and
-EnrichR is implemented.}
+enrichR is implemented. Use one or more of the tools.}
 
-\item{enrichment_database}{Name of the database for enrichment.
-If NULL then multiple databases will be used or user can specify one or more
-database names.Default NULL.}
+\item{enrichment_database}{Name of the database for enrichment. User can
+specify one or more database names. Check \code{\link[scFlow:list_databases]{scFlow::list_databases()}} for
+available database alias.}
 
 \item{is_output}{If TRUE a folder will be created and results of enrichment
-analysis will be saved otherwise a R list will be returned. Default FALSE}
+analysis will be saved otherwise a R list will be returned. Default FALSE.}
 
 \item{output_dir}{Path for the output directory. Default is current
 directory.}
 }
 \value{
-enrichment_result a list of list containing enrichment output from
-different enrichment tools and a list of plots.
+enrichment_result a list of list containing enrichment outputs from
+different enrichment tools.
 }
 \description{
 Performs gene ontology and impacted pathway enrichment analysis with a list
@@ -51,14 +51,20 @@ enrichment_result <- find_impacted_pathways(
     "de_result_table.tsv",
     sep = ""
   ),
-  enrichment_method = "ORA",
-  additional_enrichment_databse = FALSE
+  enrichment_method = "ORA"
 )
 }
 \seealso{
 Other Impacted pathway analysis: 
+\code{\link{.dotplot_pe}()},
+\code{\link{.get_overlap_id}()},
+\code{\link{.listdb}()},
+\code{\link{list_databases}()},
+\code{\link{pathway_analysis_enrichr}()},
 \code{\link{pathway_analysis_rontotools}()},
 \code{\link{pathway_analysis_webgestaltr}()},
-\code{\link{pathway_to_graph}()}
+\code{\link{pathway_to_graph}()},
+\code{\link{plot_network}()},
+\code{\link{report_impacted_pathway}()}
 }
 \concept{Impacted pathway analysis}
