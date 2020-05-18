@@ -31,8 +31,11 @@ metadata <- read_metadata(
 sce <- generate_sce(mat, metadata)
 
 #sce <- find_cells(sce, lower = 100, retain = 300)
+sce <- find_cells(sce, lower = 100, retain = 674)
 
 sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 100, max_library_size = "adaptive")
+
+sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 300, max_library_size = 10000, max_features = 500)
 
 sce <- filter_sce(sce)
 

@@ -4,7 +4,7 @@
 \alias{.clean_ggplot_plot_env}
 \title{Remove objects from a ggplot plot_env}
 \usage{
-.clean_ggplot_plot_env(p)
+.clean_ggplot_plot_env(p, drop_classes = c("SingleCellExperiment", "ggplot"))
 }
 \description{
 Useful to remove large objects before writing to disk with qs or rds

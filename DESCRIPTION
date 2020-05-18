@@ -39,7 +39,7 @@ Suggests:
     scFlowData,
     scFlowExample
 Language: en-US
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Imports: 
     purrr,
     Matrix,
@@ -101,10 +101,12 @@ Imports:
     DropletUtils,
     formattable,
     qs,
+    ggdendro,
     ggridges,
     UpSetR,
     nVennR,
-    kBET
+    kBET,
+    DirichletReg
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,
@@ -135,5 +137,6 @@ Remotes:
     bioc::release/multtest,
     theislab/kBET,
     neurogenomics/scFlowExample,
-    combiz/scFlowData
+    combiz/scFlowData,
+    cran/DirichletReg
 VignetteBuilder: knitr

@@ -7,7 +7,7 @@
 report_integrated_sce(
   sce,
   report_folder_path = getwd(),
-  report_file = "integrate_reduceDims_cluster_report_scflow",
+  report_file = "integrate_scFlow",
   categorical_covariates = list()
 )
 }

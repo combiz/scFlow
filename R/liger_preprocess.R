@@ -55,6 +55,7 @@ liger_preprocess <- function(sce,
                              unique_id_var = "manifest",
                              take_gene_union = F,
                              remove.missing = T,
+                             make.sparse = T,
                              num_genes = 3000,
                              combine = "union",
                              keep_unique = F,
@@ -94,7 +95,7 @@ liger_preprocess <- function(sce,
 
   # Make a Liger object. Pass in the sparse matrix.
   cli::cli_alert("Creating LIGER object")
-  ligerex <- createLiger(
+  ligerex <- liger::createLiger(
     raw.data = mat_list, take.gene.union = take_gene_union,
     remove.missing = remove.missing
   )

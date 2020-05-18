@@ -125,11 +125,11 @@ annotate_celltype_metrics <- function(sce,
           group_by_var = group_by_var
         )
       )
-      sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[var]] <-
-        lapply(
-          sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[var]],
-          .clean_ggplot_plot_env
-          )
+      #sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[var]] <-
+      #  lapply(
+      #    sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[var]],
+      #    .clean_ggplot_plot_env
+      #    )
     }
   }
 
@@ -240,6 +240,8 @@ annotate_celltype_metrics <- function(sce,
       legend.title = ggplot2::element_blank()
     )
 
+  p$plot_env <- rlang::new_environment()
+  p2$plot_env <- rlang::new_environment()
   sce@metadata$celltype_annotations$
     prop_plots[[group_by_var]][[celltype_var]] <- list()
   sce@metadata$celltype_annotations$
@@ -338,6 +340,9 @@ annotate_celltype_metrics <- function(sce,
       legend.text = ggplot2::element_text(size = 10),
       legend.position = "none"
     )
+
+  p$plot_env <- rlang::new_environment()
+  p2$plot_env <- rlang::new_environment()
 
   sce@metadata$celltype_annotations$
     metric_plots[[metric_var]][[celltype_var]] <- list()
