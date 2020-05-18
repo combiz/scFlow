@@ -40,7 +40,7 @@ metadata <- qs::qread(params$metadata_path)
 
 `r if(dim(metadata)[1] == 0){"No gene found to be differentially expressed at FDR 0.05"}`
 
-```{r conditional_de_block, child='de_template.Rmd', eval = dim(metadata)[1] > 0}
+```{r conditional_de_block, child='de_template.Rmd', eval = !is.null(metadata$cluster_params)}
 ```
 
 

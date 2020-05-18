@@ -1,5 +1,5 @@
 ---
-title: "<b>scFlow</b> - Dataset Integration Report"
+title: "<b>scFlow</b> - Dataset Integration and Clustering Report"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
@@ -51,7 +51,7 @@ Datasets were integrated using the method **'Linked Inference of Genomic Experim
 ```{r, fig.align="center", fig.width=30, fig.height=20,  fig.cap = "<b>Venn diagram of selected variable genes</b>. The bar numbers indicate how many variable genes are common between datasets. The datasets are represented by the numbers in the parentheses.", eval=length(metadata$dataset_integration$var.genes_per_dataset) < 11}
 knitr::opts_chunk$set(echo = FALSE)
 my_nv <- metadata$dataset_integration$var.genes_plots$venn
-nVennR::showSVG(my_nv)
+suppressWarnings(nVennR::showSVG(my_nv))
 ```
 </div>
 </div>
@@ -96,6 +96,9 @@ paste(out, collapse='\n')
 ```
 
 `r paste(out, collapse='\n')`
+
+```{r conditional_clustering_block, child='clustering.Rmd', eval = !is.null(metadata$cluster_params)}
+```
 
 # References {-}
 <div id="refs"></div>

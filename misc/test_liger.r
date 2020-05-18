@@ -1,4 +1,5 @@
 library(caret)
+library(SingleCellExperiment)
 library(scFlow)
 #sce_all <- read_sce("~/Documents/Amy_Glia_Expt/sce") # not working
 sce_all <- read_sce("~/Documents/nf-sc/results/celltype_mapped_sce/celltype_mapped_sce")
