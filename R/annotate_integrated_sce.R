@@ -63,6 +63,8 @@ annotate_integrated_sce <- function(sce,
     "\r\n"
   )
   
+  sce@metadata$dataset_integration$annotation$input_reduced_dim <- input_reduced_dim
+  
   pca_reducedDim_plots <- list()
   liger_reducedDim_plots <- list()
   pca_kbet_plots <- list()
