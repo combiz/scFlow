@@ -3,17 +3,17 @@
 <div class = "row">
 <div class="col-md-6">
 <div class = "zoomfig">
-```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Figure: tSNE by %s</b>", variable)}
+```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Figure: %s by %s</b>", metadata$dataset_integration$annotation$input_reduced_dim, variable)}
 knitr::opts_chunk$set(echo = FALSE)
-metadata$dataset_integration$batch_correction_plots$pca_tsne_plots[[variable]]
+metadata$dataset_integration$batch_correction_plots$pca_reducedDim_plots[[variable]]
 ```
 </div>
 </div>
 <div class="col-md-6">
 <div class = "zoomfig">
-```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Figure: tSNE (Liger) by %s</b>", variable)}
+```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Figure: %s (Liger) by %s</b>", metadata$dataset_integration$annotation$input_reduced_dim, variable)}
 knitr::opts_chunk$set(echo = FALSE)
-metadata$dataset_integration$batch_correction_plots$liger_tsne_plots[[variable]]
+metadata$dataset_integration$batch_correction_plots$liger_reducedDim_plots[[variable]]
 ```
 </div>
 </div>
