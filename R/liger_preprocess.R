@@ -89,9 +89,9 @@ liger_preprocess <- function(sce,
   for (mnft in manifests) {
     dataset_name <- paste0("dataset_", mnft)
     dataset_list[[dataset_name]] <-
-      sce[, sce@colData$manifest == mnft]
+      sce[, sce[[unique_id_var]] == mnft]
     mat_list[[dataset_name]] <-
-      sce@assays@data$counts[, sce@colData$manifest == mnft]
+      sce@assays@data$counts[, sce[[unique_id_var]] == mnft]
   }
 
   # Make a Liger object. Pass in the sparse matrix.
@@ -130,7 +130,7 @@ liger_preprocess <- function(sce,
     single_dataset <- paste0("dataset_", mnft)
     single_ligerex <- paste0("ligerex_", mnft)
     single_mat <-
-      sce@assays@data$counts[, sce@colData$manifest == mnft]
+      sce@assays@data$counts[, sce[[unique_id_var]] == mnft]
     single_ligerex <- createLiger(
       raw.data = list(single_dataset = single_mat),
       remove.missing = remove.missing)
