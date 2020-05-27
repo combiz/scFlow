@@ -6,7 +6,6 @@ sce <- read_sce("~/Documents/junk/enriched/final_sce/")
 sce$seqdate <- as.factor(sce$seqdate)
 sce_all <- sce
 sce_subset <- sce[, sce$cluster_celltype == "Micro"]
-sce_su
 
 colnames(SummarizedExperiment::colData(sce))
 plot_violin(sce_subset, group_var = "individual", subset_group = "Micro", gene = "DPYD", label_angle = 90)
@@ -109,7 +108,7 @@ fargs <-  list(
   pval_cutoff = 0.1,
   ensembl_mapping_file = "~/Documents/junk/src/ensembl-ids/ensembl_mappings.tsv"
 )
-de_results <- do.call(perform_de_test, fargs)
+de_results <- do.call(perform_de, fargs)
 
 
 #sce_pp <- do.call(scFlow:::.preprocess_sce_for_de, fargs)

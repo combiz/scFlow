@@ -145,7 +145,8 @@ perform_de <- function(sce,
   fargs <- list(
     mast_method = "bayesglm",
     ebayes = FALSE,
-    force_run = FALSE
+    force_run = FALSE,
+    n_label = 10
   )
   inargs <- list(...)
   fargs[names(inargs)] <- inargs
