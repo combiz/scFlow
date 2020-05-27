@@ -56,6 +56,7 @@ find_cells <- function(sce,
   ed_out <- DropletUtils::emptyDrops(
     SingleCellExperiment::counts(sce[genes_idx, ]),
     lower = lower,
+    retain = retain,
     test.ambient = TRUE,
     niters = niters
   )
@@ -82,6 +83,7 @@ find_cells <- function(sce,
   ed_out <- DropletUtils::emptyDrops(
     SingleCellExperiment::counts(sce[genes_idx, ]),
     lower = lower,
+    retain = retain,
     test.ambient = FALSE,
     niters = niters
   )

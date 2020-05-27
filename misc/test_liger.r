@@ -3,12 +3,15 @@ library(SingleCellExperiment)
 library(scFlow)
 #sce_all <- read_sce("~/Documents/Amy_Glia_Expt/sce") # not working
 sce_all <- read_sce("~/Documents/nf-sc/results/celltype_mapped_sce/celltype_mapped_sce")
-idx <- as.numeric(caret::createDataPartition(sce_all$manifest, p = .03, list = FALSE)) # 15% subset
+#idx <- as.numeric(caret::createDataPartition(sce_all$manifest, p = .03, list = FALSE)) # 15% subset
+idx <- as.numeric(caret::createDataPartition(sce_all$individual, p = .03, list = FALSE)) # 15% subset
+mini_sce <- sce_all[, idx]
 sce <- sce_all[, idx]
 
 sce <- sce[, sce$manifest != "kurus"]
 
 sce <- integrate_sce(sce, unique_id_var = "manifest", k = 20)
+sce <- integrate_sce(sce, unique_id_var = "individual", k = 20)
 
 # sce <- read_sce("~/Documents/liger_test")
 

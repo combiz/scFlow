@@ -137,7 +137,7 @@ perform_de <- function(sce,
 #' @importFrom scater normalize
 #' @importFrom methods as
 #' @importFrom magrittr %>%
-#' @importFrom MAST zlm
+#' @importFrom MAST zlm summary
 #' @importFrom cli cli_text cli_alert_info cli_alert_danger cli_alert_success
 #'
 #' @keywords internal
@@ -226,7 +226,8 @@ perform_de <- function(sce,
     gc()
 
     # only test the condition coefficient.
-    summaryCond <- suppressWarnings(summary(zlmCond, doLRT = ctrast))
+    # suppress warnings is a temporary fix for missing namespace in mast
+    summaryCond <- suppressWarnings(MAST::summary(zlmCond, doLRT = ctrast))
 
     # create data table of results
     summaryDt <- summaryCond$datatable
@@ -259,6 +260,11 @@ perform_de <- function(sce,
       pval = `Pr(>Chisq)`,
       logFC = coef
     )
+
+    assertthat::assert_that(
+      !all(is.na(fcHurdle$pval)),
+      msg = "Singularities prevented p-value calculations. Revise model."
+      )
 
     # append gene names
     ensembl_res <- map_ensembl_gene_id(
@@ -317,7 +323,7 @@ perform_de <- function(sce,
         as.data.frame(SingleCellExperiment::colData(fargs$sce))[[fargs$dependent_var]]),
       n_genes = dim(sce)[[1]],
       model = gsub(" ", "", model_formula_string, fixed = TRUE),
-      model_full_rank = is_full_rank,
+      model_full_rank = ifelse(is.null(fargs$random_effects_var), is_full_rank, NA),
       contrast_name = element_name
     )
 
