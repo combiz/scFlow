@@ -8,10 +8,10 @@ library(parallel)
 library(scFlow)
 
 # v2 chemistry
-#matpath <- "~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix"
+matpath <- "~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix"
 #matpath <- "~/Documents/junk/MS535" #bad sample
 #matpath <- "~/Documents/junk/MS461" #ok sample
-matpath <- "~/Documents/junk/MS426/outs/raw_feature_bc_matrix" # emptydrops peculiar sample (large pass #)
+#matpath <- "~/Documents/junk/MS426/outs/raw_feature_bc_matrix" # emptydrops peculiar sample (large pass #)
 #matpath <- "~/Documents/junk/MS523/outs/raw_feature_bc_matrix/"# emptydrops peculiar sample (all < retain fail)
 # v3 chemistry, enriched
 #matpath <- "~/Documents/testmatrices/enriched"
@@ -36,18 +36,25 @@ sce <- generate_sce(mat, metadata)
 
 #sce <- find_cells(sce, lower = 125, retain = NULL)
 
-sce <- find_cells(sce, lower = 100, retain = NULL, niters = 10000)
+#sce <- find_cells(sce, lower = 100, retain = NULL, niters = 10000)
 sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 200, max_library_size = "adaptive", nmads = 4)
 #
 
-sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 100, max_library_size = "adaptive")
-sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 300, max_library_size = 10000, max_features = 500)
+#sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 100, max_library_size = "adaptive")
+#sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 300, max_library_size = 10000, max_features = 500)
 
 sce <- filter_sce(sce)
 
-df2 <- read.csv("~/Documents/scFlow/misc/emptydropssweeping2.csv")
+#qs::qsave(sce, "sce.qs")
+sce <- qs::qread("sce.qs", nthreads = future::availableCores())
 
-#sce <- find_singlets(sce, "doubletfinder", pK = 0.005, vars_to_regress_out = NULL)
+###
+
+###
+
+#df2 <- read.csv("~/Documents/scFlow/misc/emptydropssweeping2.csv")
+
+sce <- find_singlets(sce, "doubletfinder", pK = 0.005, vars_to_regress_out = NULL)
 
 sce <- filter_sce(sce)
 

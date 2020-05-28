@@ -28,11 +28,14 @@
 #' @importFrom stats setNames na.omit
 #' @importFrom sctransform vst get_residual_var get_residuals correct_counts
 #' @importFrom future.apply future_lapply
-#' @importFrom future nbrOfWorkers
+#' @importFrom future availableCores
 #'
 #' @keywords internal
 
 run_doubletfinder <- function(sce, ...) {
+
+  print(sys.nframe())
+  print(sys.frames())
 
   cat(cli::rule("Finding Singlets with DoubletFinder", line = 1), "\r\n")
 
@@ -44,7 +47,7 @@ run_doubletfinder <- function(sce, ...) {
     var_features = 2000,
     doublet_rate = 0,
     dpk = 8, # estimated doublets per thousand cells
-    num.cores = 1
+    num.cores = future::availableCores()
   )
   inargs <- list(...)
   fargs[names(inargs)] <- inargs #override defaults if provided
@@ -101,25 +104,50 @@ run_doubletfinder <- function(sce, ...) {
 
   seu_metadata <- data.frame(sce_ss@colData) %>%
     droplevels()
+
+  #seu <- do.call(
+  #  Seurat::CreateSeuratObject,
+  #  list(counts = SingleCellExperiment::counts(sce_ss),
+  #       meta.data = seu_metadata)
+  #)
   seu <- Seurat::CreateSeuratObject(
     counts = SingleCellExperiment::counts(sce_ss),
     meta.data = seu_metadata
   )
 
-  cat(cli::rule("Normalizing data", line = 1), "\r\n")
-  seu <- Seurat::NormalizeData(seu)
-  cat(cli::rule("Scaling data", line = 1), "\r\n")
-  seu <- Seurat::ScaleData(
-    seu,
-    vars.to.regress = fargs$vars_to_regress_out
-  )
-
   cat(cli::rule("Finding variable features", line = 1), "\r\n")
+  #seu <- do.call(
+    #Seurat::FindVariableFeatures,
+    #list(object = seu,
+    #     selection.method = "vst",
+    #     nfeatures = fargs$var_features
+    #     )
+    #)
   seu <- Seurat::FindVariableFeatures(
     seu,
     selection.method = "vst",
     nfeatures = fargs$var_features
   )
+
+  cat(cli::rule("Normalizing data", line = 1), "\r\n")
+  seu <- Seurat::NormalizeData(seu)
+  #seu <- do.call(Seurat::NormalizeData,
+  #               list(object = seu)
+  #)
+
+  cat(cli::rule("Scaling data", line = 1), "\r\n")
+
+  seu <- Seurat::ScaleData(
+    seu,
+    vars.to.regress = fargs$vars_to_regress_out
+  )
+  print(ls())
+  #seu <- do.call(
+    #Seurat::ScaleData,
+    #list(object = seu,
+    #     vars.to.regress = fargs$vars_to_regress_out)
+    #)
+
   cat(cli::rule("Calculating PCA reduced dimensions", line = 1), "\r\n")
   seu <- Seurat::RunPCA(seu)
   cat(cli::rule("Calculating tSNE reduced dimensions", line = 1), "\r\n")

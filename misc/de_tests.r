@@ -5,7 +5,7 @@ library(magrittr)
 sce <- read_sce("~/Documents/junk/enriched/final_sce/")
 sce$seqdate <- as.factor(sce$seqdate)
 sce_all <- sce
-sce_subset <- sce[, sce$cluster_celltype == "Micro"]
+sce_subset <- sce[, sce$cluster_celltype == "Micro" & sce$brain_region == "SSC"] #EC
 
 colnames(SummarizedExperiment::colData(sce))
 plot_violin(sce_subset, group_var = "individual", subset_group = "Micro", gene = "DPYD", label_angle = 90)

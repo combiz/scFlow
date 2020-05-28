@@ -8,6 +8,7 @@
 }
 \description{
 Useful to remove large objects before writing to disk with qs or rds
+This function was deprecated by p$plot_env <- rlang::new_environment()
 }
 \seealso{
 Other helper: 

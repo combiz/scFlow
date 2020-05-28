@@ -19,10 +19,13 @@
 find_singlets <- function(sce,
                           singlet_find_method,
                           ...) {
-
   fargs <- list(...)
 
-  cat(cli::rule("Finding Singlets", line = 2), "\r\n")
+
+  print(sys.nframe())
+  print(sys.frames())
+
+  cli::cli_h1("Finding Singlets")
 
   if (class(sce) != "SingleCellExperiment") {
     stop(cli::cli_alert_danger("A SingleCellExperiment is required."))
@@ -46,7 +49,7 @@ find_singlets <- function(sce,
 
   sce <- do.call(
     singlet_find_methods_l[[singlet_find_method]],
-    c(sce = sce, fargs)
+    c(list(sce = sce), fargs)
   )
 
   sce@metadata$scflow_steps$singlets_annotated <- 1

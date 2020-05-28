@@ -282,6 +282,7 @@ perform_de <- function(sce,
 
     fcHurdle$contrast <- ctrast
     fcHurdle$reference <- fargs$ref_class
+    fcHurdle$FCRO <- order(abs(2^fcHurdle$logFC))
 
     model_formula_string <- .formula_to_char(model_formula)
     fcHurdle$model <- gsub(" ", "", model_formula_string,
@@ -297,8 +298,8 @@ perform_de <- function(sce,
     results <- fcHurdle %>%
       dplyr::filter(padj <= fargs$pval_cutoff) %>%
       dplyr::filter(gene_biotype == "protein_coding") %>%
-      dplyr::filter(abs(logFC) > log2(fargs$fc_threshold)) %>%
-      dplyr::arrange(-logFC)
+      dplyr::filter(abs(logFC) >= log2(fargs$fc_threshold)) %>%
+      dplyr::arrange(FCRO)
 
 
     DGEs <- c(sum(results$logFC > 0), sum(results$logFC < 0))
@@ -540,27 +541,30 @@ perform_de <- function(sce,
       aes(logFC, y = -log10(padj), label = ifelse(label == "Yes", gene, "")),
       max.iter = 1000, size = 3, na.rm = TRUE
     ) +
-    xlab("log2 fold change") +
-    ylab("-log10 adjusted p-value") +
+    xlab(bquote(Log[2]*" (fold-change)")) +
+    ylab(bquote("-"*Log[10]*" (adjusted p-value)")) +
     geom_vline(xintercept = c(-log2(fc_threshold), log2(fc_threshold)),
                linetype = 2, size = 0.2, alpha = 0.5) +
     geom_hline(yintercept = pval_cutoff,
                linetype = 2, size = 0.2, alpha = 0.5) +
-    scale_colour_manual(name = NULL, aesthetics = c("colour", "fill"),
-                        values = c("red", "blue", "grey"),
-                        label = c("Up", "Down", "Not sig")) +
+    scale_colour_manual(name = NULL,
+                        aesthetics = c("colour", "fill"),
+                        values = c("#DC0000FF", "#3C5488FF", "grey"),
+                        label = c("Up-regulated", "Down-regulated"),
+                        breaks = c("Up", "Down")) +
+    scale_x_continuous(limits = c(-6, 6)) +
+    scale_y_continuous(limits = c(0, NA)) +
     guides(colour = guide_legend(override.aes = list(size = 3))) +
     theme(
-      axis.text = element_text(color = "black", size = 12),
-      axis.title = element_text(color = "black", size = 14),
+      axis.text = element_text(color = "black", size = 16),
+      axis.title = element_text(color = "black", size = 18),
       plot.title = element_text(hjust = 0.5, face = "bold"),
       panel.background = element_blank(),
       axis.line = element_line(colour = "black"),
       panel.border = element_rect(colour = "black", fill = NA),
       legend.text = element_text(size = 12, colour = "black"),
-      legend.key = element_blank(),
+      legend.position = "top",
+      legend.direction="horizontal",
       plot.margin = margin(c(1, 1, 1, 1), unit = "cm")
-    ) +
-    coord_cartesian(xlim = c(-6, 6), ylim = c(0, 150),
-                    expand = TRUE, clip = "on")
+    )
 }
