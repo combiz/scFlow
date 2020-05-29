@@ -117,7 +117,8 @@ use_package("kBET")
 use_vignette("basic-qc", title = "Guided tutorial for sample quality control")
 
 #use_vignette("How to do this cool analysis") # later
-
+usethis::use_github_links()
+usethis::use_github_action_check_full()
 ### BEFORE EVERY COMMIT
 #Restart R Session Cmd+Shift+F10 (Ctrl+Shift+F10 for Windows)
 #Document Package Cmd+Shift+D (Ctrl+Shift+D for Windows)

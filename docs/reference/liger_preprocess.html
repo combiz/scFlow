@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -37,7 +41,6 @@
 
 <meta property="og:title" content="Preprocessing steps for Liger dimensionality reduction — liger_preprocess" />
 <meta property="og:description" content="Split merged object into multiple sce objects and extract sparse matrices:" />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -55,7 +58,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -69,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scFlow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
       </span>
     </div>
 
@@ -84,25 +87,13 @@
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/basic-qc.html">scFlow: Guided Tutorial for Sample QC</a>
-    </li>
-  </ul>
-</li>
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/combiz/scFlow">
+  <a href="https://github.com/combiz/scFlow/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -131,9 +122,11 @@
 
     <pre class="usage"><span class='fu'>liger_preprocess</span>(
   <span class='no'>sce</span>,
+  <span class='no'>k</span>,
   <span class='kw'>unique_id_var</span> <span class='kw'>=</span> <span class='st'>"manifest"</span>,
   <span class='kw'>take_gene_union</span> <span class='kw'>=</span> <span class='no'>F</span>,
-  <span class='kw'>remove_missing</span> <span class='kw'>=</span> <span class='no'>T</span>,
+  <span class='kw'>remove.missing</span> <span class='kw'>=</span> <span class='no'>T</span>,
+  <span class='kw'>make.sparse</span> <span class='kw'>=</span> <span class='no'>T</span>,
   <span class='kw'>num_genes</span> <span class='kw'>=</span> <span class='fl'>3000</span>,
   <span class='kw'>combine</span> <span class='kw'>=</span> <span class='st'>"union"</span>,
   <span class='kw'>keep_unique</span> <span class='kw'>=</span> <span class='no'>F</span>,
@@ -149,25 +142,18 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>sce</th>
-      <td><p>merged SingleCellExperiment objects</p>
+      <td><p>SingleCellExperiment object or merged objects</p></td>
+    </tr>
+    <tr>
+      <th>k</th>
+      <td><p>Inner dimension of factorization (number of factors).</p>
 <p>Make a Liger object:</p></td>
     </tr>
     <tr>
-      <th>take_gene_union</th>
-      <td><p>Whether to fill out raw.data matrices with union
-of genes across all datasets (filling in 0 for missing data)
-(requires make.sparse=T) (default FALSE).</p></td>
-    </tr>
-    <tr>
-      <th>remove_missing</th>
+      <th>remove.missing</th>
       <td><p>Whether to remove cells from scale.data
 with no gene expression (default TRUE)</p>
 <p>Remove cells/genes with no expression across any genes/cells:</p></td>
-    </tr>
-    <tr>
-      <th>num_genes</th>
-      <td><p>Number of genes to find for each dataset.
-Set to 3000 as default.</p></td>
     </tr>
     <tr>
       <th>combine</th>
@@ -176,56 +162,58 @@ Either "union" or "intersect".
 (default "union")</p></td>
     </tr>
     <tr>
-      <th>keep_unique</th>
-      <td><p>Keep genes that occur (i.e., there is a
-corresponding column in raw.data) only in one dataset (default FALSE)</p></td>
-    </tr>
-    <tr>
       <th>capitalize</th>
       <td><p>Capitalize gene names to match homologous genes
 (ie. across species)
 (default FALSE)</p></td>
     </tr>
     <tr>
-      <th>do_plot</th>
+      <th>raw.data</th>
+      <td><p>List of expression matrices (gene by cell)
+each from an sce object.</p></td>
+    </tr>
+    <tr>
+      <th>take.gene.union</th>
+      <td><p>Whether to fill out raw.data matrices with union
+of genes across all datasets (filling in 0 for missing data)
+(requires make.sparse=T) (default FALSE).</p></td>
+    </tr>
+    <tr>
+      <th>num.genes</th>
+      <td><p>Number of genes to find for each dataset.
+Set to 3000 as default.</p></td>
+    </tr>
+    <tr>
+      <th>keep.unique</th>
+      <td><p>Keep genes that occur (i.e., there is a
+corresponding column in raw.data) only in one dataset (default FALSE)</p></td>
+    </tr>
+    <tr>
+      <th>do.plot</th>
       <td><p>Display log plot of gene variance vs. gene expression
 for each dataset.
 Selected genes are plotted in green. (default FALSE)</p></td>
     </tr>
     <tr>
-      <th>cex_use</th>
+      <th>cex.use</th>
       <td><p>Point size for plot.</p>
 <p>Scale genes by root-mean-square across cells:</p></td>
     </tr>
     <tr>
-      <th>use_cols</th>
+      <th>use.cols</th>
       <td><p>Treat each column as a cell (default TRUE)</p></td>
-    </tr>
-    <tr>
-      <th>raw.data</th>
-      <td><p>List of expression matrices (gene by cell)
-each from an sce object.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>liger preprocessed object.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p>Other Data integration: 
-<code><a href='integrate_sce.html'>integrate_sce</a>()</code>,
-<code><a href='liger_reduce_dims.html'>liger_reduce_dims</a>()</code></p></div>
 
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#see-also">See also</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -236,7 +224,7 @@ each from an sce object.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>

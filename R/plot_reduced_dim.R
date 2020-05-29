@@ -128,7 +128,7 @@ plot_reduced_dim <- function(sce,
       ggplot2::theme(legend.position = "none")
   }
 
-  p <- .clean_ggplot_plot_env(p)
+  p$plot_env <- rlang::new_environment()
   return(p)
 
 }

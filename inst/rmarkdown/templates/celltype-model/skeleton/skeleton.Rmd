@@ -34,7 +34,7 @@ knitr::knit_hooks$set(wrap = function(before, options, envir){
 
 ```{r load_data, results='hide', include=FALSE}
 results <- qs::qread(params$results_path)
-sig_celltypes <- results$dirichlet_pvals %>% dplyr::filter(pval <= 0.05) %>% dplyr::select(!!results$fargs$celltype_var) %>% unique() %>% as.character()
+sig_celltypes <- results$dirichlet_pvals[[results$fargs$celltype_var]][results$dirichlet_pvals$pval <= 0.05]
 ```
 
 ## Analysis summary
@@ -75,7 +75,8 @@ DT::datatable(results$prop_counts_mat, rownames = TRUE, options = list(pageLengt
 ```{r, fig.align = "center", fig.cap = "Note: These are the final cell-type proportions and associated metadata used as inputs in the Dirichlet model.  Differences in cell-type proportion values between this table and the previous relative proportions table may arise from the transformation of variables to cause the values to shrink away from extreme values of 0 and 1.  See the _DirichletRegData_ function in the DirichletReg package for more details."}
 DR_data <- results$DR_data_df
 DR_data$counts <- NULL
-DT::datatable(DR_data, rownames = TRUE, options = list(pageLength = nrow(DR_data), scrollX=T, columnDefs = list(list(className = 'dt-left', targets = "_all"))), escape = FALSE) %>% DT::formatRound(columns = colnames(DR_data), digits = 3)
+numeric_cols <- names(results$unique_id_plots_by_celltype)
+DT::datatable(DR_data, rownames = TRUE, options = list(pageLength = nrow(DR_data), scrollX=T, columnDefs = list(list(className = 'dt-left', targets = "_all"))), escape = FALSE) %>% DT::formatRound(columns = numeric_cols, digits = 3)
 ```
 
 <br>scFlow v`r utils::packageVersion("scFlow")` -- `r Sys.time()`

@@ -5,12 +5,19 @@
 \title{Annotate integrated, reduced dimension,
 and clustered SingleCellExperiment object}
 \usage{
-annotate_integrated_sce(sce, categorical_covariates = list())
+annotate_integrated_sce(
+  sce,
+  categorical_covariates = list(),
+  input_reduced_dim = "tSNE"
+)
 }
 \arguments{
 \item{sce}{SingleCellExperiment object}
 
 \item{categorical_covariates}{list of categorical variables}
+
+\item{input_reduced_dim}{which reduced dim to use for integration and
+clustering. Either "tSNE" or "UMAP" (default "tSNE").}
 }
 \value{
 sce annotated SingleCellExperiment object

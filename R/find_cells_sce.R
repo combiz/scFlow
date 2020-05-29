@@ -56,6 +56,7 @@ find_cells <- function(sce,
   ed_out <- DropletUtils::emptyDrops(
     SingleCellExperiment::counts(sce[genes_idx, ]),
     lower = lower,
+    retain = retain,
     test.ambient = TRUE,
     niters = niters
   )
@@ -82,6 +83,7 @@ find_cells <- function(sce,
   ed_out <- DropletUtils::emptyDrops(
     SingleCellExperiment::counts(sce[genes_idx, ]),
     lower = lower,
+    retain = retain,
     test.ambient = FALSE,
     niters = niters
   )
@@ -194,7 +196,7 @@ find_cells <- function(sce,
       axis.text.y = element_text(hjust = 0.5, vjust = 0.5)
     )
 
-  p <- .clean_ggplot_plot_env(p)
+  p$plot_env <- rlang::new_environment()
   return(p)
 }
 
@@ -225,6 +227,6 @@ find_cells <- function(sce,
       plot.title = element_text(size = 18, hjust = 0.5)
     )
 
-  p <- .clean_ggplot_plot_env(p)
+  p$plot_env <- rlang::new_environment()
   return(p)
 }

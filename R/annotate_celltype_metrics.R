@@ -147,11 +147,11 @@ annotate_celltype_metrics <- function(sce,
           metric_var = metric_var
         )
       )
-      sce@metadata$celltype_annotations$metric_plots[[metric_var]][[var]] <-
-        lapply(
-          sce@metadata$celltype_annotations$metric_plots[[metric_var]][[var]],
-          .clean_ggplot_plot_env
-          )
+      #sce@metadata$celltype_annotations$metric_plots[[metric_var]][[var]] <-
+      #  lapply(
+      #    sce@metadata$celltype_annotations$metric_plots[[metric_var]][[var]],
+      #    .clean_ggplot_plot_env
+      #    )
     }
   }
 
@@ -385,6 +385,7 @@ annotate_celltype_metrics <- function(sce,
 #' Remove objects from a ggplot plot_env
 #'
 #' Useful to remove large objects before writing to disk with qs or rds
+#' This function was deprecated by p$plot_env <- rlang::new_environment()
 #'
 #' @family helper
 #'

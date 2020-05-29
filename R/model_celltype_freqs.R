@@ -22,6 +22,8 @@ model_celltype_freqs <- function(sce,
                                  ref_class = "Control",
                                  var_order = NULL,
                                  ...) {
+
+  if (is.null(var_order)) { var_order <- levels(sce[[dependent_var]]) }
   fargs <- c(as.list(environment()), list(...))
 
   cli::cli_h1("Modelling Cell-type Frequencies")
@@ -257,10 +259,10 @@ model_celltype_freqs <- function(sce,
       facet_wrap(~ .data[[celltype_var]], ncol = 3)
   }
 
-  #p$plot_env <- new.env()
-  p$plot_env$sce <- NULL
-  p$plot_env$... <- NULL
-  p$plot_env$fargs$sce <- NULL
+  p$plot_env <- rlang::new_environment()
+  #p$plot_env$sce <- NULL
+  #p$plot_env$... <- NULL
+  #p$plot_env$fargs$sce <- NULL
   return(p)
 }
 
@@ -375,7 +377,7 @@ model_celltype_freqs <- function(sce,
     palette <- fargs$palette
   }
 
-  p <- ggplot(df, aes(x = group, y = mean)) +
+  p <- ggplot(df, aes(x = .data[[dependent_var]], y = mean)) +
     geom_col(aes(fill = .data[[dependent_var]]), colour = "black") +
     geom_errorbar(aes(ymin = mean - se, ymax = mean + se),
       width = .2,
@@ -408,10 +410,10 @@ model_celltype_freqs <- function(sce,
       facet_grid(~ .data[[celltype_var]], scales = "free_y", switch = "x")
   }
 
-  #p$plot_env <- new.env()
-  p$plot_env$sce <- NULL
-  p$plot_env$... <- NULL
-  p$plot_env$fargs$sce <- NULL
+  p$plot_env <- rlang::new_environment()
+  #p$plot_env$sce <- NULL
+  #p$plot_env$... <- NULL
+  #p$plot_env$fargs$sce <- NULL
   return(p)
 }
 
@@ -427,7 +429,7 @@ model_celltype_freqs <- function(sce,
 #'
 #' @importFrom SingleCellExperiment counts
 #' @importFrom SummarizedExperiment rowData colData
-#' @importFrom dplyr select group_by count
+#' @importFrom dplyr select group_by count mutate_if
 #' @importFrom tidyr pivot_wider
 #'
 #' @keywords internal
@@ -437,6 +439,7 @@ model_celltype_freqs <- function(sce,
                          ...) {
   mat <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
     dplyr::select(!!unique_id_var, !!celltype_var) %>%
+    dplyr::mutate_if(is.factor, as.character) %>%
     dplyr::group_by(!!(as.name(unique_id_var))) %>%
     dplyr::count(!!(as.name(celltype_var))) %>%
     tidyr::pivot_wider(names_from = !!(as.name(celltype_var)), values_from = "n") %>%

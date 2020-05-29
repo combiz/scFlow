@@ -1,7 +1,8 @@
 library(scFlow)
 sce <- read_sce("~/Documents/junk/mergedsce")
+sce_all <- sce
+sce_subset <- sce_all[, sce$cluster_celltype == "Micro"]
 
-sce_subset <- sce[, sce$cluster_celltype == "Micro"]
 
 sce_pb <- pseudobulk_sce(
   sce_subset,

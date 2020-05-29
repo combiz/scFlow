@@ -3,20 +3,27 @@ library(SingleCellExperiment)
 library(scFlow)
 #sce_all <- read_sce("~/Documents/Amy_Glia_Expt/sce") # not working
 sce_all <- read_sce("~/Documents/nf-sc/results/celltype_mapped_sce/celltype_mapped_sce")
-idx <- as.numeric(caret::createDataPartition(sce_all$manifest, p = .03, list = FALSE)) # 15% subset
+
+#idx <- as.numeric(caret::createDataPartition(sce_all$individual, p = .03, list = FALSE)) # 15% subset
+mini_sce <- sce_all[, idx]
 sce <- sce_all[, idx]
 
 sce <- sce[, sce$manifest != "kurus"]
 
 sce <- integrate_sce(sce, unique_id_var = "manifest", k = 20)
+sce <- integrate_sce(sce, unique_id_var = "individual", k = 20)
+
+write_sce(sce, "~/Documents/junk/mini_sce_liger")
 
 # sce <- read_sce("~/Documents/liger_test")
 
 sce <- reduce_dims_sce(sce, input_reduced_dim = c("PCA", "Liger"), unique_id_var = "manifest")
+sce <- reduce_dims_sce(sce, input_reduced_dim = c("PCA", "Liger"), unique_id_var = "individual")
 
 sce <- cluster_sce(sce)
 
 sce <- annotate_integrated_sce(sce, categorical_covariates = c("group", "sex"))
+sce <- annotate_integrated_sce(sce, categorical_covariates = c("sex"))
 
 report_integrated_sce(sce)
 
