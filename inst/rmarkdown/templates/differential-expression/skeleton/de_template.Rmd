@@ -28,7 +28,7 @@ metadata_plot <- attr(metadata, "plot")
 ```
 
 <div class = "zoomfig">
-```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Volcano plot for differentially expressed gene.</b> Top %s up and down-regulated protein-coding genes are labelled.", dim(metadata_plot$plot_env$top_de)[1])}
+```{r, fig.align="center", fig.width=9, fig.height=7, fig.cap = sprintf("<b>Figure: Volcano plot for differentially expressed gene.</b> Top %s up and down-regulated protein-coding genes are labelled.", dim(metadata_plot$plot_env$top_de)[1])}
 metadata_plot
 ```
 </div>

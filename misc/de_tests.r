@@ -111,11 +111,12 @@ fargs <-  list(
 de_results <- do.call(perform_de, fargs)
 
 
-#sce_pp <- do.call(scFlow:::.preprocess_sce_for_de, fargs)
-#sce <- sce_pp
+sce_pp <- do.call(scFlow:::.preprocess_sce_for_de, fargs)
+sce <- sce_pp
 
-
-
+idx <- as.numeric(caret::createDataPartition(sce$manifest, p = .20, list = FALSE)) # 15% subset
+sce_pp <- sce_pp[, idx]
+sce_pp
 
 
 ################################################################################

@@ -20,7 +20,8 @@ Helper function to check SCE before running liger
 \seealso{
 Other helper functions: 
 \code{\link{.append_celltype_plots_sce}()},
-\code{\link{.read_rds_files_to_list}()}
+\code{\link{.read_rds_files_to_list}()},
+\code{\link{.with_env}()}
 }
 \concept{helper functions}
 \keyword{internal}

@@ -545,14 +545,14 @@ perform_de <- function(sce,
     ylab(bquote("-"*Log[10]*" (adjusted p-value)")) +
     geom_vline(xintercept = c(-log2(fc_threshold), log2(fc_threshold)),
                linetype = 2, size = 0.2, alpha = 0.5) +
-    geom_hline(yintercept = pval_cutoff,
+    geom_hline(yintercept = -log10(pval_cutoff),
                linetype = 2, size = 0.2, alpha = 0.5) +
     scale_colour_manual(name = NULL,
                         aesthetics = c("colour", "fill"),
                         values = c("#DC0000FF", "#3C5488FF", "grey"),
                         label = c("Up-regulated", "Down-regulated"),
                         breaks = c("Up", "Down")) +
-    scale_x_continuous(limits = c(-6, 6)) +
+    #scale_x_continuous(limits = c(-6, 6)) +
     scale_y_continuous(limits = c(0, NA)) +
     guides(colour = guide_legend(override.aes = list(size = 3))) +
     theme(

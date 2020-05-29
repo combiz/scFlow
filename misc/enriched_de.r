@@ -3,14 +3,12 @@ options(mc.cores = 12)
 library(scFlow)
 library(magrittr)
 sce <- read_sce("~/Documents/junk/enriched/final_sce/")
-sce$seqdate <- as.factor(sce$seqdate)
+#sce$seqdate <- as.factor(sce$seqdate)
 sce_all <- sce
-sce_subset <- sce[, sce$cluster_celltype == "Micro" & sce$brain_region == "EC"] #EC
+#sce_subset <- sce[, sce$cluster_celltype == "Micro" & sce$brain_region == "EC"] #EC
+sce_subset <- sce[, sce$cluster_celltype == "Astro" & sce$brain_region == "EC"] #EC
 
-#colnames(SummarizedExperiment::colData(sce))
-#plot_violin(sce_subset, group_var = "individual", subset_group = "Micro", gene = "DPYD", label_angle = 90)
 
-?plot_violin
 # glmer
 fargs <-  list(
   sce = sce_subset,
@@ -20,10 +18,10 @@ fargs <-  list(
   min_counts = 1,
   min_cells_pc = 0.10,
   rescale_numerics = TRUE,
-  dependent_var = "diagnosis_region",
-  #dependent_var = "diagnosis",
-  #ref_class = "control",
-  ref_class = "control_EC",
+  #dependent_var = "diagnosis_region",
+  dependent_var = "diagnosis",
+  ref_class = "control",
+  #ref_class = "control_EC",
   confounding_vars = c(
     "cngeneson",
     "sex",
@@ -35,11 +33,13 @@ fargs <-  list(
     "pc_ribo"
   ),
   random_effects_var = "individual",
-  fc_threshold = 1.05,
+  fc_threshold = 1,
   #pval_cutoff = 0.1,
   pval_cutoff = 1.0,
   ensembl_mapping_file = "~/Documents/junk/src/ensembl-ids/ensembl_mappings.tsv"
 )
+de_results <- do.call(perform_de, fargs)
+
 
 # bayesglm
 fargs <-  list(
