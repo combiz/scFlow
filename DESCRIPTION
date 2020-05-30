@@ -106,7 +106,17 @@ Imports:
     UpSetR,
     nVennR,
     kBET,
-    DirichletReg
+    DirichletReg,
+    cowplot,
+    enrichR,
+    forcats,
+    ggrepel,
+    graph,
+    igraph,
+    Rtsne,
+    tibble,
+    tidyr,
+    tidyselect
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,
@@ -138,5 +148,6 @@ Remotes:
     theislab/kBET,
     neurogenomics/scFlowExample,
     combiz/scFlowData,
-    cran/DirichletReg
+    cran/DirichletReg,
+    neurogenomics/scFlowExample
 VignetteBuilder: knitr
