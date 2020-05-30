@@ -148,6 +148,5 @@ Remotes:
     theislab/kBET,
     neurogenomics/scFlowExample,
     combiz/scFlowData,
-    cran/DirichletReg,
-    neurogenomics/scFlowExample
+    cran/DirichletReg
 VignetteBuilder: knitr
