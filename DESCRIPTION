@@ -36,8 +36,7 @@ Suggests:
     spelling,
     covr,
     knitr,
-    scFlowData,
-    scFlowExample
+    scFlowData
 Language: en-US
 RoxygenNote: 7.1.0
 Imports: 
