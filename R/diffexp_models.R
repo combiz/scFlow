@@ -504,8 +504,8 @@ perform_de <- function(sce,
 #' @keywords internal
 
 .volcano_plot <- function(dt = fcHurdle,
-                          fc_threshold = 2,
-                          pval_cutoff = 0.001,
+                          fc_threshold = 1.05,
+                          pval_cutoff = 0.05,
                           n_label = 10) {
   dt <- dt[!is.na(dt$padj), ]
   dt <- dt[!is.nan(dt$logFC), ]
@@ -533,38 +533,40 @@ perform_de <- function(sce,
       print(top_down)
   }
 
+  dt$padj[dt$padj == 0] <- min(dt[dt$padj > 0, "padj"]) # to prevent infinite points
+
   ggplot2::ggplot(dt) +
-    geom_point(aes(x = logFC, y = -log10(padj), fill = de, colour = de),
+    ggplot2::geom_point(ggplot2::aes(x = logFC, y = -log10(padj), fill = de, colour = de),
                show.legend = T, alpha = 0.5) +
     ggrepel::geom_text_repel(
       data = dt,
-      aes(logFC, y = -log10(padj), label = ifelse(label == "Yes", gene, "")),
+      ggplot2::aes(logFC, y = -log10(padj), label = ifelse(label == "Yes", as.character(.data[["gene"]]), "")),
       max.iter = 1000, size = 3, na.rm = TRUE
     ) +
-    xlab(bquote(Log[2]*" (fold-change)")) +
-    ylab(bquote("-"*Log[10]*" (adjusted p-value)")) +
-    geom_vline(xintercept = c(-log2(fc_threshold), log2(fc_threshold)),
+    ggplot2::xlab(bquote(Log[2]*" (fold-change)")) +
+    ggplot2::ylab(bquote("-"*Log[10]*" (adjusted p-value)")) +
+    ggplot2::geom_vline(xintercept = c(-log2(fc_threshold), log2(fc_threshold)),
                linetype = 2, size = 0.2, alpha = 0.5) +
-    geom_hline(yintercept = -log10(pval_cutoff),
+    ggplot2::geom_hline(yintercept = -log10(pval_cutoff),
                linetype = 2, size = 0.2, alpha = 0.5) +
-    scale_colour_manual(name = NULL,
+    ggplot2::scale_colour_manual(name = NULL,
                         aesthetics = c("colour", "fill"),
                         values = c("#DC0000FF", "#3C5488FF", "grey"),
                         label = c("Up-regulated", "Down-regulated"),
                         breaks = c("Up", "Down")) +
     #scale_x_continuous(limits = c(-6, 6)) +
-    scale_y_continuous(limits = c(0, NA)) +
-    guides(colour = guide_legend(override.aes = list(size = 3))) +
-    theme(
-      axis.text = element_text(color = "black", size = 16),
-      axis.title = element_text(color = "black", size = 18),
-      plot.title = element_text(hjust = 0.5, face = "bold"),
-      panel.background = element_blank(),
-      axis.line = element_line(colour = "black"),
-      panel.border = element_rect(colour = "black", fill = NA),
-      legend.text = element_text(size = 12, colour = "black"),
+    ggplot2::scale_y_continuous(limits = c(0, NA)) +
+    ggplot2::guides(colour = ggplot2::guide_legend(override.aes = list(size = 3))) +
+    ggplot2::theme(
+      axis.text = ggplot2::element_text(color = "black", size = 16),
+      axis.title = ggplot2::element_text(color = "black", size = 18),
+      plot.title = ggplot2::element_text(hjust = 0.5, face = "bold"),
+      panel.background = ggplot2::element_blank(),
+      axis.line = ggplot2::element_line(colour = "black"),
+      panel.border = ggplot2::element_rect(colour = "black", fill = NA),
+      legend.text = ggplot2::element_text(size = 12, colour = "black"),
       legend.position = "top",
       legend.direction="horizontal",
-      plot.margin = margin(c(1, 1, 1, 1), unit = "cm")
+      plot.margin = ggplot2::margin(c(1, 1, 1, 1), unit = "cm")
     )
 }
