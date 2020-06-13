@@ -2,6 +2,7 @@ library(scFlow)
 library(ggplot2)
 
 ##
+sce <- read_sce("~/Documents/junk/celltype_mapped_sce/")
 sce <- read_sce("~/Documents/junk/MS_Custom_Mapped_SCE")
 
 res <- model_celltype_freqs(sce)
@@ -20,6 +21,7 @@ plot_reduced_dim(sce, feature_dim = "clusters", reduced_dim = "UMAP_Liger", labe
 ctm <- read_celltype_mappings("~/Documents/junk/celltype_mappings.tsv")
 sce$clusters <- as.numeric(as.character(sce$clusters))
 sce <- map_custom_celltypes(sce, ctm, cols = "cluster_celltype")
+table(sce$cluster_celltype)
 
 sce$clusters <- as.character(as.numeric(sce$clusters))
 plot_reduced_dim(sce, feature_dim = "cluster_celltype", reduced_dim = "UMAP_Liger", size = 0.5, label_clusters = TRUE)

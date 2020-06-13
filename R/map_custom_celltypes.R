@@ -26,8 +26,6 @@ map_custom_celltypes <- function(sce,
   assertthat::assert_that(
     clusters_colname %in% colnames(mappings))
 
-  sce[[clusters_colname]] <- as.numeric(as.character(sce[[clusters_colname]]))
-
   if (!is.null(cols)) {
     assertthat::assert_that(
       cols %in% colnames(mappings), msg = "Invalid cols specified.")
@@ -39,10 +37,12 @@ map_custom_celltypes <- function(sce,
 
   for (var in cols) {
     mappings_lookup <- mappings[[var]]
-    names(mappings_lookup) <- as.character(mappings[[clusters_colname]])
+    names(mappings_lookup) <- mappings[[clusters_colname]]
     sce[[var]] <- purrr::map_chr(
-      sce[[clusters_colname]], ~ as.character(mappings_lookup[[.]])
-      )
+      sce[[clusters_colname]], ~ as.character(mappings_lookup[[.]]))
+
+    sce[[var]] <- as.factor(sce[[var]])
+
     cli::cli_text("Appended {.var {var}} to SingleCellExperiment")
   }
 
