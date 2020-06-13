@@ -15,6 +15,24 @@
 
 
 ################################################################################
+#' Clean ggplot2 env's by generating a ggplot2 grob then converting to a ggplot2
+#'
+#' Useful to remove large objects before writing to disk with qs or rds
+#'
+#' @family helper
+#' @importFrom ggplot2 ggplotGrob
+#' @importFrom ggpubr as_ggplot
+#'
+#' @keywords internal
+.grobify_ggplot <- function(p) {
+  if ("ggplot" %in% class(p)) {
+    p <- ggplot2::ggplotGrob(p)
+    p <- ggpubr::as_ggplot(p)
+  }
+  return(p)
+}
+
+################################################################################
 #' Remove objects from a ggplot plot_env
 #'
 #' Useful to remove large objects before writing to disk with qs or rds

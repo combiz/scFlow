@@ -73,14 +73,16 @@ metadata$qc_plots$count_depth_distribution
 <div class = "col-md-6">
 ```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of count depth per cell.</b> A lower-limit threshold of %s%s was applied (red line).", metadata$qc_params$min_library_size, ifelse(!is.null(metadata$qc_params$max_library_size), sprintf(" and an upper-limit threshold of %s", metadata$qc_params$max_library_size), ""))}
 knitr::opts_chunk$set(echo = FALSE)
-ggplotly(metadata$qc_plots$count_depth_histogram)
+metadata$qc_plots$count_depth_histogram
+#ggplotly(metadata$qc_plots$count_depth_histogram)
 ```
 </div>
 
 <div class = "col-md-6">
 ```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of number of genes per cell.</b> A lower-limit threshold of %s%s was applied (red line). ", metadata$qc_params$min_features, ifelse(!is.null(metadata$qc_params$max_features), sprintf(" and an upper-limit threshold of %s", metadata$qc_params$max_features), ""))}
 knitr::opts_chunk$set(echo = FALSE)
-ggplotly(metadata$qc_plots$number_genes_histogram)
+metadata$qc_plots$number_genes_histogram
+#ggplotly(metadata$qc_plots$number_genes_histogram)
 ```
 </div>
 </div>
@@ -101,14 +103,16 @@ metadata$qc_plots$number_genes_vs_count_depth
 <div class = "col-md-6">
 ```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of mitochondrial fraction per cell.</b> A upper-threshold of %s (i.e. %1.2f%%) maximum mitochondrial fraction was applied (red line).", metadata$qc_params$max_mito, metadata$qc_params$max_mito * 100)}
 knitr::opts_chunk$set(echo = FALSE)
-ggplotly(metadata$qc_plots$mito_fraction_histogram)
+#ggplotly(metadata$qc_plots$mito_fraction_histogram)
+metadata$qc_plots$mito_fraction_histogram
 ```
 </div>
 
 <div class = "col-md-6">
 ```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of ribosomal fraction per cell.</b> A upper-threshold of %s (i.e. %1.2f%%) maximum ribosomal fraction was applied (red line).", metadata$qc_params$max_ribo, metadata$qc_params$max_ribo * 100)}
 knitr::opts_chunk$set(echo = FALSE)
-ggplotly(metadata$qc_plots$ribo_fraction_histogram)
+metadata$qc_plots$ribo_fraction_histogram
+#ggplotly(metadata$qc_plots$ribo_fraction_histogram)
 ```
 </div>
 </div>

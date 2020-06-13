@@ -133,7 +133,7 @@ annotate_merged_sce <- function(sce,
       size = 6,
       alpha = 1, label_clusters = TRUE
       )
-    p$plot_env$sce <- NULL
+    p <- .grobify_ggplot(p)
     sce@metadata$pseudobulk_rd_plots[[rd_method]] <- p
     cli::cli_ul(sprintf("sce@metadata$pseudobulk_rd_plots$%s", rd_method))
   }
@@ -366,6 +366,6 @@ annotate_merged_sce <- function(sce,
       }
   }
 
-  p$plot_env$sce <- NULL
+  p <- .grobify_ggplot(p)
   return(p)
 }

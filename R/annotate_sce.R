@@ -380,7 +380,7 @@ annotate_sce <- function(sce,
           legend.position = "none",
           plot.title = element_text(size = 18, hjust = 0.5))
 
-  p$plot_env <- rlang::new_environment()
+  p <- .grobify_ggplot(p)
   sce@metadata$qc_plots$count_depth_distribution <- p
   sce@metadata$qc_plot_data$count_depth_distribution <- dt
 
@@ -442,7 +442,7 @@ annotate_sce <- function(sce,
         color = "red")
   }
 
-  p$plot_env <- rlang::new_environment()
+  p <- .grobify_ggplot(p)
   sce@metadata$qc_plots$number_genes_vs_count_depth <- p
   sce@metadata$qc_plot_data$number_genes_vs_count_depth <- dt
 
@@ -490,7 +490,7 @@ annotate_sce <- function(sce,
         color = "red")
   }
 
-  p$plot_env <- rlang::new_environment()
+  p <- .grobify_ggplot(p)
   sce@metadata$qc_plots$count_depth_histogram <- p
   sce@metadata$qc_plot_data$count_depth_histogram <- dt
 
@@ -538,7 +538,7 @@ annotate_sce <- function(sce,
         linetype = "solid",
         color = "red")
   }
-  p$plot_env <- rlang::new_environment()
+  p <- .grobify_ggplot(p)
   sce@metadata$qc_plots$number_genes_histogram <- p
   sce@metadata$qc_plot_data$number_genes_histogram <- dt
 
@@ -574,7 +574,7 @@ annotate_sce <- function(sce,
           legend.text=element_text(size=10),
           plot.title = element_text(size = 18, hjust = 0.5))
 
-  p$plot_env <- rlang::new_environment()
+  p <- .grobify_ggplot(p)
   sce@metadata$qc_plots$mito_fraction_histogram <- p
   sce@metadata$qc_plot_data$mito_fraction_histogram <- dt
 
@@ -613,7 +613,7 @@ annotate_sce <- function(sce,
           legend.text=element_text(size=10),
           plot.title = element_text(size = 18, hjust = 0.5))
 
-  p$plot_env <- rlang::new_environment()
+  p <- .grobify_ggplot(p)
   sce@metadata$qc_plots$ribo_fraction_histogram <- p
   sce@metadata$qc_plot_data$ribo_fraction_histogram <- dt
 
