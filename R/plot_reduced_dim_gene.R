@@ -71,7 +71,7 @@ plot_reduced_dim_gene <- function(sce,
 
   p <- ggplot(data = dt) +
     geom_point(aes(x = dim1, y = dim2,
-                   colour = dt$gene),
+                   colour = gene),
                shape = 16, size = size, alpha = alpha) +
     scale_colour_gradientn(#limits = c(0, 1),
       colours = c(palette[1], palette[2]),

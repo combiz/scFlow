@@ -125,11 +125,11 @@ annotate_celltype_metrics <- function(sce,
           group_by_var = group_by_var
         )
       )
-      #sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[var]] <-
-      #  lapply(
-      #    sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[var]],
-      #    .clean_ggplot_plot_env
-      #    )
+      sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[var]] <-
+        lapply(
+          sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[var]],
+          .clean_ggplot_plot_env
+          )
     }
   }
 
@@ -147,11 +147,11 @@ annotate_celltype_metrics <- function(sce,
           metric_var = metric_var
         )
       )
-      #sce@metadata$celltype_annotations$metric_plots[[metric_var]][[var]] <-
-      #  lapply(
-      #    sce@metadata$celltype_annotations$metric_plots[[metric_var]][[var]],
-      #    .clean_ggplot_plot_env
-      #    )
+      sce@metadata$celltype_annotations$metric_plots[[metric_var]][[var]] <-
+        lapply(
+          sce@metadata$celltype_annotations$metric_plots[[metric_var]][[var]],
+          .clean_ggplot_plot_env
+          )
     }
   }
 
@@ -240,8 +240,10 @@ annotate_celltype_metrics <- function(sce,
       legend.title = ggplot2::element_blank()
     )
 
-  p$plot_env <- rlang::new_environment()
-  p2$plot_env <- rlang::new_environment()
+  #p$plot_env$sce <- NULL
+  #p2$plot_env$sce <- NULL
+
+  #sce <- parent.frame()[["sce"]]
   sce@metadata$celltype_annotations$
     prop_plots[[group_by_var]][[celltype_var]] <- list()
   sce@metadata$celltype_annotations$
@@ -341,8 +343,8 @@ annotate_celltype_metrics <- function(sce,
       legend.position = "none"
     )
 
-  p$plot_env <- rlang::new_environment()
-  p2$plot_env <- rlang::new_environment()
+  #p$plot_env$sce <- NULL
+  #p2$plot_env$sce <- NULL
 
   sce@metadata$celltype_annotations$
     metric_plots[[metric_var]][[celltype_var]] <- list()
@@ -356,76 +358,4 @@ annotate_celltype_metrics <- function(sce,
     metric_plots[[metric_var]][[celltype_var]]$ridge_plot <- p2
 
   return(sce)
-}
-
-################################################################################
-#' Retrieve a palette of n_colours discrete colours from paletteer
-#'
-#' Useful to remove large objects before writing to disk with qs or rds
-#'
-#' @family helper
-#'
-#' @importFrom paletteer paletteer_d
-#' @importFrom grDevices colorRampPalette
-#'
-#' @keywords internal
-.get_d_palette <- function(pal_name = "ggsci::nrc_npg", n_colours = NULL) {
-  palette_choice <- paletteer::paletteer_d("ggsci::nrc_npg")
-  get_palette <- grDevices::colorRampPalette(palette_choice)
-  if (n_colours <= length(palette_choice)) {
-    pal_values <- palette_choice[1:n_colours]
-  } else {
-    pal_values <- get_palette(n_colours)
-  }
-  return(pal_values)
-}
-
-
-################################################################################
-#' Remove objects from a ggplot plot_env
-#'
-#' Useful to remove large objects before writing to disk with qs or rds
-#' This function was deprecated by p$plot_env <- rlang::new_environment()
-#'
-#' @family helper
-#'
-#' @keywords internal
-.clean_ggplot_plot_env <- function(p,
-                                   drop_classes = c(
-                                     "SingleCellExperiment",
-                                     "ggplot"
-                                   )) {
-  if ("ggplot" %in% class(p)) {
-    env_classes <- lapply(p$plot_env, class)
-    drop_idx <- purrr::map_lgl(env_classes, ~ any(drop_classes %in% .))
-    drop_names <- names(drop_idx[drop_idx])
-    for (drop_name in drop_names) {
-      p$plot_env[[eval(drop_name)]] <- NULL
-    }
-    p$plot_env$... <- NULL
-  }
-  return(p)
-}
-
-################################################################################
-#' scale_y_continuous(labels=.fancy_scientific)
-#'
-#' @family helper
-#'
-#' @keywords internal
-.fancy_scientific <- function(l) {
-  # turn in to character string in scientific notation
-  l <- format(l, scientific = TRUE)
-  # prevent 0 x xx
-  l <- gsub("0e\\+00","0",l)
-  # quote the part before the exponent to keep all the digits
-  l <- gsub("^(.*)e", "'\\1'e", l)
-  # remove + after exponent, if exists. E.g.: (3x10^+2 -> 3x10^2)
-  l <- gsub("e\\+","e",l)
-  # turn the 'e+' into plotmath format
-  l <- gsub("e", "%*%10^", l)
-  # convert 1x10^ or 1.000x10^ -> 10^
-  l <- gsub("\\'1[\\.0]*\\'\\%\\*\\%", "", l)
-  # return this as an expression
-  parse(text=l)
 }

@@ -82,19 +82,62 @@ perform_de <- function(sce,
 #' @importFrom scater librarySizeFactors normalize
 #' @importFrom Matrix colSums
 #' @importFrom cli cli_text
+#' @importFrom sctransform vst
+#' @importFrom limma normalizeQuantiles
 #'
 #' @keywords internal
 .preprocess_sce_for_de <- function(...) {
   fargs <- list(...)
   sce <- fargs$sce
 
+  # run this before subset to avoid non-conformable array error
+  if (fargs$sctransform) {
+    cli::cli_alert("Normalizing with sctransform")
+    #sce$log10_total_counts <- log10(sce$total_counts)
+    vst_out <- sctransform::vst(
+      umi = as(SingleCellExperiment::counts(sce), "dgCMatrix"),
+      cell_attr = as.data.frame(SummarizedExperiment::colData(sce)),
+      latent_var = c("log_umi"),#c("log10_total_counts"),
+      batch_var = NULL,
+      latent_var_nonreg = NULL,
+      n_genes = 2000,
+      n_cells = NULL,
+      return_gene_attr = TRUE,
+      return_cell_attr = TRUE,
+      method = "poisson",
+      do_regularize = TRUE,
+      residual_type = "pearson",
+      show_progress = TRUE
+    )
+    mat <- vst_out$y
+    ridx <- rownames(sce) %in% rownames(mat)
+    sce <- sce[ridx, ]
+    SingleCellExperiment::normcounts(sce) <- mat
+  }
+
+  if (fargs$quantile_norm) {
+    cli::cli_alert("Quantile normalizing")
+    #mat <- as(SingleCellExperiment::counts(sce), "dgCMatrix")
+    new_mat <- matrix(0, nrow = dim(mat)[1], ncol = dim(mat)[2])
+    #new_mat <- Matrix::Matrix(0, nrow = dim(mat)[1], ncol = dim(mat)[2], sparse = TRUE)
+    for(unique_id in unique(sce[[fargs$unique_id_var]])) {
+      print(sprintf("normalizing sample %s", unique_id))
+      idx <- sce[[fargs$unique_id_var]] == unique_id
+      submat <- as.matrix(mat[, idx])
+      qn_submat <- preprocessCore::normalize.quantiles(submat)
+      new_mat[, idx] <- qn_submat
+    }
+    mat <- new_mat
+    SingleCellExperiment::normcounts(sce) <- mat
+  }
+
   sce <- .filter_sce_genes_for_de(sce,
     min_counts = fargs$min_counts,
     min_cells_pc = fargs$min_cells_pc
   )
 
-  sce@int_colData$size_factor <- scater::librarySizeFactors(sce)
-  sce <- scater::normalize(sce)
+  #sce@int_colData$size_factor <- scater::librarySizeFactors(sce)
+  #sce <- scater::normalize(sce)
 
   if (fargs$rescale_numerics == TRUE) {
     # recale numerics avoids issues with glmer
@@ -107,6 +150,19 @@ perform_de <- function(sce,
   # from MAST tutorial
   cdr2 <- Matrix::colSums(SingleCellExperiment::counts(sce) > 0)
   sce$cngeneson <- as.numeric(scale(cdr2))
+
+
+
+  if (fargs$pseudobulk) {
+    cli::cli_alert("Pseudobulking")
+    sce <- pseudobulk_sce(sce, keep_vars = unique(c(fargs$dependent_var, fargs$confounding_vars, fargs$random_effects_var)))
+    if(fargs$quantile_norm) {
+      cli::cli_alert("Quantile normalizing merged")
+      mat <- SingleCellExperiment::normcounts(sce)
+      mat <- preprocessCore::normalize.quantiles(mat)
+      SingleCellExperiment::normcounts(sce) <- mat
+    }
+  }
 
   cli::cli_text(c(
     "Setting '{.emph {fargs$ref_class}}' ",

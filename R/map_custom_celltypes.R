@@ -26,6 +26,8 @@ map_custom_celltypes <- function(sce,
   assertthat::assert_that(
     clusters_colname %in% colnames(mappings))
 
+  sce[[clusters_colname]] <- as.numeric(as.character(sce[[clusters_colname]]))
+
   if (!is.null(cols)) {
     assertthat::assert_that(
       cols %in% colnames(mappings), msg = "Invalid cols specified.")

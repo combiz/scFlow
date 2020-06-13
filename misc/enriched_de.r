@@ -1,4 +1,8 @@
-options(mc.cores = min(1, future::availableCores() - 2))
+options(mc.cores = max(1, future::availableCores() - 2))
+
+param = BiocParallel::SnowParam(max(1, future::availableCores() - 2), "SOCK", progressbar = TRUE)
+BiocParallel::register(param)
+
 library(parallel)
 #options(mc.cores = 10)
   library(scFlow)
@@ -6,9 +10,9 @@ library(magrittr)
 sce <- read_sce("~/Documents/junk/enriched/final_sce/")
 #sce$seqdate <- as.factor(sce$seqdate)
 sce_all <- sce
-sce_subset <- sce[, sce$cluster_celltype == "Micro" & sce$brain_region == "SSC"] #EC
+sce_subset <- sce_all[, sce_all$cluster_celltype == "Micro" & sce_all$brain_region == "EC"] #EC
 sce <- sce_subset
-#sce_subset <- sce[, sce$cluster_celltype == "Astro" & sce$brain_region == "EC"] #EC
+#sce_subset <- sce_all[, sce_all$cluster_celltype == "Astro" & sce_all$brain_region == "SSC"] #EC
 #sce_ssc <- sce[, sce$brain_region == "SSC"]
 #sce_ec <- sce[, sce$brain_region == "EC"]
 
