@@ -17,8 +17,11 @@ write_sce(sce, "~/Documents/junk/mini_sce_liger")
 
 # sce <- read_sce("~/Documents/liger_test")
 
+
 sce <- reduce_dims_sce(sce, input_reduced_dim = c("PCA", "Liger"), unique_id_var = "manifest")
 sce <- reduce_dims_sce(sce, input_reduced_dim = c("PCA", "Liger"), unique_id_var = "individual")
+
+sce <- cluster_sce(sce, reduction_method = "UMAP_Liger")
 
 sce <- cluster_sce(sce)
 
@@ -61,6 +64,12 @@ sce_bck <- sce
 sce <- cluster_sce(sce, reduction_method = "UMAP_Liger")
 sce <- cluster_sce(sce, reduction_method = "tSNE_Liger", resolution = 0.01, k = 20)
 
-sce <- map_celltypes_sce(sce, ctd_folder = ctd_fp)
+sce <- map_celltypes_sce(sce, )
 reduction_methods = c("tSNE", "UMAP", "UMAP3D")
+sce <- annotate_celltype_metrics(sce, facet_vars = c("diagnosis"), metric_vars = c("pc_mito"), cluster_var = "clusters", celltype_var = "cluster_celltype", input_reduced_dim = "UMAP_Liger")
+report_celltype_metrics(sce)
+sce$clusters <- as.factor(as.character(as.numeric(sce$clusters)))
+
+x <- model_celltype_freqs(sce, ref_class = "Controls", dependent_var = "diagnosis", var_order = NULL)
+report_celltype_model(x)
 

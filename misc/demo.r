@@ -3,7 +3,7 @@
 
 ##  ............................................................................
 ##  Initialize                                                              ####
-options(mc.cores = future::availableCores())
+options(mc.cores = future::availableCores() - 2)
 library(parallel)
 library(scFlow)
 
@@ -38,14 +38,14 @@ sce <- generate_sce(mat, metadata)
 
 sce <- find_cells(sce, lower = 100, retain = 12000, niters = 30000)
 sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 250, max_library_size = "adaptive", nmads = 4)
-s#
+#
 
 #sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 100, max_library_size = "adaptive")
 #sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 300, max_library_size = 10000, max_features = 500)
 
 sce <- filter_sce(sce)
 
-#qs::qsave(sce, "sce.qs")
+qs::qsave(sce, "sce.qs")
 sce <- qs::qread("sce.qs", nthreads = future::availableCores())
 
 ###
@@ -55,6 +55,7 @@ sce <- qs::qread("sce.qs", nthreads = future::availableCores())
 #df2 <- read.csv("~/Documents/scFlow/misc/emptydropssweeping2.csv")
 
 sce <- find_singlets(sce, "doubletfinder", pK = 0.005, vars_to_regress_out = NULL)
+
 
 sce <- filter_sce(sce)
 

@@ -15,7 +15,8 @@ To evaluate whether the model was reliable, the p-values for all presumed ambien
 
 ```{r, fig.align="center", fig.width=8, fig.height=4, fig.cap = sprintf("<b>Figure: Distribution of p-values for low total-count barcodes. </b>Ideally this distribution should be close to uniform.  Large peaks near zero would suggest that barcodes with fewer _total_counts_ than the *lower* parameter (lower = %s) are not all ambient.  In this case, further decreasing the *lower* parameter is recommended to ensure that barcodes representing genuine cells with relatively low expression are not used to estimate the ambient profile.", metadata$emptydrops_params$lower)}
 knitr::opts_chunk$set(echo = FALSE)
-ggplotly(metadata$emptydrops_plots$emptydrops_hist)
+#ggplotly(metadata$emptydrops_plots$emptydrops_hist)
+metadata$emptydrops_plots$emptydrops_hist
 ```
 
 In addition to this visualization, the uniformity was tested using the `r metadata$emptydrops_params$uniformity_method` which yielded a _p-value_ of `r metadata$emptydrops_params$uniformity_pval` (≤0.05 would suggest non-uniformity).

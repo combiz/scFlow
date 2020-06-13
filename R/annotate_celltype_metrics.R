@@ -71,7 +71,7 @@ annotate_celltype_metrics <- function(sce,
 
   # generate the plots
   # cluster numbers
-  sce@metadata$celltype_annotations$reddim_plots$cluster_var <- do.call(
+  p <- do.call(
     plot_reduced_dim,
     list(
       sce = sce,
@@ -82,9 +82,11 @@ annotate_celltype_metrics <- function(sce,
       ...
     )
   )
+  p <- .grobify_ggplot(p)
+  sce@metadata$celltype_annotations$reddim_plots$cluster_var <- p
 
   # reddim cluster aliases
-  sce@metadata$celltype_annotations$reddim_plots$celltype_var <- do.call(
+  p <- do.call(
     plot_reduced_dim,
     list(
       sce = sce,
@@ -95,10 +97,12 @@ annotate_celltype_metrics <- function(sce,
       ...
     )
   )
+  p <- .grobify_ggplot(p)
+  sce@metadata$celltype_annotations$reddim_plots$celltype_var <- p
 
   # reddim custom coldata variables
   for (facet_var in union(facet_vars, unique_id_var)) {
-    sce@metadata$celltype_annotations$reddim_plots[[facet_var]] <- do.call(
+    p <- do.call(
       plot_reduced_dim,
       list(
         sce = sce,
@@ -109,6 +113,8 @@ annotate_celltype_metrics <- function(sce,
         ...
       )
     )
+    p <- .grobify_ggplot(p)
+    sce@metadata$celltype_annotations$reddim_plots[[facet_var]] <- p
   }
 
   # proportion of cell types (rel/abs) by groups
@@ -125,11 +131,11 @@ annotate_celltype_metrics <- function(sce,
           group_by_var = group_by_var
         )
       )
-      sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[var]] <-
-        lapply(
-          sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[var]],
-          .clean_ggplot_plot_env
-          )
+      #sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[var]] <-
+      #  lapply(
+      #    sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[var]],
+      #    .clean_ggplot_plot_env
+      #    )
     }
   }
 
@@ -147,11 +153,11 @@ annotate_celltype_metrics <- function(sce,
           metric_var = metric_var
         )
       )
-      sce@metadata$celltype_annotations$metric_plots[[metric_var]][[var]] <-
-        lapply(
-          sce@metadata$celltype_annotations$metric_plots[[metric_var]][[var]],
-          .clean_ggplot_plot_env
-          )
+      #sce@metadata$celltype_annotations$metric_plots[[metric_var]][[var]] <-
+      #  lapply(
+      #    sce@metadata$celltype_annotations$metric_plots[[metric_var]][[var]],
+      #    .clean_ggplot_plot_env
+      #    )
     }
   }
 
@@ -201,6 +207,7 @@ annotate_celltype_metrics <- function(sce,
       fill = .data[[celltype_var]]
     )
   ) +
+    ggplot2::xlab(group_by_var) +
     ggplot2::geom_col() +
     scale_colours +
     ggplot2::scale_y_continuous(expand = c(0, 0)) +
@@ -230,6 +237,7 @@ annotate_celltype_metrics <- function(sce,
     ggplot2::coord_flip() +
     ggplot2::theme_bw() +
     ggplot2::ylab("%") +
+    ggplot2::xlab(group_by_var) +
     ggplot2::theme(
       panel.border = ggplot2::element_blank(),
       panel.grid.major = ggplot2::element_blank(),
@@ -241,6 +249,8 @@ annotate_celltype_metrics <- function(sce,
     )
 
   #p$plot_env$sce <- NULL
+  p <- .grobify_ggplot(p)
+  p2 <- .grobify_ggplot(p2)
   #p2$plot_env$sce <- NULL
 
   #sce <- parent.frame()[["sce"]]
@@ -307,6 +317,7 @@ annotate_celltype_metrics <- function(sce,
     ggplot2::coord_flip() +
     ggplot2::theme_bw() +
     ggplot2::ylab(paste(metric_var)) +
+    ggplot2::xlab(celltype_var) +
     ggplot2::theme(
       panel.border = ggplot2::element_blank(),
       panel.grid.major = ggplot2::element_blank(),
@@ -334,6 +345,8 @@ annotate_celltype_metrics <- function(sce,
       colour = "white",
       fill = "grey30"
     ) +
+    ggplot2::xlab(metric_var) +
+    ggplot2::ylab(celltype_var) +
     ggplot2::theme_light() +
     ggplot2::theme(
       panel.border = ggplot2::element_blank(),
@@ -343,8 +356,8 @@ annotate_celltype_metrics <- function(sce,
       legend.position = "none"
     )
 
-  #p$plot_env$sce <- NULL
-  #p2$plot_env$sce <- NULL
+  p <- .grobify_ggplot(p)
+  p2 <- .grobify_ggplot(p2)
 
   sce@metadata$celltype_annotations$
     metric_plots[[metric_var]][[celltype_var]] <- list()
