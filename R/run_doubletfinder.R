@@ -83,7 +83,14 @@ run_doubletfinder <- function(sce,
     dpk <- NULL
   }
 
-  sce@metadata$doubletfinder_params <- fargs
+  sce@metadata$doubletfinder_params <- list(
+    pK = pK,
+    pca_dims = pca_dims,
+    var_features = var_features,
+    vars_to_regress_out = vars_to_regress_out,
+    doublet_rate = doublet_rate,
+    dpk = dpk
+  )
 
   cli::cli_alert(c(
     "Selected {.val {dim(sce_ss)[[2]]}} cells ",

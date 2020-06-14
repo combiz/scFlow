@@ -5,14 +5,33 @@
 \title{Find singlets in a SingleCellExperiment with DoubletFinder by McGinnis CS
 et al}
 \usage{
-run_doubletfinder(sce, ...)
+run_doubletfinder(
+  sce,
+  pK = NULL,
+  pca_dims = 10,
+  var_features = 2000,
+  vars_to_regress_out = "nCount_RNA",
+  doublet_rate = 0,
+  dpk = 8,
+  num_cores = max(1, future::availableCores() - 2)
+)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}
 
-\item{...}{'pK' passed here will override parameter sweep,
-'doublet_rate' passed here will override the default of 7.5\\%
-a doublet_rate of 0 is a special case that automates the estimated dr}
+\item{pK}{a pK value to use in place of a parameter sweep}
+
+\item{pca_dims}{the number of principal components to use}
+
+\item{var_features}{the top n variable features to use}
+
+\item{vars_to_regress_out}{the variables to regress out}
+
+\item{doublet_rate}{either a fixed doublet rate (e.g. 0.075) or 0 to}
+
+\item{dpk}{doublets per thousand cells increment if doublet_rate is 0.}
+
+\item{num.cores}{the number of CPU cores to use}
 }
 \value{
 sce a SingleCellExperiment object annotated for singlets

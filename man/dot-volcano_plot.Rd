@@ -6,8 +6,8 @@
 \usage{
 .volcano_plot(
   dt = fcHurdle,
-  fc_threshold = 2,
-  pval_cutoff = 0.001,
+  fc_threshold = 1.05,
+  pval_cutoff = 0.05,
   n_label = 10
 )
 }
