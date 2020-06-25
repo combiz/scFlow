@@ -7,11 +7,17 @@ library(parallel)
 #options(mc.cores = 10)
   library(scFlow)
 library(magrittr)
-sce <- read_sce("~/Documents/junk/enriched/final_sce/")
+#sce <- read_sce("~/Documents/junk/enriched/final_sce/")
+sce <- read_sce("~/Documents/junk/enriched_impute/")
+
+
+##########
+
+class(sce$p.Tau)
 #sce$seqdate <- as.factor(sce$seqdate)
-sce_all <- sce
-sce_subset <- sce_all[, sce_all$cluster_celltype == "Micro" & sce_all$brain_region == "EC"] #EC
-sce <- sce_subset
+#sce_all <- sce
+#sce_subset <- sce_all[, sce_all$cluster_celltype == "Micro" & sce_all$brain_region == "EC"] #EC
+#sce <- sce_subset
 #sce_subset <- sce_all[, sce_all$cluster_celltype == "Astro" & sce_all$brain_region == "SSC"] #EC
 #sce_ssc <- sce[, sce$brain_region == "SSC"]
 #sce_ec <- sce[, sce$brain_region == "EC"]

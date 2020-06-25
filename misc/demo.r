@@ -10,9 +10,10 @@ library(scFlow)
 # v2 chemistry
 matpath <- "~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix"
 #matpath <- "~/Documents/junk/MS535" #bad sample
-#matpath <- "~/Documents/junk/MS461" #ok sample
+matpath <- "~/Documents/junk/MS461" #ok sample
 matpath <- "~/Documents/junk/MS426/outs/raw_feature_bc_matrix" # emptydrops peculiar sample (large pass #)
 #matpath <- "~/Documents/junk/MS523/outs/raw_feature_bc_matrix/"# emptydrops peculiar sample (all < retain fail)
+matpath <- "~/Documents/junk/MS405/outs/raw_feature_bc_matrix/" # sukip / MS405
 # v3 chemistry, enriched
 #matpath <- "~/Documents/testmatrices/enriched"
 
@@ -34,7 +35,7 @@ metadata <- read_metadata(
 
 sce <- generate_sce(mat, metadata)
 
-#sce <- find_cells(sce, lower = 125, retain = NULL)
+sce <- find_cells(sce, lower = 125, retain = NULL, niters = 30000)
 
 sce <- find_cells(sce, lower = 100, retain = 12000, niters = 30000)
 sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 250, max_library_size = "adaptive", nmads = 4)
@@ -71,13 +72,16 @@ alarm()
 ##  Bonus - cluster and identify celltypes                                  ####
 
 x <- Sys.time()
+library(monocle3)
 
-sce <- reduce_dims_sce(sce, pca_dims = 5, reduction_methods = c("tSNE", "UMAP"))
+sce <- reduce_dims_sce(sce, pca_dims = 5, reduction_methods = c("tSNE", "UMAP"), input_reduced_dim = "PCA")
 
-sce <- cluster_sce(sce)
+sce <- cluster_sce(sce, reduction_method = "UMAP_PCA")
+original_sce <- sce
 
 sce <- map_celltypes_sce(sce, ctd_folder = ctd_fp)
 
+table(sce$clusters, sce$cluster_celltype)
 totaltime <- Sys.time() - x
 
 print(totaltime)

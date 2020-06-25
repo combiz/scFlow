@@ -1,3 +1,11 @@
+library(parallel)
+options(mc.cores = 12)
+
+library("biomaRt")
+human <- useMart(host="www.ensembl.org", "ENSEMBL_MART_ENSEMBL", dataset="hsapiens_gene_ensembl")
+attrib_hum <- listAttributes(human)
+entrez_df <- getBM(attributes=c("ensembl_gene_id", "chromosome_name"), mart = human)
+
 fargs <- list(
   sce = sce,
   min_counts = 1,
@@ -13,7 +21,10 @@ fargs <- list(
     #"PMI",
     "RIN",
     #"seqdate",
-    "pc_mito"
+    "pc_mito",
+    "p_tau",
+    "braak",
+    "amyloid_beta"
     #),
   ),
   random_effects_var = NULL,
@@ -22,20 +33,27 @@ fargs <- list(
   ensembl_mapping_file = "~/Documents/junk/src/ensembl-ids/ensembl_mappings.tsv",
   n_label = 12,
   gene_biotype = "protein_coding",
-  pseudobulk = TRUE,
+  pseudobulk = FALSE,
   #pseudobulk = FALSE,
-  sctransform = TRUE,
-  quantile_norm = TRUE,
+  sctransform = FALSE,
+  quantile_norm = FALSE,
   unique_id_var = "individual"
 )
-sce_all <- sce
-#sce_subset <- sce_all[, sce_all$cluster_celltype == "Micro"]
-sce_subset <- sce_all[, sce_all$cluster_celltype == "Oligo"]
+#sce_all <- sce
+sce_subset <- sce_all[, sce_all$cluster_celltype == "Micro" & sce_all$brain_region == "EC"]
+#sce_subset <- sce_all[, sce_all$cluster_celltype == "Micro"] # both EC and SSC
+#sce_subset <- sce_all[, sce_all$cluster_celltype == "Oligo"]
 sce <- sce_subset
 #sce[[fargs$dependent_var]] <- relevel(
 #  sce[[fargs$dependent_var]],
 #  ref = fargs$ref_class
 #)
+
+#ad
+sce$diagnosis <- relevel(
+  sce$diagnosis,
+  ref = "control"
+)
 
 # ms
 sce$sex <- relevel(
@@ -47,6 +65,7 @@ sce$group <- relevel(
   sce$group,
   ref = "Low"
 )
+##
 
 fargs$sce <- sce
 sce_pp <- do.call(scFlow:::.preprocess_sce_for_de, fargs)
@@ -112,6 +131,8 @@ model_formula <- as.formula("~ group + (1 | individual) + cngeneson + pc_mito + 
 model_formula <- as.formula("~ diagnosis") # pb
 model_formula <- as.formula("~ sex") # pb
 model_formula <- as.formula("~ sex + pc_mito + cngeneson") # pb
+model_formula <- as.formula("~ sex + pc_mito + cngeneson + p_tau + amyloid_beta") # pb
+model_formula <- as.formula("~ sex + pc_mito + cngeneson") # pb
 model_formula <- as.formula("~ diagnosis + pc_mito + sex") # pb
 
 sce$cngeneson
@@ -143,9 +164,27 @@ x <- SingleCellExperiment::counts(sce)
 x <- rowSums(x)
 x[1]
 ##
-
+sce <- sce_pp
 mat <- as(SingleCellExperiment::counts(sce), "dgCMatrix")
-vobjDream <- variancePartition::voomWithDreamWeights( mat, model_formula, as.data.frame(SummarizedExperiment::colData(sce)) )
+cpm <- as(SingleCellExperiment::cpm(sce), "dgCMatrix")
+normcounts <- as(SingleCellExperiment::normcounts(sce), "dgCMatrix")
+logcpm <- log2(cpm + 1)
+#
+newmat <- preprocessCore::normalize.quantiles(as.matrix(mat)) #### OPTIONAL
+colnames(newmat) <- colnames(mat)
+rownames(newmat) <- rownames(mat)
+mat <- newmat
+#
+mat <- cpm
+mat <- logcpm
+mat <- normcounts
+
+newmat <- preprocessCore::normalize.quantiles(as.matrix(mat)) #### OPTIONAL
+colnames(newmat) <- colnames(mat)
+rownames(newmat) <- rownames(mat)
+mat <- newmat
+
+vobjDream <- variancePartition::voomWithDreamWeights( mat, model_formula, as.data.frame(SummarizedExperiment::colData(sce)))
 fit <- variancePartition::dream( vobjDream, model_formula, as.data.frame(SummarizedExperiment::colData(sce)) )
 if (!fargs$random_effects_var) {
   fit <- limma::eBayes(fit)
@@ -165,7 +204,11 @@ C <- variancePartition::canCorPairs( ~ group + cngeneson + individual + pc_mito 
 variancePartition::plotCorrMatrix( C )
 
 # variance
-varPart <- variancePartition::fitExtractVarPartModel( vobjDream, model_formula, as.data.frame(SummarizedExperiment::colData(sce)), showWarnings=FALSE )
+#varPart <- variancePartition::fitExtractVarPartModel( vobjDream, model_formula, as.data.frame(SummarizedExperiment::colData(sce)), showWarnings=FALSE )
+sce <- sce_all[,sce_all$cluster_celltype == "Micro" & sce_all$brain_region == "EC"]
+mat <- as(SingleCellExperiment::counts(sce), "dgCMatrix")
+vobjDream <- variancePartition::voomWithDreamWeights( mat, ~ sex + (1 | individual) + pc_mito + diagnosis, as.data.frame(SummarizedExperiment::colData(sce)))
+varPart <- variancePartition::fitExtractVarPartModel( vobjDream, ~ sex + (1 | individual) + pc_mito + diagnosis, as.data.frame(SummarizedExperiment::colData(sce)), showWarnings=FALSE )
 variancePartition::plotVarPart( sortCols(varPart), label.angle=60 )
 plotPercentBars( varPart[1:15,] )
 var_genes <- map_ensembl_gene_id(rownames(varPart), ensembl_mapping_file = fargs$ensembl_mapping_file)
@@ -176,6 +219,53 @@ plotPercentBars( prob_varPart )
 varPart
 
 ######################
+
+res <- results_l$control_vs_sexmale# dream
+res <- results_l$control_vs_scesexmale #limma
+head(res, n = 50)
+res[1:50,]$chromosome_name == "Y"
+res[res$gene %in% c("LINGO1", "RASGEF1B", "SLC26A3","INO80D", "TMEM163"),]
+scFlow:::.volcano_plot(res, fc_threshold = 1.05, pval_cutoff = 0.05)
+#write.table(res, "~/Documents/junk/enriched_de/micro_ec_dream_sctransform_pb_cpm_sctransform.tsv", col.names = TRUE, row.names = FALSE, sep = "\t")
+
+## permute test
+
+contrast <- "control_vs_amyloid_beta"
+contrast <- "control_vs_p_tau"
+contrast <- "control_vs_sexmale"
+get_top_50_genes <- function(res) { res[1:50,]}
+get_de_genes <- function(res) {res[res$pval <= 0.05,]} # padj or pval?
+pmute_l <- lapply(results_l$permutations, function(x) x[[contrast]])
+for (i in 1:length(pmute_l)) {pmute_l[[i]]$permutation <- i}
+## for saving full rbind
+#all_rbound <- Reduce(rbind, pmute_l)
+#results_l[[contrast]]$permutation <- "REAL"
+#all_rbound <- rbind(all_rbound, results_l[[contrast]])
+#write.table(all_rbound, file = "ptau_100_permutations.tsv", col.names = T, row.names = F, sep = "\t")
+##
+#x <- lapply(pmute_l, get_top_50_genes)
+x <- lapply(pmute_l, get_de_genes)
+x <- Reduce(rbind, x)
+x <- x %>%
+  dplyr::group_by(gene) %>%
+  dplyr::tally() %>%
+  dplyr::arrange(-n) %>%
+  dplyr::mutate(permute_freq = n / n_permutations) %>%
+  dplyr::mutate(permute_p = 1 - permute_freq) %>%
+  dplyr::mutate(permute_padj = p.adjust(permute_p, method = "fdr"))
+View(x)
+x$gene <- factor(x$gene, levels = rev(x$gene))
+z <- x[x$gene %in% c("LINGO1", "RASGEF1B", "SLC26A3","INO80D", "TMEM163"),]
+z <- x[1:50,]
+ggplot(z, aes(x = gene, y = permute_freq)) +
+  geom_col() +
+  coord_flip()
+y <- dplyr::left_join(results_l[[contrast]], x, by = "gene")
+head(y)
+View(y)
+scFlow:::.volcano_plot(results_l[[contrast]], fc_threshold = 1.05, pval_cutoff = 0.05)
+#write.table(y, file = "micro_ec_p_tau_with_permutes.tsv", col.names = T, row.names = F, sep = "\t")
+####
 
 #sce <- sce_subset
 ################################################################################
@@ -292,6 +382,7 @@ varPart
   print(colnames(fit$design))
 
   contrasts <- c("sexfemale")
+  contrasts <- c("sexmale")
   #contrasts <- c("diagnosiscase")
   contrasts <- c("diagnosisMS")
   contrasts <- c("sexF")
@@ -300,94 +391,129 @@ varPart
   contrasts <- c("groupHigh")
   contrasts <- "diagnosiscase"
 
-    colnames(fit$coefficients)
 
-colnames(fit$coefficients)
+  contrasts <- colnames(fit$coefficients)
+
+  contrasts <- "sexmale"
+  contrasts <- "amyloid_beta"
+  contrasts <- "p_tau"
 
   results_l <- list()
+  results_l$permutations <- list()
 
-  for (ctrast in contrasts) {
-    message(sprintf("Running DE for %s\n", ctrast))
-    gc()
-    print(ctrast)
-    tt <- limma::topTable(fit, coef = ctrast,
-                          adjust = "fdr", number = 10000000, sort.by = "p")
-    tt$ensembl_gene_id <- rownames(tt)
+  n_permutations <- 100
+  for (i in 1:(n_permutations + 1)) {
+    print(i)
 
-    # append gene names
-    ensembl_res <- map_ensembl_gene_id(
-      tt$ensembl_gene_id,
-      mappings = c("external_gene_name", "gene_biotype"),
-      ensembl_mapping_file = fargs$ensembl_mapping_file
-    ) %>%
-      dplyr::rename(gene = external_gene_name)
+    metadata <- as.data.frame(SummarizedExperiment::colData(sce))
+    if (i > 1) {
+      metadata <- metadata[sample(nrow(metadata)),]
+    }
 
-    tt <- dplyr::left_join(tt, ensembl_res, by = "ensembl_gene_id")
-    tt <- tt %>%
-      dplyr::rename(padj = adj.P.Val, pval = P.Value) %>%
-      dplyr::filter(gene_biotype %in% fargs$gene_biotype)
+    model_formula <- ~sex + pc_mito + cngeneson
+    #model_formula <- ~amyloid_beta + pc_mito + sex + cngeneson
+    #model_formula <- ~amyloid_beta
+    model_formula <- ~p_tau + pc_mito + sex #+ cngeneson
+    mat <- as(SingleCellExperiment::counts(sce), "dgCMatrix")
+    colnames(mat) <- metadata$pseudobulk_id
+    vobjDream <- variancePartition::voomWithDreamWeights( mat, model_formula, metadata)
+    fit <- variancePartition::dream( vobjDream, model_formula, metadata )
+    if (is.null(fargs$random_effects_var)) {
+      fit <- limma::eBayes(fit)
+    }
 
-    tt$contrast <- ctrast
-    tt$reference <- fargs$ref_class
-    tt$FCRO <- order(abs(2^tt$logFC))
+    for (ctrast in contrasts) {
+      message(sprintf("Running DE for %s\n", ctrast))
+      gc()
+      print(ctrast)
+      tt <- limma::topTable(fit, coef = ctrast,
+                            adjust = "fdr", number = 10000000, sort.by = "p")
+      tt$ensembl_gene_id <- rownames(tt)
 
-    model_formula_string <- scFlow:::.formula_to_char(model_formula)
-    tt$model <- gsub(" ", "", model_formula_string,
-                     fixed = TRUE) # no whitespace
+      # append gene names
+      ensembl_res <- map_ensembl_gene_id(
+        tt$ensembl_gene_id,
+        mappings = c("external_gene_name", "gene_biotype"),
+        ensembl_mapping_file = fargs$ensembl_mapping_file
+      ) %>%
+        dplyr::rename(gene = external_gene_name)
 
-    p <- scFlow:::.volcano_plot(
-      dt = tt,
-      fc_threshold = fargs$fc_threshold,
-      pval_cutoff = fargs$pval_cutoff,
-      n_label = fargs$n_label
-    )
+      tt <- dplyr::left_join(tt, ensembl_res, by = "ensembl_gene_id")
+      tt <- tt %>%
+        dplyr::rename(padj = adj.P.Val, pval = P.Value) %>%
+        dplyr::filter(gene_biotype %in% fargs$gene_biotype)
 
-    results <- tt %>%
-      dplyr::filter(padj <= fargs$pval_cutoff) %>%
-      dplyr::filter(gene_biotype %in% fargs$gene_biotype) %>%
-      dplyr::filter(abs(logFC) >= log2(fargs$fc_threshold)) %>%
-      dplyr::arrange(FCRO)
+      tt$contrast <- ctrast
+      tt$reference <- fargs$ref_class
+      tt$FCRO <- order(abs(2^tt$logFC))
+      tt$TSRO <- order(abs(tt$t))
 
-    DGEs <- c(sum(results$logFC > 0), sum(results$logFC < 0))
-    names(DGEs) <- c("Up", "Down")
+      model_formula_string <- scFlow:::.formula_to_char(model_formula)
+      tt$model <- gsub(" ", "", model_formula_string,
+                       fixed = TRUE) # no whitespace
 
-    element_name <- paste(fargs$ref_class, ctrast, sep = "_vs_")
-    element_name <- gsub("\\$", "", element_name)
+      p <- scFlow:::.volcano_plot(
+        dt = tt,
+        fc_threshold = fargs$fc_threshold,
+        pval_cutoff = fargs$pval_cutoff,
+        n_label = fargs$n_label
+      )
 
-    de_params <- list(
-      celltype = unique(fargs$sce$cluster_celltype),
-      de_method = fargs$de_method,
-      pseudobulk = fargs$sce@metadata$scflow_steps$pseudobulk,
-      min_counts = fargs$min_counts,
-      min_cells_pc = fargs$min_cells_pc,
-      rescale_numerics = fargs$rescale_numerics,
-      dependent_var = fargs$dependent_var,
-      ref_class = fargs$ref_class,
-      confounding_vars = fargs$confounding_vars,
-      random_effects_var = fargs$random_effects_var,
-      fc_threshold = fargs$fc_threshold,
-      pval_cutoff = fargs$pval_cutoff,
-      cells_per_group = table(
-        as.data.frame(SingleCellExperiment::colData(fargs$sce))[[fargs$dependent_var]]),
-      n_genes = dim(sce)[[1]],
-      model = gsub(" ", "", model_formula_string, fixed = TRUE),
-      model_full_rank = ifelse(is.null(fargs$random_effects_var), is_full_rank, NA),
-      contrast_name = element_name
-    )
+      results <- tt %>%
+        dplyr::filter(padj <= fargs$pval_cutoff) %>%
+        dplyr::filter(gene_biotype %in% fargs$gene_biotype) %>%
+        dplyr::filter(abs(logFC) >= log2(fargs$fc_threshold)) %>%
+        dplyr::arrange(padj)
 
-    #if (fargs$de_method != "limma") {
-    #  de_params$mast_method <- NULL
-    #}
+      results <- dplyr::left_join(results, entrez_df, by = "ensembl_gene_id") # for chr#
 
-    de_params <- unlist(de_params)
+      DGEs <- c(sum(results$logFC > 0), sum(results$logFC < 0))
+      names(DGEs) <- c("Up", "Down")
 
-    attr(results, "de_parameters") <- de_params
+      element_name <- paste(fargs$ref_class, ctrast, sep = "_vs_")
+      element_name <- gsub("\\$", "", element_name)
 
-    attr(results, "de_result") <- DGEs
+      de_params <- list(
+        celltype = unique(fargs$sce$cluster_celltype),
+        de_method = fargs$de_method,
+        pseudobulk = fargs$sce@metadata$scflow_steps$pseudobulk,
+        min_counts = fargs$min_counts,
+        min_cells_pc = fargs$min_cells_pc,
+        rescale_numerics = fargs$rescale_numerics,
+        dependent_var = fargs$dependent_var,
+        ref_class = fargs$ref_class,
+        confounding_vars = fargs$confounding_vars,
+        random_effects_var = fargs$random_effects_var,
+        fc_threshold = fargs$fc_threshold,
+        pval_cutoff = fargs$pval_cutoff,
+        cells_per_group = table(
+          as.data.frame(SingleCellExperiment::colData(fargs$sce))[[fargs$dependent_var]]),
+        n_genes = dim(sce)[[1]],
+        model = gsub(" ", "", model_formula_string, fixed = TRUE),
+        model_full_rank = ifelse(is.null(fargs$random_effects_var), is_full_rank, NA),
+        contrast_name = element_name
+      )
 
-    attr(results, "plot") <- p
+      #if (fargs$de_method != "limma") {
+      #  de_params$mast_method <- NULL
+      #}
 
-    results_l[[element_name]] <- results
+      de_params <- unlist(de_params)
+
+      attr(results, "de_parameters") <- de_params
+
+      attr(results, "de_result") <- DGEs
+
+      attr(results, "plot") <- p
+
+      if (i == 1) {
+        results_l[[element_name]] <- results
+      } else {
+        permute_name <- paste0("P", i - 1)
+        results_l[["permutations"]][[permute_name]] <- list()
+        results_l[["permutations"]][[permute_name]][[element_name]] <- results
+      }
+    }
   }
 
   message("Done!  Returning results")

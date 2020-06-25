@@ -77,7 +77,7 @@ annotate_integrated_sce <- function(sce,
                                  feature_dim = variable,
                                  reduced_dim = sprintf("%s_PCA",
                                                        input_reduced_dim),
-                                 size = 1, alpha = 0.3)
+                                 size = .1, alpha = 0.2)
     # reducedDim_pca <- plot_pca +
     # ggtitle(sprintf("%s using PCA data", input_reduced_dim)) +
     # theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.8))
@@ -89,7 +89,7 @@ annotate_integrated_sce <- function(sce,
                                    feature_dim = variable,
                                    reduced_dim = sprintf("%s_Liger",
                                                          input_reduced_dim),
-                                   size = 0.75, alpha = 0.3)
+                                   size = 0.1, alpha = 0.2)
     # reducedDim_liger <- plot_liger +
     # ggtitle(sprintf("%s using LIGER data", input_reduced_dim)) +
     # theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.8))
@@ -200,7 +200,7 @@ annotate_integrated_sce <- function(sce,
                                feature_dim = "clusters",
                                reduced_dim = sprintf("%s_PCA",
                                                      input_reduced_dim),
-                               size = 0.75, alpha = 0.3, label_clusters = TRUE
+                               size = 0.1, alpha = 0.2, label_clusters = TRUE
   )
   # cluster_pca <- plot_pca +
   # ggtitle(sprintf("%s using PCA data (colored by cluster)",
@@ -215,7 +215,7 @@ annotate_integrated_sce <- function(sce,
                                  feature_dim = "clusters",
                                  reduced_dim = sprintf("%s_Liger",
                                                        input_reduced_dim),
-                                 size = 0.75, alpha = 0.3,
+                                 size = 0.1, alpha = 0.2,
                                  label_clusters = TRUE
   )
   # cluster_liger <- plot_liger +
