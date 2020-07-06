@@ -45,15 +45,16 @@ annotate_sce_cells <- function(sce, ...) {
   sce$qc_metric_min_features <-
     sce$total_features_by_counts >= args$min_features
 
-  if (length(sce$pc_mito) == 0) {
+  # add pc mito
+  qc_metric_is_mito <- startsWith(
+    as.character(SummarizedExperiment::rowData(sce)$gene), "MT-") + 0
+  qc_metric_is_mito[is.na(qc_metric_is_mito)] <- 0 # for non-mapped genes
+  SummarizedExperiment::rowData(sce)$qc_metric_is_mito <- qc_metric_is_mito
     sce$pc_mito <- Matrix::colSums(
       SingleCellExperiment::counts(
         sce[SummarizedExperiment::rowData(sce)$qc_metric_is_mito == 1, ]
       )
     ) / sce$total_counts
-  } else {
-    print("Retaining previously calculated percentage mitochondrial counts.")
-  }
 
   sce$qc_metric_pc_mito_ok <- sce$pc_mito <= args$max_mito
 

@@ -11,6 +11,7 @@
 #' @param random_effects_var variable(s) to model as random effects
 #' @param fc_threshold fold change up/down threshold
 #' @param pval_cutoff the adjusted pvalue cutoff threshold
+#' @param unique_id_var the colData variable identifying unique samples
 #' @param ... advanced options
 #'
 #' @return results_l a list of DE table results
@@ -39,6 +40,7 @@ perform_de <- function(sce,
                        random_effects_var = NULL,
                        fc_threshold = 1.1,
                        pval_cutoff = 0.05,
+                       unique_id_var = "individual",
                        ...) {
   fargs <- c(as.list(environment()), list(...))
 
@@ -87,7 +89,16 @@ perform_de <- function(sce,
 #'
 #' @keywords internal
 .preprocess_sce_for_de <- function(...) {
-  fargs <- list(...)
+  fargs <- list(
+    quantile_norm = FALSE,
+    sctransform = FALSE,
+    rescale_numerics = TRUE,
+    pseudobulk = FALSE,
+    subset_var = NULL, # for variance calculation, subset on
+    subset_class = NULL # for variance calculation, subset class
+  )
+  inargs <- list(...)
+  fargs[names(inargs)] <- inargs
   sce <- fargs$sce
 
   # run this before subset to avoid non-conformable array error
@@ -140,6 +151,7 @@ perform_de <- function(sce,
   #sce <- scater::normalize(sce)
 
   if (fargs$rescale_numerics == TRUE) {
+    cli::cli_alert("Rescaling numeric variables")
     # recale numerics avoids issues with glmer
     nums <- unlist(lapply(SummarizedExperiment::colData(sce), is.numeric))
     SummarizedExperiment::colData(sce)[, nums] <- scale(
@@ -151,11 +163,26 @@ perform_de <- function(sce,
   cdr2 <- Matrix::colSums(SingleCellExperiment::counts(sce) > 0)
   sce$cngeneson <- as.numeric(scale(cdr2))
 
+  #calculate genes with high inter-individual variance
+  variable_genes <- .get_variance_explained(
+    sce,
+    variable = fargs$unique_id_var,
+    subset_var = fargs$subset_var,
+    subset_class = fargs$subset_class)
+  sce@metadata$variable_genes <- variable_genes
 
 
   if (fargs$pseudobulk) {
     cli::cli_alert("Pseudobulking")
-    sce <- pseudobulk_sce(sce, keep_vars = unique(c(fargs$dependent_var, fargs$confounding_vars, fargs$random_effects_var)))
+    sce <- pseudobulk_sce(
+      sce,
+      keep_vars = unique(c(
+        fargs$dependent_var,
+        fargs$confounding_vars,
+        fargs$random_effects_var))
+      )
+    sce@metadata$variable_genes <- variable_genes
+
     if(fargs$quantile_norm) {
       cli::cli_alert("Quantile normalizing merged")
       mat <- SingleCellExperiment::normcounts(sce)
@@ -170,10 +197,12 @@ perform_de <- function(sce,
   ))
 
   # define the reference class
-  sce[[fargs$dependent_var]] <- relevel(
-    sce[[fargs$dependent_var]],
-    ref = fargs$ref_class
-  )
+  if (!is.numeric(sce[[fargs$dependent_var]])) {
+    sce[[fargs$dependent_var]] <- relevel(
+      sce[[fargs$dependent_var]],
+      ref = fargs$ref_class
+    )
+  }
 
   return(sce)
 }
@@ -263,18 +292,22 @@ perform_de <- function(sce,
   )
   message(Sys.time() - x)
 
-  ## test each contrast separately
-  # obtain the group names for non-controls
-  dependent_var_names <- unique(sce[[fargs$dependent_var]])
+  if(is.numeric(sce[[fargs$dependent_var]])) {
+    contrasts <- fargs$dependent_var
+  } else {
+    ## test each contrast separately
+    # obtain the group names for non-controls
+    dependent_var_names <- unique(sce[[fargs$dependent_var]])
 
-  dependent_var_names <- droplevels(
-    dependent_var_names[dependent_var_names != fargs$ref_class]
-  )
+    dependent_var_names <- droplevels(
+      dependent_var_names[dependent_var_names != fargs$ref_class]
+    )
 
-  contrasts <- purrr::map_chr(
-    dependent_var_names,
-    ~ paste0(fargs$dependent_var, .)
-  )
+    contrasts <- purrr::map_chr(
+      dependent_var_names,
+      ~ paste0(fargs$dependent_var, .)
+    )
+  }
 
   results_l <- list()
 
@@ -357,6 +390,12 @@ perform_de <- function(sce,
       dplyr::filter(abs(logFC) >= log2(fargs$fc_threshold)) %>%
       dplyr::arrange(FCRO)
 
+    if (!is.null(sce@metadata$variable_genes)) {
+    results <- dplyr::left_join(
+      results,
+      sce@metadata$variable_genes,
+      by = "ensembl_gene_id")
+    }
 
     DGEs <- c(sum(results$logFC > 0), sum(results$logFC < 0))
     names(DGEs) <- c("Up", "Down")
@@ -548,6 +587,59 @@ perform_de <- function(sce,
 #' @keywords internal
 .formula_to_char <- function(model_formula) {
   as.character(Reduce(paste, deparse(model_formula)))
+}
+
+#' Get the variance explained by a variable for all genes
+#' @importFrom assertthat assert_that
+#' @importFrom cli cli_h2 cli_alert
+#' @importFrom SingleCellExperiment normcounts logcounts
+#' @importFrom scater normalizeCounts getVarianceExplained
+#' @importFrom dplyr mutate rename dense_rank desc
+#' @importFrom tidyr drop_na
+#' @keywords internal
+.get_variance_explained <- function(sce,
+                                    variable = "individual",
+                                    subset_var = NULL,
+                                    subset_class = NULL) {
+
+  assertthat::assert_that(length(variable) == 1)
+  assertthat::assert_that(class(sce) == "SingleCellExperiment")
+  start_time <- Sys.time()
+  cli::cli_h2("Calculating variance explained by {.var {variable}}")
+  cli::cli_alert("Normalizing counts")
+  sce_in <- sce
+  if (!is.null(subset_var)) {
+    assertthat::assert_that(
+      all(subset_var %in% colnames(SummarizedExperiment::colData(sce)))
+      )
+    assertthat::assert_that(
+      subset_class %in% unique(sce[[subset_var]])
+    )
+    cli::cli_alert(c("Subsetting cells where {.var {subset_var}} ",
+                     "is {.var {subset_class}}"))
+    sce <- sce[, sce[[subset_var]] == subset_class]
+  }
+  SingleCellExperiment::normcounts(sce) <-
+    scater::normalizeCounts(sce, log = FALSE)
+  SingleCellExperiment::logcounts(sce) <-
+    log2(SingleCellExperiment::normcounts(sce) + 1)
+  cli::cli_alert(c(
+    "Calculating variance explained by {.var {variable}} ",
+    "for {.val {dim(sce)[[1]]}} genes"
+  ))
+  vemat <- scater::getVarianceExplained(sce, variables = variable)
+  vedf <- as.data.frame.matrix(vemat) %>%
+    dplyr::mutate(
+      ensembl_gene_id = rownames(.)
+    )
+  vedf <- tidyr::drop_na(vedf) %>%
+    dplyr::rename(variance = 1) %>%
+    dplyr::mutate(variance_rank = dplyr::dense_rank(dplyr::desc(variance)))
+
+  end_time <- Sys.time()
+  cli::cli_alert(c("Time taken: ", end_time - start_time))
+
+  return(vedf)
 }
 
 

@@ -17,6 +17,7 @@ perform_de(
   random_effects_var = NULL,
   fc_threshold = 1.1,
   pval_cutoff = 0.05,
+  unique_id_var = "individual",
   ...
 )
 }
@@ -40,6 +41,8 @@ perform_de(
 \item{fc_threshold}{fold change up/down threshold}
 
 \item{pval_cutoff}{the adjusted pvalue cutoff threshold}
+
+\item{unique_id_var}{the colData variable identifying unique samples}
 
 \item{...}{advanced options}
 }

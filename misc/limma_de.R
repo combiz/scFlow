@@ -1,11 +1,14 @@
+options(mc.cores = 10)
 library(parallel)
-options(mc.cores = 12)
+library(scFlow)
+
+sce <- read_sce("~/Documents/junk/enriched_with_ptau/")
 
 library("biomaRt")
 human <- useMart(host="www.ensembl.org", "ENSEMBL_MART_ENSEMBL", dataset="hsapiens_gene_ensembl")
 attrib_hum <- listAttributes(human)
 entrez_df <- getBM(attributes=c("ensembl_gene_id", "chromosome_name"), mart = human)
-
+#
 fargs <- list(
   sce = sce,
   min_counts = 1,
@@ -39,9 +42,9 @@ fargs <- list(
   quantile_norm = FALSE,
   unique_id_var = "individual"
 )
-#sce_all <- sce
-sce_subset <- sce_all[, sce_all$cluster_celltype == "Micro" & sce_all$brain_region == "EC"]
-#sce_subset <- sce_all[, sce_all$cluster_celltype == "Micro"] # both EC and SSC
+sce_all <- sce
+#sce_subset <- sce_all[, sce_all$cluster_celltype == "Micro" & sce_all$brain_region == "EC"]
+sce_subset <- sce_all[, sce_all$cluster_celltype == "Micro"] # both EC and SSC
 #sce_subset <- sce_all[, sce_all$cluster_celltype == "Oligo"]
 sce <- sce_subset
 #sce[[fargs$dependent_var]] <- relevel(
@@ -134,6 +137,7 @@ model_formula <- as.formula("~ sex + pc_mito + cngeneson") # pb
 model_formula <- as.formula("~ sex + pc_mito + cngeneson + p_tau + amyloid_beta") # pb
 model_formula <- as.formula("~ sex + pc_mito + cngeneson") # pb
 model_formula <- as.formula("~ diagnosis + pc_mito + sex") # pb
+model_formula <- as.formula("~ p_tau + (1 | individual) + cngeneson + pc_mito + pc_ribo") # DE BY P_TAU
 
 sce$cngeneson
 sce <- sce_pp
@@ -184,6 +188,7 @@ colnames(newmat) <- colnames(mat)
 rownames(newmat) <- rownames(mat)
 mat <- newmat
 
+mat <- as(SingleCellExperiment::counts(sce), "dgCMatrix")
 vobjDream <- variancePartition::voomWithDreamWeights( mat, model_formula, as.data.frame(SummarizedExperiment::colData(sce)))
 fit <- variancePartition::dream( vobjDream, model_formula, as.data.frame(SummarizedExperiment::colData(sce)) )
 if (!fargs$random_effects_var) {
@@ -204,10 +209,10 @@ C <- variancePartition::canCorPairs( ~ group + cngeneson + individual + pc_mito 
 variancePartition::plotCorrMatrix( C )
 
 # variance
-#varPart <- variancePartition::fitExtractVarPartModel( vobjDream, model_formula, as.data.frame(SummarizedExperiment::colData(sce)), showWarnings=FALSE )
+varPart <- variancePartition::fitExtractVarPartModel( vobjDream, model_formula, as.data.frame(SummarizedExperiment::colData(sce)), showWarnings=FALSE )
 sce <- sce_all[,sce_all$cluster_celltype == "Micro" & sce_all$brain_region == "EC"]
 mat <- as(SingleCellExperiment::counts(sce), "dgCMatrix")
-vobjDream <- variancePartition::voomWithDreamWeights( mat, ~ sex + (1 | individual) + pc_mito + diagnosis, as.data.frame(SummarizedExperiment::colData(sce)))
+#vobjDream <- variancePartition::voomWithDreamWeights( mat, ~ sex + (1 | individual) + pc_mito + diagnosis, as.data.frame(SummarizedExperiment::colData(sce)))
 varPart <- variancePartition::fitExtractVarPartModel( vobjDream, ~ sex + (1 | individual) + pc_mito + diagnosis, as.data.frame(SummarizedExperiment::colData(sce)), showWarnings=FALSE )
 variancePartition::plotVarPart( sortCols(varPart), label.angle=60 )
 plotPercentBars( varPart[1:15,] )
