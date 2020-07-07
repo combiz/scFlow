@@ -37,6 +37,11 @@ annotate_merged_sce <- function(sce,
       plot_vars)
   )
 
+  sce@metadata$cell_numbers_plot <- .plot_n_cells_by_unique_id_var(
+    sce,
+    unique_id_var = unique_id_var
+    )
+
   # generate cell metadata plots
   merged_plots_l <- list()
   merged_plots_data_l <- list()
@@ -368,4 +373,43 @@ annotate_merged_sce <- function(sce,
 
   p <- .grobify_ggplot(p)
   return(p)
+}
+
+
+#' helper fn to generate a cell numbers plot by sample
+#'
+#' @param sce a singlecellexperiment object
+#' @param unique_id_var the colData variable identifying unique samples
+#' @keywords internal
+.plot_n_cells_by_unique_id_var <- function(sce, unique_id_var = "individual") {
+
+  df <- as.data.frame(SummarizedExperiment::colData(sce))
+  df <- df %>%
+    dplyr::group_by(.data[[unique_id_var]]) %>%
+    dplyr::tally() %>%
+    dplyr::arrange(n)
+
+  df[[unique_id_var]] <- factor(df[[unique_id_var]], levels = df[[unique_id_var]])
+
+  p <- ggplot2::ggplot(df, ggplot2::aes(x = .data[[unique_id_var]], y = n)) +
+    ggplot2::geom_col() +
+    ggplot2::geom_text(ggplot2::aes(label = n, y = n + (max(df$n)*.05)))+
+    ggplot2::coord_flip() +
+    ggplot2::theme_bw()+
+    ggplot2::ylab("Number of cells") +
+    ggplot2::xlab(unique_id_var) +
+    ggplot2::scale_y_continuous(expand = c(0, 0), limits = c(0, max(df$n) * 1.1)) +
+    ggplot2::theme(
+      panel.border = ggplot2::element_blank(),
+      panel.grid.major = ggplot2::element_blank(),
+      panel.grid.minor = ggplot2::element_blank(),
+      text = ggplot2::element_text(size = 16),
+      axis.title = ggplot2::element_text(size = 18),
+      legend.text = ggplot2::element_text(size = 10),
+      legend.title = ggplot2::element_blank()
+    )
+
+  p <- .grobify_ggplot(p)
+  return(p)
+
 }
