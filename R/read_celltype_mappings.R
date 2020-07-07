@@ -21,7 +21,7 @@ read_celltype_mappings <- function(file_path) {
 
   cli::cli_text("Reading: {.path {file_path}}")
   celltype_mappings <- read.delim(
-    file = file_path
+    file = file_path, stringsAsFactors = FALSE
   )
 
   cli::cli_alert_success(
