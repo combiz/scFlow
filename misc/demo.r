@@ -12,7 +12,7 @@ matpath <- "~/Documents/ms-sc/data/raw/testfbmatrix/outs/raw_feature_bc_matrix"
 #matpath <- "~/Documents/junk/MS535" #bad sample
 matpath <- "~/Documents/junk/MS461" #ok sample
 matpath <- "~/Documents/junk/MS426/outs/raw_feature_bc_matrix" # emptydrops peculiar sample (large pass #)
-#matpath <- "~/Documents/junk/MS523/outs/raw_feature_bc_matrix/"# emptydrops peculiar sample (all < retain fail)
+matpath <- "~/Documents/junk/MS523/outs/raw_feature_bc_matrix/"# emptydrops peculiar sample (all < retain fail)
 matpath <- "~/Documents/junk/MS405/outs/raw_feature_bc_matrix/" # sukip / MS405
 # v3 chemistry, enriched
 #matpath <- "~/Documents/testmatrices/enriched"
@@ -35,7 +35,7 @@ metadata <- read_metadata(
 
 sce <- generate_sce(mat, metadata)
 
-sce <- find_cells(sce, lower = 125, retain = NULL, niters = 30000)
+sce <- find_cells(sce, lower = 100, retain = "auto", niters = 30000)
 
 sce <- find_cells(sce, lower = 100, retain = 12000, niters = 30000)
 sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 250, max_library_size = "adaptive", nmads = 4)
@@ -48,8 +48,6 @@ sce <- filter_sce(sce)
 
 qs::qsave(sce, "sce.qs")
 sce <- qs::qread("sce.qs", nthreads = future::availableCores())
-
-###
 
 ###
 
