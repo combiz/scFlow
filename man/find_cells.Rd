@@ -7,9 +7,10 @@
 find_cells(
   sce,
   lower = 100,
-  retain = NULL,
+  retain = "auto",
   alpha_cutoff = 0.001,
   niters = 10000,
+  expect_cells = 3000,
   ...
 )
 }
@@ -18,7 +19,12 @@ find_cells(
 
 \item{lower}{see \code{\link[dropletUtils:emptyDrops]{dropletUtils::emptyDrops()}}}
 
-\item{retain}{see \code{\link[dropletUtils:emptyDrops]{dropletUtils::emptyDrops()}}}
+\item{retain}{see \code{\link[dropletUtils:emptyDrops]{dropletUtils::emptyDrops()}}.  Use "auto" to calculate
+the parameter from the top \code{expect_cells} cells (cellranger method).}
+
+\item{niters}{the number of Monte Carlo iterations}
+
+\item{expect_cells}{the number of cells expected for auto retain}
 
 \item{...}{additional arguments for uniformity testing}
 
