@@ -388,7 +388,7 @@ perform_de <- function(sce,
       #dplyr::filter(padj <= fargs$pval_cutoff) %>%
       #dplyr::filter(gene_biotype == "protein_coding") %>%
       #dplyr::filter(abs(logFC) >= log2(fargs$fc_threshold)) %>%
-      dplyr::arrange(FCRO)
+      dplyr::arrange(padj)
 
     if (!is.null(sce@metadata$variable_genes)) {
     results <- dplyr::left_join(
@@ -397,13 +397,12 @@ perform_de <- function(sce,
       by = "ensembl_gene_id")
     }
 
-    #DGEs <- c(sum(results$logFC >= log2(fargs$fc_threshold)), sum(results$logFC <= log2(fargs$fc_threshold)))
     DGEs <- c(results %>%
       filter(padj <= fargs$pval_cutoff, logFC >= log2(fargs$fc_threshold)) %>%
       pull(gene) %>%
       length(),
       results %>%
-        filter(padj <= fargs$pval_cutoff, logFC <= log2(fargs$fc_threshold)) %>%
+        filter(padj <= fargs$pval_cutoff, logFC <= -log2(fargs$fc_threshold)) %>%
         pull(gene) %>%
         length())
 
@@ -711,7 +710,6 @@ perform_de <- function(sce,
                         values = c("#DC0000FF", "#3C5488FF", "grey"),
                         label = c("Up-regulated", "Down-regulated"),
                         breaks = c("Up", "Down")) +
-    #scale_x_continuous(limits = c(-6, 6)) +
     ggplot2::scale_y_continuous(limits = c(0, NA)) +
     ggplot2::guides(colour = ggplot2::guide_legend(override.aes = list(size = 3))) +
     ggplot2::theme(
