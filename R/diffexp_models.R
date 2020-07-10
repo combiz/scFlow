@@ -385,9 +385,9 @@ perform_de <- function(sce,
     )
 
     results <- fcHurdle %>%
-      dplyr::filter(padj <= fargs$pval_cutoff) %>%
-      dplyr::filter(gene_biotype == "protein_coding") %>%
-      dplyr::filter(abs(logFC) >= log2(fargs$fc_threshold)) %>%
+      #dplyr::filter(padj <= fargs$pval_cutoff) %>%
+      #dplyr::filter(gene_biotype == "protein_coding") %>%
+      #dplyr::filter(abs(logFC) >= log2(fargs$fc_threshold)) %>%
       dplyr::arrange(FCRO)
 
     if (!is.null(sce@metadata$variable_genes)) {
@@ -397,7 +397,16 @@ perform_de <- function(sce,
       by = "ensembl_gene_id")
     }
 
-    DGEs <- c(sum(results$logFC > 0), sum(results$logFC < 0))
+    #DGEs <- c(sum(results$logFC >= log2(fargs$fc_threshold)), sum(results$logFC <= log2(fargs$fc_threshold)))
+    DGEs <- c(results %>%
+      filter(padj <= fargs$pval_cutoff, logFC >= log2(fargs$fc_threshold)) %>%
+      pull(gene) %>%
+      length(),
+      results %>%
+        filter(padj <= fargs$pval_cutoff, logFC <= log2(fargs$fc_threshold)) %>%
+        pull(gene) %>%
+        length())
+
     names(DGEs) <- c("Up", "Down")
 
     element_name <- paste(fargs$ref_class, ctrast, sep = "_vs_")
