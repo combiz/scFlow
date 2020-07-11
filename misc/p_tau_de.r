@@ -8,9 +8,13 @@ library(magrittr)
 #write_sce(sce, "~/Documents/Amy_Seurat")
 #sce <- read_sce("~/Documents/junk/enriched_with_ptau")
 sce <- read_sce("~/Documents/Amy_Seurat")
+sce_old <- sce
 
+idx <- as.numeric(caret::createDataPartition(sce$individual, p = .05, list = FALSE)) # 15% subset
+sce <- sce[, idx]
 
 sce_all <- sce
+
 
 #sce_all$cluster_celltype <- "Other"
 #sce_all$cluster_celltype[sce_all$seurat_clusters %in% c("1", "6", "7", "9")] <- "Micro"
@@ -19,7 +23,9 @@ sce_all <- sce
 
 ## ~ diagnosis
 #for (region in c("EC", "SSC", "ALL")) {
-for (celltype in c("Micro", "Astro")) {
+#for (celltype in c("Micro", "Astro")) {
+#for (celltype in c("Astro")) {
+for (celltype in c("Micro")) {
 
   for (region in c("ALL")) {
 
@@ -106,7 +112,7 @@ for (celltype in c("Micro", "Astro")) {
         de_method = "MASTZLM",
         ebayes = FALSE,
         mast_method = "glmer",
-        min_counts = 1,
+        min_counts = 2,
         min_cells_pc = 0.10,
         rescale_numerics = TRUE,
         dependent_var = "p_tau",
@@ -118,7 +124,8 @@ for (celltype in c("Micro", "Astro")) {
         ensembl_mapping_file = "~/Documents/junk/src/ensembl-ids/ensembl_mappings.tsv",
         unique_id_var = "individual",
         subset_var = "diagnosis",
-        subset_class = "Control"
+        subset_class = "Control",
+        nAGQ = 0
       )
 
       #for (contrast in names(de_results)) {

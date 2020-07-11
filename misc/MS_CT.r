@@ -89,3 +89,15 @@ res <- model_celltype_freqs(sce, unique_id_var = "manifest", celltype_var = "clu
 report_celltype_model(res)
 #qs::qsave(sce@metadata$celltype_annotations$reddim_plots$cluster_var, "test.qs")
 
+
+
+###############
+ensembl_fp <- "~/Documents/junk/src/ensembl-ids/ensembl_mappings.tsv"
+samplesheet_fp <- "~/Documents/junk/refs/SampleSheet.tsv"
+ctd_fp <- "~/Documents/junk/refs/ctd/"
+sce_all <- sce
+idx <- as.numeric(caret::createDataPartition(sce$individual, p = .10, list = FALSE)) # 15% subset
+sce <- sce[, idx]
+
+sce <- map_celltypes_sce(sce,ctd_folder = ctd_fp, clusters_colname = "clusters")
+class(sce$clusters)

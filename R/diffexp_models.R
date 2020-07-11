@@ -231,7 +231,8 @@ perform_de <- function(sce,
     mast_method = "bayesglm",
     ebayes = FALSE,
     force_run = FALSE,
-    n_label = 10
+    n_label = 10,
+    nAGQ = 0
   )
   inargs <- list(...)
   fargs[names(inargs)] <- inargs
@@ -288,7 +289,8 @@ perform_de <- function(sce,
     sca = sca,
     method = fargs$mast_method, # note: glmer requires a random effects var
     ebayes = fargs$ebayes,
-    parallel = TRUE
+    parallel = TRUE,
+    fitArgsD = list(nAGQ = fargs$nAGQ)
   )
   message(Sys.time() - x)
 

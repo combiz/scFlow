@@ -40,7 +40,7 @@ map_custom_celltypes <- function(sce,
     names(mappings_lookup) <- mappings[[clusters_colname]]
 
     sce[[var]] <- purrr::map_chr(
-      sce[[clusters_colname]], ~ mappings_lookup[.])
+      as.character(sce[[clusters_colname]]), ~ mappings_lookup[.])
 
     #sce[[var]] <- as.factor(as.character(sce[[var]]))
 
