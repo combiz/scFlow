@@ -77,13 +77,14 @@ map_celltypes_sce <- function(sce,
 
   generate_ct_label <- plyr::adply(mappings_lookup, 1, function(x) {
     if (x$Allan2019_ML1 == "Non-neuronal") {
-      x$allan_celltype
+      paste(x$allan_celltype)
     } else if (x$allan_celltype == "Exc") {
       paste("EN", x$allan_layer, sep = "-")
     } else if (x$allan_celltype == "Inh") {
       paste("IN", x$allan_cluster_gene_1, sep = "-")
-    } else x$allan_celltype
-  }, .expand = FALSE, .id = "Cluster") %>%
+    } else {
+      x$allan_celltype
+    }}, .expand = FALSE, .id = "Cluster")%>%
     dplyr::rename(cluster_celltype = V1)
 
   mappings_lookup <- merge(mappings_lookup, generate_ct_label, on = "Cluster")
