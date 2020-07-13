@@ -20,6 +20,7 @@ library(utils)
 library(knitr)
 library(htmltools)
 library(plotly)
+library(dplyr)
 
 
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE)

@@ -5,7 +5,7 @@ qc_table <- as.data.frame(attr(metadata, "de_parameters"))
 datatable(qc_table, colnames = "", options = list(pageLength = 5))
 ```
 
-Differential gene expression was performed on a total of `r prettyNum(as.numeric(attr(metadata, "de_parameters")["n_genes"]),big.mark=",",scientific=FALSE)` genes which expressed a minimum of `r as.numeric(attr(metadata, "de_parameters")["min_counts"])` count in at least `r as.numeric(attr(metadata, "de_parameters")["min_cells_pc"])*100` percent of the cells. DGEs were detected at a fold-change threshold of `r as.numeric(attr(metadata, "de_parameters")["fc_threshold"])` and an adjusted p-value cut-off of `r as.numeric(attr(metadata, "de_parameters")["pval_cutoff"])` was applied. 
+Differential gene expression was performed on a total of `r prettyNum(as.numeric(attr(metadata, "de_parameters")["n_genes"]),big.mark=",",scientific=FALSE)` genes which expressed a minimum of `r as.numeric(attr(metadata, "de_parameters")["min_counts"])` count in at least `r as.numeric(attr(metadata, "de_parameters")["min_cells_pc"])*100` percent of the cells. DGEs were detected at a fold-change threshold of `r as.numeric(attr(metadata, "de_parameters")["fc_threshold"])` and an adjusted p-value (padj) cut-off of `r as.numeric(attr(metadata, "de_parameters")["pval_cutoff"])` was applied. 
 
 ### Result summary
 
@@ -28,7 +28,7 @@ metadata_plot <- attr(metadata, "plot")
 ```
 
 <div class = "zoomfig">
-```{r, fig.align="center", fig.width=9, fig.height=7, fig.cap = sprintf("<b>Figure: Volcano plot for differentially expressed gene.</b> Top %s up and down-regulated protein-coding genes are labelled.", dim(metadata_plot$plot_env$top_de)[1])}
+```{r, fig.align="center", fig.width=5, fig.height=4, fig.cap = sprintf("<b>Figure: Volcano plot for differentially expressed gene.</b> Top %s up and down-regulated protein-coding genes are labelled.", dim(metadata_plot$plot_env$top_de)[1])}
 metadata_plot
 ```
 </div>
@@ -37,11 +37,21 @@ metadata_plot
 ### List of differentially expressed gene
 
 ```{r, results = 'asis', warning=FALSE}
-metadata_table <- metadata
-metadata_table$pval <- as.numeric(format(metadata_table$pval, format = "e", digits = 2))
-metadata_table$logFC <- as.numeric(format(metadata_table$logFC, format = "e", digits = 2))
-metadata_table$ci.hi <- as.numeric(format(metadata_table$ci.hi, format = "e", digits = 2))
-metadata_table$ci.lo <- as.numeric(format(metadata_table$ci.lo, format = "e", digits = 2))
-metadata_table$padj <- as.numeric(format(metadata_table$padj, format = "e", digits = 2))
+fc_threshold <- as.numeric(attr(metadata, "de_parameters")["fc_threshold"]) 
+
+pval_cutoff <- as.numeric(attr(metadata, "de_parameters")["pval_cutoff"])
+
+#metadata_table <- metadata
+metadata_table <- metadata %>%
+  dplyr::filter(!is.na(padj)) %>%
+  dplyr::filter(!is.nan(logFC)) %>%
+  dplyr::filter(padj <= pval_cutoff, abs(logFC) >= log2(fc_threshold)) %>%
+  dplyr::mutate_at(c("pval", "logFC", "ci.hi", "ci.lo", "padj"), ~ as.numeric(format(., format = "e", digits = 2))) %>%
+  dplyr::mutate_at("variance", ~ round(., 2))
+# metadata_table$pval <- as.numeric(format(metadata_table$pval, format = "e", digits = 2))
+# metadata_table$logFC <- as.numeric(format(metadata_table$logFC, format = "e", digits = 2))
+# metadata_table$ci.hi <- as.numeric(format(metadata_table$ci.hi, format = "e", digits = 2))
+# metadata_table$ci.lo <- as.numeric(format(metadata_table$ci.lo, format = "e", digits = 2))
+# metadata_table$padj <- as.numeric(format(metadata_table$padj, format = "e", digits = 2))
 datatable(metadata_table, rownames = FALSE, options = list(pageLength = 10, scrollX=T, autoWidth = TRUE), escape = FALSE )
 ```
