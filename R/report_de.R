@@ -2,6 +2,9 @@
 #' Generate a report for differential expression analysis
 #'
 #' @param res Differential expression result table from perform_de() function.
+#' @param fc_threshold fold change up/down threshold.
+#' @param pval_cutoff the adjusted pvalue cutoff threshold.
+#' @param n_label number of genes to be labelled in the volcano plot.
 #' @param report_folder_path folder path to save the report.
 #' @param report_file filename for report (without an extension).
 #'
@@ -15,6 +18,9 @@
 #' @export
 #'
 report_de <- function(res,
+                      fc_threshold = 1.05,
+                      pval_cutoff = 0.05,
+                      n_label = 10,
                       report_folder_path = getwd(),
                       report_file = "de_report_scflow") {
   report_file <- tools::file_path_sans_ext(report_file)
@@ -41,7 +47,10 @@ report_de <- function(res,
       package = "scFlow"
     ),
     params = list(
-      metadata_path = metadata_tmp_path
+      metadata_path = metadata_tmp_path,
+      fc_threshold = fc_threshold,
+      pval_cutoff = pval_cutoff,
+      n_label = n_label
     ),
     output_dir = report_folder_path,
     output_file = report_file,

@@ -9,8 +9,6 @@
 #' @param ref_class the class of dependent_var used as reference
 #' @param confounding_vars the independent variables of the model
 #' @param random_effects_var variable(s) to model as random effects
-#' @param fc_threshold fold change up/down threshold
-#' @param pval_cutoff the adjusted pvalue cutoff threshold
 #' @param unique_id_var the colData variable identifying unique samples
 #' @param ... advanced options
 #'
@@ -38,8 +36,6 @@ perform_de <- function(sce,
                                             "seqdate",
                                             "pc_mito"),
                        random_effects_var = NULL,
-                       fc_threshold = 1.1,
-                       pval_cutoff = 0.05,
                        unique_id_var = "individual",
                        ...) {
   fargs <- c(as.list(environment()), list(...))
@@ -231,7 +227,6 @@ perform_de <- function(sce,
     mast_method = "bayesglm",
     ebayes = FALSE,
     force_run = FALSE,
-    n_label = 10,
     nAGQ = 0
   )
   inargs <- list(...)
@@ -379,17 +374,7 @@ perform_de <- function(sce,
     fcHurdle$model <- gsub(" ", "", model_formula_string,
                            fixed = TRUE) # no whitespace
 
-    p <- .volcano_plot(
-      dt = fcHurdle,
-      fc_threshold = fargs$fc_threshold,
-      pval_cutoff = fargs$pval_cutoff,
-      n_label = fargs$n_label
-    )
-
     results <- fcHurdle %>%
-      #dplyr::filter(padj <= fargs$pval_cutoff) %>%
-      #dplyr::filter(gene_biotype == "protein_coding") %>%
-      #dplyr::filter(abs(logFC) >= log2(fargs$fc_threshold)) %>%
       dplyr::arrange(padj)
 
     if (!is.null(sce@metadata$variable_genes)) {
@@ -398,17 +383,6 @@ perform_de <- function(sce,
       sce@metadata$variable_genes,
       by = "ensembl_gene_id")
     }
-
-    DGEs <- c(results %>%
-      filter(padj <= fargs$pval_cutoff, logFC >= log2(fargs$fc_threshold)) %>%
-      pull(gene) %>%
-      length(),
-      results %>%
-        filter(padj <= fargs$pval_cutoff, logFC <= -log2(fargs$fc_threshold)) %>%
-        pull(gene) %>%
-        length())
-
-    names(DGEs) <- c("Up", "Down")
 
     element_name <- paste(fargs$ref_class, ctrast, sep = "_vs_")
 
@@ -424,8 +398,6 @@ perform_de <- function(sce,
       ref_class = fargs$ref_class,
       confounding_vars = fargs$confounding_vars,
       random_effects_var = fargs$random_effects_var,
-      fc_threshold = fargs$fc_threshold,
-      pval_cutoff = fargs$pval_cutoff,
       cells_per_group = table(
         as.data.frame(SingleCellExperiment::colData(fargs$sce))[[fargs$dependent_var]]),
       n_genes = dim(sce)[[1]],
@@ -441,10 +413,6 @@ perform_de <- function(sce,
     de_params <- unlist(de_params)
 
     attr(results, "de_parameters") <- de_params
-
-    attr(results, "de_result") <- DGEs
-
-    attr(results, "plot") <- p
 
     results_l[[element_name]] <- results
   }
@@ -661,7 +629,7 @@ perform_de <- function(sce,
 #'
 #' @keywords internal
 
-.volcano_plot <- function(dt = fcHurdle,
+.volcano_plot <- function(dt,
                           fc_threshold = 1.05,
                           pval_cutoff = 0.05,
                           n_label = 10) {
