@@ -88,6 +88,7 @@ liger_preprocess <- function(sce,
   manifests <- unique(sce@colData[, unique_id_var])
   for (mnft in manifests) {
     dataset_name <- paste0("dataset_", mnft)
+    cli::cli_text("Extracting {.val {dataset_name}}")
     dataset_list[[dataset_name]] <-
       sce[, sce[[unique_id_var]] == mnft]
     mat_list[[dataset_name]] <-

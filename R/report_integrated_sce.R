@@ -44,14 +44,14 @@ report_integrated_sce <- function(sce,
       "rmarkdown/templates/integrate/skeleton/skeleton.Rmd",
       package = "scFlow"),
     params = list(
-      metadata_path = metadata_tmp_path,
-      categorical_covariates = categorical_covariates
-    ),
-    output_dir = report_folder_path,
-    output_file = report_file,
-    knit_root_dir = krd,
-    intermediates_dir = intd,
-    quiet = TRUE
+                      metadata_path = metadata_tmp_path,
+                      categorical_covariates = categorical_covariates
+                    ),
+                    output_dir = report_folder_path,
+                    output_file = report_file,
+                    knit_root_dir = krd,
+                    intermediates_dir = intd,
+                    quiet = TRUE
   )
   cli::cli_text(c(
     "Report successfully generated: ",

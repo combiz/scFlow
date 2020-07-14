@@ -99,7 +99,24 @@ paste(out, collapse='\n')
 
 ```{r conditional_clustering_block, child='clustering.Rmd', eval = !is.null(metadata$cluster_params)}
 ```
+</div>
+</div>
+```{r, results='asis', include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
 
+show_plot <- function(plot_object) {
+  div(style="margin:auto;text-align:center", plot_object)
+}
+
+out <- NULL
+for (variable in names(metadata$dataset_integration$clustering_plots$liger_proportional_barplots)) {
+    out <- c(out, knitr::knit_child("categorical_covariates_2.Rmd"))
+}
+paste(out, collapse='\n')
+```
+`r paste(out, collapse='\n')`
+</div>
+</div>
 # References {-}
 <div id="refs"></div>
 
