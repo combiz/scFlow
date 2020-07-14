@@ -63,7 +63,8 @@ annotate_integrated_sce <- function(sce,
     "\r\n"
   )
 
-  sce@metadata$dataset_integration$annotation$input_reduced_dim <- input_reduced_dim
+  sce@metadata$dataset_integration$annotation$input_reduced_dim <-
+    input_reduced_dim
 
   pca_reducedDim_plots <- list()
   liger_reducedDim_plots <- list()
@@ -77,24 +78,22 @@ annotate_integrated_sce <- function(sce,
                                  feature_dim = variable,
                                  reduced_dim = sprintf("%s_PCA",
                                                        input_reduced_dim),
-                                 size = .1, alpha = 0.2)
+                                 size = 1, alpha = 0.3)
     # reducedDim_pca <- plot_pca +
     # ggtitle(sprintf("%s using PCA data", input_reduced_dim)) +
     # theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.8))
     # pca_reducedDim_plots[[variable]] <- reducedDim_pca
-    plot_pca <- .grobify_ggplot(plot_pca)
     pca_reducedDim_plots[[variable]] <- plot_pca
 
     plot_liger <- plot_reduced_dim(sce,
                                    feature_dim = variable,
                                    reduced_dim = sprintf("%s_Liger",
                                                          input_reduced_dim),
-                                   size = 0.1, alpha = 0.2)
+                                   size = 0.75, alpha = 0.3)
     # reducedDim_liger <- plot_liger +
     # ggtitle(sprintf("%s using LIGER data", input_reduced_dim)) +
     # theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.8))
     # liger_reducedDim_plots[[variable]] <- reducedDim_liger
-    plot_liger <- .grobify_ggplot(plot_liger)
     liger_reducedDim_plots[[variable]] <- plot_liger
 
     data <- SingleCellExperiment::reducedDim(sce, "PCA")
@@ -133,7 +132,6 @@ annotate_integrated_sce <- function(sce,
       ) +
       ggtitle("kBET test results - PCA") +
       theme(plot.title = element_text(hjust = 0.5, size = 15, face = "bold"))
-    kbet_pca <- .grobify_ggplot(kbet_pca)
     pca_kbet_plots[[variable]] <- kbet_pca
 
     data <- SingleCellExperiment::reducedDim(sce, "Liger")
@@ -174,7 +172,6 @@ annotate_integrated_sce <- function(sce,
       ) +
       ggtitle("kBET test results - LIGER") +
       theme(plot.title = element_text(hjust = 0.5, size = 15, face = "bold"))
-    kbet_liger <- .grobify_ggplot(kbet_liger)
     liger_kbet_plots[[variable]] <- kbet_liger
   }
 
@@ -196,11 +193,15 @@ annotate_integrated_sce <- function(sce,
   )
 
   cli::cli_text("Generating tSNE/UMAP plots for PCA and LIGER data...")
+  sce <- cluster_sce(sce, k = 50, reduction_method = sprintf("%s_PCA",
+                                                             input_reduced_dim))
+  pca_clusters <- sce$clusters
+
   plot_pca <- plot_reduced_dim(sce,
                                feature_dim = "clusters",
                                reduced_dim = sprintf("%s_PCA",
                                                      input_reduced_dim),
-                               size = 0.1, alpha = 0.2, label_clusters = TRUE
+                               size = 0.75, alpha = 0.3, label_clusters = TRUE
   )
   # cluster_pca <- plot_pca +
   # ggtitle(sprintf("%s using PCA data (colored by cluster)",
@@ -208,14 +209,18 @@ annotate_integrated_sce <- function(sce,
   # theme(plot.title = element_text(size = 15, face = "bold"))
 
   cluster_pca <- plot_pca
-  cluster_pca <- .grobify_ggplot(cluster_pca)
   sce@metadata$dataset_integration$clustering_plots$cluster_pca <- cluster_pca
+
+  sce <- cluster_sce(sce, k = 50, reduction_method = sprintf("%s_Liger",
+                                                             input_reduced_dim))
+
+  liger_clusters <- sce$clusters
 
   plot_liger <- plot_reduced_dim(sce,
                                  feature_dim = "clusters",
                                  reduced_dim = sprintf("%s_Liger",
                                                        input_reduced_dim),
-                                 size = 0.1, alpha = 0.2,
+                                 size = 0.75, alpha = 0.3,
                                  label_clusters = TRUE
   )
   # cluster_liger <- plot_liger +
@@ -223,8 +228,81 @@ annotate_integrated_sce <- function(sce,
   # input_reduced_dim)) +
   # theme(plot.title = element_text(size = 15, face = "bold"))
   cluster_liger <- plot_liger
-  cluster_liger <- .grobify_ggplot(cluster_liger)
 
-  sce@metadata$dataset_integration$clustering_plots$cluster_liger <- cluster_liger
+  sce@metadata$dataset_integration$clustering_plots$cluster_liger <-
+    cluster_liger
+
+  sankey_data <- as.data.frame.matrix(table(pca_clusters, liger_clusters)) %>%
+    rownames_to_column %>%
+    tidyr::gather(key = "key", value = "value", -rowname) %>%
+    dplyr::filter(value > 0)
+  colnames(sankey_data) <- c("pca_cluster", "liger_cluster", "overlap")
+  sankey_data$liger_cluster <- paste(sankey_data$liger_cluster, " ", sep = "")
+  nodes <- data.frame(name = c(as.character(sankey_data$pca_cluster),
+                             as.character(sankey_data$liger_cluster)) %>%
+                        unique())
+  sankey_data$pca_cluster_id <-
+    match(sankey_data$pca_cluster, nodes$name) - 1
+  sankey_data$liger_cluster_id <-
+    match(sankey_data$liger_cluster, nodes$name) - 1
+  my_colour_scale <-
+    'd3.scaleOrdinal() .range(["red","cornflowerblue","green","blue","darkorange","grey"])'
+  sankey_plot <- networkD3::sankeyNetwork(Links = sankey_data, Nodes = nodes,
+                                          Source = "pca_cluster_id",
+                                          Target = "liger_cluster_id",
+                                          Value = "overlap", NodeID = "name",
+                                          sinksRight = TRUE,
+                                          colourScale = my_colour_scale,
+                                          nodeWidth = 80, fontSize = 13,
+                                          nodePadding = 20)
+
+  sce@metadata$dataset_integration$clustering_plots$sankey_plot <- sankey_plot
+
+  pca_proportional_barplots <- list()
+  liger_proportional_barplots <- list()
+
+  for (variable in categorical_covariates) {
+
+    pca_barplot_data <-
+      data.frame("clusters" = pca_clusters, "group" = sce@colData[[variable]])
+    clusters <- pca_barplot_data$clusters
+    group <- pca_barplot_data$group
+
+    pca_barplot <- ggplot(pca_barplot_data, aes(x = clusters, fill = group)) +
+      geom_bar(position = "fill") + theme_bw() +
+      theme(
+        axis.text = element_text(size = 13),
+        axis.title = element_text(size = 13),
+        axis.line = element_line(colour = "black"),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank()) +
+      theme(legend.text = element_text(size = 13))
+
+    pca_proportional_barplots[[variable]] <- pca_barplot
+
+    liger_barplot_data <-
+      data.frame("clusters" = liger_clusters,
+                 "group" = sce@colData[[variable]])
+    clusters <- liger_barplot_data$clusters
+    group <- liger_barplot_data$group
+
+    liger_barplot <-
+      ggplot(liger_barplot_data, aes(x = clusters, fill = group)) +
+      geom_bar(position = "fill") + theme_bw() +
+      theme(
+        axis.text = element_text(size = 13),
+        axis.title = element_text(size = 13),
+        axis.line = element_line(colour = "black"),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank()) +
+      theme(legend.text = element_text(size = 13))
+
+    liger_proportional_barplots[[variable]] <- liger_barplot
+  }
+  sce@metadata$dataset_integration$clustering_plots$pca_proportional_barplots <-
+    pca_proportional_barplots
+  sce@metadata$dataset_integration$clustering_plots$liger_proportional_barplots <-
+    liger_proportional_barplots
+
   return(sce)
 }

@@ -1,0 +1,20 @@
+## `r variable`
+
+<div class = "row">
+<div class="col-md-6">
+<div class = "basicfig">
+```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Proportional barplot by %s</b>", variable)}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$dataset_integration$clustering_plots$pca_proportional_barplots[[variable]]
+```
+</div>
+</div>
+<div class="col-md-6">
+<div class = "basicfig">
+```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Proportional barplot (LIGER) by %s</b>", variable)}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$dataset_integration$clustering_plots$liger_proportional_barplots[[variable]]
+```
+</div>
+</div>
+</div>
