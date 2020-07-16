@@ -1,18 +1,18 @@
 ### Analysis summary
 
 ```{r, fig.align = "center"}
-qc_table <- as.data.frame(attr(metadata, "de_parameters"))
+qc_table <- as.data.frame(attr(metadata, "de_params"))
 datatable(qc_table, colnames = "", options = list(pageLength = 5))
 ```
 
-Differential gene expression was performed on a total of `r prettyNum(as.numeric(attr(metadata, "de_parameters")["n_genes"]),big.mark=",",scientific=FALSE)` genes which expressed a minimum of `r as.numeric(attr(metadata, "de_parameters")["min_counts"])` count in at least `r as.numeric(attr(metadata, "de_parameters")["min_cells_pc"])*100` percent of the cells. DGEs were detected at a fold-change threshold of `r as.numeric(attr(metadata, "de_parameters")["fc_threshold"])` and an adjusted p-value (padj) cut-off of `r as.numeric(attr(metadata, "de_parameters")["pval_cutoff"])` was applied. 
+Differential gene expression was performed on a total of `r prettyNum(as.numeric(attr(metadata, "de_params")["n_genes"]),big.mark=",",scientific=FALSE)` genes which expressed a minimum of `r as.numeric(attr(metadata, "de_params")["min_counts"])` count in at least `r as.numeric(attr(metadata, "de_params")["min_cells_pc"])*100` percent of the cells. Differentially expressed genes (DEGs) were detected at a fold-change threshold of `r as.numeric(attr(metadata, "report_params")["fc_threshold"])` and an adjusted p-value (padj) cut-off of `r as.numeric(attr(metadata, "report_params")["pval_cutoff"])` was applied. 
 
 ### Result summary
 
 ```{r, echo=FALSE, results="hide"}
 Up <- as.numeric(attr(metadata, "de_result")["Up"])
 Down <- as.numeric(attr(metadata, "de_result")["Down"])
-Total_gene <- as.numeric(attr(metadata, "de_parameters")["n_genes"])
+Total_gene <- as.numeric(attr(metadata, "de_params")["n_genes"])
 Up_percent <- Up/Total_gene*100
 Down_percent <- Down/Total_gene*100
 ```
@@ -37,9 +37,9 @@ metadata_plot
 ### List of differentially expressed gene
 
 ```{r, results = 'asis', warning=FALSE}
-fc_threshold <- as.numeric(attr(metadata, "de_parameters")["fc_threshold"]) 
+fc_threshold <- as.numeric(attr(metadata, "report_params")["fc_threshold"]) 
 
-pval_cutoff <- as.numeric(attr(metadata, "de_parameters")["pval_cutoff"])
+pval_cutoff <- as.numeric(attr(metadata, "report_params")["pval_cutoff"])
 
 #metadata_table <- metadata
 metadata_table <- metadata %>%
@@ -53,5 +53,5 @@ metadata_table <- metadata %>%
 # metadata_table$ci.hi <- as.numeric(format(metadata_table$ci.hi, format = "e", digits = 2))
 # metadata_table$ci.lo <- as.numeric(format(metadata_table$ci.lo, format = "e", digits = 2))
 # metadata_table$padj <- as.numeric(format(metadata_table$padj, format = "e", digits = 2))
-datatable(metadata_table, rownames = FALSE, options = list(pageLength = 10, scrollX=T, autoWidth = TRUE), escape = FALSE )
+datatable(metadata_table, rownames = FALSE, options = list(pageLength = 10, scrollX=T, autoWidth = TRUE, columnDefs = list(list(width = '500px', targets = 12))), escape = FALSE )
 ```

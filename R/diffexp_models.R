@@ -412,7 +412,7 @@ perform_de <- function(sce,
 
     de_params <- unlist(de_params)
 
-    attr(results, "de_parameters") <- de_params
+    attr(results, "de_params") <- de_params
 
     results_l[[element_name]] <- results
   }
@@ -649,14 +649,12 @@ perform_de <- function(sce,
         dplyr::filter(de == "Up" & gene_biotype == "protein_coding") %>%
         dplyr::top_n(min(n_up, n_label), wt = -padj)
       dt$label[dt$gene %in% top_up$gene] <- "Yes"
-      print(top_up)
   }
   if (n_down > 0) {
     top_down <- dt %>%
       dplyr::filter(de == "Down" & gene_biotype == "protein_coding") %>%
       dplyr::top_n(min(n_down, n_label), wt = -padj)
       dt$label[dt$gene %in% top_down$gene] <- "Yes"
-      print(top_down)
   }
 
   dt$padj[dt$padj == 0] <- min(dt[dt$padj > 0, "padj"]) # to prevent infinite points

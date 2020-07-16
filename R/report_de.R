@@ -27,6 +27,34 @@ report_de <- function(res,
 
   cli::cli_h2("Generating report for differential expression analysis")
 
+  p <- .volcano_plot(
+    dt = res,
+    fc_threshold = fc_threshold,
+    pval_cutoff = pval_cutoff,
+    n_label = n_label
+  )
+
+  DGEs <- c(res %>%
+              filter(padj <= pval_cutoff, logFC >= log2(fc_threshold)) %>%
+              pull(gene) %>%
+              length(),
+            res %>%
+              filter(padj <= pval_cutoff, logFC <= -log2(fc_threshold)) %>%
+              pull(gene) %>%
+              length())
+
+  names(DGEs) <- c("Up", "Down")
+
+
+  attr(res, "de_result") <- DGEs
+
+  attr(res, "plot") <- p
+
+
+  attr(res, "report_params") <- setNames(c(fc_threshold, pval_cutoff),
+                                             c("fc_threshold", "pval_cutoff"))
+
+
   metadata_tmp_path <- file.path(tempdir(), "metadata.qs")
 
   cli::cli_text("Writing temp files for report...")
@@ -47,10 +75,7 @@ report_de <- function(res,
       package = "scFlow"
     ),
     params = list(
-      metadata_path = metadata_tmp_path,
-      fc_threshold = fc_threshold,
-      pval_cutoff = pval_cutoff,
-      n_label = n_label
+      metadata_path = metadata_tmp_path
     ),
     output_dir = report_folder_path,
     output_file = report_file,
