@@ -79,7 +79,7 @@ perform_de <- function(sce,
 #'
 #' @family differential gene expression
 #'
-#' @importFrom SingleCellExperiment counts
+#' @importFrom SingleCellExperiment counts tpm
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom scater librarySizeFactors normalize
 #' @importFrom Matrix colSums
@@ -219,7 +219,7 @@ perform_de <- function(sce,
 #'
 #' @importFrom SingleCellExperiment counts
 #' @importFrom SummarizedExperiment rowData colData
-#' @importFrom scater normalize
+#' @importFrom scater normalize calculateTPM
 #' @importFrom methods as
 #' @importFrom magrittr %>%
 #' @importFrom MAST zlm summary
@@ -238,6 +238,8 @@ perform_de <- function(sce,
   fargs[names(inargs)] <- inargs
 
   sce <- fargs$sce
+  SingleCellExperiment::tpm(sce) <- scater::calculateTPM(sce, exprs_values = "counts")
+  SingleCellExperiment::counts(sce) <- log2(SingleCellExperiment::tpm(sce) + 1)
   sca <- as(sce, "SingleCellAssay")
 
   message("Generating model formula")
@@ -282,6 +284,12 @@ perform_de <- function(sce,
   # fit model
   message("Fitting model\n")
 
+  if (fargs$mast_method == "glmer") {
+    fit_args_D <- list(nAGQ = fargs$nAGQ)
+  } else {
+    fit_args_D <- list()
+  }
+
   # options(warn=-1) #temporary silencing
   x <- Sys.time()
   zlmCond <- MAST::zlm(
@@ -290,7 +298,7 @@ perform_de <- function(sce,
     method = fargs$mast_method, # note: glmer requires a random effects var
     ebayes = fargs$ebayes,
     parallel = TRUE,
-    fitArgsD = list(nAGQ = fargs$nAGQ)
+    fitArgsD = fit_args_D
   )
   message(Sys.time() - x)
 

@@ -2,8 +2,9 @@ library(scFlow)
 library(ggplot2)
 
 ##
-sce <- read_sce("~/Documents/junk/celltype_mapped_sce/")
-sce <- read_sce("~/Documents/junk/MS_Custom_Mapped_SCE")
+#sce <- read_sce("~/Documents/junk/celltype_mapped_sce/")
+#sce <- read_sce("~/Documents/junk/MS_Custom_Mapped_SCE")
+sce <- read_sce("~/Documents/junk/ms26072020/")
 
 ## old vs new
 old <- read.delim("~/Documents/ms-sc/data/tidy/sce-fullcoldata.tsv")
@@ -13,6 +14,7 @@ old_dt <- data.frame(barcode = as.character(old$barcode), cluster_celltype_old =
 new_dt <- data.frame(barcode = as.character(sce$barcode), cluster_celltype_new = as.character(sce$cluster_celltype))
 dt <- dplyr::left_join(new_dt, old_dt, by = "barcode")
 dt$cluster_celltype_old[is.na(dt$cluster_celltype_old)] <- "NA"
+sce$cluster_celltype_old <- dt$cluster_celltype_old
 
 # how many cells from each celltype were dropped by the new qc etc
 sce$cluster_celltype_old <- dt$cluster_celltype_old
@@ -29,20 +31,64 @@ ggplot(df, aes(x = cluster_celltype, y = retained_pc))+
     axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5),
     axis.text = element_text(size = 16)
   )
+###
+library(dplyr)
+freqs <- as.data.frame.matrix(table(sce$clusters, sce$cluster_celltype_old))
+freqs$clusters <- row.names(freqs)
+freqs$old_name <- colnames(freqs)[apply(freqs,1,which.max)]
+new_cluster_celltype <- freqs %>%
+  select(clusters, old_name) %>%
+  arrange(as.numeric(as.character(clusters)))
+
+x <- map_custom_celltypes(sce, new_cluster_celltype)
+
+write.table(new_cluster_celltype, "~/junk/new_celltype_mappings.tsv", row.names = F, col.names = T, sep = "\t")
+
+plot_reduced_dim(x, feature_dim = "old_name", reduced_dim = "UMAP_Liger", size = .5, label_clusters = TRUE)
+
+setdiff(unique(new_cluster_celltype$old_name), unique(sce$cluster_celltype_old))
+###
+
+
 
 plot_reduced_dim(sce, feature_dim = "cluster_celltype_old", reduced_dim = "UMAP_Liger", size = .5)
+plot_reduced_dim(sce, feature_dim = "cluster_celltype_old", reduced_dim = "UMAP_Liger", size = .5, label_clusters = TRUE)
 plot_reduced_dim(sce, feature_dim = "cluster_celltype_old", reduced_dim = "UMAP_Liger", size = .5, label_clusters = TRUE)
 plot_reduced_dim(sce, feature_dim = "cluster_celltype", reduced_dim = "UMAP_Liger", size = .5, label_clusters = TRUE)
 plot_reduced_dim(sce, feature_dim = "clusters", reduced_dim = "UMAP_Liger", size = .5, label_clusters = TRUE)
 
-plot_reduced_dim(sce, feature_dim = "cluster_celltype_old", reduced_dim = "UMAP_Liger", highlight_feature = "EN-3-5", size = .5)
+plot_reduced_dim(sce, feature_dim = "cluster_celltype_old", reduced_dim = "UMAP_Liger", highlight_feature = "B-cells", size = .1)
+
+plot_reduced_dim_gene(sce, gene = "SST", reduced_dim = "UMAP_Liger", size = .5)
+plot_reduced_dim_gene(sce, gene = "PVALB", reduced_dim = "UMAP_Liger", size = .5)
+
+plot_reduced_dim_gene(sce, gene = "SV2C", reduced_dim = "UMAP_Liger", size = .5)
+plot_reduced_dim_gene(sce, gene = "VIP", reduced_dim = "UMAP_Liger", size = .5)
 
 plot_reduced_dim_gene(sce, gene = "PLP1", reduced_dim = "UMAP_Liger", size = .5)
+plot_reduced_dim_gene(sce, gene = "CD74", reduced_dim = "UMAP_Liger", size = .5)
+
+plot_reduced_dim_gene(sce, gene = "DRD1", reduced_dim = "UMAP_Liger", size = .5)
+
+plot_reduced_dim_gene(sce, gene = "CUX1", reduced_dim = "UMAP_Liger", size = .5)
 plot_reduced_dim_gene(sce, gene = "PLXDC2", reduced_dim = "UMAP_Liger", size = .5)
 plot_reduced_dim_gene(sce, gene = "RBMS3", reduced_dim = "UMAP_Liger", size = .5) #stromal
 plot_reduced_dim_gene(sce, gene = "B2M", reduced_dim = "UMAP_Liger", size = .5) #b
 plot_reduced_dim_gene(sce, gene = "SSR4", reduced_dim = "UMAP_Liger", size = .5) #b
 plot_reduced_dim_gene(sce, gene = "PVALB", reduced_dim = "UMAP_Liger", size = .5) #b
+plot_reduced_dim_gene(sce, gene = "VIP", reduced_dim = "UMAP_Liger", size = .5)
+plot_reduced_dim_gene(sce, gene = "SV2C", reduced_dim = "UMAP_Liger", size = .5)
+plot_reduced_dim_gene(sce, gene = "SLC17A7", reduced_dim = "UMAP_Liger", size = .5)
+plot_reduced_dim_gene(sce, gene = "SYT1", reduced_dim = "UMAP_Liger", size = .5)
+plot_reduced_dim_gene(sce, gene = "GAD2", reduced_dim = "UMAP_Liger", size = .5)
+plot_reduced_dim_gene(sce, gene = "IL26", reduced_dim = "UMAP_Liger", size = .5)
+plot_reduced_dim_gene(sce, gene = "IL26", reduced_dim = "UMAP_Liger", size = .5)
+
+plot_reduced_dim_gene(sce, gene = "ETV1", reduced_dim = "UMAP_Liger", size = .5)
+
+plot_reduced_dim_gene(sce, gene = "CD133", reduced_dim = "UMAP_Liger", size = .5) # EPendymal
+plot_reduced_dim_gene(sce, gene = "ETV4", reduced_dim = "UMAP_Liger", size = .5)
+plot_reduced_dim_gene(sce, gene = "NRG1", reduced_dim = "UMAP_Liger", size = .5)
 
 table(sce$cluster_celltype_old)
 
@@ -62,18 +108,19 @@ sce <- read_sce("~/Documents/junk/celltype_mapped_sce/", read_metadata = FALSE)
 plot_reduced_dim(sce, feature_dim = "cluster_celltype", reduced_dim = "UMAP_Liger", label_clusters = TRUE, size = .5)
 plot_reduced_dim(sce, feature_dim = "clusters", reduced_dim = "UMAP_Liger", label_clusters = TRUE, size = .5)
 
-ctm <- read_celltype_mappings("~/Documents/junk/celltype_mappings.tsv")
-sce$clusters <- as.numeric(as.character(sce$clusters))
-sce <- map_custom_celltypes(sce, ctm, cols = "cluster_celltype")
+ctm <- read_celltype_mappings("~/junk/new_celltype_mappings.tsv")
+#sce$clusters <- as.numeric(as.character(sce$clusters))
+sce <- map_custom_celltypes(sce, ctm, cols = "new_cluster_celltype")
 table(sce$cluster_celltype)
-
+sce$cluster_celltype <- NULL
+sce$cluster_celltype <- sce$new_cluster_celltype
 sce$clusters <- as.character(as.numeric(sce$clusters))
-plot_reduced_dim(sce, feature_dim = "cluster_celltype", reduced_dim = "UMAP_Liger", size = 0.5, label_clusters = TRUE)
+plot_reduced_dim(sce, feature_dim = "new_cluster_celltype", reduced_dim = "UMAP_Liger", size = 0.5, label_clusters = TRUE)
 sce_all <- sce
 sce <- sce[, sce$cluster_celltype != "Doublets"]
 write_sce(sce, "~/Documents/junk/MS_Custom_Mapped_SCE")
 
-
+sce$cluster_celltype <- sce$new_cluster_celltype
 
 ###
 sce$clusters <- as.character(as.numeric(sce$clusters))

@@ -2,7 +2,15 @@ options(mc.cores = 10)
 library(parallel)
 library(scFlow)
 
-sce <- read_sce("~/Documents/junk/enriched_with_ptau/")
+sce <- read_sce("~/Documents/Amy_Seurat/")
+
+SummarizedExperiment::rowData(sce)$gene <- NULL
+sce <- annotate_sce_genes(sce, ensembl_mapping_file = "~/Documents/junk/src/ensembl-ids/ensembl_mappings.tsv")
+table(SummarizedExperiment::rowData(sce)$gene_biotype)
+ridx <- !is.na(SummarizedExperiment::rowData(sce)$gene_biotype) &
+  SummarizedExperiment::rowData(sce)$gene_biotype == "protein_coding"
+sce <- sce[ridx,]
+print(table(SummarizedExperiment::rowData(sce)$gene_biotype))
 
 library("biomaRt")
 human <- useMart(host="www.ensembl.org", "ENSEMBL_MART_ENSEMBL", dataset="hsapiens_gene_ensembl")
@@ -125,7 +133,7 @@ ggplot(y_dt, aes(x = model, y = padj)) + geom_col() + coord_flip() + facet_grid(
 
 ### dream #############
 
-library(variancePartition) # NEEDED TO WORK!
+#library(variancePartition) #
 #model_formula <- as.formula("~ sex + (1 | individual) + cngeneson + age + pc_mito + pc_ribo + (1 | diagnosis)") # nope
 #model_formula <- as.formula("~ sex + (1 | individual) + cngeneson + pc_mito + pc_ribo + (1 | diagnosis)")
 model_formula <- as.formula("~ sex + (1 | individual) + cngeneson + pc_mito + pc_ribo") # best so far
@@ -201,12 +209,20 @@ plot(sce$cngeneson, pca_mat[, 1])
 
 # model colinearity plots
 #bad model
-C <- variancePartition::canCorPairs( ~ sex + cngeneson + individual + age + pc_mito + pc_ribo + diagnosis + Braak_tangle_stage + PM_delay + RIN, as.data.frame(SummarizedExperiment::colData(sce)))
+C <- variancePartition::canCorPairs(
+  ~ brain_region + p_tau + amyloid_beta,
+  as.data.frame(SummarizedExperiment::colData(sce))
+  )
+C <- variancePartition::canCorPairs(
+  ~ brain_region + p_tau + amyloid_beta + individual + diagnosis + pc_mito + Braak + gfap + iba1 + hla + gpnmb + Sex,
+  as.data.frame(SummarizedExperiment::colData(sce[,sce$cluster_celltype == "Astro"]))
+)
+C <- variancePartition::canCorPairs( ~ sex + cngeneson + individual + age + pc_mito + pc_ribo + diagnosis + Braak_tangle_stage + PM_delay + RIN, )
 #simplified model without colinear vars
 C <- variancePartition::canCorPairs( ~ sex + cngeneson + individual + pc_mito + pc_ribo, as.data.frame(SummarizedExperiment::colData(sce)))
 C <- variancePartition::canCorPairs( ~ group + cngeneson + individual + pc_mito + pc_ribo, as.data.frame(SummarizedExperiment::colData(sce)))
 # Plot correlation matrix
-variancePartition::plotCorrMatrix( C )
+variancePartition::plotCorrMatrix( C)
 
 # variance
 varPart <- variancePartition::fitExtractVarPartModel( vobjDream, model_formula, as.data.frame(SummarizedExperiment::colData(sce)), showWarnings=FALSE )

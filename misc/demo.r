@@ -47,7 +47,10 @@ sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 2
 sce <- filter_sce(sce)
 
 qs::qsave(sce, "sce.qs")
-sce <- qs::qread("sce.qs", nthreads = future::availableCores())
+sce <- qs::qread(
+  "sce.qs",
+  nthreads = future::availableCores()
+  )
 
 ###
 
