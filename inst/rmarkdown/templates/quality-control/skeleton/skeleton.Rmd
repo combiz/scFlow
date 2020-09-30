@@ -87,21 +87,20 @@ metadata$qc_plots$number_genes_histogram
 </div>
 </div>
 
-
 ## Number of genes versus count depth 
 <div class = "row">
 <div class = "zoomfig">
-```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Number of genes versus count depth coloured by relative mitochondrial counts.</b> The count-depth threshold of %s%s counts and the number of genes threshold of %s%s genes are indicated with vertical and horizontal red lines, respectively. Cells with high mitochondrial counts are typically in cells with relatively lower count depth. Cells with fractional mitochondrial counts higher than %s (i.e. %1.2f%%) were filtered.", metadata$qc_params$min_library_size, ifelse(!is.null(metadata$qc_params$max_library_size), sprintf(" – %s", metadata$qc_params$max_library_size), ""), metadata$qc_params$min_features, ifelse(!is.null(metadata$qc_params$max_features), sprintf(" – %s", metadata$qc_params$max_features), ""), metadata$qc_params$max_mito, metadata$qc_params$max_mito * 100)}
+```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: Number of genes versus count depth coloured by relative mitochondrial counts.</b> The count-depth threshold of %s%s counts and the number of genes threshold of %s%s genes are indicated with vertical and horizontal red lines, respectively. Cells with high mitochondrial counts are typically in cells with relatively lower count depth. Cells with fractional mitochondrial counts higher than %.3f (i.e. %1.2f%%) were filtered.", metadata$qc_params$min_library_size, ifelse(!is.null(metadata$qc_params$max_library_size), sprintf(" – %s", metadata$qc_params$max_library_size), ""), metadata$qc_params$min_features, ifelse(!is.null(metadata$qc_params$max_features), sprintf(" – %s", metadata$qc_params$max_features), ""), metadata$qc_params$max_mito, metadata$qc_params$max_mito * 100)}
 knitr::opts_chunk$set(echo = FALSE)
 metadata$qc_plots$number_genes_vs_count_depth
 ```
 </div>
 
 ## Fraction of mitochondrial / ribosomal counts
-
+`r if(metadata$qc_params$max_mito_method == "adaptive"){sprintf("The maximum fraction of mitochondrial counts per cell threshold was determined adaptively for this sample as >=%s median average deviations (MADs), or %s total counts per cell.", metadata$qc_params$nmads, metadata$qc_params$max_mito)}`
 <div class = "row">
 <div class = "col-md-6">
-```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of mitochondrial fraction per cell.</b> A upper-threshold of %s (i.e. %1.2f%%) maximum mitochondrial fraction was applied (red line).", metadata$qc_params$max_mito, metadata$qc_params$max_mito * 100)}
+```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of mitochondrial fraction per cell.</b> An upper-threshold of %.3f (i.e. %1.2f%%) maximum mitochondrial fraction was applied (red line).", metadata$qc_params$max_mito, metadata$qc_params$max_mito * 100)}
 knitr::opts_chunk$set(echo = FALSE)
 #ggplotly(metadata$qc_plots$mito_fraction_histogram)
 metadata$qc_plots$mito_fraction_histogram
@@ -109,7 +108,7 @@ metadata$qc_plots$mito_fraction_histogram
 </div>
 
 <div class = "col-md-6">
-```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of ribosomal fraction per cell.</b> A upper-threshold of %s (i.e. %1.2f%%) maximum ribosomal fraction was applied (red line).", metadata$qc_params$max_ribo, metadata$qc_params$max_ribo * 100)}
+```{r, fig.align="center", fig.width=4.5, fig.height=4, fig.cap = sprintf("<b>Figure: Histogram of ribosomal fraction per cell.</b> An upper-threshold of %s (i.e. %1.2f%%) maximum ribosomal fraction was applied (red line).", metadata$qc_params$max_ribo, metadata$qc_params$max_ribo * 100)}
 knitr::opts_chunk$set(echo = FALSE)
 metadata$qc_plots$ribo_fraction_histogram
 #ggplotly(metadata$qc_plots$ribo_fraction_histogram)

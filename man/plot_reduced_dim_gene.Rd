@@ -38,6 +38,7 @@ Generates a 2d plot of cells with gene expression
 }
 \seealso{
 Other plotting functions: 
+\code{\link{plot_expr_by_numeric_var}()},
 \code{\link{plot_reduced_dim}()},
 \code{\link{plot_violin}()}
 }

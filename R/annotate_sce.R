@@ -43,7 +43,7 @@
 #'   number of genes with >0 counts)
 #' @param max_features the maximum number of features per cell or "adaptive"
 #' @param max_mito the maximum proportion of counts mapping to
-#'   mitochondrial genes (0 - 1)
+#'   mitochondrial genes (0 - 1) or "adaptive"
 #' @param min_ribo the minimum proportion of counts mapping to
 #'   ribosomal genes (0 - 1)
 #' @param max_ribo the maximum proportion of counts mapping to
@@ -75,7 +75,7 @@ annotate_sce <- function(sce,
                          max_library_size = "adaptive",
                          min_features = 100,
                          max_features = "adaptive",
-                         max_mito = 0.10,
+                         max_mito = "adaptive",
                          min_ribo = 0.00,
                          max_ribo = 1.00,
                          min_counts = 2,
@@ -85,7 +85,7 @@ annotate_sce <- function(sce,
                          drop_ribo = FALSE,
                          annotate_genes = TRUE,
                          annotate_cells = TRUE,
-                         nmads = 3.5,
+                         nmads = 4.0,
                          ensembl_mapping_file = NULL) {
 
   if (class(sce) != "SingleCellExperiment") {

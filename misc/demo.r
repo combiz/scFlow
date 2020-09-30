@@ -35,11 +35,12 @@ metadata <- read_metadata(
 
 sce <- generate_sce(mat, metadata)
 
-sce <- find_cells(sce, lower = 100, retain = "auto", niters = 30000)
+sce <- find_cells(sce, lower = 100, retain = "auto", niters = 10000)
 
 sce <- find_cells(sce, lower = 100, retain = 12000, niters = 30000)
-sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 250, max_library_size = "adaptive", nmads = 4)
-#
+#sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 250, max_library_size = "adaptive", nmads = 4)
+sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 250, max_library_size = "adaptive", nmads = 4, max_mito = "adaptive")
+
 
 #sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 100, max_library_size = "adaptive")
 #sce <- annotate_sce(sce, ensembl_mapping_file = ensembl_fp, min_library_size = 300, max_library_size = 10000, max_features = 500)
