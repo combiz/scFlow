@@ -10,7 +10,7 @@ annotate_sce(
   max_library_size = "adaptive",
   min_features = 100,
   max_features = "adaptive",
-  max_mito = 0.1,
+  max_mito = "adaptive",
   min_ribo = 0,
   max_ribo = 1,
   min_counts = 2,
@@ -37,7 +37,7 @@ number of genes with >0 counts)}
 \item{max_features}{the maximum number of features per cell or "adaptive"}
 
 \item{max_mito}{the maximum proportion of counts mapping to
-mitochondrial genes (0 - 1)}
+mitochondrial genes (0 - 1) or "adaptive"}
 
 \item{min_ribo}{the minimum proportion of counts mapping to
 ribosomal genes (0 - 1)}
