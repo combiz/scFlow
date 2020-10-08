@@ -4,10 +4,23 @@
 \alias{report_de}
 \title{Generate a report for differential expression analysis}
 \usage{
-report_de(res, report_folder_path = getwd(), report_file = "de_report_scflow")
+report_de(
+  res,
+  fc_threshold = 1.05,
+  pval_cutoff = 0.05,
+  n_label = 10,
+  report_folder_path = getwd(),
+  report_file = "de_report_scflow"
+)
 }
 \arguments{
 \item{res}{Differential expression result table from perform_de() function.}
+
+\item{fc_threshold}{fold change up/down threshold.}
+
+\item{pval_cutoff}{the adjusted pvalue cutoff threshold.}
+
+\item{n_label}{number of genes to be labelled in the volcano plot.}
 
 \item{report_folder_path}{folder path to save the report.}
 
