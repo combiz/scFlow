@@ -23,12 +23,22 @@ annotate_celltype_metrics <- function(sce,
                                     celltype_var = "cluster_celltype",
                                     unique_id_var = "manifest",
                                     facet_vars = c("manifest", "group", "sex"),
-                                    input_reduced_dim = "UMAP",
+                                    input_reduced_dim = "UMAP_Liger",
                                     metric_vars = c("pc_mito",
                                                     "pc_ribo",
                                                     "total_counts",
                                                     "total_features_by_counts"),
                                     ...) {
+
+  fargs <- list(
+    fraction_expressing = 0.10,
+    top_n = 5,
+    max_point_size = 3,
+    n_cores = future::availableCores()
+  )
+  inargs <- list(...)
+  fargs[names(inargs)] <- inargs
+
   sce@metadata$celltype_annotations <- list()
   sce@metadata$celltype_annotations$reddim_plots <- list()
   sce@metadata$celltype_annotations$prop_plots <- list()
@@ -68,6 +78,19 @@ annotate_celltype_metrics <- function(sce,
     all(var_cat_classes),
     msg = "Specify numeric metric variables only."
   )
+
+  # find specific markers
+  markers <- find_marker_genes(
+    sce,
+    by_vars = c(celltype_var, cluster_var),
+    fraction_expressing = fargs$fraction_expressing,
+    top_n = fargs$top_n,
+    max_point_size = fargs$max_point_size,
+    n_cores = fargs$n_cores
+    )
+
+  sce@metadata$markers <- markers
+
 
   # generate the plots
   # cluster numbers

@@ -20,7 +20,7 @@ annotate_sce(
   drop_ribo = FALSE,
   annotate_genes = TRUE,
   annotate_cells = TRUE,
-  nmads = 3.5,
+  nmads = 4,
   ensembl_mapping_file = NULL
 )
 }

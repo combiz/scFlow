@@ -42,6 +42,7 @@ metadata <- qs::qread(params$metadata_path)
 ## Dimensionality Reduction Plots
 ### Cell-types
 This two-dimensional embedding of cells should demonstrate spatial separation of major cell-types; if not, it may be useful to manually re-annotate cell-types with reference to cell-type associated marker genes, and/or revise dimensionality reduction and/or clustering parameters.
+
 <div class = "zoomfig">
 ```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: %s plot of cell-types.</b> Each cell is coloured by annotated cell-type.", metadata$celltype_annotations$params$input_reduced_dim)}
 knitr::opts_chunk$set(echo = FALSE)
@@ -49,8 +50,35 @@ metadata$celltype_annotations$reddim_plots$celltype_var
 ```
 </div>
 
+#### Top Cell-type Marker Genes Table
+
+<div class = "formattable">
+```{r results='asis', echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+datatable(
+  metadata$markers$cluster_celltype$top_specific_markers, 
+  rownames = FALSE, 
+  options = list(
+    pageLength = 5, 
+    scrollX=T, 
+    columnDefs = list(list(className = 'dt-left', targets = "_all"))), 
+  escape = FALSE 
+  )
+```
+</div>
+
+#### Top Cell-Type Marker Genes Plot
+
+<div class = "plainfig">
+```{r, fig.align="center", fig.width=9, fig.height=14, fig.cap = "<b>Figure: Top marker genes for cells grouped by cell-type.</b> Point colour represents expression and size represents the fraction of cells within the group expressing the gene.", echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$markers$cluster_celltype$marker_plot
+```
+</div>
+
 ### Clusters
 Optimal clustering parameters should provide a level of granularity sufficient to identify minority cell-types as distinct numbered clusters.  If any cluster encompasses an adjacent small, well-separated cluster, the clustering parameters should be revised to allow for the annotation of the potential minority cell-type.
+
 <div class = "zoomfig">
 ```{r, fig.align="center", fig.width=6, fig.height=4, fig.cap = sprintf("<b>Figure: %s plot of clusters.</b> Each cell is coloured by annotated cluster.", metadata$celltype_annotations$params$input_reduced_dim)}
 knitr::opts_chunk$set(echo = FALSE)
@@ -58,6 +86,30 @@ metadata$celltype_annotations$reddim_plots$cluster_var
 ```
 </div>
 
+#### Top Cluster Marker Genes Table
+
+<div class = "formattable">
+```{r results='asis', echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+datatable(
+  metadata$markers$clusters$top_specific_markers, 
+  rownames = FALSE, 
+  options = list(
+    pageLength = 5, 
+    scrollX=T, 
+    columnDefs = list(list(className = 'dt-left', targets = "_all"))), 
+  escape = FALSE 
+  )
+```
+</div>
+
+#### Top Cluster Marker Genes Plot
+<div class = "plainfig">
+```{r, fig.align="center", fig.width=9, fig.height=14, fig.cap = "<b>Figure: Top marker genes for cells grouped by cluster.</b> Point colour represents expression and size represents the fraction of cells within the group expressing the gene.", echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+metadata$markers$clusters$marker_plot
+```
+</div>
 
 ```{r, results='asis', include=FALSE, echo=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
