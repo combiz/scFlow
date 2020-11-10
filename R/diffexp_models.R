@@ -9,8 +9,6 @@
 #' @param ref_class the class of dependent_var used as reference
 #' @param confounding_vars the independent variables of the model
 #' @param random_effects_var variable(s) to model as random effects
-#' @param fc_threshold fold change up/down threshold
-#' @param pval_cutoff the adjusted pvalue cutoff threshold
 #' @param unique_id_var the colData variable identifying unique samples
 #' @param ... advanced options
 #'
@@ -38,8 +36,6 @@ perform_de <- function(sce,
                                             "seqdate",
                                             "pc_mito"),
                        random_effects_var = NULL,
-                       fc_threshold = 1.1,
-                       pval_cutoff = 0.05,
                        unique_id_var = "individual",
                        ...) {
   fargs <- c(as.list(environment()), list(...))
@@ -231,7 +227,6 @@ perform_de <- function(sce,
     mast_method = "bayesglm",
     ebayes = FALSE,
     force_run = FALSE,
-    n_label = 10,
     nAGQ = 0
   )
   inargs <- list(...)
@@ -387,18 +382,8 @@ perform_de <- function(sce,
     fcHurdle$model <- gsub(" ", "", model_formula_string,
                            fixed = TRUE) # no whitespace
 
-    p <- .volcano_plot(
-      dt = fcHurdle,
-      fc_threshold = fargs$fc_threshold,
-      pval_cutoff = fargs$pval_cutoff,
-      n_label = fargs$n_label
-    )
-
     results <- fcHurdle %>%
-      dplyr::filter(padj <= fargs$pval_cutoff) %>%
-      dplyr::filter(gene_biotype == "protein_coding") %>%
-      dplyr::filter(abs(logFC) >= log2(fargs$fc_threshold)) %>%
-      dplyr::arrange(FCRO)
+      dplyr::arrange(padj)
 
     if (!is.null(sce@metadata$variable_genes)) {
     results <- dplyr::left_join(
@@ -407,16 +392,13 @@ perform_de <- function(sce,
       by = "ensembl_gene_id")
     }
 
-    DGEs <- c(sum(results$logFC > 0), sum(results$logFC < 0))
-    names(DGEs) <- c("Up", "Down")
-
     element_name <- paste(fargs$ref_class, ctrast, sep = "_vs_")
 
     de_params <- list(
       celltype = unique(fargs$sce$cluster_celltype),
       de_method = fargs$de_method,
       mast_method = fargs$mast_method,
-      pseudobulk = fargs$sce@metadata$scflow_steps$pseudobulk,
+      pseudobulk = ifelse(isTRUE(fargs$sce@metadata$scflow_steps$pseudobulk), "Yes", "No"),
       min_counts = fargs$min_counts,
       min_cells_pc = fargs$min_cells_pc,
       rescale_numerics = fargs$rescale_numerics,
@@ -424,8 +406,6 @@ perform_de <- function(sce,
       ref_class = fargs$ref_class,
       confounding_vars = fargs$confounding_vars,
       random_effects_var = fargs$random_effects_var,
-      fc_threshold = fargs$fc_threshold,
-      pval_cutoff = fargs$pval_cutoff,
       cells_per_group = table(
         as.data.frame(SingleCellExperiment::colData(fargs$sce))[[fargs$dependent_var]]),
       n_genes = dim(sce)[[1]],
@@ -440,11 +420,7 @@ perform_de <- function(sce,
 
     de_params <- unlist(de_params)
 
-    attr(results, "de_parameters") <- de_params
-
-    attr(results, "de_result") <- DGEs
-
-    attr(results, "plot") <- p
+    attr(results, "de_params") <- de_params
 
     results_l[[element_name]] <- results
   }
@@ -661,7 +637,7 @@ perform_de <- function(sce,
 #'
 #' @keywords internal
 
-.volcano_plot <- function(dt = fcHurdle,
+.volcano_plot <- function(dt,
                           fc_threshold = 1.05,
                           pval_cutoff = 0.05,
                           n_label = 10) {
@@ -681,14 +657,12 @@ perform_de <- function(sce,
         dplyr::filter(de == "Up" & gene_biotype == "protein_coding") %>%
         dplyr::top_n(min(n_up, n_label), wt = -padj)
       dt$label[dt$gene %in% top_up$gene] <- "Yes"
-      print(top_up)
   }
   if (n_down > 0) {
     top_down <- dt %>%
       dplyr::filter(de == "Down" & gene_biotype == "protein_coding") %>%
       dplyr::top_n(min(n_down, n_label), wt = -padj)
       dt$label[dt$gene %in% top_down$gene] <- "Yes"
-      print(top_down)
   }
 
   dt$padj[dt$padj == 0] <- min(dt[dt$padj > 0, "padj"]) # to prevent infinite points
@@ -712,7 +686,6 @@ perform_de <- function(sce,
                         values = c("#DC0000FF", "#3C5488FF", "grey"),
                         label = c("Up-regulated", "Down-regulated"),
                         breaks = c("Up", "Down")) +
-    #scale_x_continuous(limits = c(-6, 6)) +
     ggplot2::scale_y_continuous(limits = c(0, NA)) +
     ggplot2::guides(colour = ggplot2::guide_legend(override.aes = list(size = 3))) +
     ggplot2::theme(

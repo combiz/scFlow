@@ -15,8 +15,6 @@ perform_de(
   confounding_vars = c("individual", "cngeneson", "sex", "age", "PMI", "RIN",
     "seqdate", "pc_mito"),
   random_effects_var = NULL,
-  fc_threshold = 1.1,
-  pval_cutoff = 0.05,
   unique_id_var = "individual",
   ...
 )
@@ -37,10 +35,6 @@ perform_de(
 \item{confounding_vars}{the independent variables of the model}
 
 \item{random_effects_var}{variable(s) to model as random effects}
-
-\item{fc_threshold}{fold change up/down threshold}
-
-\item{pval_cutoff}{the adjusted pvalue cutoff threshold}
 
 \item{unique_id_var}{the colData variable identifying unique samples}
 
