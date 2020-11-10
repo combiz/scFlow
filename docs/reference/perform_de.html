@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scFlow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
       </span>
     </div>
 
@@ -133,6 +133,7 @@
   <span class='kw'>random_effects_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>fc_threshold</span> <span class='kw'>=</span> <span class='fl'>1.1</span>,
   <span class='kw'>pval_cutoff</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
+  <span class='kw'>unique_id_var</span> <span class='kw'>=</span> <span class='st'>"individual"</span>,
   <span class='no'>...</span>
 )</pre>
 
@@ -178,6 +179,10 @@
     <tr>
       <th>pval_cutoff</th>
       <td><p>the adjusted pvalue cutoff threshold</p></td>
+    </tr>
+    <tr>
+      <th>unique_id_var</th>
+      <td><p>the colData variable identifying unique samples</p></td>
     </tr>
     <tr>
       <th>...</th>

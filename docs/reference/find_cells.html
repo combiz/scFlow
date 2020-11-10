@@ -75,7 +75,7 @@ is_empty_drop - is the barcode an empty drop
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scFlow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
       </span>
     </div>
 
@@ -129,9 +129,10 @@ is_empty_drop - is the barcode an empty drop
     <pre class="usage"><span class='fu'>find_cells</span>(
   <span class='no'>sce</span>,
   <span class='kw'>lower</span> <span class='kw'>=</span> <span class='fl'>100</span>,
-  <span class='kw'>retain</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>retain</span> <span class='kw'>=</span> <span class='st'>"auto"</span>,
   <span class='kw'>alpha_cutoff</span> <span class='kw'>=</span> <span class='fl'>0.001</span>,
   <span class='kw'>niters</span> <span class='kw'>=</span> <span class='fl'>10000</span>,
+  <span class='kw'>expect_cells</span> <span class='kw'>=</span> <span class='fl'>3000</span>,
   <span class='no'>...</span>
 )</pre>
 
@@ -148,7 +149,16 @@ is_empty_drop - is the barcode an empty drop
     </tr>
     <tr>
       <th>retain</th>
-      <td><p>see <code>dropletUtils::emptyDrops()</code></p></td>
+      <td><p>see <code>dropletUtils::emptyDrops()</code>.  Use "auto" to calculate
+the parameter from the top <code>expect_cells</code> cells (cellranger method).</p></td>
+    </tr>
+    <tr>
+      <th>niters</th>
+      <td><p>the number of Monte Carlo iterations</p></td>
+    </tr>
+    <tr>
+      <th>expect_cells</th>
+      <td><p>the number of cells expected for auto retain</p></td>
     </tr>
     <tr>
       <th>...</th>

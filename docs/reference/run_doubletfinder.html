@@ -75,7 +75,7 @@ SingleCellExperiment annotated with is_singlet and tSNE coordinates." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scFlow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
       </span>
     </div>
 
@@ -125,7 +125,16 @@ et al</h1>
 SingleCellExperiment annotated with is_singlet and tSNE coordinates.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>run_doubletfinder</span>(<span class='no'>sce</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>run_doubletfinder</span>(
+  <span class='no'>sce</span>,
+  <span class='kw'>pK</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>pca_dims</span> <span class='kw'>=</span> <span class='fl'>10</span>,
+  <span class='kw'>var_features</span> <span class='kw'>=</span> <span class='fl'>2000</span>,
+  <span class='kw'>vars_to_regress_out</span> <span class='kw'>=</span> <span class='st'>"nCount_RNA"</span>,
+  <span class='kw'>doublet_rate</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>dpk</span> <span class='kw'>=</span> <span class='fl'>8</span>,
+  <span class='kw'>num_cores</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span>(<span class='fl'>1</span>, <span class='kw pkg'>future</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/availableCores.html'>availableCores</a></span>() - <span class='fl'>2</span>)
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -135,10 +144,32 @@ SingleCellExperiment annotated with is_singlet and tSNE coordinates.</p>
       <td><p>a SingleCellExperiment object</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>'pK' passed here will override parameter sweep,
-'doublet_rate' passed here will override the default of 7.5\<!-- % -->
-a doublet_rate of 0 is a special case that automates the estimated dr</p></td>
+      <th>pK</th>
+      <td><p>a pK value to use in place of a parameter sweep</p></td>
+    </tr>
+    <tr>
+      <th>pca_dims</th>
+      <td><p>the number of principal components to use</p></td>
+    </tr>
+    <tr>
+      <th>var_features</th>
+      <td><p>the top n variable features to use</p></td>
+    </tr>
+    <tr>
+      <th>vars_to_regress_out</th>
+      <td><p>the variables to regress out</p></td>
+    </tr>
+    <tr>
+      <th>doublet_rate</th>
+      <td><p>either a fixed doublet rate (e.g. 0.075) or 0 to</p></td>
+    </tr>
+    <tr>
+      <th>dpk</th>
+      <td><p>doublets per thousand cells increment if doublet_rate is 0.</p></td>
+    </tr>
+    <tr>
+      <th>num.cores</th>
+      <td><p>the number of CPU cores to use</p></td>
     </tr>
     </table>
 

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scFlow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
       </span>
     </div>
 
@@ -126,7 +126,7 @@
   <span class='kw'>max_library_size</span> <span class='kw'>=</span> <span class='st'>"adaptive"</span>,
   <span class='kw'>min_features</span> <span class='kw'>=</span> <span class='fl'>100</span>,
   <span class='kw'>max_features</span> <span class='kw'>=</span> <span class='st'>"adaptive"</span>,
-  <span class='kw'>max_mito</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
+  <span class='kw'>max_mito</span> <span class='kw'>=</span> <span class='st'>"adaptive"</span>,
   <span class='kw'>min_ribo</span> <span class='kw'>=</span> <span class='fl'>0</span>,
   <span class='kw'>max_ribo</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>min_counts</span> <span class='kw'>=</span> <span class='fl'>2</span>,
@@ -136,7 +136,7 @@
   <span class='kw'>drop_ribo</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>annotate_genes</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>annotate_cells</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>nmads</span> <span class='kw'>=</span> <span class='fl'>3.5</span>,
+  <span class='kw'>nmads</span> <span class='kw'>=</span> <span class='fl'>4</span>,
   <span class='kw'>ensembl_mapping_file</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
 )</pre>
 
@@ -167,7 +167,7 @@ number of genes with &gt;0 counts)</p></td>
     <tr>
       <th>max_mito</th>
       <td><p>the maximum proportion of counts mapping to
-mitochondrial genes (0 - 1)</p></td>
+mitochondrial genes (0 - 1) or "adaptive"</p></td>
     </tr>
     <tr>
       <th>min_ribo</th>
