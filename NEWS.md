@@ -1,3 +1,5 @@
+# scFlow 0.6.0
+
 # scFlow 0.5.1
 
 # *News*
