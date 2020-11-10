@@ -1,8 +1,11 @@
-# scFlow 0.6.0
-
-# scFlow 0.5.1
-
 # *News*
+
+# scFlow 0.6.0 _(10/11/2020)_
+
+* Marker identification for groups of cells.  The `find_marker_genes()` function identifies marker genes for arbitrary groups of cells (e.g. celltypes, clusters).  The function is now invoked by the `annotate_celltype_metrics()` function to generate marker genes for clusters and celltypes which are presented in the updated `report_celltype_metrics()` function.
+
+* Adaptive thresholding on mitochondrial counts with now enabled with `annotate_sce()` and reflected in the associated report `report_qc_sce()`.
+
 
 # scFlow 0.5.0 _(14/05/2020)_
 
