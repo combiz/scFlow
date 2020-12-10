@@ -8,7 +8,7 @@ map_ensembl_gene_id(
   ensembl_ids,
   mappings = c("ensembl_gene_id", "gene_biotype", "external_gene_name",
     "percentage_gene_gc_content"),
-  species = "human",
+  species = getOption("scflow_species", default = "human"),
   ensembl_mapping_file = NULL
 )
 }

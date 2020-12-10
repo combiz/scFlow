@@ -21,7 +21,8 @@ annotate_sce(
   annotate_genes = TRUE,
   annotate_cells = TRUE,
   nmads = 4,
-  ensembl_mapping_file = NULL
+  ensembl_mapping_file = NULL,
+  species = getOption("scflow_species", default = "human")
 )
 }
 \arguments{

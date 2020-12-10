@@ -4,7 +4,7 @@
 #' @param sce_l a list of SingleCellExperiment objects, or, folder_paths to
 #' SingleCellExperiment objects to be read in with \code{\link{read_sce}}
 #' @param ensembl_mapping_file path to the mappings tsv file
-#' @species human or mouse
+#' @param species human or mouse
 #'
 #' @return sce a annotated SingleCellExperiment object
 #'

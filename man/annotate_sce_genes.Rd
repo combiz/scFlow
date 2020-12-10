@@ -9,7 +9,8 @@ annotate_sce_genes(
   drop_unmapped = TRUE,
   drop_mito = TRUE,
   drop_ribo = FALSE,
-  ensembl_mapping_file = NULL
+  ensembl_mapping_file = NULL,
+  species = getOption("scflow_species", default = "human")
 )
 }
 \arguments{
