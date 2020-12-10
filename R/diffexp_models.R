@@ -365,7 +365,8 @@ perform_de <- function(sce,
     ensembl_res <- map_ensembl_gene_id(
       fcHurdle$ensembl_gene_id,
       mappings = c("external_gene_name", "gene_biotype"),
-      ensembl_mapping_file = fargs$ensembl_mapping_file
+      ensembl_mapping_file = fargs$ensembl_mapping_file,
+      species = species
     ) %>%
       dplyr::rename(gene = external_gene_name)
 

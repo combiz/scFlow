@@ -4,6 +4,7 @@
 #' @param sce_l a list of SingleCellExperiment objects, or, folder_paths to
 #' SingleCellExperiment objects to be read in with \code{\link{read_sce}}
 #' @param ensembl_mapping_file path to the mappings tsv file
+#' @species human or mouse
 #'
 #' @return sce a annotated SingleCellExperiment object
 #'
@@ -19,7 +20,10 @@
 #' @importFrom tools toTitleCase
 #' @export
 #'
-merge_sce <- function(sce_l, ensembl_mapping_file = NULL) {
+merge_sce <- function(sce_l, ensembl_mapping_file = NULL,
+                      species = getOption(
+                        "scflow_species",
+                        default = "human")) {
 
   cat(cli::rule("Merging SingleCellExperiments", line = 2), "\r\n")
 
