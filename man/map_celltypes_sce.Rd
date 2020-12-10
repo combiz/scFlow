@@ -8,7 +8,8 @@ map_celltypes_sce(
   sce,
   ctd_folder,
   cells_to_sample = 10000,
-  clusters_colname = "clusters"
+  clusters_colname = "clusters",
+  species = "human"
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ map_celltypes_sce(
 \item{cells_to_sample}{total cells to consider for gene enrichment}
 
 \item{clusters_colname}{the name of the colData column with cluster number}
+
+\item{species}{specify human or mouse}
 }
 \value{
 sce a SingleCellExperiment object annotated with celltypes/metadata

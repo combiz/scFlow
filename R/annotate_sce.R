@@ -86,7 +86,10 @@ annotate_sce <- function(sce,
                          annotate_genes = TRUE,
                          annotate_cells = TRUE,
                          nmads = 4.0,
-                         ensembl_mapping_file = NULL) {
+                         ensembl_mapping_file = NULL,
+                         species = getOption(
+                           "scflow_species",
+                           default = "human")) {
 
   if (class(sce) != "SingleCellExperiment") {
     stop(cli::cli_alert_danger("A SingleCellExperiment is required."))
