@@ -127,9 +127,10 @@ usethis::use_github_action_check_full()
 ## before every release
 # knit the readme.Rmd <<--
 # update the site
+use_version()
 pkgdown::build_site()
 
-use_version()
+
 build()
 
 #########################

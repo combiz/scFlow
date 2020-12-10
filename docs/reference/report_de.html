@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scFlow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.0</span>
       </span>
     </div>
 
@@ -120,7 +120,14 @@
     <p>Generate a report for differential expression analysis</p>
     </div>
 
-    <pre class="usage"><span class='fu'>report_de</span>(<span class='no'>res</span>, <span class='kw'>report_folder_path</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span>(), <span class='kw'>report_file</span> <span class='kw'>=</span> <span class='st'>"de_report_scflow"</span>)</pre>
+    <pre class="usage"><span class='fu'>report_de</span>(
+  <span class='no'>res</span>,
+  <span class='kw'>fc_threshold</span> <span class='kw'>=</span> <span class='fl'>1.05</span>,
+  <span class='kw'>pval_cutoff</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
+  <span class='kw'>n_label</span> <span class='kw'>=</span> <span class='fl'>10</span>,
+  <span class='kw'>report_folder_path</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span>(),
+  <span class='kw'>report_file</span> <span class='kw'>=</span> <span class='st'>"de_report_scflow"</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -128,6 +135,18 @@
     <tr>
       <th>res</th>
       <td><p>Differential expression result table from perform_de() function.</p></td>
+    </tr>
+    <tr>
+      <th>fc_threshold</th>
+      <td><p>fold change up/down threshold.</p></td>
+    </tr>
+    <tr>
+      <th>pval_cutoff</th>
+      <td><p>the adjusted pvalue cutoff threshold.</p></td>
+    </tr>
+    <tr>
+      <th>n_label</th>
+      <td><p>number of genes to be labelled in the volcano plot.</p></td>
     </tr>
     <tr>
       <th>report_folder_path</th>
