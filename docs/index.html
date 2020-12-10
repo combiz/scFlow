@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">scFlow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
       </span>
     </div>
 
@@ -143,275 +143,7 @@
 <p>You may need to install scFlow using a Personal Access Token (Github-&gt;Settings-&gt;Developer Settings): -</p>
 <div class="sourceCode" id="cb3"><pre class="r"><span class="co"># install.packages("devtools")</span>
 <span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">"combiz/scFlow"</span>, <span class="kw">auth_token</span> <span class="kw">=</span> <span class="st">"YOURTOKEN"</span>)</pre></div>
-<p>See <a href="https://github.com/combiz/scFlow/wiki/Installing-scFlow-from-a-private-github-repo">this page on the wiki</a> for a full explanation. For dependecy related issues check this <a href="https://github.com/combiz/scFlow/wiki">link</a>.</p>
-</div>
-<div id="preprocessing-example-dataset" class="section level2">
-<h2 class="hasAnchor">
-<a href="#preprocessing-example-dataset" class="anchor"></a>Preprocessing example dataset</h2>
-<div id="prerequisite" class="section level3">
-<h3 class="hasAnchor">
-<a href="#prerequisite" class="anchor"></a>Prerequisite</h3>
-<p>To preprocess scFlowExamples dataset, the following packages should be installed.</p>
-<div class="sourceCode" id="cb4"><pre class="r"><span class="kw">if</span> (!<span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span>(<span class="st">"BiocManager"</span>, <span class="kw">quietly</span> <span class="kw">=</span> <span class="fl">TRUE</span>)) {
-  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"BiocManager"</span>)
-}
-<span class="kw pkg">BiocManager</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html">install</a></span>(<span class="st">"DropletUtils"</span>)
-
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"ids"</span>)
-
-<span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">"NathanSkene/One2One"</span>)</pre></div>
-</div>
-<div id="install-the-dataset-repository" class="section level3">
-<h3 class="hasAnchor">
-<a href="#install-the-dataset-repository" class="anchor"></a>Install the dataset repository</h3>
-<div class="sourceCode" id="cb5"><pre class="r"><span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">"neurogenomics/scFlowExample"</span>)</pre></div>
-</div>
-<div id="preparing-data-for-scflow" class="section level3">
-<h3 class="hasAnchor">
-<a href="#preparing-data-for-scflow" class="anchor"></a>Preparing data for <em>scFlow</em>
-</h3>
-<div class="sourceCode" id="cb6"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">scFlowExamples</span>)
-<span class="no">indvExp</span> <span class="kw">&lt;-</span> <span class="kw pkg">scFlowExamples</span><span class="kw ns">::</span><span class="no">indvExp</span>
-
-<span class="co"># Create a folder to store the 10xGenomics matrix format data</span>
-<span class="no">output_path</span> <span class="kw">&lt;-</span> <span class="st">"~/tmp_ZeiselSCFLOW"</span>
-<span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span>(<span class="no">output_path</span>)
-
-
-<span class="kw">for</span> (<span class="no">i</span> <span class="kw">in</span> <span class="fl">1</span>:<span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">indvExp</span>)) {
-  <span class="no">x</span> <span class="kw">&lt;-</span> <span class="no">indvExp</span><span class="kw">[[</span><span class="no">i</span>]]$<span class="no">exp</span>
-
-  <span class="co"># Convert gene symbols from mouse to human</span>
-  <span class="co"># Limit genes to Mouse:Human orthologs</span>
-  <span class="co"># Convert human gene symbols to Ensembl gene IDs</span>
-
-  <span class="no">x</span> <span class="kw">&lt;-</span> <span class="fu">mouse_symbol_to_human_ensembl</span>(<span class="no">x</span>)
-
-  <span class="co"># Write the data</span>
-
-  <span class="no">output_file</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"%s/individual_%s"</span>, <span class="no">output_path</span>, <span class="no">i</span>)
-  <span class="kw pkg">DropletUtils</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/DropletUtils/man/write10xCounts.html">write10xCounts</a></span>(<span class="no">output_file</span>, <span class="no">x</span>,
-    <span class="kw">barcodes</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="no">x</span>), <span class="kw">gene.id</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="no">x</span>),
-    <span class="kw">gene.symbol</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="no">x</span>), <span class="kw">gene.type</span> <span class="kw">=</span> <span class="st">"Gene Expression"</span>, <span class="kw">overwrite</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-    <span class="kw">type</span> <span class="kw">=</span> <span class="st">"auto"</span>, <span class="kw">genome</span> <span class="kw">=</span> <span class="st">"unknown"</span>, <span class="kw">version</span> <span class="kw">=</span> <span class="st">"3"</span>
-  )
-}</pre></div>
-</div>
-<div id="create-the-manifesto-file-for-scflow" class="section level3">
-<h3 class="hasAnchor">
-<a href="#create-the-manifesto-file-for-scflow" class="anchor"></a>Create the manifesto file for <em>scFlow</em>
-</h3>
-<div class="sourceCode" id="cb7"><pre class="r"><span class="no">y</span> <span class="kw">&lt;-</span> <span class="kw pkg">ids</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ids/man/proquint.html">proquint</a></span>(<span class="kw">n</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">indvExp</span>), <span class="kw">n_words</span> <span class="kw">=</span> <span class="fl">1L</span>, <span class="kw">use_cache</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">use_openssl</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
-<span class="no">z</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="kw">key</span> <span class="kw">=</span> <span class="no">y</span>, <span class="kw">filepath</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"%s/%s"</span>, <span class="no">output_path</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">list.files</a></span>(<span class="no">output_path</span>, <span class="kw">pattern</span> <span class="kw">=</span> <span class="st">"individual"</span>)), <span class="kw">stringsAsFactors</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span>(<span class="no">z</span>, <span class="kw">file</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"%s/Manifest.txt"</span>, <span class="no">output_path</span>), <span class="kw">row.names</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">col.names</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">quote</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">sep</span> <span class="kw">=</span> <span class="st">"\t"</span>)</pre></div>
-</div>
-<div id="create-the-sample-sheet-for-scflow" class="section level3">
-<h3 class="hasAnchor">
-<a href="#create-the-sample-sheet-for-scflow" class="anchor"></a>Create the sample sheet for <em>scFlow</em>
-</h3>
-<div class="sourceCode" id="cb8"><pre class="r"><span class="no">dx</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="no">indvExp</span>, <span class="kw">FUN</span> <span class="kw">=</span> <span class="kw">function</span>(<span class="no">x</span>) {
-  <span class="fu"><a href="https://rdrr.io/r/base/function.html">return</a></span>(<span class="no">x</span>$<span class="no">dx</span>)
-}))
-<span class="no">sex</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"M"</span>, <span class="st">"F"</span>), <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">dx</span>), <span class="kw">replace</span> <span class="kw">=</span> <span class="no">T</span>)
-<span class="no">age</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span>(<span class="fl">1</span>:<span class="fl">100</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span>(<span class="no">dx</span>))
-<span class="no">sample_sheet</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="kw">manifest</span> <span class="kw">=</span> <span class="no">z</span>[, <span class="fl">1</span>], <span class="kw">individual</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="no">z</span>), <span class="kw">diagnosis</span> <span class="kw">=</span> <span class="no">dx</span>, <span class="kw">sex</span> <span class="kw">=</span> <span class="no">sex</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/write.table.html">write.table</a></span>(<span class="no">sample_sheet</span>, <span class="kw">file</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span>(<span class="st">"%s/SampleSheet.tsv"</span>, <span class="no">output_path</span>), <span class="kw">row.names</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">col.names</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">quote</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">sep</span> <span class="kw">=</span> <span class="st">"\t"</span>)</pre></div>
-<p>For a detailed explanation on how <code>scFlowExample</code> dataset was generated, visit this <a href="https://github.com/neurogenomics/scFlowExample">link</a>.</p>
-</div>
-</div>
-<div id="running-scflow" class="section level2">
-<h2 class="hasAnchor">
-<a href="#running-scflow" class="anchor"></a>Running <em>scFlow</em>
-</h2>
-<p>The <code>scFlow</code> pipeline requires three main input: a folder containing <code>matrix.mtx.gz</code>, <code>features.tsv.gz</code>, <code>barcodes.tsv.gz</code> for individual samples, a SampleSheet.tsv file which is a tab-separated-variable file with sample metadata and a Manifest.txt file is a tab-separated-variable file with two columns: <code>key</code> and <code>filepath</code>. Details of how to generate the files is given in this <a href="https://github.com/combiz/scFlow/wiki/Generating-a-Manifest-File-and-SampleSheet-for-scFlow">page</a></p>
-<p>The basic <code>scFlow</code> workflow for sample QC begins with the import of the feature-barcode sparse matrix with <code>read_sparse_matrix</code>. The metadata for the sample is then imported from a sample sheet with <code>read_metadata</code>. A SingleCellExperiment object is created from the matrix and the metadata using <code>generate_sce</code> which is then annotated with both gene and cell-level data using <code>annotate_sce</code>. We then filter the SingleCellExperiment to select only cells and genes meeting our QC criteria using <code>filter_sce</code>. We can then optionally find singlets in our filtered SingleCellExperiment using <code>find_singlets</code> before filtering them out again with <code>filter_sce</code>. A complete QC report can then be generated using <code>report_qc_sce</code> before saving the filtered and quality-controlled SingleCellExperiment with <code>write_sce</code>.</p>
-<div id="step-one---import-the-matrix-and-metadata" class="section level3">
-<h3 class="hasAnchor">
-<a href="#step-one---import-the-matrix-and-metadata" class="anchor"></a>Step one - import the matrix and metadata</h3>
-<div class="sourceCode" id="cb9"><pre class="r"><span class="no">matrix_fp</span> <span class="kw">&lt;-</span> <span class="st">"path/to/matrix/file"</span>
-<span class="no">samplesheet_fp</span> <span class="kw">&lt;-</span> <span class="st">"path/to/SampleSheet.tsv"</span>
-<span class="no">ensembl_fp</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"extdata"</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">"scFlowData"</span>), <span class="st">"/"</span>, <span class="st">"ensembl_mappings.tsv"</span>, <span class="kw">sep</span> <span class="kw">=</span> <span class="st">""</span>)</pre></div>
-<div class="sourceCode" id="cb10"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">scFlow</span>)
-<span class="no">mat</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/read_sparse_matrix.html">read_sparse_matrix</a></span>(<span class="no">matrix_fp</span>)</pre></div>
-<p>Next we retrieve the metadata by pointing to a Sample Sheet and specifying a unique identifier (unique_key) in a specific column (key_colname):</p>
-<div class="sourceCode" id="cb11"><pre class="r"><span class="no">metadata</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/read_metadata.html">read_metadata</a></span>(
-<span class="kw">unique_key</span> <span class="kw">=</span> <span class="st">"fonij"</span>,
-<span class="kw">key_colname</span> <span class="kw">=</span> <span class="st">"manifest"</span>,
-<span class="kw">samplesheet_path</span> <span class="kw">=</span> <span class="no">samplesheet_fp</span>
-)
-<span class="co">#&gt; ══ Retrieving sample metadata ════════════════════════════════════════════════════════════════════════════════════ </span>
-<span class="co">#&gt; Reading /home/nfancy/R/x86_64-pc-linux-gnu-library/3.6/scFlowData/extdata/vignette_data/SampleSheet.tsv  </span>
-<span class="co">#&gt; ✔ Four metadata variables loaded for manifest='fonij'</span>
-<span class="co">#&gt; manifest: fonij (factor)</span>
-<span class="co">#&gt; individual: 1 (integer)</span>
-<span class="co">#&gt; diagnosis: Cases (factor)</span>
-<span class="co">#&gt; sex: F (factor)</span></pre></div>
-<p>For downstream analyses it’s important that the variable classes are correctly specified. Carefully inspect the metadata classes in brackets. In the above example we see that the <em>individual</em> were imported as integer rather than factor variables. Let’s correct this by reloading the metadata, this time specifying the correct variable classes for this variable:-</p>
-<div class="sourceCode" id="cb12"><pre class="r"><span class="no">var_classes</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
-<span class="kw">individual</span> <span class="kw">=</span> <span class="st">"factor"</span>
-)
-
-<span class="no">metadata</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/read_metadata.html">read_metadata</a></span>(
-<span class="kw">unique_key</span> <span class="kw">=</span> <span class="st">"lodut"</span>,
-<span class="kw">key_colname</span> <span class="kw">=</span> <span class="st">"manifest"</span>,
-<span class="kw">samplesheet_path</span> <span class="kw">=</span> <span class="no">samplesheet_fp</span>,
-<span class="kw">col_classes</span> <span class="kw">=</span> <span class="no">var_classes</span>
-)</pre></div>
-<p>With the metadata imported with the correct variable classes, and the previously loaded sparse matrix, we can generate our <code>SingleCellExperiment</code> object:-</p>
-<div class="sourceCode" id="cb13"><pre class="r"><span class="no">sce</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/generate_sce.html">generate_sce</a></span>(<span class="no">mat</span>, <span class="no">metadata</span>)</pre></div>
-<p>The SingleCellExperiment object was succesfully created and we can now proceed with annotation.</p>
-</div>
-<div id="step-two-annotate-the-singlecellexperiment" class="section level3">
-<h3 class="hasAnchor">
-<a href="#step-two-annotate-the-singlecellexperiment" class="anchor"></a>Step two – Annotate the SingleCellExperiment</h3>
-<p>In <code>scFlow</code> we specify all of our QC preferences and cutoffs with the <code>annotate_sce</code> command. This will also produce plots in the <code>sce@metadata</code> slot allowing rapid revision and optimization of QC parameters. Let’s start with the default parameters by simply providing the <code>SingleCellExperiment</code> object to the <code>annotate_sce</code> function:-</p>
-<div class="sourceCode" id="cb14"><pre class="r"><span class="no">sce</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/annotate_sce.html">annotate_sce</a></span>(
-  <span class="no">sce</span>,
-  <span class="kw">ensembl_mapping_file</span> <span class="kw">=</span> <span class="no">ensembl_fp</span>
-)</pre></div>
-<p>A list of QC plots are available to browse in the <code>sce@metadata$qc_plots</code>, e.g.</p>
-<div class="sourceCode" id="cb15"><pre class="r"><span class="no">sce</span>@<span class="kw">metadata</span>$<span class="no">qc_plots</span>$<span class="no">number_genes_vs_count_depth</span></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-18-1.png" width="100%"></p>
-<p>After running <code>annotate_sce</code> we may examine the plots and assess whether the applied thresholds are sensible for the sample. The effects of different parameters can be explored by iterating through the above <code>generate_sce</code> and <code>annotate_sce</code> functions until satisfied with the settings.</p>
-<p>The next step is to filter the SingleCellExperiment with <code>filter_sce</code>: -</p>
-<div class="sourceCode" id="cb16"><pre class="r"><span class="no">sce</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/filter_sce.html">filter_sce</a></span>(<span class="no">sce</span>)</pre></div>
-</div>
-<div id="step-three-finding-singlets-and-discarding-multiplets" class="section level3">
-<h3 class="hasAnchor">
-<a href="#step-three-finding-singlets-and-discarding-multiplets" class="anchor"></a>Step three – Finding singlets and discarding multiplets</h3>
-<p>At this stage we may wish to identify singlets in the <code>SingleCellExperiment</code> and discard any multiplets. In <code>scFlow</code> we simply run <code>find_singlets</code> and specify our preferred multiplet identification algorithm. Here we will use <code>doubletfinder</code> (This will take a while depending on the cell numbers):-</p>
-<div class="sourceCode" id="cb17"><pre class="r"><span class="no">sce</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/find_singlets.html">find_singlets</a></span>(<span class="no">sce</span>, <span class="st">"doubletfinder"</span>, <span class="kw">pK</span> <span class="kw">=</span> <span class="fl">0.005</span>, <span class="kw">vars_to_regress_out</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"nCount_RNA"</span>, <span class="st">"pc_mito"</span>))</pre></div>
-<p>Now we can filter out these multiplets with <code>filter_sce</code>:-</p>
-<div class="sourceCode" id="cb18"><pre class="r"><span class="no">sce</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/filter_sce.html">filter_sce</a></span>(<span class="no">sce</span>)</pre></div>
-<p>You can see the remaining cells after all the filtering done by:</p>
-<div class="sourceCode" id="cb19"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(<span class="no">sce</span>)
-<span class="co">#&gt; [1] 8502 2148</span></pre></div>
-<p>Finally we produce a report with <code>report_qc_sce</code> (this takes a few minutes): -</p>
-<div class="sourceCode" id="cb20"><pre class="r"><span class="fu"><a href="reference/report_qc_sce.html">report_qc_sce</a></span>(<span class="no">sce</span>, <span class="kw">report_file</span> <span class="kw">=</span> <span class="st">"qc_report_scflow_individual_1"</span>)</pre></div>
-<p>And save our SingleCellExperiment: -</p>
-<div class="sourceCode" id="cb21"><pre class="r"><span class="fu"><a href="reference/write_sce.html">write_sce</a></span>(<span class="no">sce</span>, <span class="st">"./sce_individual_1"</span>)</pre></div>
-</div>
-<div id="step-four-merging-multiple-datasets-into-one-singlecellexperiment-object" class="section level3">
-<h3 class="hasAnchor">
-<a href="#step-four-merging-multiple-datasets-into-one-singlecellexperiment-object" class="anchor"></a>Step four – Merging multiple datasets into one <em>SingleCellExperiment</em> object</h3>
-<p>Follow step one-three for all individual samples and save them using <code>write_sce</code> function. Then we read the individual <code>SingleCellExperiment</code> using <code>read_sce</code> into a list and merge them using <code>merge_sce</code> function.</p>
-<div class="sourceCode" id="cb22"><pre class="r"><span class="no">sce_path</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.files.html">dir</a></span>(
-  <span class="kw">path</span> <span class="kw">=</span> <span class="st">"/path/to/dir"</span>,
-  <span class="kw">pattern</span> <span class="kw">=</span> <span class="st">"sce_individual"</span>,
-  <span class="kw">full.names</span> <span class="kw">=</span> <span class="fl">TRUE</span>
-)
-
-<span class="no">sce_pathlist</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>()
-
-<span class="kw">for</span> (<span class="no">i</span> <span class="kw">in</span> <span class="no">sce_path</span>) {
-  <span class="no">sce_pathlist</span><span class="kw">[[</span><span class="no">i</span>]] <span class="kw">&lt;-</span> <span class="no">i</span>
-}
-
-<span class="no">sce_list</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="no">sce_pathlist</span>, <span class="no">read_sce</span>)
-
-<span class="no">sce_merged</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/merge_sce.html">merge_sce</a></span>(
-  <span class="no">sce_list</span>,
-  <span class="kw">ensembl_mapping_file</span> <span class="kw">=</span> <span class="no">ensembl_fp</span>
-)</pre></div>
-<p>Then we write the merged <code>SingleCellExperiment</code> object.</p>
-<div class="sourceCode" id="cb23"><pre class="r"><span class="fu"><a href="reference/write_sce.html">write_sce</a></span>(
-  <span class="kw">sce</span> <span class="kw">=</span> <span class="no">sce_merged</span>,
-  <span class="kw">folder_path</span> <span class="kw">=</span> <span class="st">"./sce_merged"</span>
-)</pre></div>
-</div>
-<div id="step-five-dimension-reduction-and-clustering" class="section level3">
-<h3 class="hasAnchor">
-<a href="#step-five-dimension-reduction-and-clustering" class="anchor"></a>Step five – Dimension reduction and clustering</h3>
-<p>Once we merge all the samples into one <code>SingleCellExperiment</code> object we can move to the next steps of dimension reduction and clustering. Here dimension reduction is performed using multiple methods by default i.e. “PCA”, “tSNE”, “UMAP”, “UMAP3D”. Once the dimension reduction step is done the <code>SingleCellExperiment</code> object is ready for clustering.</p>
-<div class="sourceCode" id="cb24"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span>(<span class="no">sce_merged</span>)
-<span class="co">#&gt; [1] 10184 12859</span></pre></div>
-<div class="sourceCode" id="cb25"><pre class="r"><span class="no">sce_merged</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/reduce_dims_sce.html">reduce_dims_sce</a></span>(<span class="no">sce_merged</span>, <span class="kw">pca_dims</span> <span class="kw">=</span> <span class="fl">5</span>)</pre></div>
-<p>We can now plot tSNE:-</p>
-<div class="sourceCode" id="cb26"><pre class="r"><span class="fu"><a href="reference/plot_reduced_dim.html">plot_reduced_dim</a></span>(<span class="no">sce_merged</span>, <span class="kw">feature_dim</span> <span class="kw">=</span> <span class="st">"diagnosis"</span>, <span class="kw">reduced_dim</span> <span class="kw">=</span> <span class="st">"tSNE"</span>, <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">1</span>)</pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-30-1.png" width="100%"></p>
-<p>The next step is to cluster all the cells using <code>cluster_sce</code> command.</p>
-<div class="sourceCode" id="cb27"><pre class="r"><span class="no">sce_merged</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/cluster_sce.html">cluster_sce</a></span>(<span class="no">sce_merged</span>)</pre></div>
-<p>We can then plot the clusters:-</p>
-<div class="sourceCode" id="cb28"><pre class="r"><span class="fu"><a href="reference/plot_reduced_dim.html">plot_reduced_dim</a></span>(<span class="no">sce_merged</span>, <span class="kw">feature_dim</span> <span class="kw">=</span> <span class="st">"clusters"</span>, <span class="kw">reduced_dim</span> <span class="kw">=</span> <span class="st">"tSNE"</span>, <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">1</span>)</pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-32-1.png" width="100%"></p>
-<p>The next step is to annotate the celltypes for each cluster. Here, we will use the package <code>ewce</code>. For this we use the following command (This may take a while):-</p>
-<div class="sourceCode" id="cb29"><pre class="r"><span class="no">sce_merged</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/map_celltypes_sce.html">map_celltypes_sce</a></span>(<span class="no">sce_merged</span>,
-  <span class="kw">ctd_folder</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"extdata"</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">"scFlowData"</span>), <span class="st">"/"</span>, <span class="st">"ctd"</span>, <span class="kw">sep</span> <span class="kw">=</span> <span class="st">""</span>)
-)</pre></div>
-<p>The celltypes for each cell can be found in <code>sce_merged@colData$cluster_celltype</code> slot. We can also generate tSNE plot for each celltype.</p>
-<div class="sourceCode" id="cb30"><pre class="r"><span class="fu"><a href="reference/plot_reduced_dim.html">plot_reduced_dim</a></span>(<span class="no">sce_merged</span>, <span class="kw">feature_dim</span> <span class="kw">=</span> <span class="st">"cluster_celltype"</span>, <span class="kw">reduced_dim</span> <span class="kw">=</span> <span class="st">"tSNE"</span>, <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">1</span>)</pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-34-1.png" width="100%"></p>
-</div>
-<div id="step-six-performing-differential-expression-analysis-following-by-impacted-pathway-analysis" class="section level3">
-<h3 class="hasAnchor">
-<a href="#step-six-performing-differential-expression-analysis-following-by-impacted-pathway-analysis" class="anchor"></a>Step six – Performing differential expression analysis following by impacted pathway analysis</h3>
-<p>We need to subset the merged <code>SingleCellExperiment</code> object to perform differential expression analysis. Here we are using <code>MASTZLM</code> for differential expression analysis. For example, we are interested in performing DE analysis in the <code>IN-SST</code> cell cluster. So, we first subset the <code>IN-SST</code> cluster.</p>
-<div class="sourceCode" id="cb31"><pre class="r"><span class="no">sce_subset</span> <span class="kw">&lt;-</span> <span class="no">sce_merged</span>[, <span class="no">sce_merged</span>$<span class="no">cluster_celltype</span> <span class="kw">==</span> <span class="st">"IN-SST"</span>]</pre></div>
-<p>We need to specify the colData column name as dependent_var as the variable of interest for DE analysis. For example here we want to perform DE analysis between Case and Controls which is found in <code>diagnosis</code> column. ref_class is the reference group for DE analysis. If there are any confounding variables those colData names can be passed through confounding_vars argument.</p>
-<div class="sourceCode" id="cb32"><pre class="r"><span class="no">result_de</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/perform_de.html">perform_de</a></span>(
-  <span class="no">sce_subset</span>,
-  <span class="kw">dependent_var</span> <span class="kw">=</span> <span class="st">"diagnosis"</span>,
-  <span class="kw">ref_class</span> <span class="kw">=</span> <span class="st">"Controls"</span>,
-  <span class="kw">confounding_vars</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"cngeneson"</span>, <span class="st">"sex"</span>),
-  <span class="kw">ensembl_mapping_file</span> <span class="kw">=</span> <span class="no">ensembl_fp</span>)</pre></div>
-<p>result_de is a list of DE tables. If there are more than one group to be compared against the reference (here <code>Controls</code>) group they will all be merged into the <code>result_de@Controls_Merged_Results</code> slot.</p>
-<div class="sourceCode" id="cb33"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">result_de</span>$<span class="no">Controls_vs_diagnosisCases</span>, <span class="fl">5</span>)
-<span class="co">#&gt;   ensembl_gene_id          pval    logFC    ci.hi    ci.lo   gene_biotype</span>
-<span class="co">#&gt; 1 ENSG00000122585 2.080333e-146 3.672375 3.922793 3.421956 protein_coding</span>
-<span class="co">#&gt; 2 ENSG00000109846  0.000000e+00 2.467718 2.547119 2.388317 protein_coding</span>
-<span class="co">#&gt; 3 ENSG00000125869  0.000000e+00 2.337181 2.407184 2.267177 protein_coding</span>
-<span class="co">#&gt; 4 ENSG00000128683 2.249204e-300 1.880722 1.972310 1.789133 protein_coding</span>
-<span class="co">#&gt; 5 ENSG00000102804 9.839248e-288 1.812161 1.900221 1.724101 protein_coding</span>
-<span class="co">#&gt;      gene percentage_gene_gc_content          padj       contrast</span>
-<span class="co">#&gt; 1     NPY                      43.41 3.934699e-144 diagnosisCases</span>
-<span class="co">#&gt; 2   CRYAB                      46.12  0.000000e+00 diagnosisCases</span>
-<span class="co">#&gt; 3   LAMP5                      42.77  0.000000e+00 diagnosisCases</span>
-<span class="co">#&gt; 4    GAD1                      45.82 2.056147e-297 diagnosisCases</span>
-<span class="co">#&gt; 5 TSC22D1                      38.08 6.746034e-285 diagnosisCases</span>
-<span class="co">#&gt;   reference                    model</span>
-<span class="co">#&gt; 1  Controls ~diagnosis+cngeneson+sex</span>
-<span class="co">#&gt; 2  Controls ~diagnosis+cngeneson+sex</span>
-<span class="co">#&gt; 3  Controls ~diagnosis+cngeneson+sex</span>
-<span class="co">#&gt; 4  Controls ~diagnosis+cngeneson+sex</span>
-<span class="co">#&gt; 5  Controls ~diagnosis+cngeneson+sex</span></pre></div>
-<p>We have implimented both topology based and non-topology based pathway enrichment analysis. Here we will use ROntoTools and WebGestaltR respectively.</p>
-<div class="sourceCode" id="cb34"><pre class="r"><span class="no">enrichment_result_webgestaltr</span> <span class="kw">&lt;-</span> <span class="fu">pathway_analysis_webgestalt</span>(
-  <span class="kw">gene_file</span> <span class="kw">=</span> <span class="no">result_de</span>$<span class="no">Controls_vs_diagnosisCases</span>,
-  <span class="kw">enrichment_method</span> <span class="kw">=</span> <span class="st">"ORA"</span>,
-  <span class="kw">project_name</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-  <span class="kw">additional_enrichment_databse</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
-  <span class="kw">is_output</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
-  <span class="kw">output_dir</span> <span class="kw">=</span> <span class="st">"~/"</span>
-)</pre></div>
-<div class="sourceCode" id="cb35"><pre class="r"><span class="no">enrichment_result_webgestaltr</span>$<span class="no">pathway_KEGG</span>[<span class="fl">1</span>:<span class="fl">5</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">8</span>,<span class="fl">9</span>)]
-<span class="co">#&gt;     geneSet                          description       pValue          FDR</span>
-<span class="co">#&gt; 25 hsa03010                             Ribosome 0.000000e+00 0.000000e+00</span>
-<span class="co">#&gt; 53 hsa04723 Retrograde endocannabinoid signaling 6.661338e-15 4.360034e-13</span>
-<span class="co">#&gt; 63 hsa04727                    GABAergic synapse 1.285971e-11 7.081007e-10</span>
-<span class="co">#&gt; 74 hsa05032                   Morphine addiction 1.045983e-09 4.903399e-08</span>
-<span class="co">#&gt; 79 hsa04725                  Cholinergic synapse 4.169939e-09 1.831078e-07</span>
-
-<span class="no">enrichment_result_webgestaltr</span>$<span class="no">plot</span>$<span class="no">pathway_KEGG</span></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-41-1.png" width="100%"></p>
-<div class="sourceCode" id="cb36"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">1234</span>)
-<span class="no">enrichment_result_rontotools</span> <span class="kw">&lt;-</span> <span class="fu"><a href="reference/pathway_analysis_rontotools.html">pathway_analysis_rontotools</a></span>(
-  <span class="kw">gene_file</span> <span class="kw">=</span> <span class="no">result_de</span>$<span class="no">Controls_vs_diagnosisCases</span>,
-  <span class="kw">project_name</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-  <span class="kw">enrichment_database</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"kegg"</span>, <span class="st">"reactome"</span>, <span class="st">"nci"</span>, <span class="st">"panther"</span>),
-  <span class="kw">is_output</span> <span class="kw">=</span> <span class="fl">TRUE</span>,
-  <span class="kw">output_dir</span> <span class="kw">=</span> <span class="st">"~/"</span>
-)</pre></div>
-<div class="sourceCode" id="cb37"><pre class="r"><span class="no">enrichment_result_rontotools</span>$<span class="no">kegg</span>[<span class="fl">1</span>:<span class="fl">5</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">6</span>,<span class="fl">7</span>)]
-<span class="co">#&gt;     geneSet                        description      pValue        FDR</span>
-<span class="co">#&gt; 1 hsa:00010       Glycolysis / Gluconeogenesis 0.004975124 0.01129865</span>
-<span class="co">#&gt; 2 hsa:00120     Primary bile acid biosynthesis 0.004975124 0.01129865</span>
-<span class="co">#&gt; 3 hsa:00230                  Purine metabolism 0.004975124 0.01129865</span>
-<span class="co">#&gt; 4 hsa:00410            beta-Alanine metabolism 0.004975124 0.01129865</span>
-<span class="co">#&gt; 5 hsa:00430 Taurine and hypotaurine metabolism 0.004975124 0.01129865</span>
-
-<span class="no">enrichment_result_rontotools</span>$<span class="no">plot</span>$<span class="no">kegg</span></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-43-1.png" width="100%"></p>
-</div>
+<p>See <a href="https://github.com/combiz/scFlow/wiki/Installing-scFlow-from-a-private-github-repo">this page on the wiki</a> for a full explanation. For dependency related issues check this <a href="https://github.com/combiz/scFlow/wiki">link</a>.</p>
 </div>
 </div>
   </div>
@@ -430,7 +162,7 @@
 <h2>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
+<li><small><a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a></small></li>
 </ul>
 </div>
 <div class="developers">
@@ -449,6 +181,7 @@
 <li><a href="https://travis-ci.org/combiz/scFlow"><img src="https://travis-ci.org/combiz/scFlow.svg?branch=master" alt="Travis build status"></a></li>
 <li><a href="https://codecov.io/gh/combiz/scFlow?branch=master"><img src="https://codecov.io/gh/combiz/scFlow/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
 <li><a href="https://ci.appveyor.com/project/combiz/scFlow"><img src="https://ci.appveyor.com/api/projects/status/github/combiz/scFlow?branch=master&amp;svg=true" alt="AppVeyor build status"></a></li>
+<li><a href="https://github.com/combiz/scFlow/actions"><img src="https://github.com/combiz/scFlow/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
 </ul>
 </div>
 </div>

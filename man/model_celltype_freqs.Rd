@@ -31,4 +31,8 @@ results_l a list of results
 \description{
 Model Changes in Celltype Frequencies with Dirichlet Multinomial Regression
 }
+\seealso{
+Other Further analyses: 
+\code{\link{find_marker_genes}()}
+}
 \concept{Further analyses}

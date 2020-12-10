@@ -94,6 +94,7 @@ model_celltype_freqs <- function(sce,
       facet_plots = TRUE
     ), fargs)
   )
+  #results$dirichlet_plot$plot_env$sce <- NULL
 
   # individual celltype plots for dirichlet
   results$dirichlet_plots_by_celltype <- list()
@@ -259,10 +260,8 @@ model_celltype_freqs <- function(sce,
       facet_wrap(~ .data[[celltype_var]], ncol = 3)
   }
 
-  p$plot_env <- rlang::new_environment()
-  #p$plot_env$sce <- NULL
-  #p$plot_env$... <- NULL
-  #p$plot_env$fargs$sce <- NULL
+  p <- ggplot2::ggplotGrob(p)
+  p <- ggpubr::as_ggplot(p)
   return(p)
 }
 
@@ -410,10 +409,12 @@ model_celltype_freqs <- function(sce,
       facet_grid(~ .data[[celltype_var]], scales = "free_y", switch = "x")
   }
 
-  p$plot_env <- rlang::new_environment()
+  p <- ggplot2::ggplotGrob(p)
+  p <- ggpubr::as_ggplot(p)
   #p$plot_env$sce <- NULL
   #p$plot_env$... <- NULL
   #p$plot_env$fargs$sce <- NULL
+
   return(p)
 }
 

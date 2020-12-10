@@ -8,6 +8,7 @@
 #' @param ctd_folder path to a folder with ctd RDS files
 #' @param cells_to_sample total cells to consider for gene enrichment
 #' @param clusters_colname the name of the colData column with cluster number
+#' @param species specify human or mouse
 #'
 #' @return sce a SingleCellExperiment object annotated with celltypes/metadata
 #' @author Nathan Skene / Combiz Khozoie
@@ -24,13 +25,17 @@
 map_celltypes_sce <- function(sce,
                               ctd_folder,
                               cells_to_sample = 10000,
-                              clusters_colname = "clusters") {
+                              clusters_colname = "clusters",
+                              species = "human") {
 
   assertthat::assert_that(dir.exists(ctd_folder))
   assertthat::assert_that(
     clusters_colname %in% names(SummarizedExperiment::colData(sce)),
     msg = "clusters_colname missing from colData"
     )
+  assertthat::assert_that(
+    species %in% c("human", "mouse")
+  )
 
   l_ctd <- .read_rds_files_to_list(ctd_folder)
 
@@ -57,7 +62,7 @@ map_celltypes_sce <- function(sce,
   sce@metadata$ctd <- ctd
 
   message("mapping celltypes with ewce")
-  mappings <- .map_celltypes_with_ewce(ctd, l_ctd)
+  mappings <- .map_celltypes_with_ewce(ctd, l_ctd, inputSpecies = species)
 
   # generate lookup for merging into colData
   mappings_lookup <- mappings %>%
@@ -77,13 +82,14 @@ map_celltypes_sce <- function(sce,
 
   generate_ct_label <- plyr::adply(mappings_lookup, 1, function(x) {
     if (x$Allan2019_ML1 == "Non-neuronal") {
-      x$allan_celltype
+      paste(x$allan_celltype)
     } else if (x$allan_celltype == "Exc") {
       paste("EN", x$allan_layer, sep = "-")
     } else if (x$allan_celltype == "Inh") {
       paste("IN", x$allan_cluster_gene_1, sep = "-")
-    } else x$allan_celltype
-  }, .expand = FALSE, .id = "Cluster") %>%
+    } else {
+      x$allan_celltype
+    }}, .expand = FALSE, .id = "Cluster")%>%
     dplyr::rename(cluster_celltype = V1)
 
   mappings_lookup <- merge(mappings_lookup, generate_ct_label, on = "Cluster")
@@ -119,7 +125,7 @@ map_celltypes_sce <- function(sce,
 #' @importFrom dplyr rename
 #' @importFrom magrittr %>%
 #' @keywords internal
-.map_celltypes_with_ewce <- function(ctd, l_ctd) {
+.map_celltypes_with_ewce <- function(ctd, l_ctd, inputSpecies = "human") {
 
   # cortical types only
   cortical_types <- c(
@@ -148,7 +154,7 @@ map_celltypes_sce <- function(sce,
     mapped_dt <- .map_celltypes(
       ctdToMap = ctd,
       ctdToMapAgainst = l_ctd[[ctd_name]],
-      inputSpecies = "human",
+      inputSpecies = inputSpecies,
       mapAgainstSpecies = species,
       annotLevel = 1,
       numTopMarkers = 50,

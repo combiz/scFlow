@@ -6,8 +6,11 @@
 #'
 #' @param sce a SingleCellExperiment object
 #' @param lower see [dropletUtils::emptyDrops()]
-#' @param retain see [dropletUtils::emptyDrops()]
+#' @param retain see [dropletUtils::emptyDrops()].  Use "auto" to calculate
+#' the parameter from the top `expect_cells` cells (cellranger method).
 #' @param alpha minimum FDR for [dropletUtils::emptyDrops()]
+#' @param niters the number of Monte Carlo iterations
+#' @param expect_cells the number of cells expected for auto retain
 #' @param ... additional arguments for uniformity testing
 #'
 #' @return sce a SingleCellExperiment object annotated with emptyDrops metrics
@@ -21,9 +24,10 @@
 #' @export
 find_cells <- function(sce,
                        lower = 100,
-                       retain = NULL,
+                       retain = "auto",
                        alpha_cutoff = 0.001,
                        niters = 10000,
+                       expect_cells = 3000,
                        ...) {
   if (class(sce) != "SingleCellExperiment") {
     stop(cli::cli_alert_danger("A SingleCellExperiment is required."))
@@ -38,6 +42,22 @@ find_cells <- function(sce,
 
   cli::cli_h1("Annotating Empty Droplets")
   sce <- .append_citation_sce(sce, key = c("emptydrops"))
+
+  if (is.null(retain)) {
+    retain_param <- retain
+  }
+
+  if (toupper(retain) == "AUTO") {
+    retain_param <- retain
+    cli::cli_text(c(
+      "Calculating retain parameter from top {.val {expect_cells}}",
+      " UMI barcodes"
+      ))
+    retain <- .calculate_retain_parameter(sce, expect_cells = expect_cells)
+    cli::cli_alert("Retaining all barcodes with ≥ {.val {retain}} UMIs")
+
+  }
+
   cli::cli_h2("Running Simulations")
   cli::cli_text(
     "Generating ambient model with barcodes with fewer than ",
@@ -45,7 +65,6 @@ find_cells <- function(sce,
   )
 
   # add citations and print
-
 
   # test ambient to evaluate performance with histogram
   cli::cli_text(
@@ -125,6 +144,8 @@ find_cells <- function(sce,
   emptydrops_params$retain <- retain
   emptydrops_params$alpha_cutoff <- alpha_cutoff
   emptydrops_params$niters <- niters
+  emptydrops_params$retain_param <- retain_param
+  emptydrops_params$expect_cells <- expect_cells
 
   # save calculated params
   emptydrops_params$emptydrops_found <- sum(sce$is_empty_drop)
@@ -147,6 +168,24 @@ find_cells <- function(sce,
   sce@metadata$scflow_steps$emptydrops_annotated <- 1
 
   return(sce)
+}
+
+#' helper fn - calculate the retain parameter for emptydrops based
+#' on the cellranger m/10 of top n cells approach
+#' @importFrom Matrix colSums
+#' @importFrom SingleCellExperiment counts
+#' @importFrom dplyr slice_head arrange
+#' @export
+#' @keywords internal
+.calculate_retain_parameter <- function(sce, expect_cells = 3000) {
+  umis <- Matrix::colSums(SingleCellExperiment::counts(sce))
+  umis_rank <- dplyr::dense_rank(dplyr::desc(umis))
+  df <- data.frame(umis, umis_rank) %>%
+    dplyr::arrange(umis_rank) %>%
+    dplyr::slice_head(n = expect_cells)
+  m <- quantile(df$umis, c(.99))
+  retain <- as.integer(m / 10)
+  return(retain)
 }
 
 #' helper fn - Kolmogorov-Smirnov Uniformity Test
@@ -196,7 +235,7 @@ find_cells <- function(sce,
       axis.text.y = element_text(hjust = 0.5, vjust = 0.5)
     )
 
-  p$plot_env <- rlang::new_environment()
+  p <- .grobify_ggplot(p)
   return(p)
 }
 
@@ -227,6 +266,6 @@ find_cells <- function(sce,
       plot.title = element_text(size = 18, hjust = 0.5)
     )
 
-  p$plot_env <- rlang::new_environment()
+  p <- .grobify_ggplot(p)
   return(p)
 }

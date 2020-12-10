@@ -14,3 +14,11 @@ h3, .h3 {
   opacity: 1;
   padding: 20px;
 }
+
+.plainfig {
+  z-index:10;
+  border: thin solid;
+  background-color: white;
+  opacity: 1;
+  padding: 20px;
+}

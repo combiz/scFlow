@@ -4,7 +4,7 @@
 \alias{.map_celltypes_with_ewce}
 \title{Map cluster celltypes with EWCE}
 \usage{
-.map_celltypes_with_ewce(ctd, l_ctd)
+.map_celltypes_with_ewce(ctd, l_ctd, inputSpecies = "human")
 }
 \arguments{
 \item{ctd}{ctd for current expt}

@@ -34,7 +34,9 @@ map_ensembl_gene_id <- function(ensembl_ids,
                                              "gene_biotype",
                                              "external_gene_name",
                                              "percentage_gene_gc_content"),
-                                species = "human",
+                                species = getOption(
+                                  "scflow_species",
+                                  default = "human"),
                                 ensembl_mapping_file = NULL) {
 
   if (!species %in% c("human", "mouse")) {

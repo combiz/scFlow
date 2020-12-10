@@ -20,9 +20,10 @@ library(utils)
 library(knitr)
 library(htmltools)
 library(plotly)
+library(dplyr)
 
 
-knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 
 knitr::knit_hooks$set(wrap = function(before, options, envir){
   if (before){
@@ -35,12 +36,22 @@ knitr::knit_hooks$set(wrap = function(before, options, envir){
 
 ```{r, load_data, results='hide', include=FALSE}
 metadata <- qs::qread(params$metadata_path)
+
+fc_threshold <- as.numeric(attr(metadata, "report_params")["fc_threshold"]) 
+
+pval_cutoff <- as.numeric(attr(metadata, "report_params")["pval_cutoff"])
+
+total_de <- metadata %>%
+  filter(padj <= pval_cutoff, abs(logFC) >= log2(fc_threshold)) %>%
+  pull(gene) %>%
+  length()
 ```
 
 
-`r if(dim(metadata)[1] == 0){"No gene found to be differentially expressed at FDR 0.05"}`
+`r if(total_de == 0){sprintf("No gene found to be differentially expressed at a fold-change threshold of %g and an adjusted p-value (padj) cut-off of %g", fc_threshold, pval_cutoff)}`
 
-```{r conditional_de_block, child='de_template.Rmd', eval = !is.null(metadata)}
+
+```{r conditional_de_block, child='de_template.Rmd', eval = total_de > 0}
 ```
 
 

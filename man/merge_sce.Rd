@@ -4,13 +4,19 @@
 \alias{merge_sce}
 \title{Merge Multiple SingleCellExperiment Objects}
 \usage{
-merge_sce(sce_l, ensembl_mapping_file = NULL)
+merge_sce(
+  sce_l,
+  ensembl_mapping_file = NULL,
+  species = getOption("scflow_species", default = "human")
+)
 }
 \arguments{
 \item{sce_l}{a list of SingleCellExperiment objects, or, folder_paths to
 SingleCellExperiment objects to be read in with \code{\link{read_sce}}}
 
 \item{ensembl_mapping_file}{path to the mappings tsv file}
+
+\item{species}{human or mouse}
 }
 \value{
 sce a annotated SingleCellExperiment object

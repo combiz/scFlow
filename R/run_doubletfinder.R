@@ -13,17 +13,29 @@
 #' doi: \url{https://doi.org/10.1016/j.cels.2019.03.003}.
 #'
 #' @param sce a SingleCellExperiment object
-#' @param ... 'pK' passed here will override parameter sweep,
-#' 'doublet_rate' passed here will override the default of 7.5\%
-#' a doublet_rate of 0 is a special case that automates the estimated dr
+#' @param pK a pK value to use in place of a parameter sweep
+#' @param pca_dims the number of principal components to use
+#' @param var_features the top n variable features to use
+#' @param vars_to_regress_out the variables to regress out
+#' @param doublet_rate either a fixed doublet rate (e.g. 0.075) or 0 to
+#' @param dpk doublets per thousand cells increment if doublet_rate is 0.
+#' @param num.cores the number of CPU cores to use
 #'
 #' @return sce a SingleCellExperiment object annotated for singlets
 #'
 #' @family annotation functions
-#' @import cli Matrix dplyr SingleCellExperiment
-#' @import DoubletFinder ggplot2 purrr
+#'
+#' @importFrom cli cli_alert_danger cli_alert_success cli_h2 cli_h3
+#' @importFrom cli cli_alert cli_text
+#' @import ggplot2
+#' @importFrom dplyr rename_all
+#' @importFrom SingleCellExperiment counts reducedDim
+#' @importFrom purrr map_int map_df
+#' @importFrom DoubletFinder paramSweep_v3 summarizeSweep find.pK
+#' @importFrom DoubletFinder modelHomotypic doubletFinder_v3
 #' @importFrom magrittr %>%
-#' @import Seurat
+#' @importFrom Seurat FindVariableFeatures NormalizeData CreateSeuratObject
+#' @importFrom Seurat ScaleData RunPCA RunTSNE RunUMAP
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom stats setNames na.omit
 #' @importFrom sctransform vst get_residual_var get_residuals correct_counts
@@ -32,27 +44,18 @@
 #'
 #' @keywords internal
 
-run_doubletfinder <- function(sce, ...) {
+run_doubletfinder <- function(sce,
+                              pK = NULL,
+                              pca_dims = 10,
+                              var_features = 2000,
+                              vars_to_regress_out = "nCount_RNA",
+                              doublet_rate = 0,
+                              dpk = 8,
+                              num_cores = max(1, future::availableCores()-2)
+                              ) {
 
-  print(sys.nframe())
-  print(sys.frames())
-
-  cat(cli::rule("Finding Singlets with DoubletFinder", line = 1), "\r\n")
-
-  # defaults
-  fargs <- list(
-    pK = NULL,
-    pca_dims = 10,
-    vars_to_regress_out = "nCount_RNA",
-    var_features = 2000,
-    doublet_rate = 0,
-    dpk = 8, # estimated doublets per thousand cells
-    num.cores = future::availableCores()
-  )
-  inargs <- list(...)
-  fargs[names(inargs)] <- inargs #override defaults if provided
-
-
+  cli::cli_h2("Finding Singlets with DoubletFinder")
+  cli::cli_h3("Pre-processing")
 
   # add citations and print
   sce <- .append_citation_sce(sce, key = c("doubletfinder", "seurat"))
@@ -61,7 +64,7 @@ run_doubletfinder <- function(sce, ...) {
     stop(cli::cli_alert_danger("A SingleCellExperiment is required."))
   }
 
-  cat(cli::rule("Selecting QC passed cells/genes", line = 1), "\r\n")
+  cli::cli_alert("Selecting QC passed cells/genes")
   col_idx <- which(sce$qc_metric_passed)
   sce_ss <- filter_sce(
     sce,
@@ -70,157 +73,134 @@ run_doubletfinder <- function(sce, ...) {
   )
 
   # calculate estimated doublet rate
-  if(fargs$doublet_rate == 0) {
-    abs_dpk <- (dim(sce_ss)[[2]] / 1000) * fargs$dpk
-    fargs$doublet_rate <-  abs_dpk / 1000
+  if(doublet_rate == 0) {
+    abs_dpk <- (dim(sce_ss)[[2]] / 1000) * dpk
+    doublet_rate <-  abs_dpk / 1000
     cli::cli_text(
-      "Estimating a doublet rate of {.var {fargs$doublet_rate}} ",
-      "based on a doublets-per-thousand (dpk) increment of {.var {fargs$dpk}}")
+      "Estimating a doublet rate of {.val {doublet_rate}} ",
+      "based on a doublets-per-thousand (dpk) increment of {.val {dpk}}")
   } else {
-    fargs$dpk <- NULL
+    dpk <- NULL
   }
 
-  sce@metadata$doubletfinder_params <- fargs
+  sce@metadata$doubletfinder_params <- list(
+    pK = pK,
+    pca_dims = pca_dims,
+    var_features = var_features,
+    vars_to_regress_out = vars_to_regress_out,
+    doublet_rate = doublet_rate,
+    dpk = dpk
+  )
 
-  cat(cli::cli_text(
-    "Selected {.var {dim(sce_ss)[[2]]}} cells ",
-    "and {.var {dim(sce_ss)[[1]]}} genes"),
-    "\r\n")
-
-  # Pre-process Seurat object -----------------------------------------------
-  #seu <- do.call(
-  #  .preprocess_seurat_object,
-  #  list(sce = sce_ss,
-  #       vars_to_regress_out = fargs$vars_to_regress_out,
-  #       pca_dims = fargs$pca_dims,
-  #       var_features = fargs$var_features)
-  #)
-  #seu <- .preprocess_seurat_object(
-  #  sce = sce_ss,
-  #  vars_to_regress_out = fargs$vars_to_regress_out,
-  #  pca_dims = fargs$pca_dims,
-  #  var_features = fargs$var_features
-  #)
+  cli::cli_alert(c(
+    "Selected {.val {dim(sce_ss)[[2]]}} cells ",
+    "and {.val {dim(sce_ss)[[1]]}} genes"))
 
   seu_metadata <- data.frame(sce_ss@colData) %>%
     droplevels()
 
-  #seu <- do.call(
-  #  Seurat::CreateSeuratObject,
-  #  list(counts = SingleCellExperiment::counts(sce_ss),
-  #       meta.data = seu_metadata)
-  #)
   seu <- Seurat::CreateSeuratObject(
     counts = SingleCellExperiment::counts(sce_ss),
     meta.data = seu_metadata
   )
 
-  cat(cli::rule("Finding variable features", line = 1), "\r\n")
-  #seu <- do.call(
-    #Seurat::FindVariableFeatures,
-    #list(object = seu,
-    #     selection.method = "vst",
-    #     nfeatures = fargs$var_features
-    #     )
-    #)
+  cli::cli_alert("Finding variable features")
+
   seu <- Seurat::FindVariableFeatures(
     seu,
     selection.method = "vst",
-    nfeatures = fargs$var_features
+    nfeatures = var_features
   )
 
-  cat(cli::rule("Normalizing data", line = 1), "\r\n")
+  cli::cli_alert("Normalizing data")
   seu <- Seurat::NormalizeData(seu)
-  #seu <- do.call(Seurat::NormalizeData,
-  #               list(object = seu)
-  #)
 
-  cat(cli::rule("Scaling data", line = 1), "\r\n")
+
+  cli::cli_alert("Scaling data")
 
   seu <- Seurat::ScaleData(
     seu,
-    vars.to.regress = fargs$vars_to_regress_out
+    features = NULL,
+    vars.to.regress = vars_to_regress_out,
+    model.use = "linear",
+    use.umi = FALSE,
+    do.scale = TRUE,
+    do.center = TRUE,
+    scale.max = Inf,
+    block.size = 750,
+    min.cells.to.block = 3000,
+    verbose = TRUE
   )
-  print(ls())
-  #seu <- do.call(
-    #Seurat::ScaleData,
-    #list(object = seu,
-    #     vars.to.regress = fargs$vars_to_regress_out)
-    #)
 
-  cat(cli::rule("Calculating PCA reduced dimensions", line = 1), "\r\n")
+  cli::cli_alert("Calculating PCA reduced dimensions")
   seu <- Seurat::RunPCA(seu)
-  cat(cli::rule("Calculating tSNE reduced dimensions", line = 1), "\r\n")
-  seu <- Seurat::RunTSNE(seu, dims = 1:fargs$pca_dims)
-  cat(cli::rule("Calculating UMAP reduced dimensions", line = 1), "\r\n")
-  seu <- Seurat::RunUMAP(seu, dims = 1:fargs$pca_dims)
-
-  #seu <- sce_to_seu(sce_ss)
+  cli::cli_alert("Calculating tSNE reduced dimensions")
+  seu <- Seurat::RunTSNE(seu, dims = 1:pca_dims)
+  cli::cli_alert("Calculating UMAP reduced dimensions")
+  seu <- Seurat::RunUMAP(seu, dims = 1:pca_dims)
 
   # pK Identification -------------------------------------------------------
-  if (is.null(fargs$pK)) { # if not specified, use sweep
-    cat(cli::rule(
-      "Identifying optimal pK with parameter sweep", line = 1), "\r\n")
+  if (is.null(pK)) { # if not specified, use sweep
+    cli::cli_h3("Performing optimal pK parameter sweep")
     sweep_res_list <- DoubletFinder::paramSweep_v3(
       seu,
-      PCs = 1:fargs$pca_dims, sct = FALSE,
-      num.cores = fargs$num.cores
+      PCs = 1:pca_dims, sct = FALSE,
+      num.cores = num_cores
     )
     sweep_stats <- DoubletFinder::summarizeSweep(sweep_res_list, GT = FALSE)
     bcmvn <- DoubletFinder::find.pK(sweep_stats)
     bcmvn$pK <- as.numeric(as.character(bcmvn$pK)) # oddly, pK are factors
-    fargs$pK <- bcmvn[bcmvn$BCmetric == max(bcmvn$BCmetric), ]$pK
+    pK <- bcmvn[bcmvn$BCmetric == max(bcmvn$BCmetric), ]$pK
     sce <- .doublet_finder_plot_param_sweep(sce, bcmvn)
     # add the bcmvn dataframe to the sce metadata
     sce@metadata$qc_plot_data$doubletfinder_param_sweep <- bcmvn
-
     sce@metadata$doubletfinder_params$doubletfinder_sweep <- TRUE
   } else {
-    cli::cli_text("Skipping parameter sweep and using pK={.value {fargs$pK}}.")
+    cli::cli_text("Skipping parameter sweep and using pK={.value {pK}}.")
     sce@metadata$doubletfinder_params$doubletfinder_sweep <- FALSE
   }
   # add the pK value used to metadata
-  sce@metadata$doubletfinder_params$pK <- fargs$pK
+  sce@metadata$doubletfinder_params$pK <- pK
 
   # Homotypic Doublet Proportion Estimate -----------------------------------
-  cat(cli::rule("Estimating homotypic doublet proportions", line = 1), "\r\n")
+  cli::cli_alert("Estimating homotypic doublet proportions")
   annotations <- seu@meta.data$seurat_clusters
   homotypic_prop <- DoubletFinder::modelHomotypic(annotations)
-  n_exp_poi <- round(fargs$doublet_rate * length(seu@meta.data$orig.ident))
+  n_exp_poi <- round(doublet_rate * length(seu@meta.data$orig.ident))
   n_exp_poi_adj <- round(n_exp_poi * (1 - homotypic_prop))
   doublet_vals <- data.frame(
     n_exp_poi = n_exp_poi,
     n_exp_poi_adj = n_exp_poi_adj
   )
 
-  pann_hi <- sprintf("pANN_0.25_%s_%s", fargs$pK, doublet_vals$n_exp_poi)
+  pann_hi <- sprintf("pANN_0.25_%s_%s", pK, doublet_vals$n_exp_poi)
 
   # Run DoubletFinder with varying classification stringencies -------------
-  cat(cli::rule("Running DoubletFinder", line = 1), "\r\n")
+  cli::cli_h3("Running DoubletFinder")
   seu <- DoubletFinder::doubletFinder_v3(seu,
-    PCs = 1:fargs$pca_dims, pN = 0.25, pK = as.numeric(fargs$pK),
+    PCs = 1:pca_dims, pN = 0.25, pK = as.numeric(pK),
     nExp = n_exp_poi,
     reuse.pANN = FALSE
   )
 
   seu <- DoubletFinder::doubletFinder_v3(seu,
-    pN = 0.25, pK = as.numeric(fargs$pK),
+    pN = 0.25, pK = as.numeric(pK),
     nExp = doublet_vals$n_exp_poi_adj,
     reuse.pANN = pann_hi
   )
 
   # Annotate results -------------------------------------------------------
-  cat(cli::rule("Annotating results", line = 1), "\r\n")
+  cli::cli_alert("Annotating results")
   seu@meta.data[, "DF_hi.lo"] <- seu@meta.data[, sprintf(
     "DF.classifications_0.25_%s_%s",
-    fargs$pK,
+    pK,
     doublet_vals$n_exp_poi
   )]
 
   seu@meta.data$DF_hi.lo[which(seu@meta.data$DF_hi.lo == "Doublet" &
     seu@meta.data[, sprintf(
       "DF.classifications_0.25_%s_%s",
-      fargs$pK,
+      pK,
       doublet_vals$n_exp_poi_adj
     )] == "Singlet")] <- "Doublet_lo"
 
@@ -376,7 +356,8 @@ run_doubletfinder <- function(sce, ...) {
       plot.title = element_text(size = 18, hjust = 0.5)
     )
 
-  p$plot_env <- rlang::new_environment()
+  #p$plot_env <- rlang::new_environment()
+  p <- .grobify_ggplot(p)
   sce@metadata$qc_plots$doublet_finder[[reduced_dim]] <- p
 
   return(sce)
@@ -408,7 +389,7 @@ run_doubletfinder <- function(sce, ...) {
       legend.position = "none",
       plot.title = element_text(size = 18, hjust = 0.5))
 
-  p$plot_env <- rlang::new_environment()
+  p <- .grobify_ggplot(p)
   sce@metadata$qc_plots$doublet_finder$param_sweep <- p
 
   return(sce)

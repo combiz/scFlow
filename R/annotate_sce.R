@@ -43,7 +43,7 @@
 #'   number of genes with >0 counts)
 #' @param max_features the maximum number of features per cell or "adaptive"
 #' @param max_mito the maximum proportion of counts mapping to
-#'   mitochondrial genes (0 - 1)
+#'   mitochondrial genes (0 - 1) or "adaptive"
 #' @param min_ribo the minimum proportion of counts mapping to
 #'   ribosomal genes (0 - 1)
 #' @param max_ribo the maximum proportion of counts mapping to
@@ -75,7 +75,7 @@ annotate_sce <- function(sce,
                          max_library_size = "adaptive",
                          min_features = 100,
                          max_features = "adaptive",
-                         max_mito = 0.10,
+                         max_mito = "adaptive",
                          min_ribo = 0.00,
                          max_ribo = 1.00,
                          min_counts = 2,
@@ -85,8 +85,11 @@ annotate_sce <- function(sce,
                          drop_ribo = FALSE,
                          annotate_genes = TRUE,
                          annotate_cells = TRUE,
-                         nmads = 3.5,
-                         ensembl_mapping_file = NULL) {
+                         nmads = 4.0,
+                         ensembl_mapping_file = NULL,
+                         species = getOption(
+                           "scflow_species",
+                           default = "human")) {
 
   if (class(sce) != "SingleCellExperiment") {
     stop(cli::cli_alert_danger("A SingleCellExperiment is required."))
@@ -380,7 +383,7 @@ annotate_sce <- function(sce,
           legend.position = "none",
           plot.title = element_text(size = 18, hjust = 0.5))
 
-  p$plot_env <- rlang::new_environment()
+  p <- .grobify_ggplot(p)
   sce@metadata$qc_plots$count_depth_distribution <- p
   sce@metadata$qc_plot_data$count_depth_distribution <- dt
 
@@ -442,7 +445,7 @@ annotate_sce <- function(sce,
         color = "red")
   }
 
-  p$plot_env <- rlang::new_environment()
+  p <- .grobify_ggplot(p)
   sce@metadata$qc_plots$number_genes_vs_count_depth <- p
   sce@metadata$qc_plot_data$number_genes_vs_count_depth <- dt
 
@@ -490,7 +493,7 @@ annotate_sce <- function(sce,
         color = "red")
   }
 
-  p$plot_env <- rlang::new_environment()
+  p <- .grobify_ggplot(p)
   sce@metadata$qc_plots$count_depth_histogram <- p
   sce@metadata$qc_plot_data$count_depth_histogram <- dt
 
@@ -538,7 +541,7 @@ annotate_sce <- function(sce,
         linetype = "solid",
         color = "red")
   }
-  p$plot_env <- rlang::new_environment()
+  p <- .grobify_ggplot(p)
   sce@metadata$qc_plots$number_genes_histogram <- p
   sce@metadata$qc_plot_data$number_genes_histogram <- dt
 
@@ -574,7 +577,7 @@ annotate_sce <- function(sce,
           legend.text=element_text(size=10),
           plot.title = element_text(size = 18, hjust = 0.5))
 
-  p$plot_env <- rlang::new_environment()
+  p <- .grobify_ggplot(p)
   sce@metadata$qc_plots$mito_fraction_histogram <- p
   sce@metadata$qc_plot_data$mito_fraction_histogram <- dt
 
@@ -613,7 +616,7 @@ annotate_sce <- function(sce,
           legend.text=element_text(size=10),
           plot.title = element_text(size = 18, hjust = 0.5))
 
-  p$plot_env <- rlang::new_environment()
+  p <- .grobify_ggplot(p)
   sce@metadata$qc_plots$ribo_fraction_histogram <- p
   sce@metadata$qc_plot_data$ribo_fraction_histogram <- dt
 

@@ -63,7 +63,17 @@ Below, the pseudobulked counts matrix is used to determine which genes are detec
 <div class = "basicfig">
 ```{r results='asis', fig.align="center", fig.width=10, fig.height=4.5, fig.cap = "<b>Figure: Heatmap and dendrogram of gene expressivity by sample.</b> Genes (rows) and samples (columns) are hierarchically clustered and reveal the number and distribution of expressed (purple) and non-expressed (yellow) genes per sample.",  echo=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-print(sce@metadata$pseudobulk_plots$combined_heatmap)
+print(metadata$pseudobulk_plots$combined_heatmap)
+```
+</div>
+
+## Cell Numbers Plot
+The number of cells retained per sample ("_`r metadata$merge_qc_params$unique_id_var`_") after quality-control.  Samples which contribute relatively few cells to the study may require quality-control parameter optimization.  In some cases, it may be preferable to drop such problematic samples from the study entirely.
+
+<div class = "basicfig">
+```{r results='asis', fig.align="center", fig.width=10, fig.height=9, fig.cap = "<b>Figure: Number of cells per sample post-QC.</b>.",  echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+print(metadata$cell_numbers_plot)
 ```
 </div>
 

@@ -1,6 +1,6 @@
 Package: scFlow
 Title: A Single-Cell/Nuclei Analysis Toolkit
-Version: 0.5.0
+Version: 0.6.1
 Authors@R: 
     c(
     person(given = "Combiz",
@@ -26,7 +26,7 @@ Authors@R:
     )
 Description: Single-cell/nuclei RNA-seq analysis tools in R to build a complete analysis workflow.
 Roxygen: list(markdown = TRUE)
-License: MIT + file LICENSE
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/combiz/scFlow
@@ -36,8 +36,7 @@ Suggests:
     spelling,
     covr,
     knitr,
-    scFlowData,
-    scFlowExample
+    scFlowData
 Language: en-US
 RoxygenNote: 7.1.0
 Imports: 
@@ -121,33 +120,32 @@ Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,
     satijalab/seurat,
-    bioc::release/biomaRt,
-    bioc::release/SingleCellExperiment,
-    bioc::release/SummarizedExperiment,
+    bioc::dev/biomaRt,
+    bioc::dev/SingleCellExperiment,
+    bioc::dev/SummarizedExperiment,
     ropensci/plotly,
     NathanSkene/EWCE,
     MacoskoLab/liger,
-    bioc::release/scater,
-    bioc::release/BiocGenerics,
-    bioc::release/S4Vectors,
-    bioc::release/IRanges,
-    bioc::release/GenomicRanges,
-    bioc::release/DelayedArray,
+    bioc::dev/scater,
+    bioc::dev/BiocGenerics,
+    bioc::dev/S4Vectors,
+    bioc::dev/IRanges,
+    bioc::dev/GenomicRanges,
+    bioc::dev/DelayedArray,
     bzhanglab/WebGestaltR,
-    bioc::release/graphite,
-    bioc::release/ROntoTools,
-    bioc::release/batchelor,
-    bioc::release/DelayedMatrixStats,
-    bioc::release/DropletUtils,
-    bioc::release/limma,
+    bioc::dev/graphite,
+    bioc::dev/ROntoTools,
+    bioc::dev/batchelor,
+    bioc::dev/DelayedMatrixStats,
+    bioc::dev/DropletUtils,
+    bioc::dev/limma,
     cvarrichio/Matrix.utils,
     combiz/RANN.L1,
     cole-trapnell-lab/monocle3,
-    bioc::release/MAST,
-    bioc::release/multtest,
+    bioc::dev/MAST,
+    bioc::dev/multtest,
     theislab/kBET,
     neurogenomics/scFlowExample,
     combiz/scFlowData,
-    cran/DirichletReg,
-    neurogenomics/scFlowExample
+    cran/DirichletReg
 VignetteBuilder: knitr

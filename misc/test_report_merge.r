@@ -1,6 +1,7 @@
 library(scFlow)
 
-sce <- read_sce("~/Documents/nf-sc/results/celltype_mapped_sce/celltype_mapped_sce")
+#sce <- read_sce("~/Documents/nf-sc/results/celltype_mapped_sce/celltype_mapped_sce")
+sce <- read_sce("~/Documents/junk/celltype_mapped_sce")
 
 sce <- annotate_merged_sce(
   sce,

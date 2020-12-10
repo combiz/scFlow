@@ -10,7 +10,7 @@ annotate_celltype_metrics(
   celltype_var = "cluster_celltype",
   unique_id_var = "manifest",
   facet_vars = c("manifest", "group", "sex"),
-  input_reduced_dim = "UMAP",
+  input_reduced_dim = "UMAP_Liger",
   metric_vars = c("pc_mito", "pc_ribo", "total_counts", "total_features_by_counts"),
   ...
 )

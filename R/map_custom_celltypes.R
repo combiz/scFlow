@@ -37,10 +37,13 @@ map_custom_celltypes <- function(sce,
 
   for (var in cols) {
     mappings_lookup <- mappings[[var]]
-    names(mappings_lookup) <- as.character(mappings[[clusters_colname]])
+    names(mappings_lookup) <- mappings[[clusters_colname]]
+
     sce[[var]] <- purrr::map_chr(
-      sce[[clusters_colname]], ~ as.character(mappings_lookup[[.]])
-      )
+      as.character(sce[[clusters_colname]]), ~ mappings_lookup[.])
+
+    #sce[[var]] <- as.factor(as.character(sce[[var]]))
+
     cli::cli_text("Appended {.var {var}} to SingleCellExperiment")
   }
 

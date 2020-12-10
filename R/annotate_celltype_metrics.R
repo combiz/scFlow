@@ -23,12 +23,22 @@ annotate_celltype_metrics <- function(sce,
                                     celltype_var = "cluster_celltype",
                                     unique_id_var = "manifest",
                                     facet_vars = c("manifest", "group", "sex"),
-                                    input_reduced_dim = "UMAP",
+                                    input_reduced_dim = "UMAP_Liger",
                                     metric_vars = c("pc_mito",
                                                     "pc_ribo",
                                                     "total_counts",
                                                     "total_features_by_counts"),
                                     ...) {
+
+  fargs <- list(
+    fraction_expressing = 0.10,
+    top_n = 5,
+    max_point_size = 3,
+    n_cores = future::availableCores()
+  )
+  inargs <- list(...)
+  fargs[names(inargs)] <- inargs
+
   sce@metadata$celltype_annotations <- list()
   sce@metadata$celltype_annotations$reddim_plots <- list()
   sce@metadata$celltype_annotations$prop_plots <- list()
@@ -69,9 +79,22 @@ annotate_celltype_metrics <- function(sce,
     msg = "Specify numeric metric variables only."
   )
 
+  # find specific markers
+  markers <- find_marker_genes(
+    sce,
+    by_vars = c(celltype_var, cluster_var),
+    fraction_expressing = fargs$fraction_expressing,
+    top_n = fargs$top_n,
+    max_point_size = fargs$max_point_size,
+    n_cores = fargs$n_cores
+    )
+
+  sce@metadata$markers <- markers
+
+
   # generate the plots
   # cluster numbers
-  sce@metadata$celltype_annotations$reddim_plots$cluster_var <- do.call(
+  p <- do.call(
     plot_reduced_dim,
     list(
       sce = sce,
@@ -82,9 +105,11 @@ annotate_celltype_metrics <- function(sce,
       ...
     )
   )
+  p <- .grobify_ggplot(p)
+  sce@metadata$celltype_annotations$reddim_plots$cluster_var <- p
 
   # reddim cluster aliases
-  sce@metadata$celltype_annotations$reddim_plots$celltype_var <- do.call(
+  p <- do.call(
     plot_reduced_dim,
     list(
       sce = sce,
@@ -95,10 +120,12 @@ annotate_celltype_metrics <- function(sce,
       ...
     )
   )
+  p <- .grobify_ggplot(p)
+  sce@metadata$celltype_annotations$reddim_plots$celltype_var <- p
 
   # reddim custom coldata variables
   for (facet_var in union(facet_vars, unique_id_var)) {
-    sce@metadata$celltype_annotations$reddim_plots[[facet_var]] <- do.call(
+    p <- do.call(
       plot_reduced_dim,
       list(
         sce = sce,
@@ -109,6 +136,8 @@ annotate_celltype_metrics <- function(sce,
         ...
       )
     )
+    p <- .grobify_ggplot(p)
+    sce@metadata$celltype_annotations$reddim_plots[[facet_var]] <- p
   }
 
   # proportion of cell types (rel/abs) by groups
@@ -201,6 +230,7 @@ annotate_celltype_metrics <- function(sce,
       fill = .data[[celltype_var]]
     )
   ) +
+    ggplot2::xlab(group_by_var) +
     ggplot2::geom_col() +
     scale_colours +
     ggplot2::scale_y_continuous(expand = c(0, 0)) +
@@ -230,6 +260,7 @@ annotate_celltype_metrics <- function(sce,
     ggplot2::coord_flip() +
     ggplot2::theme_bw() +
     ggplot2::ylab("%") +
+    ggplot2::xlab(group_by_var) +
     ggplot2::theme(
       panel.border = ggplot2::element_blank(),
       panel.grid.major = ggplot2::element_blank(),
@@ -240,8 +271,12 @@ annotate_celltype_metrics <- function(sce,
       legend.title = ggplot2::element_blank()
     )
 
-  p$plot_env <- rlang::new_environment()
-  p2$plot_env <- rlang::new_environment()
+  #p$plot_env$sce <- NULL
+  p <- .grobify_ggplot(p)
+  p2 <- .grobify_ggplot(p2)
+  #p2$plot_env$sce <- NULL
+
+  #sce <- parent.frame()[["sce"]]
   sce@metadata$celltype_annotations$
     prop_plots[[group_by_var]][[celltype_var]] <- list()
   sce@metadata$celltype_annotations$
@@ -305,6 +340,7 @@ annotate_celltype_metrics <- function(sce,
     ggplot2::coord_flip() +
     ggplot2::theme_bw() +
     ggplot2::ylab(paste(metric_var)) +
+    ggplot2::xlab(celltype_var) +
     ggplot2::theme(
       panel.border = ggplot2::element_blank(),
       panel.grid.major = ggplot2::element_blank(),
@@ -332,6 +368,8 @@ annotate_celltype_metrics <- function(sce,
       colour = "white",
       fill = "grey30"
     ) +
+    ggplot2::xlab(metric_var) +
+    ggplot2::ylab(celltype_var) +
     ggplot2::theme_light() +
     ggplot2::theme(
       panel.border = ggplot2::element_blank(),
@@ -341,8 +379,8 @@ annotate_celltype_metrics <- function(sce,
       legend.position = "none"
     )
 
-  p$plot_env <- rlang::new_environment()
-  p2$plot_env <- rlang::new_environment()
+  p <- .grobify_ggplot(p)
+  p2 <- .grobify_ggplot(p2)
 
   sce@metadata$celltype_annotations$
     metric_plots[[metric_var]][[celltype_var]] <- list()
@@ -356,76 +394,4 @@ annotate_celltype_metrics <- function(sce,
     metric_plots[[metric_var]][[celltype_var]]$ridge_plot <- p2
 
   return(sce)
-}
-
-################################################################################
-#' Retrieve a palette of n_colours discrete colours from paletteer
-#'
-#' Useful to remove large objects before writing to disk with qs or rds
-#'
-#' @family helper
-#'
-#' @importFrom paletteer paletteer_d
-#' @importFrom grDevices colorRampPalette
-#'
-#' @keywords internal
-.get_d_palette <- function(pal_name = "ggsci::nrc_npg", n_colours = NULL) {
-  palette_choice <- paletteer::paletteer_d("ggsci::nrc_npg")
-  get_palette <- grDevices::colorRampPalette(palette_choice)
-  if (n_colours <= length(palette_choice)) {
-    pal_values <- palette_choice[1:n_colours]
-  } else {
-    pal_values <- get_palette(n_colours)
-  }
-  return(pal_values)
-}
-
-
-################################################################################
-#' Remove objects from a ggplot plot_env
-#'
-#' Useful to remove large objects before writing to disk with qs or rds
-#' This function was deprecated by p$plot_env <- rlang::new_environment()
-#'
-#' @family helper
-#'
-#' @keywords internal
-.clean_ggplot_plot_env <- function(p,
-                                   drop_classes = c(
-                                     "SingleCellExperiment",
-                                     "ggplot"
-                                   )) {
-  if ("ggplot" %in% class(p)) {
-    env_classes <- lapply(p$plot_env, class)
-    drop_idx <- purrr::map_lgl(env_classes, ~ any(drop_classes %in% .))
-    drop_names <- names(drop_idx[drop_idx])
-    for (drop_name in drop_names) {
-      p$plot_env[[eval(drop_name)]] <- NULL
-    }
-    p$plot_env$... <- NULL
-  }
-  return(p)
-}
-
-################################################################################
-#' scale_y_continuous(labels=.fancy_scientific)
-#'
-#' @family helper
-#'
-#' @keywords internal
-.fancy_scientific <- function(l) {
-  # turn in to character string in scientific notation
-  l <- format(l, scientific = TRUE)
-  # prevent 0 x xx
-  l <- gsub("0e\\+00","0",l)
-  # quote the part before the exponent to keep all the digits
-  l <- gsub("^(.*)e", "'\\1'e", l)
-  # remove + after exponent, if exists. E.g.: (3x10^+2 -> 3x10^2)
-  l <- gsub("e\\+","e",l)
-  # turn the 'e+' into plotmath format
-  l <- gsub("e", "%*%10^", l)
-  # convert 1x10^ or 1.000x10^ -> 10^
-  l <- gsub("\\'1[\\.0]*\\'\\%\\*\\%", "", l)
-  # return this as an expression
-  parse(text=l)
 }

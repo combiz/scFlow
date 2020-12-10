@@ -43,9 +43,9 @@ annotate_integrated_sce <- function(sce,
   } else {
     print("The number of datasets is too high for a Venn diagram.")
   }
-  
+
   cli::cli_text("Generating Upset chart for selected variable genes...")
-  
+
   upset_sets <- sce@metadata$dataset_integration$var.genes_per_dataset
   my_upset <- UpSetR::upset(
     UpSetR::fromList(upset_sets),
@@ -54,7 +54,7 @@ annotate_integrated_sce <- function(sce,
     text.scale = c(1.5, 1.5, 1.5, 1.5, 1.5, 1)
   )
   sce@metadata$dataset_integration$var.genes_plots$upset <- my_upset
-  
+
   cat(
     cli::rule(
       "Annotating Batch Effect Correction by LIGER",
@@ -62,39 +62,41 @@ annotate_integrated_sce <- function(sce,
     ),
     "\r\n"
   )
-  
+
   sce@metadata$dataset_integration$annotation$input_reduced_dim <- input_reduced_dim
-  
+
   pca_reducedDim_plots <- list()
   liger_reducedDim_plots <- list()
   pca_kbet_plots <- list()
   liger_kbet_plots <- list()
   cli::cli_text("Generating tSNE/UMAP and kBET plots for each covariate...")
-  
+
   for (variable in categorical_covariates) {
     cat(paste("• covariate:", variable, sep = " "), "\n")
     plot_pca <- plot_reduced_dim(sce,
                                  feature_dim = variable,
                                  reduced_dim = sprintf("%s_PCA",
                                                        input_reduced_dim),
-                                 size = 1, alpha = 0.3)
+                                 size = .1, alpha = 0.2)
     # reducedDim_pca <- plot_pca +
     # ggtitle(sprintf("%s using PCA data", input_reduced_dim)) +
     # theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.8))
     # pca_reducedDim_plots[[variable]] <- reducedDim_pca
+    plot_pca <- .grobify_ggplot(plot_pca)
     pca_reducedDim_plots[[variable]] <- plot_pca
-    
+
     plot_liger <- plot_reduced_dim(sce,
                                    feature_dim = variable,
                                    reduced_dim = sprintf("%s_Liger",
                                                          input_reduced_dim),
-                                   size = 0.75, alpha = 0.3)
+                                   size = 0.1, alpha = 0.2)
     # reducedDim_liger <- plot_liger +
     # ggtitle(sprintf("%s using LIGER data", input_reduced_dim)) +
     # theme(plot.title = element_text(size = 15, face = "bold", hjust = 0.8))
     # liger_reducedDim_plots[[variable]] <- reducedDim_liger
+    plot_liger <- .grobify_ggplot(plot_liger)
     liger_reducedDim_plots[[variable]] <- plot_liger
-    
+
     data <- SingleCellExperiment::reducedDim(sce, "PCA")
     batch <- SummarizedExperiment::colData(sce)[[variable]]
     subset_id <- sample.int(
@@ -131,8 +133,9 @@ annotate_integrated_sce <- function(sce,
       ) +
       ggtitle("kBET test results - PCA") +
       theme(plot.title = element_text(hjust = 0.5, size = 15, face = "bold"))
+    kbet_pca <- .grobify_ggplot(kbet_pca)
     pca_kbet_plots[[variable]] <- kbet_pca
-    
+
     data <- SingleCellExperiment::reducedDim(sce, "Liger")
     batch <- SummarizedExperiment::colData(sce)[[variable]]
     subset_id <- sample.int(
@@ -171,9 +174,10 @@ annotate_integrated_sce <- function(sce,
       ) +
       ggtitle("kBET test results - LIGER") +
       theme(plot.title = element_text(hjust = 0.5, size = 15, face = "bold"))
+    kbet_liger <- .grobify_ggplot(kbet_liger)
     liger_kbet_plots[[variable]] <- kbet_liger
   }
-  
+
   sce@metadata$dataset_integration$batch_correction_plots$pca_reducedDim_plots <-
     pca_reducedDim_plots
   sce@metadata$dataset_integration$batch_correction_plots$liger_reducedDim_plots <-
@@ -182,7 +186,7 @@ annotate_integrated_sce <- function(sce,
     pca_kbet_plots
   sce@metadata$dataset_integration$batch_correction_plots$liger_kbet_plots <-
     liger_kbet_plots
-  
+
   cat(
     cli::rule(
       "Annotating Clustering",
@@ -190,27 +194,28 @@ annotate_integrated_sce <- function(sce,
     ),
     "\r\n"
   )
-  
+
   cli::cli_text("Generating tSNE/UMAP plots for PCA and LIGER data...")
   plot_pca <- plot_reduced_dim(sce,
                                feature_dim = "clusters",
                                reduced_dim = sprintf("%s_PCA",
                                                      input_reduced_dim),
-                               size = 0.75, alpha = 0.3, label_clusters = TRUE
+                               size = 0.1, alpha = 0.2, label_clusters = TRUE
   )
   # cluster_pca <- plot_pca +
   # ggtitle(sprintf("%s using PCA data (colored by cluster)",
   # input_reduced_dim)) +
   # theme(plot.title = element_text(size = 15, face = "bold"))
-  
+
   cluster_pca <- plot_pca
+  cluster_pca <- .grobify_ggplot(cluster_pca)
   sce@metadata$dataset_integration$clustering_plots$cluster_pca <- cluster_pca
-  
+
   plot_liger <- plot_reduced_dim(sce,
                                  feature_dim = "clusters",
                                  reduced_dim = sprintf("%s_Liger",
                                                        input_reduced_dim),
-                                 size = 0.75, alpha = 0.3,
+                                 size = 0.1, alpha = 0.2,
                                  label_clusters = TRUE
   )
   # cluster_liger <- plot_liger +
@@ -218,7 +223,8 @@ annotate_integrated_sce <- function(sce,
   # input_reduced_dim)) +
   # theme(plot.title = element_text(size = 15, face = "bold"))
   cluster_liger <- plot_liger
-  
+  cluster_liger <- .grobify_ggplot(cluster_liger)
+
   sce@metadata$dataset_integration$clustering_plots$cluster_liger <- cluster_liger
   return(sce)
 }

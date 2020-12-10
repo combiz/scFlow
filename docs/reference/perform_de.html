@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scFlow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
       </span>
     </div>
 
@@ -131,8 +131,7 @@
   <span class='kw'>confounding_vars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"individual"</span>, <span class='st'>"cngeneson"</span>, <span class='st'>"sex"</span>, <span class='st'>"age"</span>, <span class='st'>"PMI"</span>, <span class='st'>"RIN"</span>,
     <span class='st'>"seqdate"</span>, <span class='st'>"pc_mito"</span>),
   <span class='kw'>random_effects_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>fc_threshold</span> <span class='kw'>=</span> <span class='fl'>1.1</span>,
-  <span class='kw'>pval_cutoff</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
+  <span class='kw'>unique_id_var</span> <span class='kw'>=</span> <span class='st'>"individual"</span>,
   <span class='no'>...</span>
 )</pre>
 
@@ -172,12 +171,8 @@
       <td><p>variable(s) to model as random effects</p></td>
     </tr>
     <tr>
-      <th>fc_threshold</th>
-      <td><p>fold change up/down threshold</p></td>
-    </tr>
-    <tr>
-      <th>pval_cutoff</th>
-      <td><p>the adjusted pvalue cutoff threshold</p></td>
+      <th>unique_id_var</th>
+      <td><p>the colData variable identifying unique samples</p></td>
     </tr>
     <tr>
       <th>...</th>

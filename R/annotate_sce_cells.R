@@ -45,17 +45,16 @@ annotate_sce_cells <- function(sce, ...) {
   sce$qc_metric_min_features <-
     sce$total_features_by_counts >= args$min_features
 
-  if (length(sce$pc_mito) == 0) {
+  # add pc mito
+  qc_metric_is_mito <- startsWith(
+    as.character(SummarizedExperiment::rowData(sce)$gene), "MT-") + 0
+  qc_metric_is_mito[is.na(qc_metric_is_mito)] <- 0 # for non-mapped genes
+  SummarizedExperiment::rowData(sce)$qc_metric_is_mito <- qc_metric_is_mito
     sce$pc_mito <- Matrix::colSums(
       SingleCellExperiment::counts(
         sce[SummarizedExperiment::rowData(sce)$qc_metric_is_mito == 1, ]
       )
     ) / sce$total_counts
-  } else {
-    print("Retaining previously calculated percentage mitochondrial counts.")
-  }
-
-  sce$qc_metric_pc_mito_ok <- sce$pc_mito <= args$max_mito
 
   if (length(sce$pc_ribo) == 0) {
     sce$pc_ribo <- Matrix::colSums(
@@ -74,12 +73,32 @@ annotate_sce_cells <- function(sce, ...) {
   sce$qc_metric_passed <- and_list_fn(
     sce$qc_metric_min_library_size,
     sce$qc_metric_min_features,
-    sce$qc_metric_pc_mito_ok,
     sce$qc_metric_pc_ribo_ok
   )
 
   if (sce@metadata$scflow_steps$emptydrops_annotated == 1) {
     sce$qc_metric_passed <- sce$qc_metric_passed & !sce$is_empty_drop
+  }
+
+  # max pc_mito outlier thresholding on passed cells
+  if (args$max_mito == "adaptive") {
+    outliers <- scater::isOutlier(
+      sce$pc_mito,
+      nmads = args$nmads,
+      subset = sce$qc_metric_passed,
+      type = "both",
+      log = FALSE)
+    higher <- as.numeric(attributes(outliers)$thresholds["higher"]) #not int for pcmito
+    args$max_mito <- higher
+    sce$qc_metric_pc_mito_ok <- sce$pc_mito <= higher #set flag
+    sce@metadata[["qc_params"]]$max_mito <- higher
+    sce@metadata[["qc_params"]]$max_mito_method <- "adaptive"
+  } else if (!is.null(sce@metadata$qc_params$max_mito)) {
+    sce@metadata[["qc_params"]]$max_mito_method <- "fixed"
+    sce$qc_metric_pc_mito_ok <- sce$pc_mito <= args$max_mito #set flag
+  } else {
+    sce@metadata[["qc_params"]]$max_mito_method <- NA
+    sce$qc_metric_pc_mito_ok <- 1
   }
 
   # max counts outlier thresholding on passed cells
@@ -128,7 +147,8 @@ annotate_sce_cells <- function(sce, ...) {
   sce$qc_metric_passed <- and_list_fn(
     sce$qc_metric_passed,
     sce$qc_metric_max_library_size,
-    sce$qc_metric_max_features
+    sce$qc_metric_max_features,
+    sce$qc_metric_pc_mito_ok
   )
 
   # fast qc for expressive genes with counts from only qc passed cells
