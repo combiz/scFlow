@@ -13,7 +13,6 @@ output:
 params:
   metadata_path: false
   categorical_covariates: true
-bibliography: "`r system.file('bibtex/references.bib', package = 'scFlow')`"
 ---
 
 ```{r setup, results='hide', include=FALSE}
@@ -99,8 +98,5 @@ paste(out, collapse='\n')
 
 ```{r conditional_clustering_block, child='clustering.Rmd', eval = !is.null(metadata$cluster_params)}
 ```
-
-# References {-}
-<div id="refs"></div>
 
 <br>scFlow v`r utils::packageVersion("scFlow")` -- `r Sys.time()`
