@@ -10,6 +10,8 @@
 #' @param confounding_vars the independent variables of the model
 #' @param random_effects_var variable(s) to model as random effects
 #' @param unique_id_var the colData variable identifying unique samples
+#' @param species human or mouse
+#' @param parallel enable parallel processing
 #' @param ... advanced options
 #'
 #' @return results_l a list of DE table results
@@ -37,6 +39,10 @@ perform_de <- function(sce,
                                             "pc_mito"),
                        random_effects_var = NULL,
                        unique_id_var = "individual",
+                       species = getOption(
+                         "scflow_species",
+                         default = "human"),
+                       parallel = TRUE,
                        ...) {
   fargs <- c(as.list(environment()), list(...))
 
@@ -227,7 +233,8 @@ perform_de <- function(sce,
     mast_method = "bayesglm",
     ebayes = FALSE,
     force_run = FALSE,
-    nAGQ = 0
+    nAGQ = 0,
+    parallel = TRUE
   )
   inargs <- list(...)
   fargs[names(inargs)] <- inargs
@@ -292,7 +299,7 @@ perform_de <- function(sce,
     sca = sca,
     method = fargs$mast_method, # note: glmer requires a random effects var
     ebayes = fargs$ebayes,
-    parallel = TRUE,
+    parallel = fargs$parallel,
     fitArgsD = fit_args_D
   )
   message(Sys.time() - x)
@@ -366,7 +373,7 @@ perform_de <- function(sce,
       fcHurdle$ensembl_gene_id,
       mappings = c("external_gene_name", "gene_biotype"),
       ensembl_mapping_file = fargs$ensembl_mapping_file,
-      species = species
+      species = fargs$species
     ) %>%
       dplyr::rename(gene = external_gene_name)
 

@@ -16,6 +16,8 @@ perform_de(
     "seqdate", "pc_mito"),
   random_effects_var = NULL,
   unique_id_var = "individual",
+  species = getOption("scflow_species", default = "human"),
+  parallel = TRUE,
   ...
 )
 }
@@ -37,6 +39,10 @@ perform_de(
 \item{random_effects_var}{variable(s) to model as random effects}
 
 \item{unique_id_var}{the colData variable identifying unique samples}
+
+\item{species}{human or mouse}
+
+\item{parallel}{enable parallel processing}
 
 \item{...}{advanced options}
 }
