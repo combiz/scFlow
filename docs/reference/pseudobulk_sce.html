@@ -8,6 +8,13 @@
 
 <title>Generate a Pseudo-bulk SingleCellExperiment from a SingleCellExperiment — pseudobulk_sce • scFlow</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -43,6 +50,7 @@
 <meta property="og:description" content="Generate a pseudo-bulk of a SingleCellExperiment by summing counts of all
 cells from the same sample_var and celltype_var.  The SCE is then
 re-annotated and library sizes calculated based on cell numbers." />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -124,13 +132,13 @@ cells from the same <code>sample_var</code> and <code>celltype_var</code>.  The 
 re-annotated and library sizes calculated based on cell numbers.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>pseudobulk_sce</span>(
-  <span class='no'>sce</span>,
-  <span class='kw'>sample_var</span> <span class='kw'>=</span> <span class='st'>"individual"</span>,
-  <span class='kw'>celltype_var</span> <span class='kw'>=</span> <span class='st'>"cluster_celltype"</span>,
-  <span class='kw'>assay_name</span> <span class='kw'>=</span> <span class='st'>"counts"</span>,
-  <span class='kw'>keep_vars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"individual"</span>, <span class='st'>"group"</span>, <span class='st'>"sex"</span>, <span class='st'>"age"</span>, <span class='st'>"PMI"</span>, <span class='st'>"RIN"</span>, <span class='st'>"seqdate"</span>)
-)</pre>
+    <pre class="usage"><span class='fu'>pseudobulk_sce</span><span class='op'>(</span>
+  <span class='va'>sce</span>,
+  sample_var <span class='op'>=</span> <span class='st'>"individual"</span>,
+  celltype_var <span class='op'>=</span> <span class='st'>"cluster_celltype"</span>,
+  assay_name <span class='op'>=</span> <span class='st'>"counts"</span>,
+  keep_vars <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"individual"</span>, <span class='st'>"group"</span>, <span class='st'>"sex"</span>, <span class='st'>"age"</span>, <span class='st'>"PMI"</span>, <span class='st'>"RIN"</span>, <span class='st'>"seqdate"</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -163,10 +171,10 @@ re-annotated and library sizes calculated based on cell numbers.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other differential gene expression: 
-<code><a href='dot-filter_sce_genes_for_de.html'>.filter_sce_genes_for_de</a>()</code>,
-<code><a href='dot-generate_model_from_vars.html'>.generate_model_from_vars</a>()</code>,
-<code><a href='dot-perform_de_with_mast.html'>.perform_de_with_mast</a>()</code>,
-<code><a href='dot-preprocess_sce_for_de.html'>.preprocess_sce_for_de</a>()</code>,
+<code><a href='.filter_sce_genes_for_de.html'>.filter_sce_genes_for_de</a>()</code>,
+<code><a href='.generate_model_from_vars.html'>.generate_model_from_vars</a>()</code>,
+<code><a href='.perform_de_with_mast.html'>.perform_de_with_mast</a>()</code>,
+<code><a href='.preprocess_sce_for_de.html'>.preprocess_sce_for_de</a>()</code>,
 <code><a href='perform_de.html'>perform_de</a>()</code>,
 <code><a href='report_de.html'>report_de</a>()</code></p></div>
 
@@ -185,7 +193,7 @@ re-annotated and library sizes calculated based on cell numbers.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

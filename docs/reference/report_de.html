@@ -8,6 +8,13 @@
 
 <title>Generate a report for differential expression analysis — report_de • scFlow</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -41,6 +48,7 @@
 
 <meta property="og:title" content="Generate a report for differential expression analysis — report_de" />
 <meta property="og:description" content="Generate a report for differential expression analysis" />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -120,14 +128,14 @@
     <p>Generate a report for differential expression analysis</p>
     </div>
 
-    <pre class="usage"><span class='fu'>report_de</span>(
-  <span class='no'>res</span>,
-  <span class='kw'>fc_threshold</span> <span class='kw'>=</span> <span class='fl'>1.05</span>,
-  <span class='kw'>pval_cutoff</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
-  <span class='kw'>n_label</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>report_folder_path</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span>(),
-  <span class='kw'>report_file</span> <span class='kw'>=</span> <span class='st'>"de_report_scflow"</span>
-)</pre>
+    <pre class="usage"><span class='fu'>report_de</span><span class='op'>(</span>
+  <span class='va'>res</span>,
+  fc_threshold <span class='op'>=</span> <span class='fl'>1.05</span>,
+  pval_cutoff <span class='op'>=</span> <span class='fl'>0.05</span>,
+  n_label <span class='op'>=</span> <span class='fl'>10</span>,
+  report_folder_path <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/getwd.html'>getwd</a></span><span class='op'>(</span><span class='op'>)</span>,
+  report_file <span class='op'>=</span> <span class='st'>"de_report_scflow"</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -161,10 +169,10 @@
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other differential gene expression: 
-<code><a href='dot-filter_sce_genes_for_de.html'>.filter_sce_genes_for_de</a>()</code>,
-<code><a href='dot-generate_model_from_vars.html'>.generate_model_from_vars</a>()</code>,
-<code><a href='dot-perform_de_with_mast.html'>.perform_de_with_mast</a>()</code>,
-<code><a href='dot-preprocess_sce_for_de.html'>.preprocess_sce_for_de</a>()</code>,
+<code><a href='.filter_sce_genes_for_de.html'>.filter_sce_genes_for_de</a>()</code>,
+<code><a href='.generate_model_from_vars.html'>.generate_model_from_vars</a>()</code>,
+<code><a href='.perform_de_with_mast.html'>.perform_de_with_mast</a>()</code>,
+<code><a href='.preprocess_sce_for_de.html'>.preprocess_sce_for_de</a>()</code>,
 <code><a href='perform_de.html'>perform_de</a>()</code>,
 <code><a href='pseudobulk_sce.html'>pseudobulk_sce</a>()</code></p></div>
 
@@ -183,7 +191,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

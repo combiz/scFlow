@@ -9,6 +9,13 @@
 <title>Find singlets in a SingleCellExperiment with DoubletFinder by McGinnis CS
 et al — run_doubletfinder • scFlow</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -44,6 +51,7 @@ et al — run_doubletfinder • scFlow</title>
 et al — run_doubletfinder" />
 <meta property="og:description" content="Runs the doubletfinder algorithm on the SingleCellExperiment. Returns a
 SingleCellExperiment annotated with is_singlet and tSNE coordinates." />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -125,16 +133,16 @@ et al</h1>
 SingleCellExperiment annotated with is_singlet and tSNE coordinates.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>run_doubletfinder</span>(
-  <span class='no'>sce</span>,
-  <span class='kw'>pK</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>pca_dims</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>var_features</span> <span class='kw'>=</span> <span class='fl'>2000</span>,
-  <span class='kw'>vars_to_regress_out</span> <span class='kw'>=</span> <span class='st'>"nCount_RNA"</span>,
-  <span class='kw'>doublet_rate</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>dpk</span> <span class='kw'>=</span> <span class='fl'>8</span>,
-  <span class='kw'>num_cores</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span>(<span class='fl'>1</span>, <span class='kw pkg'>future</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/availableCores.html'>availableCores</a></span>() - <span class='fl'>2</span>)
-)</pre>
+    <pre class="usage"><span class='fu'>run_doubletfinder</span><span class='op'>(</span>
+  <span class='va'>sce</span>,
+  pK <span class='op'>=</span> <span class='cn'>NULL</span>,
+  pca_dims <span class='op'>=</span> <span class='fl'>10</span>,
+  var_features <span class='op'>=</span> <span class='fl'>2000</span>,
+  vars_to_regress_out <span class='op'>=</span> <span class='st'>"nCount_RNA"</span>,
+  doublet_rate <span class='op'>=</span> <span class='fl'>0</span>,
+  dpk <span class='op'>=</span> <span class='fl'>8</span>,
+  num_cores <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/availableCores.html'>availableCores</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>-</span> <span class='fl'>2</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -187,7 +195,7 @@ doi: <a href='https://doi.org/10.1016/j.cels.2019.03.003'>https://doi.org/10.101
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other annotation functions: 
-<code><a href='dot-preprocess_seurat_object.html'>.preprocess_seurat_object</a>()</code>,
+<code><a href='.preprocess_seurat_object.html'>.preprocess_seurat_object</a>()</code>,
 <code><a href='annotate_celltype_metrics.html'>annotate_celltype_metrics</a>()</code>,
 <code><a href='annotate_merged_sce.html'>annotate_merged_sce</a>()</code>,
 <code><a href='annotate_sce_cells.html'>annotate_sce_cells</a>()</code>,
@@ -221,7 +229,7 @@ doi: <a href='https://doi.org/10.1016/j.cels.2019.03.003'>https://doi.org/10.101
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
