@@ -122,7 +122,7 @@ Remotes:
     satijalab/seurat,
     bioc::devel/biomaRt,
     bioc::devel/SingleCellExperiment,
-    bioc::develel/SummarizedExperiment,
+    bioc::devel/SummarizedExperiment,
     ropensci/plotly,
     NathanSkene/EWCE,
     MacoskoLab/liger,
