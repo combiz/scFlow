@@ -1,0 +1,53 @@
+h1, .h1, h2, .h2 {
+  margin-top: 60px;
+}
+
+h3, .h3 {
+  margin-top: 20px;
+}
+
+.title {
+  display: none;
+}
+
+.zoomfig:hover {
+transform: scale(1.6); /* (160% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+z-index:10;
+border: thin solid;
+background-color: white;
+opacity: 1;
+padding: 20px;
+}
+
+.plainfig {
+z-index:10;
+border: thin solid;
+background-color: white;
+opacity: 1;
+padding: 20px;
+}
+
+.basicfig {
+  padding: 20px;
+}
+
+.formattable {
+  border: thin solid;
+  background-color: white;
+  padding: 20px;
+}
+
+#scflow_logo {
+margin-right: 15px; 
+display:inline-block;
+}
+
+#report_title {
+display: inline-block;
+margin-top: 25px;
+}
+
+.date {
+float: right;
+margin-top: -20px;
+}

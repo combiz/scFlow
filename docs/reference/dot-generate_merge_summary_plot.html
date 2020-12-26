@@ -8,6 +8,13 @@
 
 <title>helper fn to generate a merge summary plot for a SingleCellExperiment — .generate_merge_summary_plot • scFlow</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -42,6 +49,7 @@
 <meta property="og:title" content="helper fn to generate a merge summary plot for a SingleCellExperiment — .generate_merge_summary_plot" />
 <meta property="og:description" content="if plot_var is a factor, a bar plot is returned.
 if plot_var is.numeric, a violin plot is returned." />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -122,13 +130,13 @@ if plot_var is.numeric, a violin plot is returned." />
 if plot_var is.numeric, a violin plot is returned.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>.generate_merge_summary_plot</span>(
-  <span class='no'>sce</span>,
-  <span class='no'>plot_var</span>,
-  <span class='no'>unique_id_var</span>,
-  <span class='kw'>facet_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>plot_points</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>.generate_merge_summary_plot</span><span class='op'>(</span>
+  <span class='va'>sce</span>,
+  <span class='va'>plot_var</span>,
+  <span class='va'>unique_id_var</span>,
+  facet_var <span class='op'>=</span> <span class='cn'>NULL</span>,
+  plot_points <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -171,7 +179,7 @@ if plot_var is.numeric, a violin plot is returned.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

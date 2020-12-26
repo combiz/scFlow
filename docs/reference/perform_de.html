@@ -8,6 +8,13 @@
 
 <title>Perform Differential Gene Expression on a SingleCellExperiment — perform_de • scFlow</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -41,6 +48,7 @@
 
 <meta property="og:title" content="Perform Differential Gene Expression on a SingleCellExperiment — perform_de" />
 <meta property="og:description" content="Perform Differential Gene Expression on a SingleCellExperiment" />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -120,20 +128,22 @@
     <p>Perform Differential Gene Expression on a SingleCellExperiment</p>
     </div>
 
-    <pre class="usage"><span class='fu'>perform_de</span>(
-  <span class='no'>sce</span>,
-  <span class='kw'>de_method</span> <span class='kw'>=</span> <span class='st'>"MASTZLM"</span>,
-  <span class='kw'>min_counts</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>min_cells_pc</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
-  <span class='kw'>rescale_numerics</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>dependent_var</span> <span class='kw'>=</span> <span class='st'>"group"</span>,
-  <span class='kw'>ref_class</span> <span class='kw'>=</span> <span class='st'>"Control"</span>,
-  <span class='kw'>confounding_vars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"individual"</span>, <span class='st'>"cngeneson"</span>, <span class='st'>"sex"</span>, <span class='st'>"age"</span>, <span class='st'>"PMI"</span>, <span class='st'>"RIN"</span>,
-    <span class='st'>"seqdate"</span>, <span class='st'>"pc_mito"</span>),
-  <span class='kw'>random_effects_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>unique_id_var</span> <span class='kw'>=</span> <span class='st'>"individual"</span>,
-  <span class='no'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>perform_de</span><span class='op'>(</span>
+  <span class='va'>sce</span>,
+  de_method <span class='op'>=</span> <span class='st'>"MASTZLM"</span>,
+  min_counts <span class='op'>=</span> <span class='fl'>1</span>,
+  min_cells_pc <span class='op'>=</span> <span class='fl'>0.1</span>,
+  rescale_numerics <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  dependent_var <span class='op'>=</span> <span class='st'>"group"</span>,
+  ref_class <span class='op'>=</span> <span class='st'>"Control"</span>,
+  confounding_vars <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"individual"</span>, <span class='st'>"cngeneson"</span>, <span class='st'>"sex"</span>, <span class='st'>"age"</span>, <span class='st'>"PMI"</span>, <span class='st'>"RIN"</span>,
+    <span class='st'>"seqdate"</span>, <span class='st'>"pc_mito"</span><span class='op'>)</span>,
+  random_effects_var <span class='op'>=</span> <span class='cn'>NULL</span>,
+  unique_id_var <span class='op'>=</span> <span class='st'>"individual"</span>,
+  species <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"scflow_species"</span>, default <span class='op'>=</span> <span class='st'>"human"</span><span class='op'>)</span>,
+  parallel <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -175,6 +185,14 @@
       <td><p>the colData variable identifying unique samples</p></td>
     </tr>
     <tr>
+      <th>species</th>
+      <td><p>human or mouse</p></td>
+    </tr>
+    <tr>
+      <th>parallel</th>
+      <td><p>enable parallel processing</p></td>
+    </tr>
+    <tr>
       <th>...</th>
       <td><p>advanced options</p></td>
     </tr>
@@ -186,10 +204,10 @@
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other differential gene expression: 
-<code><a href='dot-filter_sce_genes_for_de.html'>.filter_sce_genes_for_de</a>()</code>,
-<code><a href='dot-generate_model_from_vars.html'>.generate_model_from_vars</a>()</code>,
-<code><a href='dot-perform_de_with_mast.html'>.perform_de_with_mast</a>()</code>,
-<code><a href='dot-preprocess_sce_for_de.html'>.preprocess_sce_for_de</a>()</code>,
+<code><a href='.filter_sce_genes_for_de.html'>.filter_sce_genes_for_de</a>()</code>,
+<code><a href='.generate_model_from_vars.html'>.generate_model_from_vars</a>()</code>,
+<code><a href='.perform_de_with_mast.html'>.perform_de_with_mast</a>()</code>,
+<code><a href='.preprocess_sce_for_de.html'>.preprocess_sce_for_de</a>()</code>,
 <code><a href='pseudobulk_sce.html'>pseudobulk_sce</a>()</code>,
 <code><a href='report_de.html'>report_de</a>()</code></p></div>
 
@@ -208,7 +226,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

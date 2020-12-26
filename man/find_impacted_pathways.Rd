@@ -28,7 +28,7 @@ genes.}
 enrichR is implemented. Use one or more of the tools.}
 
 \item{enrichment_database}{Name of the database for enrichment. User can
-specify one or more database names. Check \code{\link[scFlow:list_databases]{scFlow::list_databases()}} for
+specify one or more database names. Check \code{\link[=list_databases]{list_databases()}} for
 available database alias.}
 
 \item{is_output}{If TRUE a folder will be created and results of enrichment

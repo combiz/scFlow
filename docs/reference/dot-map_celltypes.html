@@ -8,6 +8,13 @@
 
 <title>Main mapping function — .map_celltypes • scFlow</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -41,6 +48,7 @@
 
 <meta property="og:title" content="Main mapping function — .map_celltypes" />
 <meta property="og:description" content="Main mapping function" />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -120,15 +128,15 @@
     <p>Main mapping function</p>
     </div>
 
-    <pre class="usage"><span class='fu'>.map_celltypes</span>(
-  <span class='no'>ctdToMap</span>,
-  <span class='kw'>ctdToMapAgainst</span> <span class='kw'>=</span> <span class='kw pkg'>MAGMA.Celltyping</span><span class='kw ns'>::</span><span class='no'>ctd_Tasic</span>,
-  <span class='kw'>inputSpecies</span> <span class='kw'>=</span> <span class='st'>"human"</span>,
-  <span class='kw'>mapAgainstSpecies</span> <span class='kw'>=</span> <span class='st'>"mouse"</span>,
-  <span class='kw'>annotLevel</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>numTopMarkers</span> <span class='kw'>=</span> <span class='fl'>500</span>,
-  <span class='kw'>mappingLevel</span> <span class='kw'>=</span> <span class='fl'>2</span>
-)</pre>
+    <pre class="usage"><span class='fu'>.map_celltypes</span><span class='op'>(</span>
+  <span class='va'>ctdToMap</span>,
+  ctdToMapAgainst <span class='op'>=</span> <span class='fu'>MAGMA.Celltyping</span><span class='fu'>::</span><span class='va'>ctd_Tasic</span>,
+  inputSpecies <span class='op'>=</span> <span class='st'>"human"</span>,
+  mapAgainstSpecies <span class='op'>=</span> <span class='st'>"mouse"</span>,
+  annotLevel <span class='op'>=</span> <span class='fl'>2</span>,
+  numTopMarkers <span class='op'>=</span> <span class='fl'>500</span>,
+  mappingLevel <span class='op'>=</span> <span class='fl'>2</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -169,12 +177,15 @@
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other clustering and dimensionality reduction: 
-<code><a href='dot-get_x_most_specific_genes.html'>.get_x_most_specific_genes</a>()</code>,
-<code><a href='dot-map_celltypes_with_ewce.html'>.map_celltypes_with_ewce</a>()</code>,
+<code><a href='.get_x_most_specific_genes.html'>.get_x_most_specific_genes</a>()</code>,
+<code><a href='.map_celltypes_with_ewce.html'>.map_celltypes_with_ewce</a>()</code>,
 <code><a href='cluster_sce.html'>cluster_sce</a>()</code>,
 <code><a href='map_celltypes_sce.html'>map_celltypes_sce</a>()</code>,
 <code><a href='map_custom_celltypes.html'>map_custom_celltypes</a>()</code>,
 <code><a href='reduce_dims_sce.html'>reduce_dims_sce</a>()</code></p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Nathan Skene / Combiz Khozoie</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -191,7 +202,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

@@ -8,6 +8,13 @@
 
 <title>Preprocessing steps for Liger dimensionality reduction — liger_preprocess • scFlow</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -41,6 +48,7 @@
 
 <meta property="og:title" content="Preprocessing steps for Liger dimensionality reduction — liger_preprocess" />
 <meta property="og:description" content="Split merged object into multiple sce objects and extract sparse matrices:" />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -120,22 +128,22 @@
     <p>Split merged object into multiple sce objects and extract sparse matrices:</p>
     </div>
 
-    <pre class="usage"><span class='fu'>liger_preprocess</span>(
-  <span class='no'>sce</span>,
-  <span class='no'>k</span>,
-  <span class='kw'>unique_id_var</span> <span class='kw'>=</span> <span class='st'>"manifest"</span>,
-  <span class='kw'>take_gene_union</span> <span class='kw'>=</span> <span class='no'>F</span>,
-  <span class='kw'>remove.missing</span> <span class='kw'>=</span> <span class='no'>T</span>,
-  <span class='kw'>make.sparse</span> <span class='kw'>=</span> <span class='no'>T</span>,
-  <span class='kw'>num_genes</span> <span class='kw'>=</span> <span class='fl'>3000</span>,
-  <span class='kw'>combine</span> <span class='kw'>=</span> <span class='st'>"union"</span>,
-  <span class='kw'>keep_unique</span> <span class='kw'>=</span> <span class='no'>F</span>,
-  <span class='kw'>capitalize</span> <span class='kw'>=</span> <span class='no'>F</span>,
-  <span class='kw'>do_plot</span> <span class='kw'>=</span> <span class='no'>F</span>,
-  <span class='kw'>cex_use</span> <span class='kw'>=</span> <span class='fl'>0.3</span>,
-  <span class='kw'>use_cols</span> <span class='kw'>=</span> <span class='no'>T</span>,
-  <span class='no'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>liger_preprocess</span><span class='op'>(</span>
+  <span class='va'>sce</span>,
+  <span class='va'>k</span>,
+  unique_id_var <span class='op'>=</span> <span class='st'>"manifest"</span>,
+  take_gene_union <span class='op'>=</span> <span class='cn'>F</span>,
+  remove.missing <span class='op'>=</span> <span class='cn'>T</span>,
+  make.sparse <span class='op'>=</span> <span class='cn'>T</span>,
+  num_genes <span class='op'>=</span> <span class='fl'>3000</span>,
+  combine <span class='op'>=</span> <span class='st'>"union"</span>,
+  keep_unique <span class='op'>=</span> <span class='cn'>F</span>,
+  capitalize <span class='op'>=</span> <span class='cn'>F</span>,
+  do_plot <span class='op'>=</span> <span class='cn'>F</span>,
+  cex_use <span class='op'>=</span> <span class='fl'>0.3</span>,
+  use_cols <span class='op'>=</span> <span class='cn'>T</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -224,7 +232,7 @@ Selected genes are plotted in green. (default FALSE)</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

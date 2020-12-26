@@ -117,8 +117,11 @@ use_package("kBET")
 use_vignette("basic-qc", title = "Guided tutorial for sample quality control")
 
 #use_vignette("How to do this cool analysis") # later
-usethis::use_github_links()
-usethis::use_github_action_check_full()
+use_github_actions()
+use_github_actions_badge(name = "R-CMD-check", repo_spec = NULL)
+
+pkgdown::init_site() #create favicons from pkg logo
+
 ### BEFORE EVERY COMMIT
 #Restart R Session Cmd+Shift+F10 (Ctrl+Shift+F10 for Windows)
 #Document Package Cmd+Shift+D (Ctrl+Shift+D for Windows)
@@ -153,3 +156,4 @@ use_package("rlang")
 use_package("sctransform")
 use_package("future")
 use_package("future.apply")
+

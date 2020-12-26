@@ -1,5 +1,5 @@
 ---
-title: "<b>scFlow</b> - Dataset Integration and Clustering Report"
+title: "<b>scFlow</b> - Integration Report"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   html_document:
@@ -7,13 +7,12 @@ output:
     toc: false
     fig_caption: true
     keep_md: false
-    css: style.css
+    css: !expr system.file("rmarkdown/css/style.css", package = "scFlow")
     includes:
       after_body: footer.html
 params:
   metadata_path: false
   categorical_covariates: true
-bibliography: "`r system.file('bibtex/references.bib', package = 'scFlow')`"
 ---
 
 ```{r setup, results='hide', include=FALSE}
@@ -99,8 +98,5 @@ paste(out, collapse='\n')
 
 ```{r conditional_clustering_block, child='clustering.Rmd', eval = !is.null(metadata$cluster_params)}
 ```
-
-# References {-}
-<div id="refs"></div>
 
 <br>scFlow v`r utils::packageVersion("scFlow")` -- `r Sys.time()`
