@@ -20,7 +20,13 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v2
-      - uses: r-lib/actions/setup-r@v1
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v1
+        with: 
+          r-version: '3.6.3'
+          install-r:
+            default: false
+
       - name: Install dependencies
         run: |
           install.packages(c("remotes", "rcmdcheck"))
