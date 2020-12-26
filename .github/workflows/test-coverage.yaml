@@ -50,4 +50,6 @@ jobs:
 
       - name: Test coverage
         run: covr::codecov()
+        env:
+          R_LIBS_USER: /usr/local/lib/R/site-library
         shell: Rscript {0}
