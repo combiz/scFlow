@@ -1,4 +1,6 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+<img src=https://github.com/scFlow/blob/master/docs/logo/scflow.png width=300 />
+
 scFlow
 ======
 
@@ -56,13 +58,12 @@ workflow for single-cell/nuclei RNA sequencing data.
 The package functions are designed to interface neatly with
 [NextFlow](https://www.nextflow.io/) for scalable and containerized
 pipelines deployed locally, on high-performance computing clusters, or
-in the cloud. An accompanying NextFlow pipeline is in the works - TBA.
+in the cloud. See https://nf-co.re/scflow for the accompanying NextFlow pipeline.
 
-Installation
-------------
+Get Started and Documentation
+-----------------------------
 
-You must have hdf5 setup on your system to run this. If using linux, run
-“sudo apt-get install libhdf5-dev”.
+Our primary documentation is at https://combiz.github.io/scflow-manual/.
 
 You can install the development version of scFlow from
 [GitHub](https://github.com/) with:
@@ -72,17 +73,17 @@ You can install the development version of scFlow from
 devtools::install_github("combiz/scFlow")
 ```
 
-An additional data package `scFlowData` will be needed which contains
-supplimentary data required for gene annotaion, cell type annotation,
-pathway analysis. Install that with:
+Support
+-------
 
-``` r
-# install.packages("devtools")
-devtools::install_github("combiz/scFlowData")
-```
+- Ask a question [on Stack Overflow with the `scFlow` tag](https://stackoverflow.com/questions/ask?tags=scFlow), we monitor this for new questions.
+- Discuss on the [scFlow Slack team](https://ukdri.slack.com/archives/C01BDM7AJ6A).
+- Open **bug reports** and **feature requests** (not questions) on [GitHub issues](https://github.com/combiz/scFlow/issues).
 
-Developers
-----------
+How to Contribute
+-----------------
+
+Check [CONTRIBUTING](https://github.com/microsoft/scFlow/blob/master/CONTRIBUTING.md) page.
 
 You may need to install scFlow using a Personal Access Token
 (Github-&gt;Settings-&gt;Developer Settings): -
@@ -92,7 +93,14 @@ You may need to install scFlow using a Personal Access Token
 devtools::install_github("combiz/scFlow", auth_token = "YOURTOKEN")
 ```
 
-See [this page on the
-wiki](https://github.com/combiz/scFlow/wiki/Installing-scFlow-from-a-private-github-repo)
-for a full explanation. For dependency related issues check this
-[link](https://github.com/combiz/scFlow/wiki).
+Reference Papers
+----------------
+
+Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso & Sven Nahnsen. "[The nf-core framework for community-curated bioinformatics pipelines](https://www.nature.com/articles/s41587-020-0439-x)".  Nat Biotechnology (2020); doi: 10.1038/s41587-020-0439-x
+
+**Note**: If you use scFlow in your GitHub projects, please add `scFlow` in the `requirements.txt`.
+
+License
+-------
+
+This project is licensed under the terms of the GPLv3 license. See [LICENSE](https://github.com/combiz/scFlow/blob/master/LICENSE.md) for additional details.
