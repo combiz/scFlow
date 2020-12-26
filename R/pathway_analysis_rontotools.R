@@ -23,7 +23,7 @@
 #' @family Impacted pathway analysis
 #'
 #' @importFrom cli cli_text cli_alert_info
-#' @importFrom ROntoTools setNodeWeights alphaMLG pe Summary
+#' @importFrom ROntoTools setNodeWeights alphaMLG pe
 #' @importFrom ggplot2 ggplot ggsave
 #' @importFrom cowplot theme_cowplot background_grid
 #' @importFrom stringr str_wrap
@@ -149,7 +149,7 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
       verbose = FALSE
     )
 
-    res_summary <- ROntoTools::Summary(
+    res_summary <- Summary(
       res,
       pathNames = pathway_id,
       totalAcc = FALSE,
