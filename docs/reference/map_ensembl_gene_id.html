@@ -8,6 +8,13 @@
 
 <title>Return mappings for Ensembl Gene IDs — map_ensembl_gene_id • scFlow</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -44,6 +51,7 @@
 mappings from biomaRt or a local file.  If the mappings are absent from the
 local file, or the local file is not provided or missing, the mappings are
 retrieved by querying biomaRt." />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -126,13 +134,13 @@ local file, or the local file is not provided or missing, the mappings are
 retrieved by querying biomaRt.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>map_ensembl_gene_id</span>(
-  <span class='no'>ensembl_ids</span>,
-  <span class='kw'>mappings</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"ensembl_gene_id"</span>, <span class='st'>"gene_biotype"</span>, <span class='st'>"external_gene_name"</span>,
-    <span class='st'>"percentage_gene_gc_content"</span>),
-  <span class='kw'>species</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span>(<span class='st'>"scflow_species"</span>, <span class='kw'>default</span> <span class='kw'>=</span> <span class='st'>"human"</span>),
-  <span class='kw'>ensembl_mapping_file</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
-)</pre>
+    <pre class="usage"><span class='fu'>map_ensembl_gene_id</span><span class='op'>(</span>
+  <span class='va'>ensembl_ids</span>,
+  mappings <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"ensembl_gene_id"</span>, <span class='st'>"gene_biotype"</span>, <span class='st'>"external_gene_name"</span>,
+    <span class='st'>"percentage_gene_gc_content"</span><span class='op'>)</span>,
+  species <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"scflow_species"</span>, default <span class='op'>=</span> <span class='st'>"human"</span><span class='op'>)</span>,
+  ensembl_mapping_file <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -164,7 +172,7 @@ names.  ensembl_gene_id will be added if not included here.
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other annotation functions: 
-<code><a href='dot-preprocess_seurat_object.html'>.preprocess_seurat_object</a>()</code>,
+<code><a href='.preprocess_seurat_object.html'>.preprocess_seurat_object</a>()</code>,
 <code><a href='annotate_celltype_metrics.html'>annotate_celltype_metrics</a>()</code>,
 <code><a href='annotate_merged_sce.html'>annotate_merged_sce</a>()</code>,
 <code><a href='annotate_sce_cells.html'>annotate_sce_cells</a>()</code>,
@@ -184,7 +192,18 @@ names.  ensembl_gene_id will be added if not included here.
 <code><a href='sce_to_seu.html'>sce_to_seu</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>map_ensembl_gene_id</span>(<span class='st'>"ENSG00000130707"</span>)</div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span><span> Mappings file not provided, using biomaRt (slower).</span></div><div class='output co'>#&gt; <span class='error'>Error: failed to load HTTP resource</span></div><div class='input'>
+    <pre class="examples"><div class='input'><span class='fu'>map_ensembl_gene_id</span><span class='op'>(</span><span class='st'>"ENSG00000130707"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'><span style='color: #00BBBB;'>ℹ</span><span> Mappings file not provided, using biomaRt (slower).</span></div><div class='output co'>#&gt; <span class='warning'>Warning: `select_()` is deprecated as of dplyr 0.7.0.</span>
+#&gt; <span class='warning'>Please use `select()` instead.</span>
+#&gt; <span class='warning'></span><span style='color: #555555;'>This warning is displayed once every 8 hours.</span><span></span>
+#&gt; <span class='warning'></span><span style='color: #555555;'>Call `lifecycle::last_warnings()` to see where this warning was generated.</span><span></span></div><div class='output co'>#&gt; <span class='warning'>Warning: `filter_()` is deprecated as of dplyr 0.7.0.</span>
+#&gt; <span class='warning'>Please use `filter()` instead.</span>
+#&gt; <span class='warning'>See vignette('programming') for more help</span>
+#&gt; <span class='warning'></span><span style='color: #555555;'>This warning is displayed once every 8 hours.</span><span></span>
+#&gt; <span class='warning'></span><span style='color: #555555;'>Call `lifecycle::last_warnings()` to see where this warning was generated.</span><span></span></div><div class='output co'>#&gt; <span class='message'>Cache found</span></div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 1 x 4</span><span>
+#&gt;   ensembl_gene_id gene_biotype   external_gene_name percentage_gene_gc_content
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>           </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                                   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span> ENSG00000130707 protein_coding ASS1                                     55.6</div><div class='input'>
 </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -201,7 +220,7 @@ names.  ensembl_gene_id will be added if not included here.
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

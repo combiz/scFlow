@@ -7,8 +7,9 @@ output:
     toc: false
     fig_caption: true
     keep_md: false
-    css: style.css
+    css: !expr system.file("rmarkdown/css/style.css", package = "scFlow")
     includes:
+      in_header: header.html
       after_body: footer.html
 params:
   metadata_path: false

@@ -8,6 +8,13 @@
 
 <title>Helper function to expand a SingleCellExperiment to include specified genes — .expand_sce_rows • scFlow</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -44,6 +51,7 @@
 generates new zero'd matrix rows, rbinds them to the matrix, then sorts
 the matrix by ensembl_gene_id.  rowData (except ensembl_gene_id) and metadata
 are dropped to facilitate subsequent cbind-ing of SingleCellExperiments." />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -126,7 +134,7 @@ the matrix by ensembl_gene_id.  rowData (except ensembl_gene_id) and metadata
 are dropped to facilitate subsequent cbind-ing of SingleCellExperiments.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>.expand_sce_rows</span>(<span class='no'>sce</span>, <span class='no'>union_ensembl_gene_id</span>)</pre>
+    <pre class="usage"><span class='fu'>.expand_sce_rows</span><span class='op'>(</span><span class='va'>sce</span>, <span class='va'>union_ensembl_gene_id</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -161,7 +169,7 @@ in the new expanded SingleCellExperiment</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

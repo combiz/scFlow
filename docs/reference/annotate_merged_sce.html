@@ -8,6 +8,13 @@
 
 <title>Annotate a post-merge SingleCellExperiment with plots — annotate_merged_sce • scFlow</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -41,6 +48,7 @@
 
 <meta property="og:title" content="Annotate a post-merge SingleCellExperiment with plots — annotate_merged_sce" />
 <meta property="og:description" content="Annotate a post-merge SingleCellExperiment with plots" />
+<meta property="og:image" content="/logo.png" />
 
 
 
@@ -120,13 +128,13 @@
     <p>Annotate a post-merge SingleCellExperiment with plots</p>
     </div>
 
-    <pre class="usage"><span class='fu'>annotate_merged_sce</span>(
-  <span class='no'>sce</span>,
-  <span class='kw'>plot_vars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"total_features_by_counts"</span>, <span class='st'>"total_counts"</span>, <span class='st'>"pc_mito"</span>, <span class='st'>"pc_ribo"</span>),
-  <span class='kw'>unique_id_var</span> <span class='kw'>=</span> <span class='st'>"manifest"</span>,
-  <span class='kw'>facet_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>outlier_vars</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"total_features_by_counts"</span>, <span class='st'>"total_counts"</span>)
-)</pre>
+    <pre class="usage"><span class='fu'>annotate_merged_sce</span><span class='op'>(</span>
+  <span class='va'>sce</span>,
+  plot_vars <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"total_features_by_counts"</span>, <span class='st'>"total_counts"</span>, <span class='st'>"pc_mito"</span>, <span class='st'>"pc_ribo"</span><span class='op'>)</span>,
+  unique_id_var <span class='op'>=</span> <span class='st'>"manifest"</span>,
+  facet_vars <span class='op'>=</span> <span class='cn'>NULL</span>,
+  outlier_vars <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"total_features_by_counts"</span>, <span class='st'>"total_counts"</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -159,7 +167,7 @@
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other annotation functions: 
-<code><a href='dot-preprocess_seurat_object.html'>.preprocess_seurat_object</a>()</code>,
+<code><a href='.preprocess_seurat_object.html'>.preprocess_seurat_object</a>()</code>,
 <code><a href='annotate_celltype_metrics.html'>annotate_celltype_metrics</a>()</code>,
 <code><a href='annotate_sce_cells.html'>annotate_sce_cells</a>()</code>,
 <code><a href='annotate_sce_genes.html'>annotate_sce_genes</a>()</code>,
@@ -193,7 +201,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
