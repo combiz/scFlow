@@ -5,14 +5,11 @@ scFlow - Single-Cell Workflow
 =============================
 
 <!-- badges: start -->
-[![Travis build
-status](https://travis-ci.org/combiz/scFlow.svg?branch=master)](https://travis-ci.org/combiz/scFlow)
 [![Codecov test
 coverage](https://codecov.io/gh/combiz/scFlow/branch/master/graph/badge.svg)](https://codecov.io/gh/combiz/scFlow?branch=master)
 [![AppVeyor build
 status](https://ci.appveyor.com/api/projects/status/github/combiz/scFlow?branch=master&svg=true)](https://ci.appveyor.com/project/combiz/scFlow)
-[![R build
-status](https://github.com/combiz/scFlow/workflows/R-CMD-check/badge.svg)](https://github.com/combiz/scFlow/actions)
+[![R-CMD-check](https://github.com/combiz/scFlow/workflows/R-CMD-check/badge.svg)](https://github.com/combiz/scFlow/actions)
 <!-- badges: end -->
 
 The goal of scFlow is to provide tools in R to build a complete analysis

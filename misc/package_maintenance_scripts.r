@@ -117,8 +117,8 @@ use_package("kBET")
 use_vignette("basic-qc", title = "Guided tutorial for sample quality control")
 
 #use_vignette("How to do this cool analysis") # later
-usethis::use_github_links()
-usethis::use_github_action_check_full()
+use_github_actions()
+use_github_actions_badge(name = "R-CMD-check", repo_spec = NULL)
 
 pkgdown::init_site() #create favicons from pkg logo
 
