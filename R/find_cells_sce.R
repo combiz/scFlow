@@ -5,10 +5,10 @@
 #' * is_empty_drop - is the barcode an empty drop
 #'
 #' @param sce a SingleCellExperiment object
-#' @param lower see [dropletUtils::emptyDrops()]
-#' @param retain see [dropletUtils::emptyDrops()].  Use "auto" to calculate
+#' @param lower see [DropletUtils::emptyDrops()]
+#' @param retain see [DropletUtils::emptyDrops()].  Use "auto" to calculate
 #' the parameter from the top `expect_cells` cells (cellranger method).
-#' @param alpha minimum FDR for [dropletUtils::emptyDrops()]
+#' @param alpha minimum FDR for [DropletUtils::emptyDrops()]
 #' @param niters the number of Monte Carlo iterations
 #' @param expect_cells the number of cells expected for auto retain
 #' @param ... additional arguments for uniformity testing

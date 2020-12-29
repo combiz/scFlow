@@ -17,9 +17,9 @@ find_cells(
 \arguments{
 \item{sce}{a SingleCellExperiment object}
 
-\item{lower}{see \code{\link[dropletUtils:emptyDrops]{dropletUtils::emptyDrops()}}}
+\item{lower}{see \code{\link[DropletUtils:emptyDrops]{DropletUtils::emptyDrops()}}}
 
-\item{retain}{see \code{\link[dropletUtils:emptyDrops]{dropletUtils::emptyDrops()}}.  Use "auto" to calculate
+\item{retain}{see \code{\link[DropletUtils:emptyDrops]{DropletUtils::emptyDrops()}}.  Use "auto" to calculate
 the parameter from the top \code{expect_cells} cells (cellranger method).}
 
 \item{niters}{the number of Monte Carlo iterations}
@@ -28,7 +28,7 @@ the parameter from the top \code{expect_cells} cells (cellranger method).}
 
 \item{...}{additional arguments for uniformity testing}
 
-\item{alpha}{minimum FDR for \code{\link[dropletUtils:emptyDrops]{dropletUtils::emptyDrops()}}}
+\item{alpha}{minimum FDR for \code{\link[DropletUtils:emptyDrops]{DropletUtils::emptyDrops()}}}
 }
 \value{
 sce a SingleCellExperiment object annotated with emptyDrops metrics
