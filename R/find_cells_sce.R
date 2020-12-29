@@ -54,7 +54,7 @@ find_cells <- function(sce,
       " UMI barcodes"
       ))
     retain <- .calculate_retain_parameter(sce, expect_cells = expect_cells)
-    cli::cli_alert("Retaining all barcodes with ≥ {.val {retain}} UMIs")
+    cli::cli_alert("Retaining all barcodes with \u2265 {.val {retain}} UMIs")
 
   }
 
