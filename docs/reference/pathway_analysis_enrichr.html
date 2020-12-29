@@ -150,7 +150,7 @@ Column names should be gene, logFC, pval and padj respectively.</p></td>
     <tr>
       <th>enrichment_database</th>
       <td><p>Name of the database for enrichment. User can
-specify one or more database names from <code>enrichR::listEnrichDbs()</code>.</p></td>
+specify one or more database names from <code><a href='https://rdrr.io/pkg/enrichR/man/listEnrichrDbs.html'>enrichR::listEnrichrDbs()</a></code>.</p></td>
     </tr>
     <tr>
       <th>is_output</th>
@@ -181,17 +181,6 @@ and a list of plots of top 10 significant genesets.</p>
 <code><a href='plot_network.html'>plot_network</a>()</code>,
 <code><a href='report_impacted_pathway.html'>report_impacted_pathway</a>()</code></p></div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>1234</span><span class='op'>)</span>
-<span class='va'>enrichment_result</span> <span class='op'>&lt;-</span> <span class='fu'>pathway_analysis_enrichr</span><span class='op'>(</span>
-  gene_file <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span><span class='op'>(</span><span class='st'>"extdata"</span>, package <span class='op'>=</span> <span class='st'>"scFlowData"</span><span class='op'>)</span>, <span class='st'>"/"</span>,
-    <span class='st'>"de_result_table.tsv"</span>,
-    sep <span class='op'>=</span> <span class='st'>""</span>
-  <span class='op'>)</span>,
-  enrichment_database <span class='op'>=</span> <span class='st'>"GO_Molecular_Function_2018"</span>,
-  is_output <span class='op'>=</span> <span class='cn'>FALSE</span>
-<span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error: File not found.</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
