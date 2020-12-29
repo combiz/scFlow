@@ -155,6 +155,5 @@ Remotes:
     bioc::3.11/MAST,
     bioc::3.10/multtest,
     bioc::3.10/edgeR,
-    bioc::3.10/preprocessCore,
-    bioc::3.10/enrichR
+    bioc::3.10/preprocessCore
 VignetteBuilder: knitr
