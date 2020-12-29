@@ -32,17 +32,6 @@
 #' @importFrom purrr discard
 #'
 #' @export
-#'
-#' @examples
-#' set.seed(1234)
-#' enrichment_result <- pathway_analysis_rontotools(
-#'   gene_file = paste(system.file("extdata", package = "scFlowData"), "/",
-#'     "de_result_table.tsv",
-#'     sep = ""
-#'   ),
-#'   enrichment_database = "kegg",
-#'   is_output = FALSE
-#' )
 pathway_analysis_rontotools <- function(gene_file = NULL,
                                         reference_file = NULL,
                                         enrichment_database = c(

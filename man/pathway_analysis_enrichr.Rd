@@ -20,7 +20,7 @@ a list of genes, their fold-change, p-value and adjusted p-value.
 Column names should be gene, logFC, pval and padj respectively.}
 
 \item{enrichment_database}{Name of the database for enrichment. User can
-specify one or more database names from \code{\link[enrichR:listEnrichDbs]{enrichR::listEnrichDbs()}}.}
+specify one or more database names from \code{\link[enrichR:listEnrichrDbs]{enrichR::listEnrichrDbs()}}.}
 
 \item{is_output}{If TRUE a folder will be created and results of enrichment
 analysis will be saved otherwise a R list will be returned. Default FALSE}
@@ -33,17 +33,6 @@ and a list of plots of top 10 significant genesets.
 }
 \description{
 Performs impacted pathway analysis with a list of genes.
-}
-\examples{
-set.seed(1234)
-enrichment_result <- pathway_analysis_enrichr(
-  gene_file = paste(system.file("extdata", package = "scFlowData"), "/",
-    "de_result_table.tsv",
-    sep = ""
-  ),
-  enrichment_database = "GO_Molecular_Function_2018",
-  is_output = FALSE
-)
 }
 \seealso{
 Other Impacted pathway analysis: 

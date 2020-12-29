@@ -8,6 +8,8 @@ read_sce(folder_path, read_metadata = FALSE)
 }
 \arguments{
 \item{folder_path}{path to save the SingleCellExperiment}
+
+\item{read_metadata}{Enable import of metadata if previously saved.}
 }
 \value{
 sce a SingleCellExperiment object

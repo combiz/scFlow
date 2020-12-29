@@ -101,7 +101,7 @@ Quantile align (normalize) factor loadings:}
 this are removed (given weight 0) (default 0.2).}
 
 \item{dims.use}{Indices of factors to use for shared nearest
-factor determination (default 1:ncol(H[\link{1}])).}
+factor determination (default 1:ncol(H)).}
 
 \item{dist.use}{Distance metric to use in calculating nearest
 neighbors (default "CR").}

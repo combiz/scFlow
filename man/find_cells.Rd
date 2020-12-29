@@ -22,6 +22,8 @@ find_cells(
 \item{retain}{see \code{\link[DropletUtils:emptyDrops]{DropletUtils::emptyDrops()}}.  Use "auto" to calculate
 the parameter from the top \code{expect_cells} cells (cellranger method).}
 
+\item{alpha_cutoff}{The alpha cutoff used for Monte Carlo signficance.}
+
 \item{niters}{the number of Monte Carlo iterations}
 
 \item{expect_cells}{the number of cells expected for auto retain}

@@ -216,10 +216,11 @@ find_cells <- function(sce,
 
 #' helper fn - histogram plot to confirm uniform distribution
 #' @export
+#' @importFrom grDevices nclass.Sturges
 #' @keywords internal
 .plot_emptydrops_distribution <- function(dt) {
   brx <- pretty(range(dt$pval),
-    n = nclass.Sturges(dt$pval), min.n = 1
+    n = grDevices::nclass.Sturges(dt$pval), min.n = 1
   )
 
   p <- ggplot(data = dt) +

@@ -27,17 +27,6 @@
 #' @importFrom purrr map map_chr discard
 #'
 #' @export
-#'
-#' @examples
-#' set.seed(1234)
-#' enrichment_result <- pathway_analysis_enrichr(
-#'   gene_file = paste(system.file("extdata", package = "scFlowData"), "/",
-#'     "de_result_table.tsv",
-#'     sep = ""
-#'   ),
-#'   enrichment_database = "GO_Molecular_Function_2018",
-#'   is_output = FALSE
-#' )
 pathway_analysis_enrichr <- function(gene_file = NULL,
                                      enrichment_database = c(
                                        "GO_Molecular_Function_2018",
@@ -53,7 +42,6 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
                                      ),
                                      is_output = FALSE,
                                      output_dir = ".") {
-  library(enrichR)
 
   assertthat::assert_that(
     !is.null(gene_file),
@@ -209,6 +197,7 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
 }
 
 #' dotplot for ORA. x axis perturbation, y axis description
+#' @importFrom stats reorder
 #' @keywords internal
 
 
@@ -219,7 +208,7 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
 
   ggplot2::ggplot(dt, aes(
     x = odds_ratio,
-    y = reorder(description, odds_ratio)
+    y = stats::reorder(description, odds_ratio)
   )) +
     geom_point(aes(fill = FDR, size = overlap),
       shape = 21, alpha = 0.7, color = "black"

@@ -9,13 +9,13 @@
 #' @return sce a annotated SingleCellExperiment object
 #'
 #' @family annotation functions
+#' @rawNamespace import(scater, except = "normalize")
 #' @importFrom cli cli_alert_danger rule cli_text cli_alert_success
 #' @importFrom purrr map map_lgl map_chr
 #' @importFrom SingleCellExperiment counts
 #' @importFrom Matrix colSums rowSums
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom dplyr left_join union rename
-#' @importFrom scater calculateQCMetrics
 #' @importFrom english words
 #' @importFrom tools toTitleCase
 #' @export
@@ -116,9 +116,7 @@ merge_sce <- function(sce_l, ensembl_mapping_file = NULL,
 #' @param union_ensembl_gene_id the full list of ensembl_gene_id to be included
 #' in the new expanded SingleCellExperiment
 #'
-#' @import purrr SingleCellExperiment
 #' @importFrom SummarizedExperiment rowData colData
-#' @import methods Matrix
 #' @return sce a annotated SingleCellExperiment object with any
 #' @keywords internal
 .expand_sce_rows <- function(sce, union_ensembl_gene_id) {

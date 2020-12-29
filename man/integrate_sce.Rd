@@ -11,6 +11,8 @@ integrate_sce(sce, method = "Liger", ...)
 
 \item{method}{the integration method to use}
 
+\item{...}{Additional arguments}
+
 \item{k}{Inner dimension of factorization (number of factors).
 Set to k=30 as default.}
 }

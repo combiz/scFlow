@@ -15,6 +15,7 @@
 #'
 #' @family differential gene expression
 #'
+#' @rawNamespace import(scater, except = "normalize")
 #' @importFrom cli cli_text rule
 #' @importFrom SummarizedExperiment colData rowData assays
 #' @importFrom dplyr select distinct group_by tally select left_join
@@ -24,7 +25,6 @@
 #' @importFrom future availableCores
 #' @importFrom assertthat are_equal
 #' @importFrom tidyselect all_of
-#' @importFrom scater librarySizeFactors normalize calculateQCMetrics
 #' @importFrom SingleCellExperiment SingleCellExperiment counts
 #' @importFrom edgeR cpm
 #'

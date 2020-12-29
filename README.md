@@ -5,11 +5,13 @@ scFlow - Single-Cell Workflow
 =============================
 
 <!-- badges: start -->
-[![Codecov test
-coverage](https://codecov.io/gh/combiz/scFlow/branch/master/graph/badge.svg)](https://codecov.io/gh/combiz/scFlow?branch=master)
-[![AppVeyor build
-status](https://ci.appveyor.com/api/projects/status/github/combiz/scFlow?branch=master&svg=true)](https://ci.appveyor.com/project/combiz/scFlow)
+[![R GitHub
+Actions](https://github.com/combiz/scFlow/workflows/R%20GitHub%20Actions/badge.svg)](https://github.com/combiz/scFlow/actions)
 [![R-CMD-check](https://github.com/combiz/scFlow/workflows/R-CMD-check/badge.svg)](https://github.com/combiz/scFlow/actions)
+[![License: GPL
+v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![contributions
+welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/combiz/scFlow/issues)
 <!-- badges: end -->
 
 The goal of scFlow is to provide tools in R to build a complete analysis

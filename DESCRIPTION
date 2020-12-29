@@ -38,7 +38,8 @@ Suggests:
     knitr,
     scFlowData
 Depends:
-    enrichR
+    enrichR,
+    org.Hs.eg.db
 Language: en-US
 RoxygenNote: 7.1.1
 Imports: 
@@ -117,7 +118,11 @@ Imports:
     tibble,
     tidyr,
     tidyselect,
-    patchwork
+    patchwork,
+    edgeR,
+    preprocessCore,
+    scales,
+    uwot
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,
@@ -133,6 +138,7 @@ Remotes:
     neurogenomics/scFlowExample,
     combiz/scFlowData,
     cran/DirichletReg,
+    jlmelville/uwot,
     bioc::3.10/biomaRt,
     bioc::3.10/SingleCellExperiment,
     bioc::3.10/SummarizedExperiment,
@@ -149,5 +155,8 @@ Remotes:
     bioc::3.10/DropletUtils,
     bioc::3.10/limma,
     bioc::3.11/MAST,
-    bioc::3.10/multtest
+    bioc::3.10/multtest,
+    bioc::3.10/edgeR,
+    bioc::3.10/preprocessCore,
+    bioc::3.10/org.Hs.eg.db
 VignetteBuilder: knitr

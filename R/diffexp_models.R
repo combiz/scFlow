@@ -82,14 +82,15 @@ perform_de <- function(sce,
 #'
 #' @family differential gene expression
 #'
+#' @rawNamespace import(scater, except = "normalize")
 #' @importFrom SingleCellExperiment counts tpm
 #' @importFrom SummarizedExperiment rowData colData
-#' @importFrom scater librarySizeFactors normalize
 #' @importFrom Matrix colSums
 #' @importFrom cli cli_text
 #' @importFrom sctransform vst
 #' @importFrom limma normalizeQuantiles
 #' @importFrom preprocessCore normalize.quantiles
+#' @importFrom stats relevel
 #'
 #' @keywords internal
 .preprocess_sce_for_de <- function(...) {
@@ -202,7 +203,7 @@ perform_de <- function(sce,
 
   # define the reference class
   if (!is.numeric(sce[[fargs$dependent_var]])) {
-    sce[[fargs$dependent_var]] <- relevel(
+    sce[[fargs$dependent_var]] <- stats::relevel(
       sce[[fargs$dependent_var]],
       ref = fargs$ref_class
     )
@@ -223,7 +224,6 @@ perform_de <- function(sce,
 #'
 #' @importFrom SingleCellExperiment counts
 #' @importFrom SummarizedExperiment rowData colData
-#' @importFrom scater normalize calculateTPM
 #' @importFrom methods as
 #' @importFrom magrittr %>%
 #' @importFrom MAST zlm summary
@@ -381,7 +381,7 @@ perform_de <- function(sce,
 
     fcHurdle <- merge(fcHurdle, ensembl_res, by = "ensembl_gene_id")
 
-    fcHurdle$padj <- p.adjust(
+    fcHurdle$padj <- stats::p.adjust(
       fcHurdle$pval, "fdr", n = dim(sca)[[1]])
 
     fcHurdle$contrast <- ctrast
@@ -499,6 +499,7 @@ perform_de <- function(sce,
 #' @family differential gene expression
 #'
 #' @importFrom purrr map_chr
+#' @importFrom stats as.formula p.adjust
 #'
 #' @keywords internal
 .generate_model_from_vars <- function(sce,
@@ -535,7 +536,7 @@ perform_de <- function(sce,
     )
     random_effects_var <- paste(random_effects_var, collapse = " + ")
 
-    model_formula <- as.formula(
+    model_formula <- stats::as.formula(
       sprintf(
         "~ %s + %s%s %s",
         dependent_var,
@@ -545,7 +546,7 @@ perform_de <- function(sce,
       )
     )
   } else {
-    model_formula <- as.formula(
+    model_formula <- stats::as.formula(
       sprintf(
         "~ %s%s%s",
         dependent_var,
@@ -586,10 +587,10 @@ perform_de <- function(sce,
 }
 
 #' Get the variance explained by a variable for all genes
+#' @rawNamespace import(SingleCellExperiment, except = "cpm")
 #' @importFrom assertthat assert_that
 #' @importFrom cli cli_h2 cli_alert
 #' @importFrom SingleCellExperiment normcounts logcounts
-#' @importFrom scater normalizeCounts getVarianceExplained
 #' @importFrom dplyr mutate rename dense_rank desc
 #' @importFrom tidyr drop_na
 #' @keywords internal

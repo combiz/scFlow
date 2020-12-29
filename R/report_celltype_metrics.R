@@ -8,7 +8,6 @@
 #' @return sce a annotated SingleCellExperiment object
 #'
 #' @family annotation functions
-#' @import cli Matrix dplyr SingleCellExperiment purrr
 #' @import ggplot2
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom rmarkdown render
@@ -17,6 +16,7 @@
 #' @importFrom assertthat assert_that
 #' @importFrom ggridges geom_density_ridges_gradient
 #' @importFrom cli cli_h1 col_green symbol
+#' @importFrom qs qsave
 #' @export
 #'
 report_celltype_metrics <- function(sce,

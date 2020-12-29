@@ -28,6 +28,7 @@
 #' @importFrom Matrix t
 #' @importFrom SingleCellExperiment reducedDim reducedDimNames counts
 #' @importFrom SummarizedExperiment rowData colData
+#' @importFrom stats median
 #'
 #' @export
 plot_violin <- function(sce,
@@ -98,7 +99,7 @@ plot_violin <- function(sce,
     geom_violin(aes(fill = group), trim = TRUE) +
     scale_fill_manual(values = palette) +
     geom_jitter(size = size, width = .07, alpha = alpha) +
-    stat_summary(fun.y = median,
+    stat_summary(fun.y = stats::median,
                  fun.ymin = function(x) max(0, mean(x) - sd(x)),
                  fun.ymax = function(x) mean(x) + sd(x),
                  geom = "crossbar", width = 0.06, fill = "white") +

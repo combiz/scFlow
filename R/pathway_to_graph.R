@@ -13,9 +13,6 @@
 #' @importFrom graph nodes edgeDataDefaults edgeData
 #' @importFrom graphite pathways convertIdentifiers pathwayGraph pathwayId
 #' @importFrom purrr map_chr
-#'
-#' @examples
-#' pathway_to_graph("kegg")
 #' @export
 
 pathway_to_graph <- function(database_name) {

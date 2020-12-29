@@ -38,17 +38,6 @@ and a list of plots of top 10 significant genesets.
 Performs impacted pathway analysis with a list of gene, their fold-change
 and p-value. The main tool used here is pathway-express (pe).
 }
-\examples{
-set.seed(1234)
-enrichment_result <- pathway_analysis_rontotools(
-  gene_file = paste(system.file("extdata", package = "scFlowData"), "/",
-    "de_result_table.tsv",
-    sep = ""
-  ),
-  enrichment_database = "kegg",
-  is_output = FALSE
-)
-}
 \seealso{
 Other Impacted pathway analysis: 
 \code{\link{.dotplot_pe}()},

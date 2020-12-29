@@ -34,18 +34,9 @@
 #' @importFrom cowplot theme_cowplot background_grid
 #' @importFrom stringr str_wrap
 #' @importFrom assertthat assert_that
+#' @importFrom stats reorder
 #'
 #' @export
-#'
-#' @examples
-#' enrichment_result <- pathway_analysis_webgestaltr(
-#'   gene_file = paste(system.file("extdata", package = "scFlowData"), "/",
-#'     "de_result_table.tsv",
-#'     sep = ""
-#'   ),
-#'   enrichment_method = "ORA",
-#'   is_output = TRUE
-#' )
 pathway_analysis_webgestaltr <- function(gene_file = NULL,
                                          reference_file = NULL,
                                          enrichment_method = "ORA",
@@ -301,7 +292,7 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
 
   ggplot2::ggplot(dt, aes(
     x = enrichment_ratio,
-    y = reorder(description, enrichment_ratio)
+    y = stats::reorder(description, enrichment_ratio)
   )) +
     geom_point(aes(fill = FDR, size = overlap),
       shape = 21, alpha = 0.7, color = "black"
@@ -323,6 +314,7 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
 
 
 #' barplot for GSEA. x axis normalizedEnrichmentScore, y axis description
+#' @importFrom stats reorder
 #' @keywords internal
 
 
@@ -335,7 +327,7 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
   dt$description <- stringr::str_wrap(dt$description, 40)
 
   ggplot2::ggplot(dt, aes(
-    x = reorder(description, normalised_enrichment_ratio),
+    x = stats::reorder(description, normalised_enrichment_ratio),
     y = normalised_enrichment_ratio, fill = FDR
   ), alpha = 0.7) +
     geom_bar(stat = "identity") +

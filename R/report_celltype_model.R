@@ -9,7 +9,6 @@
 #' @return NULL
 #'
 #' @family annotation functions
-#' @import cli Matrix dplyr SingleCellExperiment purrr
 #' @import ggplot2
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom rmarkdown render

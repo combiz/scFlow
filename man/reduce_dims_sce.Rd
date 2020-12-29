@@ -21,6 +21,9 @@ reduce_dims_sce(
 
 \item{reduction_methods}{one or more of "tSNE","UMAP","UMAP3D"}
 
+\item{vars_to_regress_out}{Variables to regress out before dimensionality
+reduction.}
+
 \item{pca_dims}{the number of pca dimensions used}
 
 \item{...}{see uwot::umap for umap options}

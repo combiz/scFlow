@@ -19,7 +19,6 @@
 #' @return sce a SingleCellExperiment object annotated with gene data
 #'
 #' @family annotation functions
-#' @import cli Matrix dplyr
 #' @importFrom magrittr %>%
 #' @importFrom SummarizedExperiment rowData colData
 #'
