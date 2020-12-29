@@ -31,15 +31,6 @@
 #' @importFrom enrichR listEnrichrDbs
 #'
 #' @export
-#'
-#' @examples
-#' enrichment_result <- find_impacted_pathways(
-#'   gene_file = paste(system.file("extdata", package = "scFlowData"), "/",
-#'     "de_result_table.tsv",
-#'     sep = ""
-#'   ),
-#'   enrichment_method = "ORA"
-#' )
 find_impacted_pathways <- function(gene_file = NULL,
                                    reference_file = NULL,
                                    enrichment_tool = c(
