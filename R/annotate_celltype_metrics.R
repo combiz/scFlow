@@ -8,6 +8,7 @@
 #' @param facet_vars the colData variable(s) for grouped analyses
 #' @param input_reduced_dim the reducedDim slot used for clustering
 #' @param metric_vars the numeric colData variable(s) for metric comparisons
+#' @param ... additional parameters
 #'
 #' @return sce a annotated SingleCellExperiment object
 #'

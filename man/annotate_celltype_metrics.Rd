@@ -29,6 +29,8 @@ annotate_celltype_metrics(
 \item{input_reduced_dim}{the reducedDim slot used for clustering}
 
 \item{metric_vars}{the numeric colData variable(s) for metric comparisons}
+
+\item{...}{additional parameters}
 }
 \value{
 sce a annotated SingleCellExperiment object
