@@ -49,7 +49,6 @@ Imports:
     stringr,
     cli,
     dplyr,
-    english,
     magrittr,
     data.table,
     SummarizedExperiment,
