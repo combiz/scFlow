@@ -20,6 +20,7 @@
 #' analysis will be saved otherwise a R list will be returned. Default FALSE.
 #' @param output_dir Path for the output directory. Default is current
 #' directory.
+#' @param ... Additional arguments
 #'
 #' @return enrichment_result a list of list containing enrichment outputs from
 #' different enrichment tools.

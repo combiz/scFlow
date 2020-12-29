@@ -5,6 +5,7 @@
 #' @param show_category No or names of pathways to see in the netwrok plot.
 #' @param de_table A dataframe containg the gene name and foldchange of the
 #' genes. Ideally the input file for the impacted pathway analysis.
+#' @param ... Additional arguments
 #'
 #' @return A network plot object.
 #'

@@ -5,6 +5,8 @@
 #' @param sce a SingleCellExperiment object or merged sce objects
 #' @param input_reduced_dim the input reducedDim
 #' @param reduction_methods one or more of "tSNE","UMAP","UMAP3D"
+#' @param vars_to_regress_out Variables to regress out before dimensionality
+#' reduction.
 #' @param pca_dims the number of pca dimensions used
 #' @param ... see uwot::umap for umap options
 #'
@@ -18,6 +20,7 @@
 #' @importFrom threejs scatterplot3js
 #' @importFrom plotly plot_ly
 #' @importFrom Rtsne Rtsne
+#' @importFrom uwot umap
 #'
 #' @export
 

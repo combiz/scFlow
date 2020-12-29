@@ -26,6 +26,7 @@
 #' @importFrom tidyselect all_of
 #' @importFrom scater librarySizeFactors normalize calculateQCMetrics
 #' @importFrom SingleCellExperiment SingleCellExperiment counts
+#' @importFrom edgeR cpm
 #'
 #' @export
 pseudobulk_sce <- function(sce,

@@ -6,6 +6,7 @@
 #' @param celltype_var the colData variable specifying celltype or subtype
 #' @param dependent_var the name of the colData variable for contrasts
 #' @param ref_class the class of dependent_var used as reference
+#' @param ... Additional arguments
 #'
 #' @return results_l a list of results
 #'

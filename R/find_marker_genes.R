@@ -6,6 +6,7 @@
 #' @param fraction_expressing Top marker genes should be expressed in a minimum
 #' of this fraction of cells (default 0.10)
 #' @param top_n The top_n genes to use for plotting / subset table generation
+#' @param max_point_size The point size used for plotting.
 #' @param n_cores The number of cores to use
 #'
 #' @return results_l A list of results

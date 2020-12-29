@@ -31,6 +31,7 @@
 #' @importFrom SingleCellExperiment reducedDim reducedDimNames counts
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom patchwork plot_layout
+#' @importFrom scales pretty_breaks percent_format
 #'
 #' @export
 plot_expr_by_numeric_var <- function(sce,

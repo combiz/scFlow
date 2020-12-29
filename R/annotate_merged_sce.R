@@ -305,6 +305,8 @@ annotate_merged_sce <- function(sce,
 #' @param unique_id_var the colData variable identifying unique samples
 #' @param facet_var the colData variable to facet/subset by
 #' @param plot_points if TRUE plot individual values for violin plots
+#'
+#' @importFrom scales percent pretty_breaks
 #' @keywords internal
 .generate_merge_summary_plot <- function(sce,
                                          plot_var,

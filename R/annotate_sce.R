@@ -58,7 +58,9 @@
 #'   not provided, the biomaRt db is queried (slower).
 #' @param annotate_genes optionally skip gene annotation with FALSE
 #' @param annotate_cells optionally skip cell annotation with FALSE
-#'
+#' @param nmads The number of median absolute deviations used to define
+#'   outliers for adaptive thresholding.
+#' @param species The biological species of the sample.
 #' @return sce a annotated SingleCellExperiment object
 #'
 #' @family annotation functions

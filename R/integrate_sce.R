@@ -7,6 +7,7 @@
 #' @param method the integration method to use
 #' @param k Inner dimension of factorization (number of factors).
 #'   Set to k=30 as default.
+#' @param ... Additional arguments
 #'
 #' @return sce SingleCellExperiment object annotated with reducedDims
 #'

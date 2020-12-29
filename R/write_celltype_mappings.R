@@ -16,7 +16,6 @@
 #' @export
 write_celltype_mappings <- function(sce,
                                     folder_path,
-                                    write_metadata = FALSE,
                                     overwrite_files = TRUE) {
 
   cli::cli_h1("Writing Celltype Mappings")

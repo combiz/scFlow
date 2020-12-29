@@ -37,6 +37,8 @@ Suggests:
     covr,
     knitr,
     scFlowData
+Depends:
+    enrichR
 Language: en-US
 RoxygenNote: 7.1.1
 Imports: 

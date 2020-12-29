@@ -2,6 +2,7 @@
 #' Perform Differential Gene Expression on a SingleCellExperiment
 #'
 #' @param sce a SingleCellExperiment object
+#' @param de_method The differential gene expression method.
 #' @param min_counts minimum number of counts
 #' @param min_cells_pc percentage of cells with min_counts for gene selection
 #' @param rescale_numerics rescaling numerics may improve model
@@ -88,6 +89,7 @@ perform_de <- function(sce,
 #' @importFrom cli cli_text
 #' @importFrom sctransform vst
 #' @importFrom limma normalizeQuantiles
+#' @importFrom preprocessCore normalize.quantiles
 #'
 #' @keywords internal
 .preprocess_sce_for_de <- function(...) {

@@ -11,6 +11,7 @@
 #' @param alpha minimum FDR for [DropletUtils::emptyDrops()]
 #' @param niters the number of Monte Carlo iterations
 #' @param expect_cells the number of cells expected for auto retain
+#' @param alpha_cutoff The alpha cutoff used for Monte Carlo signficance.
 #' @param ... additional arguments for uniformity testing
 #'
 #' @return sce a SingleCellExperiment object annotated with emptyDrops metrics

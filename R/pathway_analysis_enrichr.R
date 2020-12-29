@@ -7,7 +7,7 @@
 #' a list of genes, their fold-change, p-value and adjusted p-value.
 #' Column names should be gene, logFC, pval and padj respectively.
 #' @param enrichment_database Name of the database for enrichment. User can
-#' specify one or more database names from [enrichR::listEnrichDbs()].
+#' specify one or more database names from [enrichR::listEnrichrDbs()].
 #' @param is_output If TRUE a folder will be created and results of enrichment
 #' analysis will be saved otherwise a R list will be returned. Default FALSE
 #' @param output_dir Path for the output directory. Default is current dir.
