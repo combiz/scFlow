@@ -48,16 +48,6 @@ and a list of plots of top 10 significant genesets.
 Performs gene ontology and impacted pathway enrichment analysis with a list
 of gene names and their fold-change.
 }
-\examples{
-enrichment_result <- pathway_analysis_webgestaltr(
-  gene_file = paste(system.file("extdata", package = "scFlowData"), "/",
-    "de_result_table.tsv",
-    sep = ""
-  ),
-  enrichment_method = "ORA",
-  is_output = TRUE
-)
-}
 \seealso{
 Other Impacted pathway analysis: 
 \code{\link{.dotplot_pe}()},

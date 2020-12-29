@@ -14,12 +14,11 @@
 #' @param ensembl_mapping_file a local tsv file with ensembl_gene_id and
 #'   additional columns for mapping ensembl_gene_id to gene info.  If
 #'   not provided, the biomaRt db is queried (slower).
-#'
+#' @param species The biological species of the sample.#'
 #'
 #' @return sce a SingleCellExperiment object annotated with gene data
 #'
 #' @family annotation functions
-#' @import cli Matrix dplyr
 #' @importFrom magrittr %>%
 #' @importFrom SummarizedExperiment rowData colData
 #'

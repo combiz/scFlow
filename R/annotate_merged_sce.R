@@ -10,13 +10,13 @@
 #' @return sce a annotated SingleCellExperiment object
 #'
 #' @family annotation functions
-#' @import cli Matrix dplyr SingleCellExperiment purrr
 #' @import ggplot2
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom rmarkdown render
 #' @importFrom purrr map_lgl
 #' @importFrom tools file_path_sans_ext
 #' @importFrom tidyr pivot_longer
+#' @importFrom stats mad median sd
 #' @export
 annotate_merged_sce <- function(sce,
                                 plot_vars = c("total_features_by_counts",
@@ -64,9 +64,9 @@ annotate_merged_sce <- function(sce,
       dplyr::group_by_at(unique_id_var) %>%
       dplyr::summarize(
         mean_avg = round(mean(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-        stdev_mean = round(sd(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-        median_avg = round(median(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-        mad = round(mad(!!rlang::sym(pv), na.rm = TRUE), digits = 3)
+        stdev_mean = round(stats::sd(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+        median_avg = round(stats::median(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+        mad = round(stats::mad(!!rlang::sym(pv), na.rm = TRUE), digits = 3)
         ) %>%
       dplyr::mutate(z = scale(mean_avg)[, 1])
 
@@ -96,7 +96,7 @@ annotate_merged_sce <- function(sce,
           median_avg = round(
             median(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
           mad = round(
-            mad(!!rlang::sym(pv), na.rm = TRUE), digits = 3)
+            stats::mad(!!rlang::sym(pv), na.rm = TRUE), digits = 3)
           ) %>%
         mutate(z = scale(mean_avg)[, 1])
 
@@ -234,6 +234,7 @@ annotate_merged_sce <- function(sce,
 #' @importFrom stats hclust
 #' @importFrom ggdendro ggdendrogram
 #' @importFrom ggpubr ggarrange
+#' @importFrom stats dist
 #' @keywords internal
 .plot_heatmap_of_pbsce <- function(pbsce, binarize = TRUE, trim_name = TRUE) {
 
@@ -247,7 +248,7 @@ annotate_merged_sce <- function(sce,
     colnames(dt) <- purrr::map_chr(colnames(dt), ~ strsplit(., "_")[[1]][[1]])
   }
 
-  clust <- stats::hclust(dist(t(dt)))
+  clust <- stats::hclust(stats::dist(t(dt)))
 
   dt_long <- dt %>%
     dplyr::mutate(ensembl_gene_id = rownames(.)) %>%
@@ -305,6 +306,8 @@ annotate_merged_sce <- function(sce,
 #' @param unique_id_var the colData variable identifying unique samples
 #' @param facet_var the colData variable to facet/subset by
 #' @param plot_points if TRUE plot individual values for violin plots
+#'
+#' @importFrom scales percent pretty_breaks
 #' @keywords internal
 .generate_merge_summary_plot <- function(sce,
                                          plot_var,
@@ -364,7 +367,7 @@ annotate_merged_sce <- function(sce,
       if (plot_points == TRUE) {
         p <- p + geom_jitter(size = .01, width = .2, alpha = .05)
       } else {
-        p <- p + stat_summary(fun.y = median,
+        p <- p + stat_summary(fun.y = stats::median,
                               fun.ymin = function(x) max(0, mean(x) - sd(x)),
                               fun.ymax = function(x) mean(x) + sd(x),
                               geom = "crossbar", width = 0.1, fill = "white")

@@ -25,6 +25,8 @@ annotate_sce_genes(
 \item{ensembl_mapping_file}{a local tsv file with ensembl_gene_id and
 additional columns for mapping ensembl_gene_id to gene info.  If
 not provided, the biomaRt db is queried (slower).}
+
+\item{species}{The biological species of the sample.#'}
 }
 \value{
 sce a SingleCellExperiment object annotated with gene data

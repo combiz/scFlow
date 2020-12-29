@@ -24,6 +24,8 @@ perform_de(
 \arguments{
 \item{sce}{a SingleCellExperiment object}
 
+\item{de_method}{The differential gene expression method.}
+
 \item{min_counts}{minimum number of counts}
 
 \item{min_cells_pc}{percentage of cells with min_counts for gene selection}

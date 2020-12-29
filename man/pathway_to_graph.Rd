@@ -17,9 +17,6 @@ This function converts a pathway database into graphNEL format using R
 package graphite. Currently available databases are kegg, reactome,
 nci and panther.
 }
-\examples{
-pathway_to_graph("kegg")
-}
 \seealso{
 Other Impacted pathway analysis: 
 \code{\link{.dotplot_pe}()},

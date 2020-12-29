@@ -20,6 +20,7 @@
 #' analysis will be saved otherwise a R list will be returned. Default FALSE.
 #' @param output_dir Path for the output directory. Default is current
 #' directory.
+#' @param ... Additional arguments
 #'
 #' @return enrichment_result a list of list containing enrichment outputs from
 #' different enrichment tools.
@@ -30,15 +31,6 @@
 #' @importFrom enrichR listEnrichrDbs
 #'
 #' @export
-#'
-#' @examples
-#' enrichment_result <- find_impacted_pathways(
-#'   gene_file = paste(system.file("extdata", package = "scFlowData"), "/",
-#'     "de_result_table.tsv",
-#'     sep = ""
-#'   ),
-#'   enrichment_method = "ORA"
-#' )
 find_impacted_pathways <- function(gene_file = NULL,
                                    reference_file = NULL,
                                    enrichment_tool = c(

@@ -6,6 +6,7 @@
 #' @param celltype_var the colData variable specifying celltype or subtype
 #' @param dependent_var the name of the colData variable for contrasts
 #' @param ref_class the class of dependent_var used as reference
+#' @param ... Additional arguments
 #'
 #' @return results_l a list of results
 #'
@@ -13,6 +14,7 @@
 #'
 #' @importFrom cli cli_h1 cli_alert
 #' @importFrom DirichletReg DR_data DirichReg
+#' @importFrom stats as.formula fisher.test p.adjust relevel
 #'
 #' @export
 model_celltype_freqs <- function(sce,
@@ -45,7 +47,7 @@ model_celltype_freqs <- function(sce,
   df <- cbind(df, covariates)
 
   cli::cli_h2("Fitting Dirichlet Model")
-  model_formula <- as.formula(sprintf("counts ~ %s", dependent_var))
+  model_formula <- stats::as.formula(sprintf("counts ~ %s", dependent_var))
   cli::cli_alert(
     "Fitting model: {.var {scFlow:::.formula_to_char(model_formula)}}"
   )
@@ -484,7 +486,7 @@ model_celltype_freqs <- function(sce,
   rownames(covariates) <- covariates[[unique_id_var]]
   covariates <- covariates[order(covariates[[unique_id_var]]), ]
   covariates[[unique_id_var]] <- NULL
-  covariates[[dependent_var]] <- relevel(
+  covariates[[dependent_var]] <- stats::relevel(
     covariates[[dependent_var]],
     ref = ref_class
   )
@@ -569,7 +571,7 @@ model_celltype_freqs <- function(sce,
       contab[2, 2] <- sum(not_ct[not_ct[[dependent_var]] == contrast_class, ]$sum)
       rownames(contab) <- c(ref_class, contrast_class)
       colnames(contab) <- c("cells", "other_cells")
-      res <- fisher.test(contab)
+      res <- stats::fisher.test(contab)
       contab_df <- as.data.frame(contab)
       contab_df[[dependent_var]] <- rownames(contab_df)
       contab_df[[celltype_var]] <- celltype
@@ -578,7 +580,7 @@ model_celltype_freqs <- function(sce,
       df <- unique(rbind(df, contab_df))
     }
   }
-  df$pval <- p.adjust(df$pval, method = "bonferroni")
+  df$pval <- stats::p.adjust(df$pval, method = "bonferroni")
   df <- df %>%
     dplyr::mutate(
       label = case_when(

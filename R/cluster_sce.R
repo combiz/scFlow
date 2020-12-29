@@ -9,8 +9,8 @@
 #' @return sce a SingleCellExperiment object annotated with reducedDims
 #'
 #' @family clustering and dimensionality reduction
-#' @import cli monocle3
 #' @importFrom SingleCellExperiment reducedDim reducedDims
+#' @importFrom monocle3 cluster_cells
 #' @importFrom assertthat assert_that
 #'
 #' @export

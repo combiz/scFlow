@@ -12,7 +12,6 @@
 #' @return sce a SingleCellExperiment object annotated for singlets
 #'
 #' @family annotation functions
-#' @import cli Matrix dplyr SingleCellExperiment
 #' @importFrom SummarizedExperiment rowData colData
 #' @export
 

@@ -58,17 +58,20 @@
 #'   not provided, the biomaRt db is queried (slower).
 #' @param annotate_genes optionally skip gene annotation with FALSE
 #' @param annotate_cells optionally skip cell annotation with FALSE
-#'
+#' @param nmads The number of median absolute deviations used to define
+#'   outliers for adaptive thresholding.
+#' @param species The biological species of the sample.
 #' @return sce a annotated SingleCellExperiment object
 #'
 #' @family annotation functions
+#' @rawNamespace import(SingleCellExperiment, except = "cpm")
 #' @importFrom SingleCellExperiment counts
 #' @importFrom dplyr rename_all
 #' @importFrom cli cli_alert_danger cli_alert_success rule cli_text
 #' @importFrom purrr map set_names map_df
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom magrittr %>%
-#' @importFrom stats quantile
+#' @importFrom stats quantile median
 #' @export
 annotate_sce <- function(sce,
                          min_library_size = 300,
@@ -241,7 +244,7 @@ annotate_sce <- function(sce,
     sum(!sce$qc_metric_max_library_size, na.rm = T)
   # counts summary
   cells_qc$median_total_counts <-
-    median(sce$total_counts[sce$qc_metric_passed], na.rm = T)
+    stats::median(sce$total_counts[sce$qc_metric_passed], na.rm = T)
   cells_qc$mean_total_counts <-
     mean(sce$total_counts[sce$qc_metric_passed], na.rm = T)
   cells_qc$sd_total_counts <-
@@ -257,7 +260,7 @@ annotate_sce <- function(sce,
     sum(!sce$qc_metric_max_features, na.rm = T)
   # features summary
   cells_qc$median_total_features_by_counts <-
-    median(sce$total_features_by_counts[sce$qc_metric_passed], na.rm = T)
+    stats::median(sce$total_features_by_counts[sce$qc_metric_passed], na.rm = T)
   cells_qc$mean_total_features_by_counts <-
     mean(sce$total_features_by_counts[sce$qc_metric_passed], na.rm = T)
   cells_qc$sd_total_features_by_counts <-
@@ -269,7 +272,7 @@ annotate_sce <- function(sce,
     sum(!sce$qc_metric_pc_mito_ok, na.rm = T)
   # pc mito summary
   cells_qc$median_pc_mito <-
-    median(sce$pc_mito[sce$qc_metric_passed], na.rm = T)
+    stats::median(sce$pc_mito[sce$qc_metric_passed], na.rm = T)
   cells_qc$mean_pc_mito <-
     mean(sce$pc_mito[sce$qc_metric_passed], na.rm = T)
   cells_qc$sd_pc_mito <-
@@ -281,7 +284,7 @@ annotate_sce <- function(sce,
     sum(!sce$qc_metric_pc_ribo_ok, na.rm = T)
   # pc ribo summary
   cells_qc$median_pc_ribo <-
-    median(sce$pc_ribo[sce$qc_metric_passed], na.rm = T)
+    stats::median(sce$pc_ribo[sce$qc_metric_passed], na.rm = T)
   cells_qc$mean_pc_ribo <-
     mean(sce$pc_ribo[sce$qc_metric_passed], na.rm = T)
   cells_qc$sd_pc_ribo <-
@@ -310,6 +313,7 @@ annotate_sce <- function(sce,
 
 #' x axis barcode rank, y axis total counts
 #' @importFrom DropletUtils barcodeRanks
+#' @importFrom grDevices rgb
 #' @keywords internal
 .qc_plot_count_depth_distribution <- function(sce) {
 
@@ -330,9 +334,9 @@ annotate_sce <- function(sce,
   cols <- c(
     "TRUE" = "grey80",
     "FALSE" = "black")
-  bluejayway <- rgb(73,108,165, max = 255)
-  vibrantflame <- rgb(232,66,27, max = 255)
-  magicalturquoise <- rgb(0,173,174, max = 255)
+  bluejayway <- grDevices::rgb(73,108,165, max = 255)
+  vibrantflame <- grDevices::rgb(232,66,27, max = 255)
+  magicalturquoise <- grDevices::rgb(0,173,174, max = 255)
 
   p <- ggplot2::ggplot(dt) +
     geom_point(

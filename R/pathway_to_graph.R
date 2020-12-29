@@ -10,17 +10,12 @@
 #' @return Saves the converted databases as rds in the extdata folder
 #'
 #' @family Impacted pathway analysis
-#' @import parallel
 #' @importFrom graph nodes edgeDataDefaults edgeData
 #' @importFrom graphite pathways convertIdentifiers pathwayGraph pathwayId
 #' @importFrom purrr map_chr
-#'
-#' @examples
-#' pathway_to_graph("kegg")
 #' @export
 
 pathway_to_graph <- function(database_name) {
-  library(parallel)
 
   # To download the pathway in graphite format.
   # The output is a list of all the pathways

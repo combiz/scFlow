@@ -26,7 +26,7 @@ Authors@R:
     )
 Description: Single-cell/nuclei RNA-seq analysis tools in R to build a complete analysis workflow.
 Roxygen: list(markdown = TRUE)
-License: GPL-3
+License: GPL-3 | file LICENSE
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/combiz/scFlow
@@ -37,6 +37,9 @@ Suggests:
     covr,
     knitr,
     scFlowData
+Depends:
+    enrichR,
+    org.Hs.eg.db
 Language: en-US
 RoxygenNote: 7.1.1
 Imports: 
@@ -49,7 +52,6 @@ Imports:
     stringr,
     cli,
     dplyr,
-    english,
     magrittr,
     data.table,
     SummarizedExperiment,
@@ -116,7 +118,11 @@ Imports:
     tibble,
     tidyr,
     tidyselect,
-    patchwork
+    patchwork,
+    edgeR,
+    preprocessCore,
+    scales,
+    uwot
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,
@@ -132,6 +138,7 @@ Remotes:
     neurogenomics/scFlowExample,
     combiz/scFlowData,
     cran/DirichletReg,
+    jlmelville/uwot,
     bioc::3.10/biomaRt,
     bioc::3.10/SingleCellExperiment,
     bioc::3.10/SummarizedExperiment,
@@ -148,5 +155,8 @@ Remotes:
     bioc::3.10/DropletUtils,
     bioc::3.10/limma,
     bioc::3.11/MAST,
-    bioc::3.10/multtest
+    bioc::3.10/multtest,
+    bioc::3.10/edgeR,
+    bioc::3.10/preprocessCore,
+    bioc::3.10/org.Hs.eg.db
 VignetteBuilder: knitr

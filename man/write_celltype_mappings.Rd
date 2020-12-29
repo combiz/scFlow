@@ -4,12 +4,7 @@
 \alias{write_celltype_mappings}
 \title{Write Celltype Mappings}
 \usage{
-write_celltype_mappings(
-  sce,
-  folder_path,
-  write_metadata = FALSE,
-  overwrite_files = TRUE
-)
+write_celltype_mappings(sce, folder_path, overwrite_files = TRUE)
 }
 \arguments{
 \item{sce}{a singlecellexperiment}

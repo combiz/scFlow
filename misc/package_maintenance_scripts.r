@@ -114,6 +114,7 @@ use_package("UpSetR")
 use_package("nVennR")
 use_package("kBET")
 
+
 use_vignette("basic-qc", title = "Guided tutorial for sample quality control")
 
 #use_vignette("How to do this cool analysis") # later
@@ -136,6 +137,8 @@ pkgdown::build_site()
 
 
 build()
+
+options(rgl.useNULL = TRUE)
 
 #########################
 use_package("purrr")

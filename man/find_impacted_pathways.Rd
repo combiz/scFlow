@@ -36,6 +36,8 @@ analysis will be saved otherwise a R list will be returned. Default FALSE.}
 
 \item{output_dir}{Path for the output directory. Default is current
 directory.}
+
+\item{...}{Additional arguments}
 }
 \value{
 enrichment_result a list of list containing enrichment outputs from
@@ -44,15 +46,6 @@ different enrichment tools.
 \description{
 Performs gene ontology and impacted pathway enrichment analysis with a list
 of gene names and their fold-change.
-}
-\examples{
-enrichment_result <- find_impacted_pathways(
-  gene_file = paste(system.file("extdata", package = "scFlowData"), "/",
-    "de_result_table.tsv",
-    sep = ""
-  ),
-  enrichment_method = "ORA"
-)
 }
 \seealso{
 Other Impacted pathway analysis: 

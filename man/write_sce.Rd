@@ -11,6 +11,8 @@ write_sce(sce, folder_path, write_metadata = FALSE, overwrite = TRUE)
 
 \item{folder_path}{path to save the SingleCellExperiment}
 
+\item{write_metadata}{Enable writing metadata.}
+
 \item{overwrite}{delete the existing directory and overwrite if TRUE}
 }
 \description{

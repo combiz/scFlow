@@ -11,7 +11,6 @@
 #'
 #' @family integration, dimension reduction, and clustering
 #'
-#' @import cli Matrix dplyr SingleCellExperiment purrr
 #' @import ggplot2
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom tools file_path_sans_ext
@@ -72,7 +71,7 @@ annotate_integrated_sce <- function(sce,
   cli::cli_text("Generating tSNE/UMAP and kBET plots for each covariate...")
 
   for (variable in categorical_covariates) {
-    cat(paste("• covariate:", variable, sep = " "), "\n")
+    cat(paste("* covariate:", variable, sep = " "), "\n")
     plot_pca <- plot_reduced_dim(sce,
                                  feature_dim = variable,
                                  reduced_dim = sprintf("%s_PCA",

@@ -24,6 +24,8 @@ model_celltype_freqs(
 \item{dependent_var}{the name of the colData variable for contrasts}
 
 \item{ref_class}{the class of dependent_var used as reference}
+
+\item{...}{Additional arguments}
 }
 \value{
 results_l a list of results

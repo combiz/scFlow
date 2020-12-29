@@ -5,12 +5,13 @@
 #' * is_empty_drop - is the barcode an empty drop
 #'
 #' @param sce a SingleCellExperiment object
-#' @param lower see [dropletUtils::emptyDrops()]
-#' @param retain see [dropletUtils::emptyDrops()].  Use "auto" to calculate
+#' @param lower see [DropletUtils::emptyDrops()]
+#' @param retain see [DropletUtils::emptyDrops()].  Use "auto" to calculate
 #' the parameter from the top `expect_cells` cells (cellranger method).
-#' @param alpha minimum FDR for [dropletUtils::emptyDrops()]
+#' @param alpha minimum FDR for [DropletUtils::emptyDrops()]
 #' @param niters the number of Monte Carlo iterations
 #' @param expect_cells the number of cells expected for auto retain
+#' @param alpha_cutoff The alpha cutoff used for Monte Carlo signficance.
 #' @param ... additional arguments for uniformity testing
 #'
 #' @return sce a SingleCellExperiment object annotated with emptyDrops metrics
@@ -54,7 +55,7 @@ find_cells <- function(sce,
       " UMI barcodes"
       ))
     retain <- .calculate_retain_parameter(sce, expect_cells = expect_cells)
-    cli::cli_alert("Retaining all barcodes with ≥ {.val {retain}} UMIs")
+    cli::cli_alert("Retaining all barcodes with \u2265 {.val {retain}} UMIs")
 
   }
 
@@ -215,10 +216,11 @@ find_cells <- function(sce,
 
 #' helper fn - histogram plot to confirm uniform distribution
 #' @export
+#' @importFrom grDevices nclass.Sturges
 #' @keywords internal
 .plot_emptydrops_distribution <- function(dt) {
   brx <- pretty(range(dt$pval),
-    n = nclass.Sturges(dt$pval), min.n = 1
+    n = grDevices::nclass.Sturges(dt$pval), min.n = 1
   )
 
   p <- ggplot(data = dt) +

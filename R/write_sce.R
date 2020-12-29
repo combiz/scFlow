@@ -15,6 +15,7 @@
 #'
 #' @param sce a SingleCellExperiment Object
 #' @param folder_path path to save the SingleCellExperiment
+#' @param write_metadata Enable writing metadata.
 #' @param overwrite delete the existing directory and overwrite if TRUE
 #'
 #' @family import and export functions

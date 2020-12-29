@@ -13,6 +13,8 @@ plot_network(enrichment_result, de_table = NULL, show_category = 5, ...)
 genes. Ideally the input file for the impacted pathway analysis.}
 
 \item{show_category}{No or names of pathways to see in the netwrok plot.}
+
+\item{...}{Additional arguments}
 }
 \value{
 A network plot object.

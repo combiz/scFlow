@@ -14,6 +14,7 @@
 #'   - 'ReducedDim_x.tsv'
 #'
 #' @param folder_path path to save the SingleCellExperiment
+#' @param read_metadata Enable import of metadata if previously saved.
 #'
 #' @return sce a SingleCellExperiment object
 #'

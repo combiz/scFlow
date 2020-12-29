@@ -8,7 +8,6 @@
 #' @return sce SingleCellExperiment object annotated with reducedDims
 #'
 #' @family integration, dimension reduction, and clustering
-#' @import cli Matrix dplyr SingleCellExperiment purrr
 #' @import ggplot2
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom rmarkdown render

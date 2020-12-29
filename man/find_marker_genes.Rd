@@ -23,6 +23,8 @@ of this fraction of cells (default 0.10)}
 
 \item{top_n}{The top_n genes to use for plotting / subset table generation}
 
+\item{max_point_size}{The point size used for plotting.}
+
 \item{n_cores}{The number of cores to use}
 }
 \value{

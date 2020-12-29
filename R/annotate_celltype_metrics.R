@@ -8,6 +8,7 @@
 #' @param facet_vars the colData variable(s) for grouped analyses
 #' @param input_reduced_dim the reducedDim slot used for clustering
 #' @param metric_vars the numeric colData variable(s) for metric comparisons
+#' @param ... additional parameters
 #'
 #' @return sce a annotated SingleCellExperiment object
 #'
@@ -17,6 +18,7 @@
 #' @importFrom assertthat assert_that
 #' @importFrom cli cli_alert_danger cli_alert_success rule cli_text
 #' @importFrom SummarizedExperiment colData
+#' @importFrom stats median
 #' @export
 annotate_celltype_metrics <- function(sce,
                                     cluster_var = "clusters",
@@ -306,6 +308,7 @@ annotate_celltype_metrics <- function(sce,
 #' @importFrom ggplot2 geom_errorbar element_blank element_text
 #' @importFrom magrittr %>%
 #' @importFrom SummarizedExperiment colData
+#' @importFrom stats sd median
 #'
 #' @keywords internal
 .append_cell_metric_plots_sce <- function(...) {
@@ -317,9 +320,9 @@ annotate_celltype_metrics <- function(sce,
     dplyr::group_by(.data[[celltype_var]]) %>%
     dplyr::summarize(
       mean = mean(.data[[metric_var]]),
-      sd = sd(.data[[metric_var]]),
-      se = sd(.data[[metric_var]]) / sqrt(dplyr::n()),
-      median = median(.data[[metric_var]])
+      sd = stats::sd(.data[[metric_var]]),
+      se = stats::sd(.data[[metric_var]]) / sqrt(dplyr::n()),
+      median = stats::median(.data[[metric_var]])
     )
 
   dt[[celltype_var]] <- forcats::fct_reorder(dt[[celltype_var]], -dt$mean)

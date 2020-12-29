@@ -8,7 +8,7 @@
 #' @family annotation functions
 #'
 #' @importFrom SingleCellExperiment counts
-#' @import Seurat
+#' @importFrom Seurat RunPCA RunTSNE RunUMAP CreateSeuratObject SCTransform
 #' @importFrom magrittr %>%
 #'
 #' @keywords internal
