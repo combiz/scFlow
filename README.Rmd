@@ -18,15 +18,16 @@ knitr::opts_chunk$set(
 )
 ```
 
-<img src="man/figures/logo.png" style="align:left;width:180px;" />
+<img src="man/figures/logo.png" width=200 style="align:left;" />
 
 # scFlow - Single-Cell Workflow
 
 <!-- badges: start -->
 [![R GitHub Actions](https://github.com/combiz/scFlow/workflows/R%20GitHub%20Actions/badge.svg)](https://github.com/combiz/scFlow/actions)
-[![R-CMD-check](https://github.com/combiz/scFlow/workflows/R-CMD-check/badge.svg)](https://github.com/combiz/scFlow/actions)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Documentation](https://img.shields.io/badge/docs-passing-brightgreen.svg?style=flat)](https://combiz.github.io/scFlow/)
+[![Manual](https://img.shields.io/badge/manual-passing-brightgreen.svg?style=flat)](https://combiz.github.io/scflow-manual/)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/combiz/scFlow/issues)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-green.svg)](https://www.gnu.org/licenses/gpl-3.0)
 <!-- badges: end -->
 
 The goal of scFlow is to provide tools in R to build a complete analysis workflow for single-cell/nuclei RNA sequencing data.
