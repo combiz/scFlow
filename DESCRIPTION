@@ -37,9 +37,6 @@ Suggests:
     covr,
     knitr,
     scFlowData
-Depends:
-    enrichR,
-    org.Hs.eg.db
 Language: en-US
 RoxygenNote: 7.1.1
 Imports: 
@@ -122,7 +119,8 @@ Imports:
     edgeR,
     preprocessCore,
     scales,
-    uwot
+    uwot,
+    enrichR
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,
@@ -158,5 +156,5 @@ Remotes:
     bioc::3.10/multtest,
     bioc::3.10/edgeR,
     bioc::3.10/preprocessCore,
-    bioc::3.10/org.Hs.eg.db
+    bioc::3.10/enrichR
 VignetteBuilder: knitr

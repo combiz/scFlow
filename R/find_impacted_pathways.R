@@ -172,7 +172,8 @@ list_databases <- function() {
     "https://www.wikipathways.org/index.php/Pathway:"
   )
 
-  library(enrichR)
+  eval(parse(text = "enrichR:::.onLoad()")) # R CMD check workaround
+
   temp_dbs[["enrichR"]] <- enrichR::listEnrichrDbs()
   temp_dbs$enrichR <- temp_dbs$enrichR[
     c(130, 131, 132, 148, 102, 93, 145, 101, 104, 49, 53),

@@ -66,6 +66,8 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
     )
   )
 
+  eval(parse(text = "enrichR:::.onLoad()")) # R CMD check workaround
+
   dbs <- enrichR::listEnrichrDbs()
 
   assertthat::assert_that(
