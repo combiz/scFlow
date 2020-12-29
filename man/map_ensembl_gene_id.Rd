@@ -33,10 +33,6 @@ mappings from biomaRt or a local file.  If the mappings are absent from the
 local file, or the local file is not provided or missing, the mappings are
 retrieved by querying biomaRt.
 }
-\examples{
-map_ensembl_gene_id("ENSG00000130707")
-
-}
 \seealso{
 Other annotation functions: 
 \code{\link{.preprocess_seurat_object}()},

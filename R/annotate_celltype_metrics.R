@@ -273,12 +273,10 @@ annotate_celltype_metrics <- function(sce,
       legend.title = ggplot2::element_blank()
     )
 
-  #p$plot_env$sce <- NULL
+
   p <- .grobify_ggplot(p)
   p2 <- .grobify_ggplot(p2)
-  #p2$plot_env$sce <- NULL
 
-  #sce <- parent.frame()[["sce"]]
   sce@metadata$celltype_annotations$
     prop_plots[[group_by_var]][[celltype_var]] <- list()
   sce@metadata$celltype_annotations$

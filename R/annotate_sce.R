@@ -112,9 +112,11 @@ annotate_sce <- function(sce,
   qc_params_l <- purrr::set_names(qc_params_l, qc_params)
   sce@metadata[["qc_params"]] <- qc_params_l
 
-  if(("adaptive" %in% sce@metadata$qc_params) &
+  if (("adaptive" %in% sce@metadata$qc_params) &
      !sce@metadata$scflow_steps$emptydrops_annotated) {
-    cli::cli_alert_warning("To improve adaptive thresholding, first run emptyDrops!")
+    cli::cli_alert_warning(
+      "To improve adaptive thresholding, first run emptyDrops!"
+      )
   }
 
   if (annotate_genes) {
@@ -176,7 +178,6 @@ annotate_sce <- function(sce,
   all_scflow_fns <- ls(getNamespace("scFlow"), all.names = TRUE)
   qc_plot_fns <- all_scflow_fns[startsWith(all_scflow_fns, ".qc_plot_")]
   for (fn in qc_plot_fns) {
-    #sce <- do.call(get(fn), list(sce = sce))
     sce <- get(fn)(sce)
   }
 
@@ -193,7 +194,8 @@ annotate_sce <- function(sce,
 .qc_append_summary_table <- function(sce) {
 
   # qc params to data frame
-  sce@metadata$qc_params[purrr::map_lgl(sce@metadata$qc_params, is.null)] <- "null"
+  sce@metadata$qc_params[purrr::map_lgl(sce@metadata$qc_params, is.null)] <-
+    "null"
   qc_params_df <- purrr::map_df(sce@metadata$qc_params, ~ .) %>%
     dplyr::rename_all(~ paste0("qc_params_", .))
 
@@ -205,7 +207,9 @@ annotate_sce <- function(sce,
   genes_qc$n_ribo <-
     sum(SummarizedExperiment::rowData(sce)$qc_metric_is_ribo, na.rm = T)
   genes_qc$n_unmapped <-
-    sum(!SummarizedExperiment::rowData(sce)$qc_metric_ensembl_mapped, na.rm = T)
+    sum(
+      !SummarizedExperiment::rowData(sce)$qc_metric_ensembl_mapped, na.rm = T
+      )
   genes_qc$n_expressive <- sum(
     SummarizedExperiment::rowData(sce)$qc_metric_is_expressive, na.rm = T)
 
@@ -260,7 +264,9 @@ annotate_sce <- function(sce,
     sum(!sce$qc_metric_max_features, na.rm = T)
   # features summary
   cells_qc$median_total_features_by_counts <-
-    stats::median(sce$total_features_by_counts[sce$qc_metric_passed], na.rm = T)
+    stats::median(
+      sce$total_features_by_counts[sce$qc_metric_passed], na.rm = T
+      )
   cells_qc$mean_total_features_by_counts <-
     mean(sce$total_features_by_counts[sce$qc_metric_passed], na.rm = T)
   cells_qc$sd_total_features_by_counts <-
@@ -331,12 +337,10 @@ annotate_sce <- function(sce,
     dplyr::arrange(barcode_rank) %>%
     dplyr::mutate(is_empty = total_counts < empty_cutoff)
 
-  cols <- c(
-    "TRUE" = "grey80",
-    "FALSE" = "black")
-  bluejayway <- grDevices::rgb(73,108,165, max = 255)
-  vibrantflame <- grDevices::rgb(232,66,27, max = 255)
-  magicalturquoise <- grDevices::rgb(0,173,174, max = 255)
+  cols <- c("TRUE" = "grey80", "FALSE" = "black")
+  bluejayway <- grDevices::rgb(73, 108, 165, max = 255)
+  vibrantflame <- grDevices::rgb(232, 66, 27, max = 255)
+  magicalturquoise <- grDevices::rgb(0, 173, 174, max = 255)
 
   p <- ggplot2::ggplot(dt) +
     geom_point(
@@ -424,14 +428,14 @@ annotate_sce <- function(sce,
                            colours = c("darkblue", "red"),
                            na.value = "red",
                            name = "Relative mito") +
-    labs(x = "Count depth", y = "Number of genes")+
+    labs(x = "Count depth", y = "Number of genes") +
     theme_bw() +
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
           axis.text = element_text(size = 12, colour = "black"),
-          axis.title=element_text(size=16),
-          legend.text=element_text(size=10),
+          axis.title = element_text(size = 16),
+          legend.text = element_text(size = 10),
           plot.title = element_text(size = 18, hjust = 0.5))
 
   if (!is.null(sce@metadata$qc_params$max_library_size)) {
@@ -471,7 +475,7 @@ annotate_sce <- function(sce,
 
   dt <- dplyr::as_tibble(data.frame(
     total_counts = sce$total_counts)) %>%
-    filter(total_counts > 10 )
+    dplyr::filter(total_counts > 10)
 
   p <- ggplot2::ggplot(dt) +
     geom_histogram(aes(x = total_counts), bins = 100) +
@@ -479,14 +483,14 @@ annotate_sce <- function(sce,
       xintercept = sce@metadata$qc_params$min_library_size,
       linetype = "solid",
       color = "red") +
-    labs(x = "Count depth", y = "Frequency")+
+    labs(x = "Count depth", y = "Frequency") +
     theme_bw() +
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
           axis.text = element_text(size = 12, colour = "black"),
-          axis.title=element_text(size=16),
-          legend.text=element_text(size=10),
+          axis.title = element_text(size = 16),
+          legend.text = element_text(size = 10),
           plot.title = element_text(size = 18, hjust = 0.5))
 
   if (!is.null(sce@metadata$qc_params$max_library_size)) {
@@ -520,7 +524,7 @@ annotate_sce <- function(sce,
   dt <- dplyr::as_tibble(data.frame(
     total_features = sce$total_features_by_counts)) %>%
     #filter(total_features <= features_cutoff) %>%
-    filter(total_features >= 10 )
+    filter(total_features >= 10)
 
   p <- ggplot2::ggplot(dt) +
     geom_histogram(aes(x = total_features), bins = 100) +
@@ -528,14 +532,14 @@ annotate_sce <- function(sce,
       xintercept = sce@metadata$qc_params$min_features,
       linetype = "solid",
       color = "red") +
-    labs(x = "Number of genes", y = "Frequency")+
+    labs(x = "Number of genes", y = "Frequency") +
     theme_bw() +
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
           axis.text = element_text(size = 12, colour = "black"),
-          axis.title=element_text(size=16),
-          legend.text=element_text(size=10),
+          axis.title = element_text(size = 16),
+          legend.text = element_text(size = 10),
           plot.title = element_text(size = 18, hjust = 0.5))
 
   if (!is.null(sce@metadata$qc_params$max_features)) {
@@ -571,14 +575,14 @@ annotate_sce <- function(sce,
       xintercept = sce@metadata$qc_params$max_mito,
       linetype = "solid",
       color = "red") +
-    labs(x = "Fraction mitochondrial counts", y = "Frequency")+
+    labs(x = "Fraction mitochondrial counts", y = "Frequency") +
     theme_bw() +
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
           axis.text = element_text(size = 12, colour = "black"),
-          axis.title=element_text(size=16),
-          legend.text=element_text(size=10),
+          axis.title = element_text(size = 16),
+          legend.text = element_text(size = 10),
           plot.title = element_text(size = 18, hjust = 0.5))
 
   p <- .grobify_ggplot(p)
@@ -610,14 +614,14 @@ annotate_sce <- function(sce,
       xintercept = sce@metadata$qc_params$max_ribo,
       linetype = "solid",
       color = "red") +
-    labs(x = "Fraction ribosomal counts", y = "Frequency")+
+    labs(x = "Fraction ribosomal counts", y = "Frequency") +
     theme_bw() +
     theme(panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
           axis.text = element_text(size = 12, colour = "black"),
-          axis.title=element_text(size=16),
-          legend.text=element_text(size=10),
+          axis.title = element_text(size = 16),
+          legend.text = element_text(size = 10),
           plot.title = element_text(size = 18, hjust = 0.5))
 
   p <- .grobify_ggplot(p)

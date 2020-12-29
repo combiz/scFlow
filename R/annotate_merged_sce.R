@@ -63,10 +63,14 @@ annotate_merged_sce <- function(sce,
       dplyr::select(unique(c(pv, unique_id_var))) %>%
       dplyr::group_by_at(unique_id_var) %>%
       dplyr::summarize(
-        mean_avg = round(mean(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-        stdev_mean = round(stats::sd(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-        median_avg = round(stats::median(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-        mad = round(stats::mad(!!rlang::sym(pv), na.rm = TRUE), digits = 3)
+        mean_avg =
+          round(mean(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+        stdev_mean =
+          round(stats::sd(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+        median_avg =
+          round(stats::median(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+        mad =
+          round(stats::mad(!!rlang::sym(pv), na.rm = TRUE), digits = 3)
         ) %>%
       dplyr::mutate(z = scale(mean_avg)[, 1])
 
@@ -392,16 +396,20 @@ annotate_merged_sce <- function(sce,
     dplyr::tally() %>%
     dplyr::arrange(n)
 
-  df[[unique_id_var]] <- factor(df[[unique_id_var]], levels = df[[unique_id_var]])
+  df[[unique_id_var]] <- factor(
+    df[[unique_id_var]], levels = df[[unique_id_var]]
+    )
 
   p <- ggplot2::ggplot(df, ggplot2::aes(x = .data[[unique_id_var]], y = n)) +
     ggplot2::geom_col() +
-    ggplot2::geom_text(ggplot2::aes(label = n, y = n + (max(df$n)*.05)))+
+    ggplot2::geom_text(ggplot2::aes(label = n, y = n + (max(df$n) * .05))) +
     ggplot2::coord_flip() +
-    ggplot2::theme_bw()+
+    ggplot2::theme_bw() +
     ggplot2::ylab("Number of cells") +
     ggplot2::xlab(unique_id_var) +
-    ggplot2::scale_y_continuous(expand = c(0, 0), limits = c(0, max(df$n) * 1.1)) +
+    ggplot2::scale_y_continuous(
+      expand = c(0, 0), limits = c(0, max(df$n) * 1.1)
+      ) +
     ggplot2::theme(
       panel.border = ggplot2::element_blank(),
       panel.grid.major = ggplot2::element_blank(),
