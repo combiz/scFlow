@@ -16,9 +16,6 @@
 #'
 #' @return mapped_df a data.frame of the provided ensembl_id's with mappings.
 #'
-#' @examples
-#' map_ensembl_gene_id("ENSG00000130707")
-#'
 #' @family annotation functions
 #'
 #' @importFrom cli cli_alert_danger col_green cli_alert_info
