@@ -88,7 +88,8 @@ annotate_sce_cells <- function(sce, ...) {
       subset = sce$qc_metric_passed,
       type = "both",
       log = FALSE)
-    higher <- as.numeric(attributes(outliers)$thresholds["higher"]) #not int for pcmito
+    higher <-
+      as.numeric(attributes(outliers)$thresholds["higher"]) #not int for pcmito
     args$max_mito <- higher
     sce$qc_metric_pc_mito_ok <- sce$pc_mito <= higher #set flag
     sce@metadata[["qc_params"]]$max_mito <- higher
@@ -109,14 +110,15 @@ annotate_sce_cells <- function(sce, ...) {
       subset = sce$qc_metric_passed,
       type = "both",
       log = FALSE)
-    higher = as.integer(attributes(outliers)$thresholds["higher"])
+    higher <- as.integer(attributes(outliers)$thresholds["higher"])
     args$max_library_size <- higher
     sce$qc_metric_max_library_size <- sce$total_counts <= higher #set flag
     sce@metadata[["qc_params"]]$max_library_size <- higher
     sce@metadata[["qc_params"]]$max_library_size_method <- "adaptive"
   } else if (!is.null(sce@metadata$qc_params$max_library_size)) {
     sce@metadata[["qc_params"]]$max_library_size_method <- "fixed"
-    sce$qc_metric_max_library_size <- sce$total_counts <= args$max_library_size #set flag
+    sce$qc_metric_max_library_size <-
+      sce$total_counts <= args$max_library_size #set flag
   } else {
     sce@metadata[["qc_params"]]$max_library_size_method <- NA
     sce$qc_metric_max_library_size <- 1
@@ -130,13 +132,15 @@ annotate_sce_cells <- function(sce, ...) {
       subset = sce$qc_metric_passed,
       type = "both",
       log = FALSE)
-    higher = as.integer(attributes(outliers)$thresholds["higher"])
+    higher <- as.integer(attributes(outliers)$thresholds["higher"])
     args$max_features <- higher
-    sce$qc_metric_max_features <- sce$total_features_by_counts <= higher #set flag
+    sce$qc_metric_max_features <-
+      sce$total_features_by_counts <= higher #set flag
     sce@metadata[["qc_params"]]$max_features <- higher
     sce@metadata[["qc_params"]]$max_features_method <- "adaptive"
   } else if (!is.null(sce@metadata$qc_params$max_library_size)) {
-    sce$qc_metric_max_features <- sce$total_features_by_counts <= args$max_features #set flag
+    sce$qc_metric_max_features <-
+      sce$total_features_by_counts <= args$max_features #set flag
     sce@metadata[["qc_params"]]$max_features_method <- "fixed"
   } else {
     sce@metadata[["qc_params"]]$max_features_method <- NA
