@@ -184,7 +184,8 @@ perform_de <- function(sce,
       keep_vars = unique(c(
         fargs$dependent_var,
         fargs$confounding_vars,
-        fargs$random_effects_var))
+        fargs$random_effects_var)),
+      sample_var = fargs$unique_id_var
       )
     sce@metadata$variable_genes <- variable_genes
 

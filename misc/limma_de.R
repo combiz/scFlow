@@ -23,18 +23,19 @@ fargs <- list(
   min_cells_pc = 0.10,
   rescale_numerics = TRUE,
   dependent_var = "diagnosis",
-  ref_class = "control",
-  confounding_vars = c("individual",
+  ref_class = "Control",
+  confounding_vars = c(#"individual",
                        "diagnosis",
-    "cngeneson",
-    "sex",#,
-    "age",
+    #"cngeneson",
+    #"Sex",#,
+    #"age",
     #"PMI",
-    "RIN",
+    #"RIN",
+    "brain_region",
     #"seqdate",
     "pc_mito",
     "p_tau",
-    "braak",
+    #"braak",
     "amyloid_beta"
     #),
   ),
@@ -44,11 +45,11 @@ fargs <- list(
   ensembl_mapping_file = "~/Documents/junk/src/ensembl-ids/ensembl_mappings.tsv",
   n_label = 12,
   gene_biotype = "protein_coding",
-  pseudobulk = FALSE,
+  pseudobulk = TRUE,
   #pseudobulk = FALSE,
   sctransform = FALSE,
   quantile_norm = FALSE,
-  unique_id_var = "individual"
+  unique_id_var = "manifest"
 )
 sce_all <- sce
 #sce_subset <- sce_all[, sce_all$cluster_celltype == "Micro" & sce_all$brain_region == "EC"]
@@ -60,11 +61,30 @@ sce <- sce_subset
 #  ref = fargs$ref_class
 #)
 
+sce$manifest <- as.factor(paste(sce$Case, sce$brain_region, sep = "_"))
+table(sce$manifest)
+
 #ad
+sce$diagnosis <- as.factor(sce$diagnosis)
 sce$diagnosis <- relevel(
   sce$diagnosis,
-  ref = "control"
+  ref = "Control"
 )
+
+sce$brain_region <- as.factor(sce$brain_region)
+sce$brain_region <- relevel(
+  sce$brain_region,
+  ref = "EC"
+)
+
+sce$cluster_celltype <- as.factor(sce$cluster_celltype)
+
+sce$brain_region <- as.factor(sce$brain_region)
+sce$brain_region <- relevel(
+  sce$brain_region,
+  ref = "EC"
+)
+
 
 # ms
 sce$sex <- relevel(
@@ -84,7 +104,7 @@ sce_pp <- do.call(scFlow:::.preprocess_sce_for_de, fargs)
 sce <- sce_pp
 fargs$sce <- sce_pp
 res <- do.call(.perform_de_with_limma, fargs)
-sce
+ sce
 sce <- sce_subset
 
 idx <- as.numeric(caret::createDataPartition(sce$individual, p = .10, list = FALSE)) # 15% subset
@@ -355,8 +375,6 @@ scFlow:::.volcano_plot(results_l[[contrast]], fc_threshold = 1.05, pval_cutoff =
       cli::cli_alert_info("Forcing run, ignoring model full rank.")
     }
   }
-  model_mat <- model.matrix(~ sce$sex + sce$cngeneson + sce$pc_mito)
-  model_mat <- model.matrix(~ sce$diagnosis + sce$pc_mito + sce$sex)
   model_mat <- stats::model.matrix(model_formula)
   # fit model
   message("Fitting model\n")
@@ -398,26 +416,8 @@ scFlow:::.volcano_plot(results_l[[contrast]], fc_threshold = 1.05, pval_cutoff =
     #~ paste0("sce$", fargs$dependent_var, .)
     ~ paste0(fargs$dependent_var, .)
   )
-  print(contrasts)
-  print("colnames:")
-  print(colnames(fit$design))
-
-  contrasts <- c("sexfemale")
-  contrasts <- c("sexmale")
-  #contrasts <- c("diagnosiscase")
-  contrasts <- c("diagnosisMS")
-  contrasts <- c("sexF")
-  contrasts <- c("sce$sexF")
-  contrasts <- c("groupHigh", "groupLow")
-  contrasts <- c("groupHigh")
-  contrasts <- "diagnosiscase"
-
 
   contrasts <- colnames(fit$coefficients)
-
-  contrasts <- "sexmale"
-  contrasts <- "amyloid_beta"
-  contrasts <- "p_tau"
 
   results_l <- list()
   results_l$permutations <- list()
@@ -431,10 +431,6 @@ scFlow:::.volcano_plot(results_l[[contrast]], fc_threshold = 1.05, pval_cutoff =
       metadata <- metadata[sample(nrow(metadata)),]
     }
 
-    model_formula <- ~sex + pc_mito + cngeneson
-    #model_formula <- ~amyloid_beta + pc_mito + sex + cngeneson
-    #model_formula <- ~amyloid_beta
-    model_formula <- ~p_tau + pc_mito + sex #+ cngeneson
     mat <- as(SingleCellExperiment::counts(sce), "dgCMatrix")
     colnames(mat) <- metadata$pseudobulk_id
     vobjDream <- variancePartition::voomWithDreamWeights( mat, model_formula, metadata)
