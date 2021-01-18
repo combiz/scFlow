@@ -13,8 +13,6 @@
 #' @param subset_var The colData variable to subset on
 #' @param subset_group The specific subset_var group to subset
 #' @param gene The gene of interest
-#' @param var_order Optional re-ordering of subset_group factor levels
-#' @param palette Optional custom palette
 #' @param size point size
 #' @param alpha point alpha
 #' @param label_angle The angle of x-axis labels (e.g. 0, 45)
@@ -39,7 +37,7 @@ plot_expr_by_numeric_var <- function(sce,
                         subset_var = "cluster_celltype",
                         subset_group = "Oligo",
                         gene = "PLP1",
-                        palette = NULL,
+                        #palette = NULL,
                         alpha = .05,
                         size = .01,
                         label_angle = 0) {
@@ -68,10 +66,10 @@ plot_expr_by_numeric_var <- function(sce,
 
   df <- data.frame(numeric_var = sce[[numeric_var]], expr = expr)
 
-  if (is.null(palette)) {
-    if(n_groups <= 10) palette <- paletteer::paletteer_d("ggsci::default_aaas")
-    if(n_groups > 10) palette <- paletteer::paletteer_d("ggsci::default_igv")
-  }
+  #if (is.null(palette)) {
+  #  if(n_groups <= 10) palette <- paletteer::paletteer_d("ggsci::default_aaas")
+  #  if(n_groups > 10) palette <- paletteer::paletteer_d("ggsci::default_igv")
+  #}
 
   pred <- predict(lm(expr ~ numeric_var, df),
                   se.fit = TRUE, interval = "confidence")

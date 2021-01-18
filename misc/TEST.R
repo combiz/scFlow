@@ -1,1 +1,0 @@
-print(packageVersion("MAST"))
