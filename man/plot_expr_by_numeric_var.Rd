@@ -10,7 +10,6 @@ plot_expr_by_numeric_var(
   subset_var = "cluster_celltype",
   subset_group = "Oligo",
   gene = "PLP1",
-  palette = NULL,
   alpha = 0.05,
   size = 0.01,
   label_angle = 0
@@ -25,8 +24,6 @@ plot_expr_by_numeric_var(
 
 \item{gene}{The gene of interest}
 
-\item{palette}{Optional custom palette}
-
 \item{alpha}{point alpha}
 
 \item{size}{point size}
@@ -34,8 +31,6 @@ plot_expr_by_numeric_var(
 \item{label_angle}{The angle of x-axis labels (e.g. 0, 45)}
 
 \item{group_var}{The colData variable for x-axis groups}
-
-\item{var_order}{Optional re-ordering of subset_group factor levels}
 }
 \value{
 p a ggplot object

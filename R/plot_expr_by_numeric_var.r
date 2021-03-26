@@ -71,21 +71,22 @@ plot_expr_by_numeric_var <- function(sce,
   #  if(n_groups > 10) palette <- paletteer::paletteer_d("ggsci::default_igv")
   #}
 
-  pred <- predict(lm(expr ~ numeric_var, df),
+  #pred <- predict(lm(expr ~ numeric_var, df),  ## ALL cells
+  pred <- predict(lm(expr ~ numeric_var, df[df$expr > 0, ]), # only expressive cells
                   se.fit = TRUE, interval = "confidence")
   limits <- as.data.frame(pred$fit)
-  limits$numeric_var <- df$numeric_var
+  limits$numeric_var <- df[df$expr > 0,]$numeric_var
 
   # Main scatter plot
   p <- ggplot(df, aes(x = numeric_var, y = expr)) +
     #geom_point() +
     geom_jitter(size = size, width = .03, alpha = alpha) +
-    stat_summary(fun.y = median,
+    stat_summary(data = df[df$expr > 0,], fun = median,
                  #fun.ymin = function(x) max(0, mean(x) - sd(x)),
                  #fun.ymax = function(x) mean(x) + sd(x),
-                 geom = "point", fill = "white", size = 3) +
+                 geom = "point", fill = "white", size = 2) +
     #geom_smooth(method = "gam", formula = y ~ s(x, bs = "cs")) +
-    geom_smooth(method = "lm", colour = "#366092", se = TRUE, fill = "#366092", alpha = 0.3) +
+    geom_smooth(data = df[df$expr > 0,], method = "lm", colour = "#366092", se = TRUE, fill = "#366092", alpha = 0.3) +
     geom_line(data = limits, aes(x = numeric_var, y = lwr),
               linetype = 2, colour = "#366092") +
     geom_line(data = limits, aes(x = numeric_var, y = upr),
@@ -123,7 +124,7 @@ plot_expr_by_numeric_var <- function(sce,
 
   # lower plot of zero counts proportion
   zp <- ggplot(dt, aes(x = numeric_var, y = pc_expressive)) +
-    geom_point() +
+    geom_point(size = 2) +
     geom_smooth(method = "lm", colour = "#366092", se = TRUE, fill = "#366092", alpha = 0.3) +
     geom_line(data = limits, aes(x = numeric_var, y = lwr),
               linetype = 2, colour = "#366092") +

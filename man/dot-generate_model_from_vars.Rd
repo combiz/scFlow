@@ -9,6 +9,7 @@
   dependent_var,
   confounding_vars,
   random_effects_var = NULL,
+  interaction_vars = NULL,
   prefix = NULL
 )
 }
@@ -20,6 +21,8 @@
 \item{confounding_vars}{the confounding variables}
 
 \item{random_effects_var}{the random effect variables (optional)}
+
+\item{interaction_vars}{variables which interact (optional)}
 
 \item{prefix}{a variable prefix (e.g. "sce$") (optional)}
 }

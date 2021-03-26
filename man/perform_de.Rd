@@ -15,6 +15,7 @@ perform_de(
   confounding_vars = c("individual", "cngeneson", "sex", "age", "PMI", "RIN",
     "seqdate", "pc_mito"),
   random_effects_var = NULL,
+  interaction_vars = NULL,
   unique_id_var = "individual",
   species = getOption("scflow_species", default = "human"),
   parallel = TRUE,
@@ -39,6 +40,8 @@ perform_de(
 \item{confounding_vars}{the independent variables of the model}
 
 \item{random_effects_var}{variable(s) to model as random effects}
+
+\item{interaction_vars}{two or more variables to model as interacting}
 
 \item{unique_id_var}{the colData variable identifying unique samples}
 
