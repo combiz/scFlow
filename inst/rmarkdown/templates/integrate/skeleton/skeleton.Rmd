@@ -9,6 +9,7 @@ output:
     keep_md: false
     css: !expr system.file("rmarkdown/css/style.css", package = "scFlow")
     includes:
+      in_header: header.html
       after_body: footer.html
 params:
   metadata_path: false
