@@ -71,14 +71,20 @@ annotate_sce_genes <- function(sce,
     !(is.na(SummarizedExperiment::rowData(sce)$gene)) + 0
 
   # annotate rowdata with qc_metric_mitochondrial
-  qc_metric_is_mito <- startsWith(
-    as.character(SummarizedExperiment::rowData(sce)$gene), "MT-") + 0
+  qc_metric_is_mito <- grepl(
+    "^mt|^MT", as.character(SummarizedExperiment::rowData(sce)$gene)
+    )
+  #qc_metric_is_mito <- startsWith(
+  #  as.character(SummarizedExperiment::rowData(sce)$gene), mito_prefix) + 0
   qc_metric_is_mito[is.na(qc_metric_is_mito)] <- 0 # for non-mapped genes
   SummarizedExperiment::rowData(sce)$qc_metric_is_mito <- qc_metric_is_mito
 
   # annotate rowdata with qc_metric_is_ribo
-  qc_metric_is_ribo <- startsWith(
-    as.character(SummarizedExperiment::rowData(sce)$gene), "RPS") + 0
+  qc_metric_is_ribo <- grepl(
+    "^RPS|^Rps|^RPL|^Rpl", as.character(SummarizedExperiment::rowData(sce)$gene)
+  )
+  #qc_metric_is_ribo <- startsWith(
+  #  as.character(SummarizedExperiment::rowData(sce)$gene), "RPS") + 0
   qc_metric_is_ribo[is.na(qc_metric_is_ribo)] <- 0
   SummarizedExperiment::rowData(sce)$qc_metric_is_ribo <-
     qc_metric_is_ribo
