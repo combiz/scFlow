@@ -11,15 +11,15 @@
 #'
 #' @return sce SingleCellExperiment object annotated with reducedDims
 #'
-#' @importFrom cli cli_h1 cli_h2 cli_text
+#' @importFrom cli cli_h1 cli_h2 cli_h3 cli_alert_success
 #'
 #' @family Data integration
 #'
 #' @export
 
 integrate_sce <- function(sce,
-                                method = "Liger",
-                                ...) {
+                          method = "Liger",
+                          ...) {
   fargs <- list(...)
   integration_methods <- c("Liger")
   assertthat::assert_that(
@@ -27,12 +27,14 @@ integrate_sce <- function(sce,
     msg = sprintf(
       "Available integration methods are: %s",
       paste0(integration_methods, collapse = ",")
-    ))
+    )
+  )
   cli::cli_h1("Integrating Datasets")
   # Reduce dimensions with Liger
   if (method == "Liger") {
     cli::cli_h2(
-      "Running Linked Inference of Genomic Experimental Relationships (LIGER)")
+      "Running Linked Inference of Genomic Experimental Relationships (LIGER)"
+    )
     # Preprocess with Liger
     cli::cli_h3("Pre-processing SingleCellExperiment for LIGER")
     ligerex <- do.call(liger_preprocess, c(list(sce = sce), fargs))
@@ -47,8 +49,16 @@ integrate_sce <- function(sce,
     ligerex <- do.call(liger_reduce_dims, c(list(ligerex = ligerex), fargs))
     sce@metadata$liger_params$liger_reduce_dims <-
       ligerex@parameters$liger_params$liger_reduce_dims
+
+    # Order ligerex@H.norm barcodes to match the orders of original sce
+
+    idx <- match(sce$barcode, rownames(ligerex@H.norm))
+    ligerex@H.norm <- ligerex@H.norm[idx, ]
+
     SingleCellExperiment::reducedDim(sce, "Liger") <- ligerex@H.norm
-    cli::cli_alert_success("Successfully computed integrated factors with LIGER")
+    cli::cli_alert_success(
+      "Successfully computed integrated factors with LIGER"
+    )
   }
   return(sce)
 }

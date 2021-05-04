@@ -266,7 +266,7 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
 #'
 #' @family Impacted pathway analysis
 #'
-#' @keywords internal
+#' @export
 
 .listdb <- function() {
   dbs <- data.frame(database = list.files(
@@ -317,28 +317,29 @@ pathway_analysis_rontotools <- function(gene_file = NULL,
 #' @keywords internal
 
 .dotplot_pe <- function(dt) {
-  dt <- dt[1:10, ]
   dt <- na.omit(dt)
+  dt <- dt %>%
+    top_n(., 10, enrichment_ratio)
   dt$description <- stringr::str_wrap(dt$description, 40)
 
   ggplot2::ggplot(dt, aes(
     x = perturbation,
     y = reorder(description, perturbation)
   )) +
-    geom_point(aes(fill = FDR, size = overlap),
+    geom_point(aes(fill = FDR, size = size),
       shape = 21, alpha = 0.7, color = "black"
     ) +
-    scale_size(name = "Overlap", range = c(3, 8)) +
+    scale_size(name = "Geneset size", range = c(3, 8)) +
     xlab("Total perturbation") +
     ylab("") +
     scale_fill_gradient(
-      low = "violetred", high = "navy", name = "FDR",
+      low = "navy", high = "gold", name = "FDR",
       guide = guide_colorbar(reverse = TRUE),
       limits = c(0, 0.05),
       aesthetics = c("fill")
     ) +
     guides(size = guide_legend(
-      override.aes = list(fill = "violetred", color = "violetred")
+      override.aes = list(fill = "gold", color = "gold")
     )) +
     cowplot::theme_cowplot() +
     cowplot::background_grid()

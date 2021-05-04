@@ -1,14 +1,11 @@
 ################################################################################
 #' Preprocessing steps for Liger dimensionality reduction
 #'
-#'
 #' Split merged object into multiple sce objects and extract sparse matrices:
 #' @param sce SingleCellExperiment object or merged objects
 #' @param k Inner dimension of factorization (number of factors).
 #'
 #' Make a Liger object:
-#' @param raw.data List of expression matrices (gene by cell)
-#'   each from an sce object.
 #' @param take.gene.union Whether to fill out raw.data matrices with union
 #'   of genes across all datasets (filling in 0 for missing data)
 #'   (requires make.sparse=T) (default FALSE).
@@ -23,30 +20,20 @@
 #' @param combine How to combine variable genes across experiments.
 #'   Either "union" or "intersect".
 #'   (default "union")
-#' @param keep.unique Keep genes that occur (i.e., there is a
-#'   corresponding column in raw.data) only in one dataset (default FALSE)
 #' @param capitalize Capitalize gene names to match homologous genes
 #'   (ie. across species)
 #'   (default FALSE)
-#' @param do.plot Display log plot of gene variance vs. gene expression
-#'   for each dataset.
-#'   Selected genes are plotted in green. (default FALSE)
-#' @param cex.use Point size for plot.
-#'
 #'  Scale genes by root-mean-square across cells:
-#' @param remove.missing Whether to remove cells from scale.data
-#'   with no gene expression (default TRUE)
 #'
 #' Remove cells/genes with no expression across any genes/cells:
 #' @param use.cols Treat each column as a cell (default TRUE)
 #'
 #' @return liger preprocessed object.
 #'
-#' @importFrom liger createLiger
-#' @importFrom liger normalize
-#' @importFrom liger selectGenes
-#' @importFrom liger scaleNotCenter
-#' @importFrom liger removeMissingObs
+#' @importFrom rliger createLiger normalize selectGenes
+#' @importFrom rliger scaleNotCenter removeMissingObs
+#' @importFrom parallel mclapply
+#' @importFrom cli cli_alert
 #'
 #' @export
 
@@ -55,14 +42,11 @@ liger_preprocess <- function(sce,
                              unique_id_var = "manifest",
                              take_gene_union = F,
                              remove.missing = T,
-                             make.sparse = T,
                              num_genes = 3000,
                              combine = "union",
-                             keep_unique = F,
                              capitalize = F,
-                             do_plot = F,
-                             cex_use = 0.3,
                              use_cols = T,
+                             num_cores = future::availableCores(),
                              ...) {
   fargs <- as.list(environment())
   fargs <- fargs[fargs = c(
@@ -70,33 +54,28 @@ liger_preprocess <- function(sce,
     "unique_id_var",
     "take_gene_union",
     "remove.missing",
-    "make.sparse",
     "num_genes",
     "combine",
-    "keep_unique",
     "capitalize",
-    "do_plot",
-    "cex_use",
-    "use_cols"
+    "use_cols",
+    "num_cores"
   )]
 
   do.call(.check_sce_for_liger, c(sce = sce, fargs))
   # Split merged sce object into multiple objects and extract sparse matrices
-  cli::cli_alert("Splitting merged sce object and extracting sparse matrices")
-  dataset_list <- list()
-  mat_list <- list()
-  manifests <- unique(sce@colData[, unique_id_var])
-  for (mnft in manifests) {
-    dataset_name <- paste0("dataset_", mnft)
-    dataset_list[[dataset_name]] <-
-      sce[, sce[[unique_id_var]] == mnft]
-    mat_list[[dataset_name]] <-
-      sce@assays@data$counts[, sce[[unique_id_var]] == mnft]
-  }
+
+  cli::cli_alert("Extracting sparse matrices")
+  mat_list <- sapply(
+    split(sce$barcode, sce[[unique_id_var]]),
+    function(cells) {
+      sce@assays@data$counts[, as.character(cells)]
+    }
+  )
+  names(mat_list) <- paste0("dataset_", names(mat_list))
 
   # Make a Liger object. Pass in the sparse matrix.
   cli::cli_alert("Creating LIGER object")
-  ligerex <- liger::createLiger(
+  ligerex <- rliger::createLiger(
     raw.data = mat_list, take.gene.union = take_gene_union,
     remove.missing = remove.missing
   )
@@ -105,44 +84,44 @@ liger_preprocess <- function(sce,
   ### preprocessing steps
   # Normalize the data to control for different numbers of UMIs per cell
   cli::cli_alert("Normalizing data")
-  ligerex <- liger::normalize(ligerex)
+  ligerex <- rliger::normalize(ligerex)
 
   # Select variable (informative) genes
   cli::cli_alert("Selecting variable (informative) genes")
-  ligerex <- liger::selectGenes(ligerex,
-                                num.genes = num_genes, combine = combine,
-                                keep.unique = keep_unique,
-                                capitalize = capitalize, do.plot = do_plot,
-                                cex.use = cex_use
+  ligerex <- rliger::selectGenes(ligerex,
+    num.genes = num_genes,
+    combine = combine,
+    capitalize = capitalize
   )
 
   # Scale the data by root-mean-square across cells
   cli::cli_alert("Scaling data")
-  ligerex <- liger::scaleNotCenter(ligerex, remove.missing = remove.missing)
+  ligerex <- rliger::scaleNotCenter(ligerex, remove.missing = remove.missing)
   # Remove cells/genes with no expression across any genes/cells
   cli::cli_alert("Removing non-expressed genes")
-  ligerex <- liger::removeMissingObs(ligerex, use.cols = use_cols)
+  ligerex <- rliger::removeMissingObs(ligerex, use.cols = use_cols)
   ########## Selecting and storing variable genes for each dataset ##########
   cli::cli_alert("Selecting and storing variable genes for each dataset")
-  var.genes_per_dataset <- list()
-  manifests <- unique(sce@colData[, unique_id_var])
-  for (mnft in manifests) {
-    single_dataset <- paste0("dataset_", mnft)
-    single_ligerex <- paste0("ligerex_", mnft)
-    single_mat <-
-      sce@assays@data$counts[, sce[[unique_id_var]] == mnft]
-    single_ligerex <- createLiger(
-      raw.data = list(single_dataset = single_mat),
-      remove.missing = remove.missing)
-    single_ligerex <- liger::normalize(single_ligerex)
-    single_ligerex <- liger::selectGenes(single_ligerex,
-                                         num.genes = num_genes,
-                                         combine = combine,
-                                         keep.unique = keep_unique,
-                                         capitalize = capitalize,
-                                         do.plot = do_plot, cex.use = cex_use)
-    var.genes_per_dataset[[single_dataset]] <- single_ligerex@var.genes
-  }
+
+  var.genes_per_dataset <- parallel::mclapply(
+    mat_list,
+    mc.cores = num_cores,
+    function(mat) {
+      single_mat <- mat
+      single_ligerex <- rliger::createLiger(
+        raw.data = list(single_dataset = single_mat),
+        remove.missing = remove.missing
+      )
+      single_ligerex <- rliger::normalize(single_ligerex)
+      single_ligerex <- rliger::selectGenes(single_ligerex,
+        num.genes = num_genes,
+        combine = combine,
+        capitalize = capitalize
+      )
+      single_ligerex_var_genes <- single_ligerex@var.genes
+    }
+  )
+
   ligerex@agg.data$var.genes_per_dataset <- var.genes_per_dataset
 
   return(ligerex)
