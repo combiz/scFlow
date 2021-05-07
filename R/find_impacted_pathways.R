@@ -11,6 +11,8 @@
 #' as input for differential expression. Column name should be gene.
 #' If not provided the human protein-coding genome will be used as background
 #' genes.
+#' @param organism Organism name. hsapiens for Homo sapiens,
+#' mmusculus for Mus musculus
 #' @param enrichment_tool Enrichment tool to use. WebGestaltR, ROntoTools and
 #' enrichR is implemented. Use one or more of the tools.
 #' @param enrichment_database Name of the database for enrichment. User can
@@ -29,17 +31,22 @@
 #'
 #' @importFrom WebGestaltR listGeneSet
 #' @importFrom enrichR listEnrichrDbs
+#' @importFrom dplyr %>% filter pull
 #'
 #' @export
 find_impacted_pathways <- function(gene_file = NULL,
                                    reference_file = NULL,
+                                   organism = c("hsapiens"),
                                    enrichment_tool = c(
-                                     "WebGestaltR", "ROntoTools", "enrichR"
+                                     "WebGestaltR", "enrichR"
                                    ),
                                    enrichment_database = c(
+                                     "GO_Biological_Process",
+                                     "GO_Cellular_Component",
+                                     "GO_Molecular_Function",
                                      "KEGG",
-                                     "Panther",
-                                     "Reactome"
+                                     "Reactome",
+                                     "Wikipathway"
                                    ),
                                    is_output = FALSE,
                                    output_dir = ".",
@@ -57,19 +64,22 @@ find_impacted_pathways <- function(gene_file = NULL,
     cli::cli_h2("Starting enrichment analysis by enrichR")
     res[["enrichR"]] <- pathway_analysis_enrichr(
       gene_file = gene_file,
-      enrichment_database = temp_dbs$enrichR$libraryName[
-        temp_dbs$enrichR$db_alias %in% enrichment_database
-      ],
+      enrichment_database = temp_dbs$enrichR %>%
+        dplyr::filter(db_alias %in% enrichment_database) %>%
+        dplyr::pull(libraryName) %>%
+        as.character(),
       is_output = is_output,
       output_dir = output_dir
     )
-    res$enrichR$metadata$enrichment_database_link <- temp_dbs$enrichR$link[
-      temp_dbs$enrichR$db_alias %in% enrichment_database
-    ]
+    res$enrichR$metadata$enrichment_database_link <- temp_dbs$enrichR %>%
+      dplyr::filter(db_alias %in% enrichment_database) %>%
+      dplyr::pull(link) %>%
+      as.character()
     names(res$enrichR$metadata$enrichment_database_link) <- tolower(
-      temp_dbs$enrichR$db_alias[
-        temp_dbs$enrichR$db_alias %in% enrichment_database
-      ]
+      temp_dbs$enrichR %>%
+        dplyr::filter(db_alias %in% enrichment_database) %>%
+        dplyr::pull(db_alias) %>%
+        as.character()
     )
     if (length(setdiff(names(res$enrichR), "metadata")) == 0) {
       res$enrichR$metadata$result <- FALSE
@@ -82,19 +92,22 @@ find_impacted_pathways <- function(gene_file = NULL,
     res[["ROntoTools"]] <- pathway_analysis_rontotools(
       gene_file = gene_file,
       reference_file = reference_file,
-      enrichment_database = temp_dbs$ROntoTools$name[
-        temp_dbs$ROntoTools$db_alias %in% enrichment_database
-      ],
+      enrichment_database = temp_dbs$ROntoTools %>%
+        dplyr::filter(db_alias %in% enrichment_database) %>%
+        dplyr::pull(name) %>%
+        as.character(),
       is_output = is_output,
       output_dir = output_dir
     )
- res$ROntoTools$metadata$enrichment_database_link <- temp_dbs$ROntoTools$link[
-      temp_dbs$ROntoTools$db_alias %in% enrichment_database
-    ]
+    res$ROntoTools$metadata$enrichment_database_link <- temp_dbs$ROntoTools %>%
+      dplyr::filter(db_alias %in% enrichment_database) %>%
+      dplyr::pull(link) %>%
+      as.character()
     names(res$ROntoTools$metadata$enrichment_database_link) <- tolower(
-      temp_dbs$ROntoTools$db_alias[
-        temp_dbs$ROntoTools$db_alias %in% enrichment_database
-      ]
+      temp_dbs$ROntoTools %>%
+        dplyr::filter(db_alias %in% enrichment_database) %>%
+        dplyr::pull(db_alias) %>%
+        as.character()
     )
     if (length(setdiff(names(res$ROntoTools), "metadata")) == 0) {
       res$ROntoTools$metadata$result <- FALSE
@@ -114,24 +127,28 @@ find_impacted_pathways <- function(gene_file = NULL,
       res[["WebGestaltR"]] <- pathway_analysis_webgestaltr(
         gene_file = gene_file,
         reference_file = reference_file,
+        organism = organism,
         enrichment_method = fargs$enrichment_method,
-        enrichment_database = temp_dbs$WebGestaltR$name[
-          temp_dbs$WebGestaltR$db_alias %in% enrichment_database
-        ],
+        enrichment_database = temp_dbs$WebGestaltR %>%
+          dplyr::filter(db_alias %in% enrichment_database) %>%
+          dplyr::pull(name) %>%
+          as.character(),
         is_output = is_output,
         output_dir = output_dir
       )
-  res$WebGestaltR$metadata$enrichment_database_link <- temp_dbs$WebGestaltR$link[
-        temp_dbs$WebGestaltR$db_alias %in% enrichment_database
-      ]
+      res$WebGestaltR$metadata$enrichment_database_link <- temp_dbs$WebGestaltR %>%
+        dplyr::filter(db_alias %in% enrichment_database) %>%
+        dplyr::pull(link) %>%
+        as.character()
       names(res$WebGestaltR$metadata$enrichment_database_link) <- tolower(
-        temp_dbs$WebGestaltR$db_alias[
-          temp_dbs$WebGestaltR$db_alias %in% enrichment_database
-        ]
+        temp_dbs$WebGestaltR %>%
+          dplyr::filter(db_alias %in% enrichment_database) %>%
+          dplyr::pull(db_alias) %>%
+          as.character()
       )
-    if (length(setdiff(names(res$WebGestaltR), "metadata")) == 0) {
-      res$WebGestaltR$metadata$result <- FALSE
-    }
+      if (length(setdiff(names(res$WebGestaltR), "metadata")) == 0) {
+        res$WebGestaltR$metadata$result <- FALSE
+      }
       cli::cli_alert_success("WebGestaltR analysis completed")
     }
   }
@@ -154,7 +171,7 @@ list_databases <- function() {
   temp_dbs <- list()
 
   temp_dbs[["WebGestaltR"]] <- WebGestaltR::listGeneSet()
-  temp_dbs$WebGestaltR <- temp_dbs$WebGestaltR[c(2, 4, 6:10), ]
+  temp_dbs$WebGestaltR <- temp_dbs$WebGestaltR[c(1, 3, 5, 7:10), ]
   temp_dbs$WebGestaltR$db_alias <- c(
     "GO_Biological_Process",
     "GO_Cellular_Component",
@@ -172,7 +189,7 @@ list_databases <- function() {
     "https://www.wikipathways.org/index.php/Pathway:"
   )
 
-  eval(parse(text = "enrichR:::.onLoad()")) # R CMD check workaround
+  eval(parse(text = "enrichR:::.onAttach()")) # R CMD check workaround
 
   temp_dbs[["enrichR"]] <- enrichR::listEnrichrDbs()
   temp_dbs$enrichR <- temp_dbs$enrichR[

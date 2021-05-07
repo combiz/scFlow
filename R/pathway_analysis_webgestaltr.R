@@ -28,7 +28,7 @@
 #' @family Impacted pathway analysis
 #'
 #' @importFrom cli cli_text cli_alert_info
-#' @importFrom dplyr filter mutate
+#' @importFrom dplyr %>% filter mutate
 #' @importFrom WebGestaltR WebGestaltR listGeneSet
 #' @importFrom ggplot2 ggplot ggsave
 #' @importFrom cowplot theme_cowplot background_grid
@@ -39,11 +39,12 @@
 #' @export
 pathway_analysis_webgestaltr <- function(gene_file = NULL,
                                          reference_file = NULL,
+                                         organism = c("hsapiens", "mmusculus"),
                                          enrichment_method = "ORA",
                                          enrichment_database = c(
-                                  "geneontology_Biological_Process_noRedundant",
-                                  "geneontology_Cellular_Component_noRedundant",
-                                  "geneontology_Molecular_Function_noRedundant",
+                                           "geneontology_Biological_Process",
+                                           "geneontology_Cellular_Component",
+                                           "geneontology_Molecular_Function",
                                            "pathway_KEGG",
                                            "pathway_Panther",
                                            "pathway_Reactome",
@@ -109,7 +110,7 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
 
   res <- WebGestaltR::WebGestaltR(
     enrichMethod = enrichment_method,
-    organism = "hsapiens",
+    organism = organism,
     enrichDatabase = enrichment_database,
     interestGene = interest_gene,
     interestGeneType = "genesymbol",
@@ -127,7 +128,7 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
       "{.strong No significant impacted pathways found at FDR <= 0.05! }"
     )
     enrichment_result <- NULL
-     } else {
+  } else {
     if (enrichment_method == "ORA") {
       enrichment_result <- .format_res_table_ORA(res, enrichment_database)
       enrichment_result$plot <- lapply(
@@ -286,29 +287,31 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
 
 
 .dotplot_ora <- function(dt) {
-  dt <- dt[1:10, ]
   dt <- na.omit(dt)
+  dt <- dt %>%
+    top_n(., 10, enrichment_ratio)
   dt$description <- stringr::str_wrap(dt$description, 40)
 
   ggplot2::ggplot(dt, aes(
     x = enrichment_ratio,
     y = stats::reorder(description, enrichment_ratio)
   )) +
-    geom_point(aes(fill = FDR, size = overlap),
+    geom_point(aes(fill = FDR, size = size),
       shape = 21, alpha = 0.7, color = "black"
     ) +
-    scale_size(name = "Overlap", range = c(3, 8)) +
+    scale_size(name = "Geneset size", range = c(3, 8)) +
     xlab("Enrichment Ratio") +
     ylab("") +
     scale_fill_gradient(
-      low = "violetred", high = "navy", name = "FDR",
+      low = "navy", high = "gold", name = "FDR",
       guide = guide_colorbar(reverse = TRUE),
       limits = c(0, 0.05),
       aesthetics = c("fill")
     ) +
     guides(size = guide_legend(
-      override.aes = list(fill = "violetred", color = "violetred")
-    )) + cowplot::theme_cowplot() +
+      override.aes = list(fill = "gold", color = "gold")
+    )) +
+    cowplot::theme_cowplot() +
     cowplot::background_grid()
 }
 
