@@ -47,13 +47,14 @@ model_celltype_freqs <- function(sce,
   df <- cbind(df, covariates)
 
   cli::cli_h2("Fitting Dirichlet Model")
+  #model_formula <- stats::as.formula(sprintf("counts ~ %s | 1", dependent_var))
   model_formula <- stats::as.formula(sprintf("counts ~ %s", dependent_var))
   cli::cli_alert(
     "Fitting model: {.var {scFlow:::.formula_to_char(model_formula)}}"
   )
   fit <- do.call(
     DirichletReg::DirichReg,
-    list(formula = model_formula, data = df)
+    list(formula = model_formula, data = df, model = "alternative")
   )
 
   cli::cli_alert("Post-processing model")
@@ -507,6 +508,7 @@ model_celltype_freqs <- function(sce,
 #'
 #' @importFrom tibble rownames_to_column
 #' @importFrom tidyr pivot_longer
+#' @importFrom dplyr case_when
 #'
 #' @keywords internal
 .process_dirichlet_fit <- function(fit, dependent_var, celltype_var, ...) {
@@ -525,7 +527,7 @@ model_celltype_freqs <- function(sce,
       values_to = "pval"
     ) %>%
     dplyr::mutate(
-      label = case_when(
+      label = dplyr::case_when(
         pval <= 0.001 ~ "***",
         pval <= 0.01 ~ "**",
         pval <= 0.05 ~ "*",
@@ -550,7 +552,7 @@ model_celltype_freqs <- function(sce,
 #'
 #' @family helper
 #'
-#' @importFrom  dplyr mutate
+#' @importFrom  dplyr mutate case_when
 #'
 #' @keywords internal
 .model_fisher_celltype <- function(counts_df,
@@ -583,7 +585,7 @@ model_celltype_freqs <- function(sce,
   df$pval <- stats::p.adjust(df$pval, method = "bonferroni")
   df <- df %>%
     dplyr::mutate(
-      label = case_when(
+      label = dplyr::case_when(
         pval <= 0.001 ~ "***",
         pval <= 0.01 ~ "**",
         pval <= 0.05 ~ "*",

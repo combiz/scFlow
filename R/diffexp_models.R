@@ -687,16 +687,24 @@ perform_de <- function(sce,
 
   dt$label <- NA
   if (n_up > 0) {
-      top_up <- dt %>%
-        dplyr::filter(de == "Up" & gene_biotype == "protein_coding") %>%
-        dplyr::top_n(min(n_up, n_label), wt = -padj)
-      dt$label[dt$gene %in% top_up$gene] <- "Yes"
+    top_up <- dt %>%
+      dplyr::filter(de == "Up" & gene_biotype == "protein_coding") %>%
+      dplyr::top_n(min(n_up, n_label), wt = -padj)
+    top_up_logfc <- dt %>%
+      dplyr::filter(de == "Up" & gene_biotype == "protein_coding") %>%
+      dplyr::top_n(min(n_up, n_label), wt = abs(logFC))
+    top_up <- rbind(top_up, top_up_logfc)
+    dt$label[dt$gene %in% top_up$gene] <- "Yes"
   }
   if (n_down > 0) {
     top_down <- dt %>%
       dplyr::filter(de == "Down" & gene_biotype == "protein_coding") %>%
       dplyr::top_n(min(n_down, n_label), wt = -padj)
-      dt$label[dt$gene %in% top_down$gene] <- "Yes"
+    top_down_logfc <- dt %>%
+      dplyr::filter(de == "Down" & gene_biotype == "protein_coding") %>%
+      dplyr::top_n(min(n_down, n_label), wt = abs(logFC))
+    top_down <- rbind(top_down, top_down_logfc)
+    dt$label[dt$gene %in% top_down$gene] <- "Yes"
   }
 
   dt$padj[dt$padj == 0] <- min(dt[dt$padj > 0, "padj"]) # to prevent infinite points
@@ -705,7 +713,7 @@ perform_de <- function(sce,
 
   ggplot2::ggplot(dt) +
     ggplot2::geom_point(ggplot2::aes(x = logFC, y = -log10(padj), fill = de, colour = de),
-               show.legend = T, alpha = 0.5) +
+                        show.legend = T, alpha = 0.5) +
     ggrepel::geom_text_repel(
       data = dt,
       ggplot2::aes(logFC, y = -log10(padj), label = ifelse(label == "Yes", as.character(.data[["gene"]]), "")),
@@ -714,14 +722,14 @@ perform_de <- function(sce,
     ggplot2::xlab(bquote(Log[2]*" (fold-change)")) +
     ggplot2::ylab(bquote("-"*Log[10]*" (adjusted p-value)")) +
     ggplot2::geom_vline(xintercept = c(-log2(fc_threshold), log2(fc_threshold)),
-               linetype = 2, size = 0.2, alpha = 0.5) +
+                        linetype = 2, size = 0.5, alpha = 0.5) +
     ggplot2::geom_hline(yintercept = -log10(pval_cutoff),
-               linetype = 2, size = 0.2, alpha = 0.5) +
+                        linetype = 2, size = 0.5, alpha = 0.5) +
     ggplot2::scale_colour_manual(name = NULL,
-                        aesthetics = c("colour", "fill"),
-                        values = c("#DC0000FF", "#3C5488FF", "grey"),
-                        label = c("Up-regulated", "Down-regulated"),
-                        breaks = c("Up", "Down")) +
+                                 aesthetics = c("colour", "fill"),
+                                 values = c("#DC0000FF", "#3C5488FF", "grey"),
+                                 label = c("Up-regulated", "Down-regulated"),
+                                 breaks = c("Up", "Down")) +
     ggplot2::scale_y_continuous(limits = c(0, NA)) +
     ggplot2::scale_x_continuous(limits = c(-max_logFC, max_logFC)) +
     ggplot2::guides(colour = ggplot2::guide_legend(override.aes = list(size = 3))) +
@@ -738,3 +746,4 @@ perform_de <- function(sce,
       plot.margin = ggplot2::margin(c(1, 1, 1, 1), unit = "cm")
     )
 }
+
