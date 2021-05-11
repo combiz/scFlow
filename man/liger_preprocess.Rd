@@ -10,14 +10,11 @@ liger_preprocess(
   unique_id_var = "manifest",
   take_gene_union = F,
   remove.missing = T,
-  make.sparse = T,
   num_genes = 3000,
   combine = "union",
-  keep_unique = F,
   capitalize = F,
-  do_plot = F,
-  cex_use = 0.3,
   use_cols = T,
+  num_cores = future::availableCores(),
   ...
 )
 }
@@ -28,10 +25,12 @@ liger_preprocess(
 
 Make a Liger object:}
 
-\item{remove.missing}{Whether to remove cells from scale.data
-with no gene expression (default TRUE)
+\item{remove.missing}{Whether to remove cells not expressing any
+measured genes, and genes not
+expressed in any cells (if take.gene.union = T, removes only genes
+not expressed in any dataset) (default TRUE).
 
-Remove cells/genes with no expression across any genes/cells:}
+Select informative genes:}
 
 \item{combine}{How to combine variable genes across experiments.
 Either "union" or "intersect".
@@ -39,10 +38,10 @@ Either "union" or "intersect".
 
 \item{capitalize}{Capitalize gene names to match homologous genes
 (ie. across species)
-(default FALSE)}
+(default FALSE)
+Scale genes by root-mean-square across cells:
 
-\item{raw.data}{List of expression matrices (gene by cell)
-each from an sce object.}
+Remove cells/genes with no expression across any genes/cells:}
 
 \item{take.gene.union}{Whether to fill out raw.data matrices with union
 of genes across all datasets (filling in 0 for missing data)
@@ -50,17 +49,6 @@ of genes across all datasets (filling in 0 for missing data)
 
 \item{num.genes}{Number of genes to find for each dataset.
 Set to 3000 as default.}
-
-\item{keep.unique}{Keep genes that occur (i.e., there is a
-corresponding column in raw.data) only in one dataset (default FALSE)}
-
-\item{do.plot}{Display log plot of gene variance vs. gene expression
-for each dataset.
-Selected genes are plotted in green. (default FALSE)}
-
-\item{cex.use}{Point size for plot.
-
-Scale genes by root-mean-square across cells:}
 
 \item{use.cols}{Treat each column as a cell (default TRUE)}
 }
