@@ -16,13 +16,17 @@ params:
 ---
 
 ```{r setup, results='hide', include=FALSE}
+# Use font awesome to display icons within header and footer html files
+htmltools::tagList(rmarkdown::html_dependency_font_awesome())
 library(plotly)
 library(DT)
 library(dplyr)
 library(utils)
 library(magrittr)
+library(htmltools)
 
 knitr::opts_chunk$set(echo = FALSE)
+
 
 knitr::knit_hooks$set(wrap = function(before, options, envir){
   if (before){
