@@ -10,7 +10,7 @@ output:
     css: !expr system.file("rmarkdown/css/style.css", package = "scFlow")
     includes:
       in_header: header.html
-      after_body: footer.html
+      after_body: !expr system.file("rmarkdown/html/footer.html", package = "scFlow")
 params:
   metadata_path: false
 ---
