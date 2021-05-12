@@ -54,7 +54,8 @@ model_celltype_freqs <- function(sce,
   )
   fit <- do.call(
     DirichletReg::DirichReg,
-    list(formula = model_formula, data = df, model = "alternative")
+    #list(formula = model_formula, data = df, model = "alternative")
+    list(formula = model_formula, data = df)
   )
 
   cli::cli_alert("Post-processing model")
