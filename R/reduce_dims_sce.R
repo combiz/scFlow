@@ -15,7 +15,7 @@
 #' @family clustering and dimensionality reduction
 #' @importFrom monocle3 preprocess_cds
 #' @importFrom SingleCellExperiment reducedDim reducedDims
-#' @importFrom RcppParallel defaultNumThreads
+#' @importFrom future availableCores
 #' @importFrom purrr map_lgl
 #' @importFrom threejs scatterplot3js
 #' @importFrom plotly plot_ly
@@ -44,7 +44,7 @@ reduce_dims_sce <- function(sce,
     repulsion_strength = 1,
     negative_sample_rate = 5,
     fast_sgd = FALSE,
-    n_threads = max(1, RcppParallel::defaultNumThreads() - 2),
+    n_threads = future::availableCores(),
     # Rtsne
     dims = 2,
     initial_dims = 50,
@@ -62,7 +62,7 @@ reduce_dims_sce <- function(sce,
     final_momentum = 0.8,
     eta = 200,
     exaggeration_factor = 12,
-    num_threads = max(1, RcppParallel::defaultNumThreads() - 2)
+    num_threads = future::availableCores()
   )
 
   inargs <- list(...)
