@@ -717,7 +717,7 @@ perform_de <- function(sce,
     ggrepel::geom_text_repel(
       data = dt,
       ggplot2::aes(logFC, y = -log10(padj), label = ifelse(label == "Yes", as.character(.data[["gene"]]), "")),
-      max.iter = 1000, size = 3, na.rm = TRUE
+      max.iter = 1000, size = 4, na.rm = TRUE
     ) +
     ggplot2::xlab(bquote(Log[2]*" (fold-change)")) +
     ggplot2::ylab(bquote("-"*Log[10]*" (adjusted p-value)")) +
