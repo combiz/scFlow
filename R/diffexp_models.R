@@ -10,6 +10,7 @@
 #' @param ref_class the class of dependent_var used as reference
 #' @param confounding_vars the independent variables of the model
 #' @param random_effects_var variable(s) to model as random effects
+#' @param interaction_vars two or more variables to model as interacting
 #' @param unique_id_var the colData variable identifying unique samples
 #' @param species human or mouse
 #' @param parallel enable parallel processing
@@ -39,6 +40,7 @@ perform_de <- function(sce,
                                             "seqdate",
                                             "pc_mito"),
                        random_effects_var = NULL,
+                       interaction_vars = NULL,
                        unique_id_var = "individual",
                        species = getOption(
                          "scflow_species",
@@ -184,7 +186,9 @@ perform_de <- function(sce,
       keep_vars = unique(c(
         fargs$dependent_var,
         fargs$confounding_vars,
-        fargs$random_effects_var))
+        fargs$random_effects_var,
+        fargs$interaction_vars)),
+      sample_var = fargs$unique_id_var
       )
     sce@metadata$variable_genes <- variable_genes
 
@@ -236,14 +240,18 @@ perform_de <- function(sce,
     ebayes = FALSE,
     force_run = FALSE,
     nAGQ = 0,
-    parallel = TRUE
+    parallel = TRUE,
+    append_info = NULL # attached to results info column
   )
   inargs <- list(...)
   fargs[names(inargs)] <- inargs
 
   sce <- fargs$sce
   SingleCellExperiment::tpm(sce) <- scater::calculateTPM(sce, exprs_values = "counts")
-  SingleCellExperiment::counts(sce) <- log2(SingleCellExperiment::tpm(sce) + 1)
+  SingleCellExperiment::logcounts(sce) <- log2(SingleCellExperiment::tpm(sce) + 1)
+
+  #SingleCellExperiment::logcounts(sce) <- log2(SingleCellExperiment::counts(sce) + 1)
+
   sca <- as(sce, "SingleCellAssay")
 
   message("Generating model formula")
@@ -259,6 +267,7 @@ perform_de <- function(sce,
         dependent_var = fargs$dependent_var,
         confounding_vars = fargs$confounding_vars,
         random_effects_var = fargs$random_effects_var,
+        interaction_vars = fargs$interaction_vars,
         prefix = .
       )
     )
@@ -299,6 +308,7 @@ perform_de <- function(sce,
   zlmCond <- MAST::zlm(
     formula = model_formula,
     sca = sca,
+    exprs_value = 'logcounts',
     method = fargs$mast_method, # note: glmer requires a random effects var
     ebayes = fargs$ebayes,
     parallel = fargs$parallel,
@@ -392,6 +402,8 @@ perform_de <- function(sce,
     fcHurdle$model <- gsub(" ", "", model_formula_string,
                            fixed = TRUE) # no whitespace
 
+    if(!is.null(fargs$append_info)){ fcHurdle$info <- fargs$append_info }
+
     results <- fcHurdle %>%
       dplyr::arrange(padj)
 
@@ -416,6 +428,7 @@ perform_de <- function(sce,
       ref_class = fargs$ref_class,
       confounding_vars = fargs$confounding_vars,
       random_effects_var = fargs$random_effects_var,
+      interaction_vars = fargs$interaction_vars,
       cells_per_group = table(
         as.data.frame(SingleCellExperiment::colData(fargs$sce))[[fargs$dependent_var]]),
       n_genes = dim(sce)[[1]],
@@ -492,6 +505,7 @@ perform_de <- function(sce,
 #' @param dependent_var the dependent variable
 #' @param confounding_vars the confounding variables
 #' @param random_effects_var the random effect variables (optional)
+#' @param interaction_vars variables which interact (optional)
 #' @param prefix a variable prefix (e.g. "sce$") (optional)
 #'
 #' @return model_formula a model formula
@@ -506,6 +520,7 @@ perform_de <- function(sce,
                                       dependent_var,
                                       confounding_vars,
                                       random_effects_var = NULL,
+                                      interaction_vars = NULL,
                                       prefix = NULL) {
   if (!is.null(prefix)) {
     dependent_var <- purrr::map_chr(
@@ -521,13 +536,11 @@ perform_de <- function(sce,
         random_effects_var, ~ paste0(prefix, .)
       )
     }
-  }
-
-  # allows a model without confounding variables
-  if (!is.null(confounding_vars)) {
-    plus_or_blank <- " + "
-  } else {
-    plus_or_blank <- ""
+    if (!is.null(interaction_vars)) {
+      interaction_vars <- purrr::map_chr(
+        interaction_vars, ~ paste0(prefix, .)
+      )
+    }
   }
 
   if (!is.null(random_effects_var)) {
@@ -538,20 +551,30 @@ perform_de <- function(sce,
 
     model_formula <- stats::as.formula(
       sprintf(
-        "~ %s + %s%s %s",
+        "~ %s + %s%s%s%s%s",
         dependent_var,
         random_effects_var,
-        plus_or_blank,
-        paste(confounding_vars, collapse = " + ")
+        ifelse(!is.null(confounding_vars), " + ", ""),
+        paste(confounding_vars, collapse = " + "),
+        ifelse(!is.null(interaction_vars), " + ", ""),
+        ifelse(
+          !is.null(interaction_vars),
+          sprintf("( %s )", paste(interaction_vars, collapse = ":")
+        ), "")
       )
     )
   } else {
     model_formula <- stats::as.formula(
       sprintf(
-        "~ %s%s%s",
+        "~ %s%s%s%s%s",
         dependent_var,
-        plus_or_blank,
-        paste(confounding_vars, collapse = " + ")
+        ifelse(!is.null(confounding_vars), " + ", ""),
+        paste(confounding_vars, collapse = " + "),
+        ifelse(!is.null(interaction_vars), " + ", ""),
+        ifelse(
+          is.null(interaction_vars), "",
+          sprintf("( %s )", paste(interaction_vars, collapse = ":"))
+        )
       )
     )
   }
@@ -664,40 +687,51 @@ perform_de <- function(sce,
 
   dt$label <- NA
   if (n_up > 0) {
-      top_up <- dt %>%
-        dplyr::filter(de == "Up" & gene_biotype == "protein_coding") %>%
-        dplyr::top_n(min(n_up, n_label), wt = -padj)
-      dt$label[dt$gene %in% top_up$gene] <- "Yes"
+    top_up <- dt %>%
+      dplyr::filter(de == "Up" & gene_biotype == "protein_coding") %>%
+      dplyr::top_n(min(n_up, n_label), wt = -padj)
+    top_up_logfc <- dt %>%
+      dplyr::filter(de == "Up" & gene_biotype == "protein_coding") %>%
+      dplyr::top_n(min(n_up, n_label), wt = abs(logFC))
+    top_up <- rbind(top_up, top_up_logfc)
+    dt$label[dt$gene %in% top_up$gene] <- "Yes"
   }
   if (n_down > 0) {
     top_down <- dt %>%
       dplyr::filter(de == "Down" & gene_biotype == "protein_coding") %>%
       dplyr::top_n(min(n_down, n_label), wt = -padj)
-      dt$label[dt$gene %in% top_down$gene] <- "Yes"
+    top_down_logfc <- dt %>%
+      dplyr::filter(de == "Down" & gene_biotype == "protein_coding") %>%
+      dplyr::top_n(min(n_down, n_label), wt = abs(logFC))
+    top_down <- rbind(top_down, top_down_logfc)
+    dt$label[dt$gene %in% top_down$gene] <- "Yes"
   }
 
   dt$padj[dt$padj == 0] <- min(dt[dt$padj > 0, "padj"]) # to prevent infinite points
 
+  max_logFC <- max(abs(dt$logFC))
+
   ggplot2::ggplot(dt) +
     ggplot2::geom_point(ggplot2::aes(x = logFC, y = -log10(padj), fill = de, colour = de),
-               show.legend = T, alpha = 0.5) +
+                        show.legend = T, alpha = 0.5) +
     ggrepel::geom_text_repel(
       data = dt,
       ggplot2::aes(logFC, y = -log10(padj), label = ifelse(label == "Yes", as.character(.data[["gene"]]), "")),
-      max.iter = 1000, size = 3, na.rm = TRUE
+      max.iter = 1000, size = 4, na.rm = TRUE
     ) +
     ggplot2::xlab(bquote(Log[2]*" (fold-change)")) +
     ggplot2::ylab(bquote("-"*Log[10]*" (adjusted p-value)")) +
     ggplot2::geom_vline(xintercept = c(-log2(fc_threshold), log2(fc_threshold)),
-               linetype = 2, size = 0.2, alpha = 0.5) +
+                        linetype = 2, size = 0.5, alpha = 0.5) +
     ggplot2::geom_hline(yintercept = -log10(pval_cutoff),
-               linetype = 2, size = 0.2, alpha = 0.5) +
+                        linetype = 2, size = 0.5, alpha = 0.5) +
     ggplot2::scale_colour_manual(name = NULL,
-                        aesthetics = c("colour", "fill"),
-                        values = c("#DC0000FF", "#3C5488FF", "grey"),
-                        label = c("Up-regulated", "Down-regulated"),
-                        breaks = c("Up", "Down")) +
+                                 aesthetics = c("colour", "fill"),
+                                 values = c("#DC0000FF", "#3C5488FF", "grey"),
+                                 label = c("Up-regulated", "Down-regulated"),
+                                 breaks = c("Up", "Down")) +
     ggplot2::scale_y_continuous(limits = c(0, NA)) +
+    ggplot2::scale_x_continuous(limits = c(-max_logFC, max_logFC)) +
     ggplot2::guides(colour = ggplot2::guide_legend(override.aes = list(size = 3))) +
     ggplot2::theme(
       axis.text = ggplot2::element_text(color = "black", size = 16),
@@ -712,3 +746,4 @@ perform_de <- function(sce,
       plot.margin = ggplot2::margin(c(1, 1, 1, 1), unit = "cm")
     )
 }
+

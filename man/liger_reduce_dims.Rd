@@ -16,20 +16,12 @@ liger_reduce_dims(
   v_init = NULL,
   rand_seed = 1,
   print_obj = FALSE,
-  knn_k = 20,
-  k2 = 500,
-  ref_dataset = NULL,
-  resolution = 1,
-  dist_use = "CR",
-  prune_thresh = 0.2,
-  min_cells = 2,
   quantiles = 50,
-  nstart = 10,
+  ref_dataset = NULL,
+  min_cells = 2,
+  knn_k = 20,
   center = FALSE,
-  small_clust_thresh = 0,
-  id_number = NULL,
-  print_mod = FALSE,
-  print_align_summary = FALSE,
+  resolution = 1,
   ...
 )
 }
@@ -48,6 +40,9 @@ as lambda increases). Set to lambda=5.0 as default.}
 \item{thresh}{Convergence threshold. Convergence occurs
 when |obj0-obj|/(mean(obj0,obj)) < thresh (default 1e-4).}
 
+\item{max_iters}{Maximum number of block coordinate descent iterations
+to perform (default 100).}
+
 \item{nrep}{Number of restarts to perform (iNMF objective function
 is non-convex, so taking the best objective from multiple successive
 initializations is recommended). For easier reproducibility,
@@ -55,69 +50,37 @@ this increments the random seed by 1 for each consecutive restart,
 so future factorizations of the same dataset can be run with
 one rep if necessary. (default 1)}
 
-\item{knn_k}{Number of nearest neighbors for within-dataset knn graph
-(default 20).}
+\item{rand_seed}{Random seed to allow reproducible results (default 1).}
 
-\item{k2}{Horizon parameter for shared nearest factor graph.
-Distances to all but the k2 nearest neighbors are set to 0
-(cuts down on memory usage for very large graphs) (default 500).}
+\item{print_obj}{Print objective function values after convergence
+(default FALSE).
+
+Quantile align (normalize) factor loadings:}
+
+\item{quantiles}{Number of quantiles to use for quantile normalization
+(default 50).}
 
 \item{ref_dataset}{Name of dataset to use as a "reference"
 for normalization. By default, the dataset with the largest number
 of cells is used.}
 
-\item{resolution}{Controls the number of communities detected.
-Higher resolution -> more communities. (default 1)}
-
 \item{min_cells}{Minimum number of cells to consider a cluster shared
 across datasets (default 2)}
 
-\item{quantiles}{Number of quantiles to use for quantile normalization
-(default 50).}
-
-\item{nstart}{Number of times to perform Louvain community detection with
-different random starts (default 10).}
+\item{knn_k}{Number of nearest neighbors for within-dataset knn graph
+(default 20).}
 
 \item{center}{Centers the data when scaling factors (useful for less
 sparse modalities like methylation data). (default FALSE)}
 
-\item{max.iters}{Maximum number of block coordinate descent iterations
-to perform (default 100).}
+\item{resolution}{Controls the number of communities detected.
+Higher resolution -> more communities. (default 1)}
 
 \item{H.init}{Initial values to use for H matrices. (default NULL)}
 
 \item{W.init}{Initial values to use for W matrix (default NULL)}
 
 \item{V.init}{Initial values to use for V matrices (default NULL)}
-
-\item{rand.seed}{Random seed to allow reproducible results (default 1).}
-
-\item{print.obj}{Print objective function values after convergence
-(default FALSE).
-
-Quantile align (normalize) factor loadings:}
-
-\item{prune.thresh}{Minimum allowed edge weight. Any edges below
-this are removed (given weight 0) (default 0.2).}
-
-\item{dims.use}{Indices of factors to use for shared nearest
-factor determination (default 1:ncol(H)).}
-
-\item{dist.use}{Distance metric to use in calculating nearest
-neighbors (default "CR").}
-
-\item{small.clust.thresh}{Extracts small clusters loading highly
-on single factor with fewer cells than this before regular alignment
-(default 0 -- no small cluster extraction).}
-
-\item{id.number}{Number to use for identifying edge file
-(when running in parallel) (generates random value by default).}
-
-\item{print.mod}{Print modularity output from clustering algorithm
-(default FALSE).}
-
-\item{print.align.summary}{Print summary of clusters which did not
-align normally (default FALSE).}
 }
 \value{
 liger object with H, H.norm, W, and V slots sets.

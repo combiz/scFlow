@@ -9,7 +9,8 @@ output:
     keep_md: false
     css: !expr system.file("rmarkdown/css/style.css", package = "scFlow")
     includes:
-      after_body: footer.html
+      in_header: header.html
+      after_body: !expr system.file("rmarkdown/html/footer.html", package = "scFlow")
 params:
   metadata_path: false
   categorical_covariates: true

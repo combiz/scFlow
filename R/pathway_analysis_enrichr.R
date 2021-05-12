@@ -42,7 +42,6 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
                                      ),
                                      is_output = FALSE,
                                      output_dir = ".") {
-
   assertthat::assert_that(
     !is.null(gene_file),
     msg = "No input gene list found!"
@@ -66,7 +65,7 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
     )
   )
 
-  eval(parse(text = "enrichR:::.onLoad()")) # R CMD check workaround
+  eval(parse(text = "enrichR:::.onAttach()")) # R CMD check workaround
 
   dbs <- enrichR::listEnrichrDbs()
 
@@ -169,9 +168,12 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
     size = as.numeric(gsub(".*\\/", "", res$Overlap)),
     overlap = as.numeric(gsub("\\/.*", "", res$Overlap)),
     odds_ratio = round(res$Odds.Ratio, 2),
+    pct_overlap = NA,
     pval = as.numeric(format(res$P.value, format = "e", digits = 2)),
     FDR = as.numeric(format(res$Adjusted.P.value, format = "e", digits = 2))
   )
+
+  res_table$pct_overlap <- round((res_table$overlap/res_table$size)*100, 2)
 
   res_table$geneset <- ifelse(is.na(res_table$geneset),
     res_table$description,
@@ -204,28 +206,29 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
 
 
 .dotplot_enrichr <- function(dt) {
-  dt <- dt[1:10, ]
   dt <- na.omit(dt)
+  dt <- dt %>%
+    top_n(., 10, pct_overlap)
   dt$description <- stringr::str_wrap(dt$description, 40)
 
   ggplot2::ggplot(dt, aes(
-    x = odds_ratio,
-    y = stats::reorder(description, odds_ratio)
+    x = pct_overlap,
+    y = stats::reorder(description, pct_overlap)
   )) +
-    geom_point(aes(fill = FDR, size = overlap),
+    geom_point(aes(fill = FDR, size = size),
       shape = 21, alpha = 0.7, color = "black"
     ) +
-    scale_size(name = "Overlap", range = c(3, 8)) +
-    xlab("Total Odds Ratio") +
+    scale_size(name = "Geneset size", range = c(3, 8)) +
+    xlab("Percent overlap") +
     ylab("") +
     scale_fill_gradient(
-      low = "violetred", high = "navy", name = "FDR",
+      low = "navy", high = "gold", name = "FDR",
       guide = guide_colorbar(reverse = TRUE),
       limits = c(0, 0.05),
       aesthetics = c("fill")
     ) +
     guides(size = guide_legend(
-      override.aes = list(fill = "violetred", color = "violetred")
+      override.aes = list(fill = "gold", color = "gold")
     )) +
     cowplot::theme_cowplot() +
     cowplot::background_grid()

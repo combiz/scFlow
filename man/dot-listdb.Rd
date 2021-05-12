@@ -26,4 +26,3 @@ Other Impacted pathway analysis:
 \code{\link{report_impacted_pathway}()}
 }
 \concept{Impacted pathway analysis}
-\keyword{internal}

@@ -7,8 +7,10 @@
 find_impacted_pathways(
   gene_file = NULL,
   reference_file = NULL,
-  enrichment_tool = c("WebGestaltR", "ROntoTools", "enrichR"),
-  enrichment_database = c("KEGG", "Panther", "Reactome"),
+  organism = c("hsapiens"),
+  enrichment_tool = c("WebGestaltR", "enrichR"),
+  enrichment_database = c("GO_Biological_Process", "GO_Cellular_Component",
+    "GO_Molecular_Function", "KEGG", "Reactome", "Wikipathway"),
   is_output = FALSE,
   output_dir = ".",
   ...
@@ -23,6 +25,9 @@ names should be gene, logFC, pval and padj respectively.}
 as input for differential expression. Column name should be gene.
 If not provided the human protein-coding genome will be used as background
 genes.}
+
+\item{organism}{Organism name. hsapiens for Homo sapiens,
+mmusculus for Mus musculus}
 
 \item{enrichment_tool}{Enrichment tool to use. WebGestaltR, ROntoTools and
 enrichR is implemented. Use one or more of the tools.}

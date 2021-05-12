@@ -9,19 +9,24 @@ output:
     keep_md: false
     css: !expr system.file("rmarkdown/css/style.css", package = "scFlow")
     includes:
-      after_body: footer.html
+      in_header: header.html
+      after_body: !expr system.file("rmarkdown/html/footer.html", package = "scFlow")
 params:
   results_path: false
 ---
 
 ```{r setup, results='hide', include=FALSE}
+# Use font awesome to display icons within header and footer html files
+htmltools::tagList(rmarkdown::html_dependency_font_awesome())
 library(plotly)
 library(DT)
 library(dplyr)
 library(utils)
 library(magrittr)
+library(htmltools)
 
 knitr::opts_chunk$set(echo = FALSE)
+
 
 knitr::knit_hooks$set(wrap = function(before, options, envir){
   if (before){

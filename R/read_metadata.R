@@ -69,8 +69,10 @@ read_metadata <- function(unique_key,
     )
     for (var in names(metadata)) {
       if(!is.na(metadata[[var]][[1]]) & metadata[[var]][[1]] != "") {
-        cli::cli_text(c("{.strong {var}}: {.envvar {metadata[[var]][[1]]}} ",
-          "{.emph ({class(metadata[[var]][[1]])}})"))
+        cli::cli_text(
+          c("{.strong {var}}: {.envvar {as.character(metadata[[var]][[1]])}} ",
+          "{.emph ({class(metadata[[var]][[1]])}})")
+          )
       } else {
         metadata[[var]][[1]] <- NA
         #addNA(metadata[[var]])

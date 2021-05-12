@@ -1,6 +1,6 @@
 Package: scFlow
 Title: A Single-Cell/Nuclei Analysis Toolkit
-Version: 0.6.1
+Version: 0.7.0
 Authors@R: 
     c(
     person(given = "Combiz",
@@ -95,7 +95,7 @@ Imports:
     DelayedMatrixStats,
     Matrix.utils,
     monocle3,
-    liger,
+    rliger,
     DropletUtils,
     formattable,
     qs,
@@ -126,8 +126,7 @@ Remotes:
     chris-mcginnis-ucsf/DoubletFinder,
     satijalab/seurat,
     ropensci/plotly,
-    NathanSkene/EWCE,
-    MacoskoLab/liger,
+    neurogenomics/EWCE,
     cvarrichio/Matrix.utils,
     combiz/RANN.L1,
     bzhanglab/WebGestaltR,

@@ -48,7 +48,7 @@ pseudobulk_sce <- function(sce,
   sce$pseudobulk_id <- as.factor(paste(
     sce[[sample_var]],
     sce[[celltype_var]],
-    sep = "_"
+    sep = "||"
   ))
 
   # original working
@@ -84,7 +84,12 @@ pseudobulk_sce <- function(sce,
   names(lup) <- n_lookup$pseudobulk_id
 
   # rebuild basic cell identifiers
-  pb_cd <- data.frame(Reduce(rbind, strsplit(colnames(pb_matrix), "_")))
+  pb_cd <- data.frame(
+    Reduce(
+      rbind, strsplit(colnames(pb_matrix), "||", fixed = TRUE)
+    ),
+    stringsAsFactors = FALSE
+  )
   pb_cd <- as.data.frame(unclass(pb_cd)) # chr to factor trick
 
   pb_cd <- magrittr::set_colnames(
