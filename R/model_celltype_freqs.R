@@ -296,7 +296,7 @@ model_celltype_freqs <- function(sce,
     dplyr::group_by(!!(as.name(dependent_var)),
                     !!(as.name(celltype_var))) %>%
     dplyr::summarise(
-      tibble(
+      tibble::tibble(
         dplyr::across(where(is.numeric), ~sum(.x), .names = "sum")
       )) %>%
     dplyr::left_join(pvals, by = c(celltype_var, dependent_var))
@@ -339,7 +339,7 @@ model_celltype_freqs <- function(sce,
     dplyr::group_by(!!(as.name(dependent_var)),
                     !!(as.name(celltype_var))) %>%
     dplyr::summarise(
-      tibble(
+      tibble::tibble(
         dplyr::across(where(is.numeric), ~mean(.x), .names = "mean"),
         dplyr::across(where(is.numeric), ~sd(.x), .names = "sd"),
         dplyr::across(where(is.numeric), ~ sd(.x) / sqrt(dplyr::n()), .names = "se")
@@ -513,7 +513,7 @@ model_celltype_freqs <- function(sce,
 #'
 #' @family helper
 #'
-#' @importFrom tibble rownames_to_column
+#' @importFrom tibble rownames_to_column tibble
 #' @importFrom tidyr pivot_longer
 #' @importFrom dplyr case_when
 #'
