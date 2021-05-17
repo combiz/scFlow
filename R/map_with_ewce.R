@@ -26,7 +26,9 @@ map_celltypes_sce <- function(sce,
                               ctd_folder,
                               cells_to_sample = 10000,
                               clusters_colname = "clusters",
-                              species = "human") {
+                              species = getOption(
+                                "scflow_species",
+                                default = "human")) {
 
   assertthat::assert_that(dir.exists(ctd_folder))
   assertthat::assert_that(
