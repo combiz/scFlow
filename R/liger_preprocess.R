@@ -148,7 +148,7 @@ liger_preprocess <- function(sce,
 
   min_cells_per_id <- 5
   assertthat::assert_that(
-    min(table(droplevels(sce[[fargs$unique_id_var]]))) >= min_cells_per_id,
+    min(table(droplevels(as.factor(sce[[fargs$unique_id_var]])))) >= min_cells_per_id,
     msg = sprintf("Need at least %s cells per id.", min_cells_per_id)
   )
 

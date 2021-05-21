@@ -208,7 +208,7 @@ perform_de <- function(sce,
   # define the reference class
   if (!is.numeric(sce[[fargs$dependent_var]])) {
     sce[[fargs$dependent_var]] <- stats::relevel(
-      sce[[fargs$dependent_var]],
+      as.factor(sce[[fargs$dependent_var]]),
       ref = fargs$ref_class
     )
   }
