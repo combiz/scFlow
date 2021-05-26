@@ -36,7 +36,8 @@ Suggests:
     spelling,
     covr,
     knitr,
-    scFlowData
+    scFlowData,
+    BiocStyle
 Language: en-US
 RoxygenNote: 7.1.1
 Imports: 
