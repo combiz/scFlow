@@ -1,4 +1,4 @@
-################################################################################
+  ################################################################################
 #' Functional enrichment analysis using enrichR
 #'
 #' Performs impacted pathway analysis with a list of genes.
@@ -218,7 +218,8 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
     geom_point(aes(fill = FDR, size = size),
       shape = 21, alpha = 0.7, color = "black"
     ) +
-    scale_size(name = "Geneset size", range = c(3, 8)) +
+    scale_size_binned(name = "Geneset size", range = c(3, 8),
+                      n.breaks = 4, nice.breaks = TRUE) +
     xlab("Percent overlap") +
     ylab("") +
     scale_fill_gradient(

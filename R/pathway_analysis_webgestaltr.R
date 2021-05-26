@@ -318,7 +318,8 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     geom_point(aes(fill = FDR, size = size),
       shape = 21, alpha = 0.7, color = "black"
     ) +
-    scale_size(name = "Geneset size", range = c(3, 8)) +
+    scale_size_binned(name = "Geneset size", range = c(3, 8),
+                      n.breaks = 4, nice.breaks = TRUE)+
     xlab("Enrichment Ratio") +
     ylab("") +
     scale_fill_gradient(

@@ -21,6 +21,7 @@
 #' @importFrom plyr adply
 #' @importFrom magrittr %>%
 #' @importFrom purrr map_chr
+#' @importFrom SingleCellExperiment counts
 #' @export
 map_celltypes_sce <- function(sce,
                               ctd_folder,
@@ -47,7 +48,7 @@ map_celltypes_sce <- function(sce,
     sce_subset <- sce
   }
 
-  mat <- Matrix::Matrix(counts(sce_subset), sparse = TRUE)
+  mat <- Matrix::Matrix(SingleCellExperiment::counts(sce_subset), sparse = TRUE)
   rownames(mat) <- as.character(
     SummarizedExperiment::rowData(sce_subset)$gene
   )
