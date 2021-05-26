@@ -21,14 +21,15 @@ map_custom_celltypes <- function(sce,
                                  clusters_colname = "clusters") {
 
   assertthat::assert_that(
-    clusters_colname %in% names(SummarizedExperiment::colData(sce)))
+    all(clusters_colname %in% names(SummarizedExperiment::colData(sce))))
 
-  assertthat::assert_that(
+  assertthat::assert_that(all(
     clusters_colname %in% colnames(mappings))
+  )
 
   if (!is.null(cols)) {
-    assertthat::assert_that(
-      cols %in% colnames(mappings), msg = "Invalid cols specified.")
+    assertthat::assert_that(all(
+      cols %in% colnames(mappings)), msg = "Invalid cols specified.")
   } else {
     cols <- names(mappings)
   }
