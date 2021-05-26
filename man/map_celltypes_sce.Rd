@@ -9,7 +9,7 @@ map_celltypes_sce(
   ctd_folder,
   cells_to_sample = 10000,
   clusters_colname = "clusters",
-  species = "human"
+  species = getOption("scflow_species", default = "human")
 )
 }
 \arguments{
