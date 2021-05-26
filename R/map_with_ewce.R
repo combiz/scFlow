@@ -89,8 +89,10 @@ map_celltypes_sce <- function(sce,
       paste("EN", x$allan_layer, sep = "-")
     } else if (x$allan_celltype == "Inh") {
       paste("IN", x$allan_cluster_gene_1, sep = "-")
+    } else if (x$allan_celltype != "no") {
+      as.character(x$allan_celltype)
     } else {
-      x$allan_celltype
+      as.character(x$Zeisel2018_ML5)
     }}, .expand = FALSE, .id = "Cluster")%>%
     dplyr::rename(cluster_celltype = V1)
 
@@ -100,6 +102,8 @@ map_celltypes_sce <- function(sce,
   # rename Cluster column
   mappings_df <- mappings_lookup %>%
     dplyr::rename(!!clusters_colname := Cluster)
+
+  mappings_df[] <- lapply(mappings_df, as.character)
 
   sce@metadata$mappings <- mappings_df
 
