@@ -37,6 +37,7 @@ Suggests:
     covr,
     knitr,
     scFlowData,
+    scFlowExamples,
     BiocStyle
 Language: en-US
 RoxygenNote: 7.1.1
@@ -121,7 +122,8 @@ Imports:
     preprocessCore,
     scales,
     uwot,
-    enrichR
+    foreach,
+    doParallel
 Remotes:
     r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,

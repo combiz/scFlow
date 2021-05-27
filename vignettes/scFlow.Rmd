@@ -3,7 +3,7 @@ title: "<b>scFlow</b> - Single-cell/nuclei RNA-seq analysis tools in R for a com
 author: "This vignette was created by Nurun Fancy and Combiz Khozoie"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  BiocStyle::html_document:
+  html_document:
     self_contained: yes
     toc: true
     toc_float: true
@@ -92,6 +92,15 @@ The basic `scFlow` workflow for sample QC begins with the import of the feature-
 
 # Step one - set up example data & import the matrix and metadata
 
+Call required packages for vignette:
+```{r}
+#vignette packages
+library(scFlow)
+library(scFlowData)
+library(scFlowExamples)
+library(SingleCellExperiment)
+```
+
 First we must get and format the data from `scFlowExamples` for the vignette:
 
 ```{r}
@@ -122,8 +131,6 @@ ctd_fp <- system.file("extdata","ctd",package="scFlowData")
 To run scFlow, we first need to read in the data matrix:
 
 ```{r eval=TRUE, results="hide"}
-library(scFlow)
-library(SingleCellExperiment)
 mat <- read_sparse_matrix(matrix_fp)
 ```
 
