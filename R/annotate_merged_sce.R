@@ -408,7 +408,7 @@ annotate_merged_sce <- function(sce,
     ggplot2::ylab("Number of cells") +
     ggplot2::xlab(unique_id_var) +
     ggplot2::scale_y_continuous(
-      expand = c(0, 0), limits = c(0, max(n) * 1.1)
+      expand = c(0, 0), limits = c(0, max(df$n) * 1.1)
       ) +
     ggplot2::theme(
       panel.border = ggplot2::element_blank(),
