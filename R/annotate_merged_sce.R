@@ -402,13 +402,13 @@ annotate_merged_sce <- function(sce,
 
   p <- ggplot2::ggplot(df, ggplot2::aes(x = .data[[unique_id_var]], y = n)) +
     ggplot2::geom_col() +
-    ggplot2::geom_text(ggplot2::aes(label = n, y = n + (max(df$n) * .05))) +
+    ggplot2::geom_text(ggplot2::aes(label = n, y = n + (max(n) * .05))) +
     ggplot2::coord_flip() +
     ggplot2::theme_bw() +
     ggplot2::ylab("Number of cells") +
     ggplot2::xlab(unique_id_var) +
     ggplot2::scale_y_continuous(
-      expand = c(0, 0), limits = c(0, max(df$n) * 1.1)
+      expand = c(0, 0), limits = c(0, max(n) * 1.1)
       ) +
     ggplot2::theme(
       panel.border = ggplot2::element_blank(),

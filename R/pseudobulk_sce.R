@@ -142,7 +142,7 @@ pseudobulk_sce <- function(sce,
   )
 
   # size factors are set to the number of cells
-  pb_sce <- scater::calculateQCMetrics(pb_sce)
+  pb_sce <- scater::perCellQCMetrics(pb_sce)
   SingleCellExperiment::sizeFactors(sce) <- sce$n_cells
 
   pb_sce@metadata$scflow_steps <- list()
