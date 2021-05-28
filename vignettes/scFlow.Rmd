@@ -220,7 +220,7 @@ Finally we produce a report with `report_qc_sce` (this takes a few minutes): -
 ```{r eval=TRUE}
 #Store results in same temp dir
 report_qc_sce(sce, report_file = "qc_report_scflow_individual_1",
-              report_folder_path = outputDir)
+              report_folder_path = paste0(outputDir,"/tmp_Zeisel2015_scflow/"))
 ```
 
 And save our SingleCellExperiment: -
@@ -233,15 +233,20 @@ write_sce(sce, folder_path=paste0(outputDir,"/sce_individual_1"))
 
 # Step four -- Merging multiple datasets into one *SingleCellExperiment* object
 
-Follow step one-three for all individual samples and save them using `write_sce` function. Then we read the individual `SingleCellExperiment` using `read_sce` into a list and merge them using `merge_sce` function.
+Follow step one-three for all individual samples and save them using `write_sce` function. Then we read the individual `SingleCellExperiment` using `read_sce` into a list and merge them using `merge_sce` function. Begin by reading in the manifest and samplesheet and listing the file path to all individuals: 
 
-```{r,results="hide"}
+```{r}
 manifest <- read.delim(manifest_fp)
 samplesheet <- read.delim(samplesheet_fp)
 dir_list <- 
-  dir(path = paste0(outputDir,"/tmp_Zeisel2015_scflow"), pattern = "individual", 
-        full.names = TRUE)
+  dir(path = paste0(outputDir,"/tmp_Zeisel2015_scflow"), 
+        pattern = "individual_[0-9]$", full.names = TRUE)
+dir_list
+```
 
+Now loop through each, performing the analysis and finally merging the results:
+
+```{r,results="hide"}
 for(i in dir_list){
   mat <- read_sparse_matrix(i)
   metadata <- read_metadata(

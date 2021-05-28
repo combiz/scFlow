@@ -9,6 +9,7 @@
 #' @param cells_to_sample total cells to consider for gene enrichment
 #' @param clusters_colname the name of the colData column with cluster number
 #' @param species specify human or mouse
+#' @param savePath The directory where the generated ctd file produced by EWCE is saved. Default is a temp directory
 #'
 #' @return sce a SingleCellExperiment object annotated with celltypes/metadata
 #' @author Nathan Skene / Combiz Khozoie
@@ -29,7 +30,8 @@ map_celltypes_sce <- function(sce,
                               clusters_colname = "clusters",
                               species = getOption(
                                 "scflow_species",
-                                default = "human")) {
+                                default = "human"),
+                              savePath=tempdir()) {
 
   assertthat::assert_that(dir.exists(ctd_folder))
   assertthat::assert_that(
@@ -59,7 +61,8 @@ map_celltypes_sce <- function(sce,
   message("generating ctd with ewce")
   ctd <- EWCE::generate.celltype.data(exp = mat,
                                       annotLevels = annotLevels,
-                                      groupName = "ctd")
+                                      groupName = "ctd",
+                                      savePath=savePath)
   load(ctd[1])
 
   sce@metadata$ctd <- ctd
