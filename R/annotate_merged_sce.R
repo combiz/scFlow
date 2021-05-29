@@ -208,7 +208,7 @@ annotate_merged_sce <- function(sce,
   colnames(pbsce) <- purrr::map_chr(
     colnames(pbsce), ~ strsplit(., "_")[[1]][[1]])
 
-  as.data.frame(SummarizedExperiment::colData(pbsce))
+  #as.data.frame(SummarizedExperiment::colData(pbsce))
   colnames(pbsce) <- pbsce[[unique_id_var]]
 
   pbsce <- reduce_dims_sce(
