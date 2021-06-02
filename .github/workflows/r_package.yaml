@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - master
+      - dev-am
   pull_request:
     branches:
       - main
@@ -14,7 +15,7 @@ jobs:
   R-CMD-check:
     name: R-CMD-check
     runs-on: ubuntu-latest
-    container: combiz/scflow-docker:dev
+    container: almurphy/scfdev:latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       RGL_USE_NULL: TRUE
@@ -23,7 +24,6 @@ jobs:
       - name: Setup R
         uses: r-lib/actions/setup-r@v1
         with:
-          r-version: '3.6.3'
           install-r: false
 
       - name: Install dependencies

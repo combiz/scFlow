@@ -497,7 +497,7 @@ model_celltype_freqs <- function(sce,
   covariates <- covariates[order(covariates[[unique_id_var]]), ]
   covariates[[unique_id_var]] <- NULL
   covariates[[dependent_var]] <- stats::relevel(
-    covariates[[dependent_var]],
+    as.factor(covariates[[dependent_var]]),
     ref = ref_class
   )
 
