@@ -314,6 +314,8 @@ After merging individual `sce` objects we can annotate and get an interactive ht
 ```{r,results="hide"}
 final_sce <- file.path(outdir, "sce")
 dir.create(final_sce)
+#annotate and save sce
+annot_sce <- annotate_merged_sce(sce_merged)
 write_sce(sce = sce_merged,
           folder_path = final_sce, 
           overwrite = TRUE)

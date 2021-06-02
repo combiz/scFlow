@@ -23,7 +23,7 @@ report_merged_sce <- function(sce,
     stop("expecting singlecellexperiment")
   }
 
-  if (sce@metadata$scflow_steps$merged_annotated != 1) {
+  if (is.null(sce@metadata$scflow_steps$merged_annotated)) {
     stop("Before producing the merged report, run annotate_merged_sce()")
   }
 
