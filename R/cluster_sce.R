@@ -2,9 +2,8 @@
 #' Cluster SingleCellExperiment with monocle3::cluster_cells
 #'
 #' @param sce a SingleCellExperiment object
-#' @param reduction_methods one or more of "PCA", "tSNE", "UMAP", "UMAP3D"
-#' @param pca_dims the number of pca dimensions used
-#' @param ... see uwot::umap for umap options
+#' @param ... see uwot::umap for umap options. Includes reduction_methods one 
+#' or more of "PCA", "tSNE", "UMAP", "UMAP3D"
 #'
 #' @return sce a SingleCellExperiment object annotated with reducedDims
 #'

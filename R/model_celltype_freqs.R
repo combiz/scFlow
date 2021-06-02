@@ -6,6 +6,8 @@
 #' @param celltype_var the colData variable specifying celltype or subtype
 #' @param dependent_var the name of the colData variable for contrasts
 #' @param ref_class the class of dependent_var used as reference
+#' @param var_order Optional re-ordering of subset_group factor levels. Default 
+#' NULL. 
 #' @param ... Additional arguments
 #'
 #' @return results_l a list of results

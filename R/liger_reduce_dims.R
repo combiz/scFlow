@@ -19,9 +19,9 @@
 #'   this increments the random seed by 1 for each consecutive restart,
 #'   so future factorizations of the same dataset can be run with
 #'   one rep if necessary. (default 1)
-#' @param H.init Initial values to use for H matrices. (default NULL)
-#' @param W.init Initial values to use for W matrix (default NULL)
-#' @param V.init Initial values to use for V matrices (default NULL)
+#' @param h_init Initial values to use for H matrices. (default NULL)
+#' @param w_init Initial values to use for W matrix (default NULL)
+#' @param v_init Initial values to use for V matrices (default NULL)
 #' @param rand_seed Random seed to allow reproducible results (default 1).
 #' @param print_obj Print objective function values after convergence
 #'   (default FALSE).
@@ -40,6 +40,7 @@
 #'   sparse modalities like methylation data). (default FALSE)
 #' @param resolution Controls the number of communities detected.
 #'   Higher resolution -> more communities. (default 1)
+#' @param ... Additional arguments.
 #'
 #' @return liger object with H, H.norm, W, and V slots sets.
 #'

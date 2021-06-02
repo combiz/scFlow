@@ -664,15 +664,23 @@ perform_de <- function(sce,
 }
 
 
-#' volcano plot
+#' Plot volcano plot for differential expression analysis
 #'
+#' @param dt Differential expression result table from perform_de() function.
+#' @param fc_threshold Fold change threshold for the volcano plot. This will be adjusted and plotted as the log2 fold change.  Default is 1.05.
+#' @param pval_cutoff The adjusted p-value cut-off for the volcano plot. Default is 0.05.
+#' @param n_label The number of top up & down differentially expressed genes to be labeled. Default is 10.
+#' 
+#' @return No return. The plot is printed out.
+#' 
+#' @family differential gene expression
+#' 
 #' @importFrom ggplot2 ggplot geom_point aes coord_cartesian
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom dplyr %>% filter top_n
 #'
-#' @keywords internal
-
-.volcano_plot <- function(dt,
+#' @export
+volcano_plot <- function(dt,
                           fc_threshold = 1.05,
                           pval_cutoff = 0.05,
                           n_label = 10) {

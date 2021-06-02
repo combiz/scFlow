@@ -25,6 +25,9 @@ model_celltype_freqs(
 
 \item{ref_class}{the class of dependent_var used as reference}
 
+\item{var_order}{Optional re-ordering of subset_group factor levels. Default
+NULL.}
+
 \item{...}{Additional arguments}
 }
 \value{

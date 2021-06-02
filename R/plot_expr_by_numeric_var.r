@@ -9,7 +9,7 @@
 #'
 #'
 #' @param sce a SingleCellExperiment object
-#' @param group_var The colData variable for x-axis groups
+#' @param numeric_var The colData variable for x-axis groups. Default is p_tau
 #' @param subset_var The colData variable to subset on
 #' @param subset_group The specific subset_var group to subset
 #' @param gene The gene of interest
