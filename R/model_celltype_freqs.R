@@ -27,7 +27,7 @@ model_celltype_freqs <- function(sce,
                                  var_order = NULL,
                                  ...) {
 
-  if (is.null(var_order)) { var_order <- levels(sce[[dependent_var]]) }
+  if (is.null(var_order)){ var_order <- levels(as.factor(sce[[dependent_var]]))}
   fargs <- c(as.list(environment()), list(...))
 
   cli::cli_h1("Modelling Cell-type Frequencies")
