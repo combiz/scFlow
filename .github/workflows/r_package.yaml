@@ -15,7 +15,6 @@ jobs:
   R-CMD-check:
     name: R-CMD-check
     runs-on: ubuntu-latest
-    container: almurphy/scfdev:latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       RGL_USE_NULL: TRUE
@@ -51,7 +50,7 @@ jobs:
           password: ${{ secrets.DOCKER_TOKEN }}
 
       - name: Build and push
-        uses: docker/build-push-action@v1
+        uses: docker/build-push-action@v2
         with:
           push: true
           tags: ${{ github.repository}}:${{ env.packageVersion }}
