@@ -138,7 +138,8 @@ snow \
 remotes \
 rliger \
 argparse \
-Hmisc
+Hmisc \
+rcmdcheck
 
 ## Install remaining packages from source
 COPY ./misc/requirements-src.R .
