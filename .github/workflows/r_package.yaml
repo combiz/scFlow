@@ -38,7 +38,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           load: true
-          tags: ${{ github.repository}}:${{ env.packageVersion }}
+          tags: almurphy/scfdev:${{ env.packageVersion }}
         
       - name: Check
         run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
@@ -52,4 +52,4 @@ jobs:
 
       - name: push service
         run: |
-          docker push ${{ github.repository}}:${{ env.packageVersion }}
+          docker push almurphy/scfdev:${{ env.packageVersion }}
