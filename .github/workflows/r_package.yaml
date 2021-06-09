@@ -33,21 +33,17 @@ jobs:
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-        with:
-          driver: docker # defaults to "docker-containerized"
 
       - name: Build service
         uses: docker/build-push-action@v2
         with:
           load: true
-          tags: scfdev:${{ env.packageVersion }}
-      
-      - name: Run image 
-        run: docker run -it scfdev
+          tags: almurphy/scfdev:${{ env.packageVersion }}
         
-      - name: Run Check in image
+      - name: Check
         run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
         shell: Rscript {0}
+        using: almurphy/scfdev:${{ env.packageVersion }}
 
       - name: Login to DockerHub
         uses: docker/login-action@v1
@@ -57,4 +53,4 @@ jobs:
 
       - name: push service
         run: |
-          docker push scfdev:${{ env.packageVersion }}
+          docker push almurphy/scfdev:${{ env.packageVersion }}
