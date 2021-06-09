@@ -45,10 +45,10 @@ jobs:
       - name: Check running containers
         run: docker ps -a
       
-      - name: Run R CMD Check in image 
-        run: docker exec 'R rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")' almurphy/scfdev:${{ env.packageVersion }}  
+      - name: Run image 
+        run: docker run -it almurphy/scfdev:${{ env.packageVersion }}
         
-      - name: Check
+      - name: Run Check in image
         run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
         shell: Rscript {0}
 
