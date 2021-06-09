@@ -15,10 +15,10 @@ jobs:
   R-CMD-check:
     name: R-CMD-check
     runs-on: ubuntu-latest
-    container: almurphy/scfdev:${{ env.packageVersion }}
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       RGL_USE_NULL: TRUE
+    container: almurphy/scfdev:${{ env.packageVersion }}
     steps:
       - uses: actions/checkout@v2
       - name: Setup R
