@@ -41,6 +41,12 @@ jobs:
         with:
           load: true
           tags: almurphy/scfdev:${{ env.packageVersion }}
+      
+      - name: Check running containers
+        run: docker ps -a
+      
+      - name: Run R CMD Check in image 
+        run: docker exec 'R rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")' almurphy/scfdev:${{ env.packageVersion }}  
         
       - name: Check
         run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
