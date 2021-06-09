@@ -40,13 +40,13 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           load: true
-          tags: almurphy/scfdev:${{ env.packageVersion }}
+          tags: scfdev:${{ env.packageVersion }}
       
       - name: Check running containers
         run: docker ps -a
       
       - name: Run image 
-        run: docker run -it almurphy/scfdev:${{ env.packageVersion }}
+        run: docker run -it scfdev:${{ env.packageVersion }}
         
       - name: Run Check in image
         run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
@@ -60,4 +60,4 @@ jobs:
 
       - name: push service
         run: |
-          docker push almurphy/scfdev:${{ env.packageVersion }}
+          docker push scfdev:${{ env.packageVersion }}
