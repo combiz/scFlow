@@ -42,11 +42,8 @@ jobs:
           load: true
           tags: scfdev:${{ env.packageVersion }}
       
-      - name: Check running containers
-        run: docker ps -a
-      
       - name: Run image 
-        run: docker run -it scfdev:${{ env.packageVersion }}
+        run: docker run -it scfdev
         
       - name: Run Check in image
         run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
