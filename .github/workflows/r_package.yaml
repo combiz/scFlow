@@ -40,10 +40,6 @@ jobs:
         with:
           load: true
           tags: almurphy/scfdev:${{ env.packageVersion }}
-        
-      - name: Check
-        run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
-        shell: Rscript {0}
 
       - name: Login to DockerHub
         uses: docker/login-action@v1
