@@ -174,7 +174,6 @@ ADD . .
 
 # Install R package from source
 RUN Rscript -e "remotes::install_local()"
+# Check errors running R CMD Check
+RUN Rscript -e "rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")"
 RUN rm -rf *
-
-## Check if scFlow installed
-#RUN R -e 'library(scFlow)'
