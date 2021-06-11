@@ -139,7 +139,8 @@ remotes \
 rliger \
 argparse \
 Hmisc \
-rcmdcheck
+rcmdcheck \
+devtools
 
 ## Install remaining packages from source
 COPY ./misc/requirements-src.R .
@@ -178,4 +179,4 @@ RUN rm -rf *
 
 # Copy all files over from github to run check
 COPY . /src/
-Run Rscript -e 'devtools::check()'
+Run Rscript -e 'print(list.files()); devtools::check()'
