@@ -94,6 +94,8 @@ RUN apt-get update \
 	xfonts-75dpi \
 	biber \
 	libsbml5-dev \
+	## qpdf needed to stop R CMD Check warning
+	qpdf \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -173,8 +175,8 @@ neurogenomics/scFlowData
 WORKDIR scFlow
 ADD . .
 
-# Run R CMD check
-Run Rscript -e 'print(list.files()); devtools::check();'
+# Run R CMD check - will fail with any errors or warnings
+Run Rscript -e 'devtools::check()'
 # Install R package from source
 RUN Rscript -e "remotes::install_local()"
 RUN rm -rf *
