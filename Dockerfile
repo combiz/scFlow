@@ -175,3 +175,7 @@ ADD . .
 # Install R package from source
 RUN Rscript -e "remotes::install_local()"
 RUN rm -rf *
+
+# Copy all files over from github to run check
+COPY . /src/
+Run Rscript -e 'devtools::check()'
