@@ -173,10 +173,8 @@ neurogenomics/scFlowData
 WORKDIR scFlow
 ADD . .
 
+# Run R CMD check
+Run Rscript -e 'print(list.files()); devtools::check();'
 # Install R package from source
 RUN Rscript -e "remotes::install_local()"
 RUN rm -rf *
-
-# Copy all files over from github to run check
-COPY . /src/
-Run Rscript -e 'print(list.files()); devtools::check()'
