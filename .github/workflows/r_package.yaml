@@ -1,11 +1,10 @@
-name: R GitHub Actions
+name: R GitHub Actions Master
 
 on:
   push:
     branches:
       - main
       - master
-      - dev-am
   pull_request:
     branches:
       - main
