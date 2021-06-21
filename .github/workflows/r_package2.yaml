@@ -3,7 +3,7 @@ name: R GitHub Actions Dev
 on:
   push:
     branches:
-      - dev
+      - dev-am
   pull_request:
     branches:
       - dev

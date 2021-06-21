@@ -648,6 +648,8 @@ perform_de <- function(sce,
     "Calculating variance explained by {.var {variable}} ",
     "for {.val {dim(sce)[[1]]}} genes"
   ))
+  #remove unused levels - necessary as each cell type passed to DEG separately
+  sce[[variable]] <- droplevels(sce[[variable]])
   vemat <- scater::getVarianceExplained(sce, variables = variable)
   vedf <- as.data.frame.matrix(vemat) %>%
     dplyr::mutate(
