@@ -303,23 +303,18 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
 
 #' dotplot for ORA. x axis enrichment_ratio, y axis description
 #' @keywords internal
-
-
 .dotplot_ora <- function(dt) {
   dt <- na.omit(dt)
   dt <- dt %>%
     top_n(., 10, enrichment_ratio)
   dt$description <- stringr::str_wrap(dt$description, 40)
-
-  ggplot2::ggplot(dt, aes(
+  p <- ggplot2::ggplot(dt, aes(
     x = enrichment_ratio,
-    y = stats::reorder(description, enrichment_ratio)
+    y = reorder(description, enrichment_ratio)
   )) +
     geom_point(aes(fill = FDR, size = size),
-      shape = 21, alpha = 0.7, color = "black"
+               shape = 21, alpha = 0.7, color = "black"
     ) +
-    scale_size_binned(name = "Geneset size", range = c(3, 8),
-                      n.breaks = 4, nice.breaks = TRUE)+
     xlab("Enrichment Ratio") +
     ylab("") +
     scale_fill_gradient(
@@ -330,11 +325,17 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     ) +
     guides(size = guide_legend(
       override.aes = list(fill = "gold", color = "gold")
-    )) +
-    cowplot::theme_cowplot() +
+    )) + cowplot::theme_cowplot() +
     cowplot::background_grid()
+  if ( nrow(dt) < 4 ){
+    p <- p + scale_size(name = "size", range = c(3, 8)) 
+  } else {
+    p <- p + 
+      scale_size_binned(name = "Geneset size", range = c(3, 8),
+                        n.breaks = 4, nice.breaks = TRUE) 
+  }
+  return(p)
 }
-
 
 #' barplot for GSEA. x axis normalizedEnrichmentScore, y axis description
 #' @importFrom stats reorder

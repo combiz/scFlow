@@ -203,24 +203,19 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
 #' dotplot for ORA. x axis perturbation, y axis description
 #' @importFrom stats reorder
 #' @keywords internal
-
-
 .dotplot_enrichr <- function(dt) {
   dt <- na.omit(dt)
   dt <- dt %>%
-    top_n(., 10, pct_overlap)
+    top_n(., 10, odds_ratio)
   dt$description <- stringr::str_wrap(dt$description, 40)
-
-  ggplot2::ggplot(dt, aes(
-    x = pct_overlap,
-    y = stats::reorder(description, pct_overlap)
+  p <- ggplot2::ggplot(dt, aes(
+    x = odds_ratio,
+    y = stats::reorder(description, odds_ratio)
   )) +
     geom_point(aes(fill = FDR, size = size),
-      shape = 21, alpha = 0.7, color = "black"
+               shape = 21, alpha = 0.7, color = "black"
     ) +
-    scale_size_binned(name = "Geneset size", range = c(3, 8),
-                      n.breaks = 4, nice.breaks = TRUE) +
-    xlab("Percent overlap") +
+    xlab("Odds ratio") +
     ylab("") +
     scale_fill_gradient(
       low = "navy", high = "gold", name = "FDR",
@@ -233,4 +228,12 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
     )) +
     cowplot::theme_cowplot() +
     cowplot::background_grid()
+  if ( nrow(dt) < 4 ){
+    p <- p + scale_size(name = "size", range = c(3, 8)) 
+  } else {
+    p <- p + 
+      scale_size_binned(name = "Geneset size", range = c(3, 8),
+                        n.breaks = 4, nice.breaks = TRUE) 
+  }
+  return(p)
 }
