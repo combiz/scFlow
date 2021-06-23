@@ -6,6 +6,8 @@
 #' @param celltype_var the colData variable specifying celltype or subtype
 #' @param dependent_var the name of the colData variable for contrasts
 #' @param ref_class the class of dependent_var used as reference
+#' @param var_order Optional re-ordering of subset_group factor levels. Default 
+#' NULL. 
 #' @param ... Additional arguments
 #'
 #' @return results_l a list of results
@@ -25,7 +27,7 @@ model_celltype_freqs <- function(sce,
                                  var_order = NULL,
                                  ...) {
 
-  if (is.null(var_order)) { var_order <- levels(sce[[dependent_var]]) }
+  if (is.null(var_order)){ var_order <- levels(as.factor(sce[[dependent_var]]))}
   fargs <- c(as.list(environment()), list(...))
 
   cli::cli_h1("Modelling Cell-type Frequencies")
@@ -495,7 +497,7 @@ model_celltype_freqs <- function(sce,
   covariates <- covariates[order(covariates[[unique_id_var]]), ]
   covariates[[unique_id_var]] <- NULL
   covariates[[dependent_var]] <- stats::relevel(
-    covariates[[dependent_var]],
+    as.factor(covariates[[dependent_var]]),
     ref = ref_class
   )
 

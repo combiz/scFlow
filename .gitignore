@@ -8,3 +8,5 @@ Meta
 *·rda
 *.rds
 *.qs
+/doc/
+/Meta/

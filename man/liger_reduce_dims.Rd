@@ -50,6 +50,12 @@ this increments the random seed by 1 for each consecutive restart,
 so future factorizations of the same dataset can be run with
 one rep if necessary. (default 1)}
 
+\item{h_init}{Initial values to use for H matrices. (default NULL)}
+
+\item{w_init}{Initial values to use for W matrix (default NULL)}
+
+\item{v_init}{Initial values to use for V matrices (default NULL)}
+
 \item{rand_seed}{Random seed to allow reproducible results (default 1).}
 
 \item{print_obj}{Print objective function values after convergence
@@ -76,11 +82,7 @@ sparse modalities like methylation data). (default FALSE)}
 \item{resolution}{Controls the number of communities detected.
 Higher resolution -> more communities. (default 1)}
 
-\item{H.init}{Initial values to use for H matrices. (default NULL)}
-
-\item{W.init}{Initial values to use for W matrix (default NULL)}
-
-\item{V.init}{Initial values to use for V matrices (default NULL)}
+\item{...}{Additional arguments.}
 }
 \value{
 liger object with H, H.norm, W, and V slots sets.

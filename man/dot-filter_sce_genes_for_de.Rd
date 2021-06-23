@@ -23,7 +23,8 @@ Other differential gene expression:
 \code{\link{.preprocess_sce_for_de}()},
 \code{\link{perform_de}()},
 \code{\link{pseudobulk_sce}()},
-\code{\link{report_de}()}
+\code{\link{report_de}()},
+\code{\link{volcano_plot}()}
 }
 \concept{differential gene expression}
 \keyword{internal}

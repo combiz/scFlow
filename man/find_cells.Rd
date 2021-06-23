@@ -29,8 +29,6 @@ the parameter from the top \code{expect_cells} cells (cellranger method).}
 \item{expect_cells}{the number of cells expected for auto retain}
 
 \item{...}{additional arguments for uniformity testing}
-
-\item{alpha}{minimum FDR for \code{\link[DropletUtils:emptyDrops]{DropletUtils::emptyDrops()}}}
 }
 \value{
 sce a SingleCellExperiment object annotated with emptyDrops metrics

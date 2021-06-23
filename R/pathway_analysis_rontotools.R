@@ -30,6 +30,7 @@
 #' @importFrom assertthat assert_that
 #' @importFrom dplyr mutate
 #' @importFrom purrr discard
+#' @importFrom methods Summary
 #'
 #' @export
 pathway_analysis_rontotools <- function(gene_file = NULL,

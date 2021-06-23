@@ -7,7 +7,7 @@
 pathway_analysis_webgestaltr(
   gene_file = NULL,
   reference_file = NULL,
-  organism = c("hsapiens", "mmusculus"),
+  organism = getOption("scflow_species", default = "human"),
   enrichment_method = "ORA",
   enrichment_database = c("geneontology_Biological_Process",
     "geneontology_Cellular_Component", "geneontology_Molecular_Function", "pathway_KEGG",
@@ -25,6 +25,15 @@ names should be gene, logFC, pval and padj respectively.}
 as input for differential expression. Column name should be gene.
 If not provided the human protein-coding genome will be used as background
 genes.}
+
+\item{organism}{default is human. From WebGestaltR supports 12 organisms,
+common choices are "hsapiens" or "mmusculus". Users can use the function
+\code{\link[WebGestaltR:listOrganism]{WebGestaltR::listOrganism()}} to check available organisms. Users can also
+input others to perform the enrichment analysis for other organisms not
+supported by WebGestaltR. For other organisms, users need to provide the
+functional categories, interesting list and reference list (for ORA method).
+Because WebGestaltR does not perform the ID mapping for the other organisms,
+the above data should have the same ID type.}
 
 \item{enrichment_method}{Method of enrichment analysis.
 Either over-representation analysis (ORA) or (Gene set enrichment analysis)

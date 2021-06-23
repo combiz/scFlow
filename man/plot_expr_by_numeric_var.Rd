@@ -18,6 +18,8 @@ plot_expr_by_numeric_var(
 \arguments{
 \item{sce}{a SingleCellExperiment object}
 
+\item{numeric_var}{The colData variable for x-axis groups. Default is p_tau}
+
 \item{subset_var}{The colData variable to subset on}
 
 \item{subset_group}{The specific subset_var group to subset}
@@ -29,8 +31,6 @@ plot_expr_by_numeric_var(
 \item{size}{point size}
 
 \item{label_angle}{The angle of x-axis labels (e.g. 0, 45)}
-
-\item{group_var}{The colData variable for x-axis groups}
 }
 \value{
 p a ggplot object

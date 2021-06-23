@@ -5,9 +5,9 @@
 #'
 #' @param sce a SingleCellExperiment object or merged sce objects
 #' @param method the integration method to use
-#' @param k Inner dimension of factorization (number of factors).
 #'   Set to k=30 as default.
-#' @param ... Additional arguments
+#' @param ... Additional arguments. Such as k Inner dimension of factorization 
+#' (number of factors).
 #'
 #' @return sce SingleCellExperiment object annotated with reducedDims
 #'

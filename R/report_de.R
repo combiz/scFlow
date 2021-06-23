@@ -27,7 +27,7 @@ report_de <- function(res,
 
   cli::cli_h2("Generating report for differential expression analysis")
 
-  p <- .volcano_plot(
+  p <- volcano_plot(
     dt = res,
     fc_threshold = fc_threshold,
     pval_cutoff = pval_cutoff,
