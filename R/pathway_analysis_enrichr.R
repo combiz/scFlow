@@ -23,7 +23,7 @@
 #' @importFrom cowplot theme_cowplot background_grid
 #' @importFrom stringr str_wrap
 #' @importFrom assertthat assert_that
-#' @importFrom dplyr %>% mutate
+#' @importFrom dplyr %>% mutate top_n
 #' @importFrom purrr map map_chr discard
 #'
 #' @export
@@ -206,7 +206,7 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
 .dotplot_enrichr <- function(dt) {
   dt <- na.omit(dt)
   dt <- dt %>%
-    top_n(., 10, odds_ratio)
+    dplyr::top_n(., 10, odds_ratio)
   dt$description <- stringr::str_wrap(dt$description, 40)
   p <- ggplot2::ggplot(dt, aes(
     x = odds_ratio,

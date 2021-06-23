@@ -133,7 +133,7 @@ Remotes:
     combiz/RANN.L1,
     cole-trapnell-lab/monocle3,
     theislab/kBET,
-    neurogenomics/scFlowExample,
+    neurogenomics/scFlowExamples,
     neurogenomics/scFlowData,
     jlmelville/uwot
 VignetteBuilder: knitr

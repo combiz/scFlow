@@ -57,7 +57,7 @@ map_celltypes_sce <- function(sce,
     SummarizedExperiment::rowData(sce_subset)$gene
   )
 
-  annotLevels = list(level1class = sce_subset[[clusters_colname]])
+  annotLevels <- list(level1class = sce_subset[[clusters_colname]])
   message("generating ctd with ewce")
   ctd <- EWCE::generate.celltype.data(exp = mat,
                                       annotLevels = annotLevels,
