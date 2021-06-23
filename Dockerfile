@@ -167,7 +167,7 @@ NathanSkene/One2One \
 hhoeflin/hdf5r \
 mojaveazure/loomR \
 cole-trapnell-lab/monocle3 \
-neurogenomics/scFlowExample \
+neurogenomics/scFlowExamples \
 neurogenomics/scFlowData
 
 ## Install scFlow package

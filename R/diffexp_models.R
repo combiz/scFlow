@@ -315,7 +315,7 @@ perform_de <- function(sce,
     fitArgsD = fit_args_D
   )
   message(Sys.time() - x)
-  zlmCond@hookOut = NULL
+  zlmCond@hookOut <- NULL
 
   if(is.numeric(sce[[fargs$dependent_var]])) {
     contrasts <- fargs$dependent_var
