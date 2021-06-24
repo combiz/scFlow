@@ -16,7 +16,6 @@ Dev](https://github.com/combiz/scFlow/actions/workflows/r_package2.yaml/badge.sv
 welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/combiz/scFlow/issues)
 [![License: GPL
 v3](https://img.shields.io/badge/License-GPLv3-green.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![R-CMD-check](https://github.com/combiz/scFlow/workflows/R-CMD-check/badge.svg)](https://github.com/combiz/scFlow/actions)
 <!-- badges: end -->
 
 The goal of scFlow is to provide tools in R to build a complete analysis
