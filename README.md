@@ -1,11 +1,10 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
 <img src="man/figures/logo.png" width=200 style="align:left;" />
 
-# scFlow - Single-Cell Workflow
+scFlow - Single-Cell Workflow
+=============================
 
 <!-- badges: start -->
-
 [![R GitHub
 Actions](https://github.com/combiz/scFlow/actions/workflows/r_package.yaml/badge.svg)](https://github.com/combiz/scFlow/actions/workflows/r_package.yaml)
 [![R GitHub Actions
@@ -61,13 +60,15 @@ workflow for single-cell/nuclei RNA sequencing data.
 The package functions are designed to interface neatly with
 [NextFlow](https://www.nextflow.io/) for scalable and containerized
 pipelines deployed locally, on high-performance computing clusters, or
-in the cloud. See <https://nf-co.re/scflow> for the accompanying
-NextFlow pipeline.
+in the cloud. See
+<a href="https://nf-co.re/scflow" class="uri">https://nf-co.re/scflow</a>
+for the accompanying NextFlow pipeline.
 
-## Get Started and Documentation
+Get Started and Documentation
+-----------------------------
 
 Our primary documentation is at
-<https://combiz.github.io/scflow-manual/>.
+<a href="https://combiz.github.io/scflow-manual/" class="uri">https://combiz.github.io/scflow-manual/</a>.
 
 You can install the development version of scFlow from GitHub with:
 
@@ -85,7 +86,8 @@ pathway analysis. Install that with:
 devtools::install_github("combiz/scFlowData")
 ```
 
-## Support
+Support
+-------
 
 -   Ask a question on Stack Overflow with the scFlow tag, we monitor
     this for new questions.
@@ -93,21 +95,23 @@ devtools::install_github("combiz/scFlowData")
 -   Open bug reports and feature requests (not questions) on GitHub
     issues.
 
-## How to Contribute
+How to Contribute
+-----------------
 
 Check the
 [CONTRIBUTING](https://github.com/microsoft/scFlow/blob/master/CONTRIBUTING.md)
 page.
 
 You may need to install scFlow using a Personal Access Token
-(Github-\>Settings-\>Developer Settings): -
+(Github-&gt;Settings-&gt;Developer Settings): -
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("combiz/scFlow", auth_token = "YOURTOKEN")
 ```
 
-## Reference Papers
+Reference Papers
+----------------
 
 Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes
 Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso & Sven

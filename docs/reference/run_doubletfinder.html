@@ -83,7 +83,7 @@ SingleCellExperiment annotated with is_singlet and tSNE coordinates." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scFlow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.1</span>
       </span>
     </div>
 
@@ -91,9 +91,12 @@ SingleCellExperiment annotated with is_singlet and tSNE coordinates." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
+</li>
+<li>
+  <a href="../articles/scFlow.html">Get started</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -105,7 +108,7 @@ SingleCellExperiment annotated with is_singlet and tSNE coordinates." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/combiz/scFlow/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -141,7 +144,7 @@ SingleCellExperiment annotated with is_singlet and tSNE coordinates.</p>
   vars_to_regress_out <span class='op'>=</span> <span class='st'>"nCount_RNA"</span>,
   doublet_rate <span class='op'>=</span> <span class='fl'>0</span>,
   dpk <span class='op'>=</span> <span class='fl'>8</span>,
-  num_cores <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/availableCores.html'>availableCores</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>-</span> <span class='fl'>2</span><span class='op'>)</span>
+  num_cores <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/Extremes.html'>max</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/re-exports.html'>availableCores</a></span><span class='op'>(</span><span class='op'>)</span> <span class='op'>-</span> <span class='fl'>2</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>

@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scFlow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.1</span>
       </span>
     </div>
 
@@ -88,9 +88,12 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
+</li>
+<li>
+  <a href="../articles/scFlow.html">Get started</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -102,7 +105,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/combiz/scFlow/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -133,6 +136,7 @@
   <span class='va'>dependent_var</span>,
   <span class='va'>confounding_vars</span>,
   random_effects_var <span class='op'>=</span> <span class='cn'>NULL</span>,
+  interaction_vars <span class='op'>=</span> <span class='cn'>NULL</span>,
   prefix <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
@@ -156,6 +160,10 @@
       <td><p>the random effect variables (optional)</p></td>
     </tr>
     <tr>
+      <th>interaction_vars</th>
+      <td><p>variables which interact (optional)</p></td>
+    </tr>
+    <tr>
       <th>prefix</th>
       <td><p>a variable prefix (e.g. "sce$") (optional)</p></td>
     </tr>
@@ -172,7 +180,8 @@
 <code><a href='.preprocess_sce_for_de.html'>.preprocess_sce_for_de</a>()</code>,
 <code><a href='perform_de.html'>perform_de</a>()</code>,
 <code><a href='pseudobulk_sce.html'>pseudobulk_sce</a>()</code>,
-<code><a href='report_de.html'>report_de</a>()</code></p></div>
+<code><a href='report_de.html'>report_de</a>()</code>,
+<code><a href='volcano_plot.html'>volcano_plot</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

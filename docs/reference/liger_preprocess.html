@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scFlow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.1</span>
       </span>
     </div>
 
@@ -88,9 +88,12 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
+</li>
+<li>
+  <a href="../articles/scFlow.html">Get started</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -102,7 +105,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/combiz/scFlow/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -134,14 +137,11 @@
   unique_id_var <span class='op'>=</span> <span class='st'>"manifest"</span>,
   take_gene_union <span class='op'>=</span> <span class='cn'>F</span>,
   remove.missing <span class='op'>=</span> <span class='cn'>T</span>,
-  make.sparse <span class='op'>=</span> <span class='cn'>T</span>,
   num_genes <span class='op'>=</span> <span class='fl'>3000</span>,
   combine <span class='op'>=</span> <span class='st'>"union"</span>,
-  keep_unique <span class='op'>=</span> <span class='cn'>F</span>,
   capitalize <span class='op'>=</span> <span class='cn'>F</span>,
-  do_plot <span class='op'>=</span> <span class='cn'>F</span>,
-  cex_use <span class='op'>=</span> <span class='fl'>0.3</span>,
   use_cols <span class='op'>=</span> <span class='cn'>T</span>,
+  num_cores <span class='op'>=</span> <span class='fu'>future</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/future/man/re-exports.html'>availableCores</a></span><span class='op'>(</span><span class='op'>)</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -154,14 +154,32 @@
     </tr>
     <tr>
       <th>k</th>
-      <td><p>Inner dimension of factorization (number of factors).</p>
+      <td><p>Inner dimension of factorization (number of factors).</p></td>
+    </tr>
+    <tr>
+      <th>unique_id_var</th>
+      <td><p>the colData variable identifying unique samples.
+Default is "manifest".</p>
 <p>Make a Liger object:</p></td>
     </tr>
     <tr>
+      <th>take_gene_union</th>
+      <td><p>Whether to fill out raw.data matrices with union
+of genes across all datasets (filling in 0 for missing data)
+(requires make.sparse=T) (default FALSE).</p></td>
+    </tr>
+    <tr>
       <th>remove.missing</th>
-      <td><p>Whether to remove cells from scale.data
-with no gene expression (default TRUE)</p>
-<p>Remove cells/genes with no expression across any genes/cells:</p></td>
+      <td><p>Whether to remove cells not expressing any
+measured genes, and genes not
+expressed in any cells (if take.gene.union = T, removes only genes
+not expressed in any dataset) (default TRUE).</p>
+<p>Select informative genes:</p></td>
+    </tr>
+    <tr>
+      <th>num_genes</th>
+      <td><p>Number of genes to find for each dataset.
+Set to 3000 as default.</p></td>
     </tr>
     <tr>
       <th>combine</th>
@@ -173,43 +191,22 @@ Either "union" or "intersect".
       <th>capitalize</th>
       <td><p>Capitalize gene names to match homologous genes
 (ie. across species)
-(default FALSE)</p></td>
+(default FALSE)
+Scale genes by root-mean-square across cells:</p>
+<p>Remove cells/genes with no expression across any genes/cells:</p></td>
     </tr>
     <tr>
-      <th>raw.data</th>
-      <td><p>List of expression matrices (gene by cell)
-each from an sce object.</p></td>
-    </tr>
-    <tr>
-      <th>take.gene.union</th>
-      <td><p>Whether to fill out raw.data matrices with union
-of genes across all datasets (filling in 0 for missing data)
-(requires make.sparse=T) (default FALSE).</p></td>
-    </tr>
-    <tr>
-      <th>num.genes</th>
-      <td><p>Number of genes to find for each dataset.
-Set to 3000 as default.</p></td>
-    </tr>
-    <tr>
-      <th>keep.unique</th>
-      <td><p>Keep genes that occur (i.e., there is a
-corresponding column in raw.data) only in one dataset (default FALSE)</p></td>
-    </tr>
-    <tr>
-      <th>do.plot</th>
-      <td><p>Display log plot of gene variance vs. gene expression
-for each dataset.
-Selected genes are plotted in green. (default FALSE)</p></td>
-    </tr>
-    <tr>
-      <th>cex.use</th>
-      <td><p>Point size for plot.</p>
-<p>Scale genes by root-mean-square across cells:</p></td>
-    </tr>
-    <tr>
-      <th>use.cols</th>
+      <th>use_cols</th>
       <td><p>Treat each column as a cell (default TRUE)</p></td>
+    </tr>
+    <tr>
+      <th>num_cores</th>
+      <td><p>Number of cores used on user's machine to run function.
+Default fouynd by <code><a href='https://rdrr.io/pkg/future/man/re-exports.html'>future::availableCores()</a></code></p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Additional arguments.</p></td>
     </tr>
     </table>
 
