@@ -208,7 +208,6 @@ annotate_merged_sce <- function(sce,
   colnames(pbsce) <- purrr::map_chr(
     colnames(pbsce), ~ strsplit(., "_")[[1]][[1]])
 
-  as.data.frame(SummarizedExperiment::colData(pbsce))
   colnames(pbsce) <- pbsce[[unique_id_var]]
 
   pbsce <- reduce_dims_sce(
@@ -402,7 +401,7 @@ annotate_merged_sce <- function(sce,
 
   p <- ggplot2::ggplot(df, ggplot2::aes(x = .data[[unique_id_var]], y = n)) +
     ggplot2::geom_col() +
-    ggplot2::geom_text(ggplot2::aes(label = n, y = n + (max(df$n) * .05))) +
+    ggplot2::geom_text(ggplot2::aes(label = n, y = n + (max(n) * .05))) +
     ggplot2::coord_flip() +
     ggplot2::theme_bw() +
     ggplot2::ylab("Number of cells") +

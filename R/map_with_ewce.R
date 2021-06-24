@@ -9,6 +9,7 @@
 #' @param cells_to_sample total cells to consider for gene enrichment
 #' @param clusters_colname the name of the colData column with cluster number
 #' @param species specify human or mouse
+#' @param savePath The directory where the generated ctd file produced by EWCE is saved. Default is a temp directory
 #'
 #' @return sce a SingleCellExperiment object annotated with celltypes/metadata
 #' @author Nathan Skene / Combiz Khozoie
@@ -21,12 +22,16 @@
 #' @importFrom plyr adply
 #' @importFrom magrittr %>%
 #' @importFrom purrr map_chr
+#' @importFrom SingleCellExperiment counts
 #' @export
 map_celltypes_sce <- function(sce,
                               ctd_folder,
                               cells_to_sample = 10000,
                               clusters_colname = "clusters",
-                              species = "human") {
+                              species = getOption(
+                                "scflow_species",
+                                default = "human"),
+                              savePath=tempdir()) {
 
   assertthat::assert_that(dir.exists(ctd_folder))
   assertthat::assert_that(
@@ -47,16 +52,17 @@ map_celltypes_sce <- function(sce,
     sce_subset <- sce
   }
 
-  mat <- Matrix::Matrix(counts(sce_subset), sparse = TRUE)
+  mat <- Matrix::Matrix(SingleCellExperiment::counts(sce_subset), sparse = TRUE)
   rownames(mat) <- as.character(
     SummarizedExperiment::rowData(sce_subset)$gene
   )
 
-  annotLevels = list(level1class = sce_subset[[clusters_colname]])
+  annotLevels <- list(level1class = sce_subset[[clusters_colname]])
   message("generating ctd with ewce")
   ctd <- EWCE::generate.celltype.data(exp = mat,
                                       annotLevels = annotLevels,
-                                      groupName = "ctd")
+                                      groupName = "ctd",
+                                      savePath=savePath)
   load(ctd[1])
 
   sce@metadata$ctd <- ctd
@@ -87,8 +93,10 @@ map_celltypes_sce <- function(sce,
       paste("EN", x$allan_layer, sep = "-")
     } else if (x$allan_celltype == "Inh") {
       paste("IN", x$allan_cluster_gene_1, sep = "-")
+    } else if (x$allan_celltype != "no") {
+      as.character(x$allan_celltype)
     } else {
-      x$allan_celltype
+      as.character(x$Zeisel2018_ML5)
     }}, .expand = FALSE, .id = "Cluster")%>%
     dplyr::rename(cluster_celltype = V1)
 
@@ -98,6 +106,8 @@ map_celltypes_sce <- function(sce,
   # rename Cluster column
   mappings_df <- mappings_lookup %>%
     dplyr::rename(!!clusters_colname := Cluster)
+
+  mappings_df[] <- lapply(mappings_df, as.character)
 
   sce@metadata$mappings <- mappings_df
 

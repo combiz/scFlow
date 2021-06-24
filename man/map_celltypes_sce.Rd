@@ -9,7 +9,8 @@ map_celltypes_sce(
   ctd_folder,
   cells_to_sample = 10000,
   clusters_colname = "clusters",
-  species = "human"
+  species = getOption("scflow_species", default = "human"),
+  savePath = tempdir()
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ map_celltypes_sce(
 \item{clusters_colname}{the name of the colData column with cluster number}
 
 \item{species}{specify human or mouse}
+
+\item{savePath}{The directory where the generated ctd file produced by EWCE is saved. Default is a temp directory}
 }
 \value{
 sce a SingleCellExperiment object annotated with celltypes/metadata

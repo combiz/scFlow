@@ -208,7 +208,7 @@ perform_de <- function(sce,
   # define the reference class
   if (!is.numeric(sce[[fargs$dependent_var]])) {
     sce[[fargs$dependent_var]] <- stats::relevel(
-      sce[[fargs$dependent_var]],
+      as.factor(sce[[fargs$dependent_var]]),
       ref = fargs$ref_class
     )
   }
@@ -315,6 +315,7 @@ perform_de <- function(sce,
     fitArgsD = fit_args_D
   )
   message(Sys.time() - x)
+  zlmCond@hookOut <- NULL
 
   if(is.numeric(sce[[fargs$dependent_var]])) {
     contrasts <- fargs$dependent_var
@@ -647,6 +648,8 @@ perform_de <- function(sce,
     "Calculating variance explained by {.var {variable}} ",
     "for {.val {dim(sce)[[1]]}} genes"
   ))
+  #remove unused levels - necessary as each cell type passed to DEG separately
+  sce[[variable]] <- droplevels(sce[[variable]])
   vemat <- scater::getVarianceExplained(sce, variables = variable)
   vedf <- as.data.frame.matrix(vemat) %>%
     dplyr::mutate(
@@ -663,15 +666,23 @@ perform_de <- function(sce,
 }
 
 
-#' volcano plot
+#' Plot volcano plot for differential expression analysis
 #'
+#' @param dt Differential expression result table from perform_de() function.
+#' @param fc_threshold Fold change threshold for the volcano plot. This will be adjusted and plotted as the log2 fold change.  Default is 1.05.
+#' @param pval_cutoff The adjusted p-value cut-off for the volcano plot. Default is 0.05.
+#' @param n_label The number of top up & down differentially expressed genes to be labeled. Default is 10.
+#' 
+#' @return No return. The plot is printed out.
+#' 
+#' @family differential gene expression
+#' 
 #' @importFrom ggplot2 ggplot geom_point aes coord_cartesian
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom dplyr %>% filter top_n
 #'
-#' @keywords internal
-
-.volcano_plot <- function(dt,
+#' @export
+volcano_plot <- function(dt,
                           fc_threshold = 1.05,
                           pval_cutoff = 0.05,
                           n_label = 10) {

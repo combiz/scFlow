@@ -1,6 +1,6 @@
 Package: scFlow
 Title: A Single-Cell/Nuclei Analysis Toolkit
-Version: 0.7.0
+Version: 0.7.1
 Authors@R: 
     c(
     person(given = "Combiz",
@@ -36,7 +36,9 @@ Suggests:
     spelling,
     covr,
     knitr,
-    scFlowData
+    scFlowData,
+    scFlowExamples,
+    BiocStyle
 Language: en-US
 RoxygenNote: 7.1.1
 Imports: 
@@ -120,39 +122,18 @@ Imports:
     preprocessCore,
     scales,
     uwot,
-    enrichR
+    foreach,
+    doParallel
 Remotes:
-    r-lib/cli,
     chris-mcginnis-ucsf/DoubletFinder,
     satijalab/seurat,
     ropensci/plotly,
     neurogenomics/EWCE,
     cvarrichio/Matrix.utils,
     combiz/RANN.L1,
-    bzhanglab/WebGestaltR,
     cole-trapnell-lab/monocle3,
     theislab/kBET,
-    neurogenomics/scFlowExample,
-    combiz/scFlowData,
-    cran/DirichletReg,
-    jlmelville/uwot,
-    bioc::3.10/biomaRt,
-    bioc::3.10/SingleCellExperiment,
-    bioc::3.10/SummarizedExperiment,
-    bioc::3.10/scater,
-    bioc::3.10/BiocGenerics,
-    bioc::3.10/S4Vectors,
-    bioc::3.10/IRanges,
-    bioc::3.10/GenomicRanges,
-    bioc::3.10/DelayedArray,
-    bioc::3.10/graphite,
-    bioc::3.10/ROntoTools,
-    bioc::3.10/batchelor,
-    bioc::3.10/DelayedMatrixStats,
-    bioc::3.10/DropletUtils,
-    bioc::3.10/limma,
-    bioc::3.11/MAST,
-    bioc::3.10/multtest,
-    bioc::3.10/edgeR,
-    bioc::3.10/preprocessCore
+    neurogenomics/scFlowExamples,
+    neurogenomics/scFlowData,
+    jlmelville/uwot
 VignetteBuilder: knitr

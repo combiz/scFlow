@@ -11,6 +11,14 @@
 #' as input for differential expression. Column name should be gene.
 #' If not provided the human protein-coding genome will be used as background
 #' genes.
+#' @param organism default is human. From WebGestaltR supports 12 organisms, 
+#' common choices are "hsapiens" or "mmusculus". Users can use the function  
+#' [WebGestaltR::listOrganism()] to check available organisms. Users can also 
+#' input others to perform the enrichment analysis for other organisms not 
+#' supported by WebGestaltR. For other organisms, users need to provide the 
+#' functional categories, interesting list and reference list (for ORA method). 
+#' Because WebGestaltR does not perform the ID mapping for the other organisms, 
+#' the above data should have the same ID type.
 #' @param enrichment_method Method of enrichment analysis.
 #' Either over-representation analysis (ORA) or (Gene set enrichment analysis)
 #' GSEA.
@@ -39,7 +47,9 @@
 #' @export
 pathway_analysis_webgestaltr <- function(gene_file = NULL,
                                          reference_file = NULL,
-                                         organism = c("hsapiens", "mmusculus"),
+                                         organism =getOption(
+                                           "scflow_species",
+                                           default = "human"),
                                          enrichment_method = "ORA",
                                          enrichment_database = c(
                                            "geneontology_Biological_Process",
@@ -56,6 +66,15 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     !is.null(gene_file),
     msg = "No input gene list found!"
   )
+  
+  #"human" to "hsapiens" and "mouse" to "mmusculus"
+  if(organism %in% c("human","mouse")){
+    if(organism=="human")
+      organism <- "hsapiens"
+    else
+      organism <- "mmusculus"
+  }
+    
 
   if (is.data.frame(gene_file)) {
     interest_gene <- gene_file
@@ -284,22 +303,18 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
 
 #' dotplot for ORA. x axis enrichment_ratio, y axis description
 #' @keywords internal
-
-
 .dotplot_ora <- function(dt) {
   dt <- na.omit(dt)
   dt <- dt %>%
     top_n(., 10, enrichment_ratio)
   dt$description <- stringr::str_wrap(dt$description, 40)
-
-  ggplot2::ggplot(dt, aes(
+  p <- ggplot2::ggplot(dt, aes(
     x = enrichment_ratio,
-    y = stats::reorder(description, enrichment_ratio)
+    y = reorder(description, enrichment_ratio)
   )) +
     geom_point(aes(fill = FDR, size = size),
-      shape = 21, alpha = 0.7, color = "black"
+               shape = 21, alpha = 0.7, color = "black"
     ) +
-    scale_size(name = "Geneset size", range = c(3, 8)) +
     xlab("Enrichment Ratio") +
     ylab("") +
     scale_fill_gradient(
@@ -310,11 +325,17 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     ) +
     guides(size = guide_legend(
       override.aes = list(fill = "gold", color = "gold")
-    )) +
-    cowplot::theme_cowplot() +
+    )) + cowplot::theme_cowplot() +
     cowplot::background_grid()
+  if ( nrow(dt) < 4 ){
+    p <- p + scale_size(name = "size", range = c(3, 8)) 
+  } else {
+    p <- p + 
+      scale_size_binned(name = "Geneset size", range = c(3, 8),
+                        n.breaks = 4, nice.breaks = TRUE) 
+  }
+  return(p)
 }
-
 
 #' barplot for GSEA. x axis normalizedEnrichmentScore, y axis description
 #' @importFrom stats reorder

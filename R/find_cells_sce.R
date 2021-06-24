@@ -8,7 +8,7 @@
 #' @param lower see [DropletUtils::emptyDrops()]
 #' @param retain see [DropletUtils::emptyDrops()].  Use "auto" to calculate
 #' the parameter from the top `expect_cells` cells (cellranger method).
-#' @param alpha minimum FDR for [DropletUtils::emptyDrops()]
+# #' @param alpha minimum FDR for [DropletUtils::emptyDrops()]
 #' @param niters the number of Monte Carlo iterations
 #' @param expect_cells the number of cells expected for auto retain
 #' @param alpha_cutoff The alpha cutoff used for Monte Carlo signficance.

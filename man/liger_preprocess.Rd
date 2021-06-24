@@ -21,9 +21,16 @@ liger_preprocess(
 \arguments{
 \item{sce}{SingleCellExperiment object or merged objects}
 
-\item{k}{Inner dimension of factorization (number of factors).
+\item{k}{Inner dimension of factorization (number of factors).}
+
+\item{unique_id_var}{the colData variable identifying unique samples.
+Default is "manifest".
 
 Make a Liger object:}
+
+\item{take_gene_union}{Whether to fill out raw.data matrices with union
+of genes across all datasets (filling in 0 for missing data)
+(requires make.sparse=T) (default FALSE).}
 
 \item{remove.missing}{Whether to remove cells not expressing any
 measured genes, and genes not
@@ -31,6 +38,9 @@ expressed in any cells (if take.gene.union = T, removes only genes
 not expressed in any dataset) (default TRUE).
 
 Select informative genes:}
+
+\item{num_genes}{Number of genes to find for each dataset.
+Set to 3000 as default.}
 
 \item{combine}{How to combine variable genes across experiments.
 Either "union" or "intersect".
@@ -43,14 +53,12 @@ Scale genes by root-mean-square across cells:
 
 Remove cells/genes with no expression across any genes/cells:}
 
-\item{take.gene.union}{Whether to fill out raw.data matrices with union
-of genes across all datasets (filling in 0 for missing data)
-(requires make.sparse=T) (default FALSE).}
+\item{use_cols}{Treat each column as a cell (default TRUE)}
 
-\item{num.genes}{Number of genes to find for each dataset.
-Set to 3000 as default.}
+\item{num_cores}{Number of cores used on user's machine to run function.
+Default fouynd by \code{future::availableCores()}}
 
-\item{use.cols}{Treat each column as a cell (default TRUE)}
+\item{...}{Additional arguments.}
 }
 \value{
 liger preprocessed object.

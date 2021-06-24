@@ -4,9 +4,11 @@
 #' Split merged object into multiple sce objects and extract sparse matrices:
 #' @param sce SingleCellExperiment object or merged objects
 #' @param k Inner dimension of factorization (number of factors).
+#' @param unique_id_var the colData variable identifying unique samples. 
+#' Default is "manifest".
 #'
 #' Make a Liger object:
-#' @param take.gene.union Whether to fill out raw.data matrices with union
+#' @param take_gene_union Whether to fill out raw.data matrices with union
 #'   of genes across all datasets (filling in 0 for missing data)
 #'   (requires make.sparse=T) (default FALSE).
 #' @param remove.missing Whether to remove cells not expressing any
@@ -15,7 +17,7 @@
 #'   not expressed in any dataset) (default TRUE).
 #'
 #'  Select informative genes:
-#' @param num.genes Number of genes to find for each dataset.
+#' @param num_genes Number of genes to find for each dataset.
 #'   Set to 3000 as default.
 #' @param combine How to combine variable genes across experiments.
 #'   Either "union" or "intersect".
@@ -26,14 +28,19 @@
 #'  Scale genes by root-mean-square across cells:
 #'
 #' Remove cells/genes with no expression across any genes/cells:
-#' @param use.cols Treat each column as a cell (default TRUE)
+#' @param use_cols Treat each column as a cell (default TRUE)
+#' @param num_cores Number of cores used on user's machine to run function. 
+#' Default fouynd by `future::availableCores()`
+#' @param ... Additional arguments.
 #'
 #' @return liger preprocessed object.
 #'
 #' @importFrom rliger createLiger normalize selectGenes
 #' @importFrom rliger scaleNotCenter removeMissingObs
-#' @importFrom parallel mclapply
+#' @importFrom parallel mclapply makeCluster stopCluster
 #' @importFrom cli cli_alert
+#' @importFrom doParallel registerDoParallel
+#' @importFrom foreach foreach %dopar%
 #'
 #' @export
 
@@ -65,14 +72,26 @@ liger_preprocess <- function(sce,
   # Split merged sce object into multiple objects and extract sparse matrices
 
   cli::cli_alert("Extracting sparse matrices")
-  mat_list <- sapply(
-    split(sce$barcode, sce[[unique_id_var]]),
-    function(cells) {
-      sce@assays@data$counts[, as.character(cells)]
-    }
-  )
-  names(mat_list) <- paste0("dataset_", names(mat_list))
+  #mat_list <- sapply(
+  #  split(sce$barcode, sce[[unique_id_var]]),
+  #  function(cells) {
+  #    sce@assays@data$counts[, as.character(cells)]
+  #  }
+  #)
+  #names(mat_list) <- paste0("dataset_", names(mat_list))
 
+  id <- as.character(unique(sce[[unique_id_var]]))
+  cl <- parallel::makeCluster(num_cores)
+  doParallel::registerDoParallel(cl)
+  mat_list <- foreach::foreach(
+    i = seq_len(length(id)), .packages = "SingleCellExperiment"
+  ) %dopar% {
+    sce@assays@data$counts[, sce[[unique_id_var]] == id[i]]
+  }
+  parallel::stopCluster(cl)
+  
+  names(mat_list) <- paste0("dataset_", id)
+  
   # Make a Liger object. Pass in the sparse matrix.
   cli::cli_alert("Creating LIGER object")
   ligerex <- rliger::createLiger(
@@ -148,7 +167,7 @@ liger_preprocess <- function(sce,
 
   min_cells_per_id <- 5
   assertthat::assert_that(
-    min(table(droplevels(sce[[fargs$unique_id_var]]))) >= min_cells_per_id,
+    min(table(droplevels(as.factor(sce[[fargs$unique_id_var]])))) >= min_cells_per_id,
     msg = sprintf("Need at least %s cells per id.", min_cells_per_id)
   )
 

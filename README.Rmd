@@ -23,7 +23,8 @@ knitr::opts_chunk$set(
 # scFlow - Single-Cell Workflow
 
 <!-- badges: start -->
-[![R GitHub Actions](https://github.com/combiz/scFlow/workflows/R%20GitHub%20Actions/badge.svg)](https://github.com/combiz/scFlow/actions)
+[![R GitHub Actions](https://github.com/combiz/scFlow/actions/workflows/r_package.yaml/badge.svg)](https://github.com/combiz/scFlow/actions/workflows/r_package.yaml)
+[![R GitHub Actions Dev](https://github.com/combiz/scFlow/actions/workflows/r_package2.yaml/badge.svg)](https://github.com/combiz/scFlow/actions/workflows/r_package2.yaml)
 [![Documentation](https://img.shields.io/badge/docs-passing-brightgreen.svg?style=flat)](https://combiz.github.io/scFlow/)
 [![Manual](https://img.shields.io/badge/manual-passing-brightgreen.svg?style=flat)](https://combiz.github.io/scflow-manual/)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/combiz/scFlow/issues)

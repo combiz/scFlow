@@ -1,14 +1,12 @@
-name: R GitHub Actions Master
+name: R GitHub Actions Dev
 
 on:
   push:
     branches:
-      - main
-      - master
+      - dev
   pull_request:
     branches:
-      - main
-      - master
+      - dev
 
 jobs:
   R-CMD-check:
@@ -40,6 +38,8 @@ jobs:
           tags: |
             almurphy/scfdev:${{ env.packageVersion }}
             almurphy/scfdev:latest
+            almurphy/scfdev:dev
+            
           
 
       - name: Login to DockerHub
@@ -52,3 +52,4 @@ jobs:
         run: |
           docker push almurphy/scfdev:${{ env.packageVersion }}
           docker push almurphy/scfdev:latest
+          docker push almurphy/scfdev:dev

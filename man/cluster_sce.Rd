@@ -9,11 +9,8 @@ cluster_sce(sce, ...)
 \arguments{
 \item{sce}{a SingleCellExperiment object}
 
-\item{...}{see uwot::umap for umap options}
-
-\item{reduction_methods}{one or more of "PCA", "tSNE", "UMAP", "UMAP3D"}
-
-\item{pca_dims}{the number of pca dimensions used}
+\item{...}{see uwot::umap for umap options. Includes reduction_methods one
+or more of "PCA", "tSNE", "UMAP", "UMAP3D"}
 }
 \value{
 sce a SingleCellExperiment object annotated with reducedDims

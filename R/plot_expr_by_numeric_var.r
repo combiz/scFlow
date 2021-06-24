@@ -9,7 +9,7 @@
 #'
 #'
 #' @param sce a SingleCellExperiment object
-#' @param group_var The colData variable for x-axis groups
+#' @param numeric_var The colData variable for x-axis groups. Default is p_tau
 #' @param subset_var The colData variable to subset on
 #' @param subset_group The specific subset_var group to subset
 #' @param gene The gene of interest
@@ -30,6 +30,7 @@
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom patchwork plot_layout
 #' @importFrom scales pretty_breaks percent_format
+#' @importFrom stats lm coef predict
 #'
 #' @export
 plot_expr_by_numeric_var <- function(sce,
