@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scFlow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.1</span>
       </span>
     </div>
 
@@ -88,9 +88,12 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
+</li>
+<li>
+  <a href="../articles/scFlow.html">Get started</a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
@@ -102,7 +105,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/combiz/scFlow/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -139,6 +142,7 @@
   confounding_vars <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"individual"</span>, <span class='st'>"cngeneson"</span>, <span class='st'>"sex"</span>, <span class='st'>"age"</span>, <span class='st'>"PMI"</span>, <span class='st'>"RIN"</span>,
     <span class='st'>"seqdate"</span>, <span class='st'>"pc_mito"</span><span class='op'>)</span>,
   random_effects_var <span class='op'>=</span> <span class='cn'>NULL</span>,
+  interaction_vars <span class='op'>=</span> <span class='cn'>NULL</span>,
   unique_id_var <span class='op'>=</span> <span class='st'>"individual"</span>,
   species <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>getOption</a></span><span class='op'>(</span><span class='st'>"scflow_species"</span>, default <span class='op'>=</span> <span class='st'>"human"</span><span class='op'>)</span>,
   parallel <span class='op'>=</span> <span class='cn'>TRUE</span>,
@@ -185,6 +189,10 @@
       <td><p>variable(s) to model as random effects</p></td>
     </tr>
     <tr>
+      <th>interaction_vars</th>
+      <td><p>two or more variables to model as interacting</p></td>
+    </tr>
+    <tr>
       <th>unique_id_var</th>
       <td><p>the colData variable identifying unique samples</p></td>
     </tr>
@@ -213,7 +221,8 @@
 <code><a href='.perform_de_with_mast.html'>.perform_de_with_mast</a>()</code>,
 <code><a href='.preprocess_sce_for_de.html'>.preprocess_sce_for_de</a>()</code>,
 <code><a href='pseudobulk_sce.html'>pseudobulk_sce</a>()</code>,
-<code><a href='report_de.html'>report_de</a>()</code></p></div>
+<code><a href='report_de.html'>report_de</a>()</code>,
+<code><a href='volcano_plot.html'>volcano_plot</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

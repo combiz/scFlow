@@ -79,10 +79,10 @@ The package functions are designed to interface neatly with [NextFlow](https://w
 # Install the dataset repository
 
 ```
-devtools::install_github("neurogenomics/scFlowExample")
+devtools::install_github("neurogenomics/scFlowExamples")
 ```
 
-For a detailed explanation on how `scFlowExample` dataset was generated, visit this [link](https://github.com/neurogenomics/scFlowExample).
+For a detailed explanation on how `scFlowExamples` dataset was generated, visit this [link](https://github.com/neurogenomics/scFlowExamples).
 
 # Running *scFlow*
 
