@@ -41,6 +41,7 @@ Suggests:
     BiocStyle
 Language: en-US
 RoxygenNote: 7.1.1
+biocViews:
 Imports: 
     purrr,
     Matrix,
