@@ -35,7 +35,9 @@ read_metadata <- function(unique_key,
     cat("Reading", cli::col_green(c(samplesheet_path, " \r\n")))
     samplesheet <- read.delim(
       samplesheet_path,
-      colClasses = args$col_classes)
+      colClasses = args$col_classes,
+      stringsAsFactors = TRUE
+      )
   }
 
   if (!(key_colname %in% colnames(samplesheet))) {
