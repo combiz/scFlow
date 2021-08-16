@@ -343,8 +343,7 @@ map_celltypes_sce <- function(sce,
       sce,
       feature_dim = celltype_dim,
       reduced_dim = reddim,
-      label_clusters = TRUE,
-      size = 1)
+      label_clusters = TRUE)
   }
 
   #3d

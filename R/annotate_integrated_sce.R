@@ -76,8 +76,7 @@ annotate_integrated_sce <- function(sce,
     plot_pca <- plot_reduced_dim(sce,
                                  feature_dim = variable,
                                  reduced_dim = sprintf("%s_PCA",
-                                                       input_reduced_dim),
-                                 size = .1, alpha = 0.2)
+                                                       input_reduced_dim))
 
     plot_pca <- .grobify_ggplot(plot_pca)
     pca_reducedDim_plots[[variable]] <- plot_pca
@@ -85,8 +84,7 @@ annotate_integrated_sce <- function(sce,
     plot_liger <- plot_reduced_dim(sce,
                                    feature_dim = variable,
                                    reduced_dim = sprintf("%s_Liger",
-                                                         input_reduced_dim),
-                                   size = 0.1, alpha = 0.2)
+                                                         input_reduced_dim))
 
     plot_liger <- .grobify_ggplot(plot_liger)
     liger_reducedDim_plots[[variable]] <- plot_liger
@@ -194,7 +192,7 @@ annotate_integrated_sce <- function(sce,
                                feature_dim = "clusters",
                                reduced_dim = sprintf("%s_PCA",
                                                      input_reduced_dim),
-                               size = 0.1, alpha = 0.2, label_clusters = TRUE
+                               label_clusters = TRUE
   )
 
   cluster_pca <- plot_pca
@@ -205,7 +203,6 @@ annotate_integrated_sce <- function(sce,
                                  feature_dim = "clusters",
                                  reduced_dim = sprintf("%s_Liger",
                                                        input_reduced_dim),
-                                 size = 0.1, alpha = 0.2,
                                  label_clusters = TRUE
   )
 

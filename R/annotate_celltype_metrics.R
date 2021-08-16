@@ -103,8 +103,7 @@ annotate_celltype_metrics <- function(sce,
       feature_dim = cluster_var,
       reduced_dim = input_reduced_dim,
       highlight_feature = NA,
-      label_clusters = TRUE,
-      ...
+      label_clusters = TRUE
     )
   )
   p <- .grobify_ggplot(p)
@@ -118,8 +117,7 @@ annotate_celltype_metrics <- function(sce,
       feature_dim = celltype_var,
       reduced_dim = input_reduced_dim,
       highlight_feature = NA,
-      label_clusters = TRUE,
-      ...
+      label_clusters = TRUE
     )
   )
   p <- .grobify_ggplot(p)
@@ -134,8 +132,7 @@ annotate_celltype_metrics <- function(sce,
         feature_dim = facet_var,
         reduced_dim = input_reduced_dim,
         highlight_feature = NA,
-        label_clusters = FALSE,
-        ...
+        label_clusters = FALSE
       )
     )
     p <- .grobify_ggplot(p)
