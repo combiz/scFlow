@@ -31,49 +31,67 @@ knitr::opts_chunk$set(
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-green.svg)](https://www.gnu.org/licenses/gpl-3.0)
 <!-- badges: end -->
 
-The goal of scFlow is to provide tools in R to build a complete analysis workflow for single-cell/nuclei RNA sequencing data.
+The scFlow R package provides the analytical back-end to the [nf-core/scflow](https://nf-co.re/scflow) Nextflow pipeline for the orchestration of automated, scalable, and reproducible single-cell RNA sequencing analyses.  
+
+The scFlow R package is built to enable standardized workflows following best practices on top of popular single-cell R packages, including Seurat, Monocle, scater, emptyDrops, DoubletFinder, LIGER, and MAST (Hao 2021, Cao 2019, McCarthy 2017, Lun 2019, McGinnis 2019, Welch 2019).  Common analytical tasks required by users that involve multiple tools can be performed in scFlow with a single command (i.e. a higher level of abstraction).  Key plots, tables, and other analysis outputs are automatically generated, together with interactive HTML reports for each stage of the analysis.  These reports provide informative summaries of analytical steps in ways that can highlight the impact of parameter choices and guide their revision when needed.
+
+The following example illustrates a complete sample quality-control with default parameters using the scFlow R package, including ambient RNA profiling, gene/cell annotation, thresholding, doublet/multiplet removal, and generation of an interactive HTML report with key plots: -
+
+```
+sce <- read_sparse_matrix(matrix_path) %>%
+generate_sce(metadata) %>%
+find_cells() %>%
+annotate_sce() %>%
+filter_sce() %>%
+find_singlets() %>%
+filter_sce() %>%
+report_qc_sce()
+```
+
+Overview of scFlow features
 
 * Quality control of gene-cell matrices
-    - Filtering of matrices by counts and features
-    - Filtering of mitochondrial genes and mitochondrial counts thresholding
+    - Profiling of ambient RNA with [emptyDrops](https://github.com/MarioniLab/DropletUtils)
+    - Filtering of matrices by counts and features including optional adaptive filtering
+    - Filtering of mitochondrial and ribosomal genes and thresholding of counts
     - Doublet and multiplet identification and removal with [DoubletFinder](https://github.com/chris-mcginnis-ucsf/DoubletFinder)
     - Rich QC metrics annotation with [scater](https://github.com/davismcc/scater)
-  
-* Dimensionality reduction and celltype identification
-    - Louvain clustering, UMAP dimensionality reduction, and cluster marker gene identification with [monocle](https://github.com/cole-trapnell-lab/monocle-release)
-    - Celltype annotation with [EWCE](https://github.com/NathanSkene/EWCE) and [Liger](https://github.com/MacoskoLab/liger)
+* Integration
+    - Calculation of latent-gene metafactors for integration [Liger](https://github.com/MacoskoLab/rliger)
+    - Evaluation of integration performance across major sources of experimental variance with [kBet](https://github.com/theislab/kBET)
+    - Latent factor contribution analysis with [UpSetR](https://github.com/hms-dbmi/UpSetR/) plots
+* Dimensionality reduction and Clustering
+    - Dimensionality reduction with tSNE and/or UMAP with/without integration
+    - Community detection with the Louvain or Leiden clustering algorithms using [monocle](https://github.com/cole-trapnell-lab/monocle-release)
+* Cell-type identification     
+    - Cluster marker gene identification with [monocle](https://github.com/cole-trapnell-lab/monocle-release)
+    - Automated cell-type annotation with [EWCE](https://github.com/NathanSkene/EWCE)
     - Cluster identity mapping against the [Allen Human Brain Atlas](https://www.brain-map.org) and Mouse Nervous System Data from [Zeisel 2018](https://doi.org/10.1016/j.cell.2018.06.021)
-  
 * Differential gene expression implementations
-    - Zero-inflated regression model with [MAST](https://github.com/RGLab/MAST)
-    - Random effects model with [Limma](https://github.com/cran/limma)
-    - Negative binomial distribution pseudobulking model with [DESeq2](https://github.com/mikelove/DESeq2)
-    - Pseudobulk generalized likelihood ratio tests with [EdgeR](https://github.com/StoreyLab/edge)
-  
+    - Flexible pre-processing including gene expressivity filtering, and options for numeric covariate scaling/centering, matrix normalization, and pseudobulking
+    - Zero-inflated mixed-effect regression model with [MAST](https://github.com/RGLab/MAST)
+    - Random effects models with [Limma](https://github.com/cran/limma)
 * Pathway and functional category enrichment analysis
     - Interface to the Enrichr database with [EnrichR](https://github.com/cran/enrichR)
     - Interface to the WebGestalt tool with [WebGestaltR](http://www.webgestalt.org/)
- 
+    - Interface to the Onto Tools suite with [ROntoTools](https://www.bioconductor.org/packages/release/bioc/html/ROntoTools.html)
+* Cell-type composition analysis
+    - Dirichlet modeling of differential cell-type composition using [DirichletReg](https://cran.r-project.org/web/packages/DirichletReg/index.html)
 * Publication quality plots and analysis reports
-    - QC plots and tabular metrics suitable for reports.
-    - UMAP plots for cell features and gene expression.
-    - Violin plots for gene expression.
-    - Pathway and gene enrichment plots
+    - Eight interactive HTML reports with key plots and algorithm performance metrics
  
-The package functions are designed to interface neatly with [NextFlow](https://www.nextflow.io/) for scalable and containerized pipelines deployed locally, on high-performance computing clusters, or in the cloud.  See https://nf-co.re/scflow for the accompanying NextFlow pipeline.
-
 ## Get Started and Documentation
 
 Our primary documentation is at https://combiz.github.io/scflow-manual/.
 
-You can install the development version of scFlow from GitHub with:
+You can install the development version of scFlow from GitHub with: -
 
 ```{r eval = FALSE}
 # install.packages("devtools")
 devtools::install_github("combiz/scFlow")
 ```
 
-An additional data package `scFlowData` will be needed which contains supplimentary data required for gene annotaion, cell type annotation, pathway analysis. Install that with:
+An additional data package, `scFlowData`, will be needed which contains supplementary data required for gene annotation, cell type annotation, and pathway analysis. Install that with: -
 
 ```{r eval = FALSE}
 # install.packages("devtools")
@@ -88,18 +106,12 @@ devtools::install_github("combiz/scFlowData")
 
 ## How to Contribute
 
-Check the [CONTRIBUTING](https://github.com/microsoft/scFlow/blob/master/CONTRIBUTING.md) page.
-
-You may need to install scFlow using a Personal Access Token (Github->Settings->Developer Settings): -
-
-```{r eval=FALSE}
-# install.packages("devtools")
-devtools::install_github("combiz/scFlow", auth_token = "YOURTOKEN")
-```
+Check the [CONTRIBUTING](https://github.com/scFlow/blob/master/CONTRIBUTING.md) page.
 
 ## Reference Papers
+
+Combiz Khozoie, Nurun Fancy, Mahdi M. Marjaneh, Alan E. Murphy, Paul M. Matthews, Nathan Skene. "scFlow: A Scalable and Reproducible Analysis Pipeline for Single-Cell RNA Sequencing Data." bioRxiv 2021 August 19. doi: 10.22541/au.162912533.38489960/v1.
 
 Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso & Sven Nahnsen. “The nf-core framework for community-curated bioinformatics pipelines”. Nat Biotechnology (2020); doi: 10.1038/s41587-020-0439-x
 
 Note: If you use scFlow in your GitHub projects, please add scFlow in the requirements.txt.
-
