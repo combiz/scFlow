@@ -8,8 +8,8 @@ plot_reduced_dim_gene(
   sce,
   reduced_dim = "UMAP",
   gene = "PLP1",
-  size = 0.1,
-  alpha = 0.2,
+  size = getOption("scflow_reddimplot_pointsize", default = 0.1),
+  alpha = getOption("scflow_reddimplot_alpha", default = 0.2),
   palette = c("grey80", "#440154FF")
 )
 }

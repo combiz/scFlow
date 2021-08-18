@@ -10,8 +10,8 @@ plot_reduced_dim(
   reduced_dim = "UMAP",
   highlight_feature = NA,
   label_clusters = FALSE,
-  size = 0.1,
-  alpha = 0.2
+  size = getOption("scflow_reddimplot_pointsize", default = 0.1),
+  alpha = getOption("scflow_reddimplot_alpha", default = 0.2)
 )
 }
 \arguments{
