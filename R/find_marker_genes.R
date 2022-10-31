@@ -57,7 +57,8 @@ find_marker_genes <- function(sce,
       top_specific_marker_ids,
       group_cells_by = by_var,
       ordering_type = "cluster_row_col",
-      max.size = max_point_size
+      max.size = max_point_size,
+      axis_order = "group_marker"
     )
 
     top_by_group <- unique(top_specific_markers$cell_group) %>%
