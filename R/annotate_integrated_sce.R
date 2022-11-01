@@ -33,15 +33,6 @@ annotate_integrated_sce <- function(sce,
     ),
     "\r\n"
   )
-  cli::cli_text("Generating Venn diagram for selected variable genes...")
-  if (length(sce@metadata$dataset_integration$var.genes_per_dataset) < 11) {
-    venn_sets <- sce@metadata$dataset_integration$var.genes_per_dataset
-    my_nv <- nVennR::plotVenn(venn_sets)
-    my_nv <- nVennR::plotVenn(nVennObj = my_nv)
-    sce@metadata$dataset_integration$var.genes_plots$venn <- my_nv
-  } else {
-    print("The number of datasets is too high for a Venn diagram.")
-  }
 
   cli::cli_text("Generating Upset chart for selected variable genes...")
 
