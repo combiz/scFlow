@@ -9,9 +9,10 @@
   ctdToMapAgainst = MAGMA.Celltyping::ctd_Tasic,
   inputSpecies = "human",
   mapAgainstSpecies = "mouse",
-  annotLevel = 2,
-  numTopMarkers = 500,
-  mappingLevel = 2
+  annotLevel = 1,
+  numTopMarkers = 50,
+  mappingLevel = 2,
+  reps = 1000
 )
 }
 \arguments{
