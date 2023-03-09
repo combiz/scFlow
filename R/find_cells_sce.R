@@ -18,7 +18,6 @@
 #'
 #' @family annotation functions
 #' @import cli
-#' @importFrom uniftest kolmogorov.unif.test
 #' @importFrom Matrix rowSums colSums
 #' @importFrom DropletUtils emptyDrops
 #'
@@ -190,13 +189,12 @@ find_cells <- function(sce,
 }
 
 #' helper fn - Kolmogorov-Smirnov Uniformity Test
-#' @importFrom uniftest kolmogorov.unif.test
 #' @importFrom cli cli_alert_warning rule
 #' @export
 #' @keywords internal
 .perform_ks_uniformity_test <- function(x, nrepl = 1000) {
   cat(cli::rule("Evaluating Distribution Uniformity", line = 1), "\r\n")
-  unif_test <- uniftest::kolmogorov.unif.test(x, nrepl = nrepl, k = 0)
+  unif_test <- .uniftest(x)
 
   if (unif_test$p.value <= 0.05) {
     cli::cli_alert_warning(c(

@@ -106,7 +106,10 @@ reduce_dims_sce <- function(sce,
   }
   cds <- monocle3::preprocess_cds(
     cds,
-    num_dim = pca_dims,
+    num_dim = pca_dims
+  )
+  cds <- monocle3::align_cds(
+    cds,
     residual_model_formula_str = res_mod_formula_str
   )
 
@@ -120,7 +123,7 @@ reduce_dims_sce <- function(sce,
   #)
 
   SingleCellExperiment::reducedDim(sce, "PCA") <-
-    SingleCellExperiment::reducedDim(cds, "PCA")
+    SingleCellExperiment::reducedDim(cds, "Aligned")
   cli::cli_alert_success("{.strong PCA} was completed successfully")
 
   for (reddim_method in reduction_methods[!reduction_methods == "PCA"]) {
