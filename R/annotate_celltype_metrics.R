@@ -21,17 +21,18 @@
 #' @importFrom stats median
 #' @export
 annotate_celltype_metrics <- function(sce,
-                                    cluster_var = "clusters",
-                                    celltype_var = "cluster_celltype",
-                                    unique_id_var = "manifest",
-                                    facet_vars = c("manifest", "group", "sex"),
-                                    input_reduced_dim = "UMAP_Liger",
-                                    metric_vars = c("pc_mito",
-                                                    "pc_ribo",
-                                                    "total_counts",
-                                                    "total_features_by_counts"),
-                                    ...) {
-
+                                      cluster_var = "clusters",
+                                      celltype_var = "cluster_celltype",
+                                      unique_id_var = "manifest",
+                                      facet_vars = c("manifest", "group", "sex"),
+                                      input_reduced_dim = "UMAP_Liger",
+                                      metric_vars = c(
+                                        "pc_mito",
+                                        "pc_ribo",
+                                        "total_counts",
+                                        "total_features_by_counts"
+                                      ),
+                                      ...) {
   fargs <- list(
     fraction_expressing = 0.10,
     top_n = 5,
@@ -49,7 +50,7 @@ annotate_celltype_metrics <- function(sce,
   sce@metadata$celltype_annotations$params <- c(
     as.list(environment()),
     list(...)
-    )
+  )
   sce@metadata$celltype_annotations$params$sce <- NULL
 
   # input validation checks
@@ -65,7 +66,8 @@ annotate_celltype_metrics <- function(sce,
   var_classes <- purrr::map_lgl(
     c(cluster_var, celltype_var, unique_id_var, facet_vars),
     ~ class(
-      SummarizedExperiment::colData(sce)[[.]]) %in% c("character", "factor")
+      SummarizedExperiment::colData(sce)[[.]]
+    ) %in% c("character", "factor")
   )
   assertthat::assert_that(
     all(var_classes),
@@ -89,7 +91,7 @@ annotate_celltype_metrics <- function(sce,
     top_n = fargs$top_n,
     max_point_size = fargs$max_point_size,
     n_cores = fargs$n_cores
-    )
+  )
 
   sce@metadata$markers <- markers
 
@@ -153,7 +155,7 @@ annotate_celltype_metrics <- function(sce,
           group_by_var = group_by_var
         )
       )
-      #sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[var]] <-
+      # sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[var]] <-
       #  lapply(
       #    sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[var]],
       #    .clean_ggplot_plot_env
@@ -175,7 +177,7 @@ annotate_celltype_metrics <- function(sce,
           metric_var = metric_var
         )
       )
-      #sce@metadata$celltype_annotations$metric_plots[[metric_var]][[var]] <-
+      # sce@metadata$celltype_annotations$metric_plots[[metric_var]][[var]] <-
       #  lapply(
       #    sce@metadata$celltype_annotations$metric_plots[[metric_var]][[var]],
       #    .clean_ggplot_plot_env
@@ -218,7 +220,7 @@ annotate_celltype_metrics <- function(sce,
 
   pal_values <- .get_d_palette(
     "ggsci::nrc_npg", length(unique(dt[[celltype_var]]))
-    )
+  )
   scale_colours <- ggplot2::scale_fill_manual(values = pal_values)
 
   # absolute counts (n)
@@ -307,7 +309,6 @@ annotate_celltype_metrics <- function(sce,
 #'
 #' @keywords internal
 .append_cell_metric_plots_sce <- function(...) {
-
   # metric_var is pc_mito, total_counts, etc.
   list2env(list(...), environment())
 
@@ -354,12 +355,16 @@ annotate_celltype_metrics <- function(sce,
   # reorder based on the dt means
   dt2[[celltype_var]] <- factor(
     dt2[[celltype_var]],
-    levels = levels(dt[[celltype_var]]) #from the previous dt
+    levels = levels(dt[[celltype_var]]) # from the previous dt
   )
 
-  p2 <- ggplot2::ggplot(dt2,
-                        ggplot2::aes(x = .data[[metric_var]],
-                                     y = .data[[celltype_var]])) +
+  p2 <- ggplot2::ggplot(
+    dt2,
+    ggplot2::aes(
+      x = .data[[metric_var]],
+      y = .data[[celltype_var]]
+    )
+  ) +
     ggridges::geom_density_ridges_gradient(
       scale = 3,
       rel_min_height = 0.01,
@@ -387,7 +392,7 @@ annotate_celltype_metrics <- function(sce,
   sce@metadata$celltype_annotations$
     metric_plots[[metric_var]][[celltype_var]]$metric_plot <- p
   sce@metadata$celltype_annotations$
-  metric_plots[[metric_var]][[celltype_var]]$ridge_data <- dt2
+    metric_plots[[metric_var]][[celltype_var]]$ridge_data <- dt2
   sce@metadata$celltype_annotations$
     metric_plots[[metric_var]][[celltype_var]]$ridge_plot <- p2
 

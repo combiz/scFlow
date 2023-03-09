@@ -10,19 +10,31 @@ map_celltypes_sce(
   cells_to_sample = 10000,
   clusters_colname = "clusters",
   species = getOption("scflow_species", default = "human"),
-  savePath = tempdir()
+  save_path = tempdir(),
+  annotation_level = 1,
+  reps = 1000,
+  ctd_species = NULL,
+  num_markers = 50
 )
 }
 \arguments{
 \item{sce}{a SingleCellExperiment}
 
-\item{ctd_folder}{path to a folder with ctd RDS files}
+\item{ctd_folder}{path to a folder with ctd RDS file}
 
 \item{cells_to_sample}{total cells to consider for gene enrichment}
 
 \item{clusters_colname}{the name of the colData column with cluster number}
 
-\item{species}{specify human or mouse}
+\item{species}{specify species of analysis dataset}
+
+\item{annotation_level}{The level(s) of annotation required. Integer for single CTD/level. For multi-CTD/level a named list, names are the CTD file names (without file extension) and elements are vectors of levels. Levels must present in the provided CTD(s). The first name and level will also be used as the primary annotation for automated reporting and will be returned in 'cluster_celltype' column data}
+
+\item{reps}{Number of bootstrap repetitions for EWCE. For publishable results set >=10000}
+
+\item{ctd_species}{Specify species used to build CTD if different from species. If multiple CTDs are used with differing species specify as a named list where names are the CTD file names (without file extension) and elements are the species. Must be 'human', 'mouse' or listed in EWCE::list_species()$id}
+
+\item{num_markers}{Number of cluster markers used to identify cell type}
 
 \item{savePath}{The directory where the generated ctd file produced by EWCE is saved. Default is a temp directory}
 }
@@ -30,7 +42,7 @@ map_celltypes_sce(
 sce a SingleCellExperiment object annotated with celltypes/metadata
 }
 \description{
-Currently works with Allan and Zeisel only
+Map cluster celltypes with EWCE
 }
 \seealso{
 Other clustering and dimensionality reduction: 

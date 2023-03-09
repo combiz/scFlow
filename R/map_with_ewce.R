@@ -2,14 +2,16 @@
 ################################################################################
 #' Map cluster celltypes with EWCE
 #'
-#' Currently works with Allan and Zeisel only
-#'
 #' @param sce a SingleCellExperiment
-#' @param ctd_folder path to a folder with ctd RDS files
+#' @param ctd_folder path to a folder with ctd RDS file
 #' @param cells_to_sample total cells to consider for gene enrichment
 #' @param clusters_colname the name of the colData column with cluster number
-#' @param species specify human or mouse
+#' @param species specify species of analysis dataset
 #' @param savePath The directory where the generated ctd file produced by EWCE is saved. Default is a temp directory
+#' @param annotation_level The level(s) of annotation required. Integer for single CTD/level. For multi-CTD/level a named list, names are the CTD file names (without file extension) and elements are vectors of levels. Levels must present in the provided CTD(s). The first name and level will also be used as the primary annotation for automated reporting and will be returned in 'cluster_celltype' column data
+#' @param reps Number of bootstrap repetitions for EWCE. For publishable results set >=10000
+#' @param ctd_species Specify species used to build CTD if different from species. If multiple CTDs are used with differing species specify as a named list where names are the CTD file names (without file extension) and elements are the species. Must be 'human', 'mouse' or listed in EWCE::list_species()$id
+#' @param num_markers Number of cluster markers used to identify cell type
 #'
 #' @return sce a SingleCellExperiment object annotated with celltypes/metadata
 #' @author Nathan Skene / Combiz Khozoie
@@ -24,27 +26,61 @@
 #' @importFrom purrr map_chr
 #' @importFrom SingleCellExperiment counts
 #' @export
+
 map_celltypes_sce <- function(sce,
                               ctd_folder,
                               cells_to_sample = 10000,
                               clusters_colname = "clusters",
                               species = getOption(
                                 "scflow_species",
-                                default = "human"),
-                              savePath=tempdir()) {
-
+                                default = "human"
+                              ),
+                              save_path = tempdir(),
+                              annotation_level = 1,
+                              reps = 1000,
+                              ctd_species = NULL,
+                              num_markers = 50) {
   assertthat::assert_that(dir.exists(ctd_folder))
   assertthat::assert_that(
     clusters_colname %in% names(SummarizedExperiment::colData(sce)),
     msg = "clusters_colname missing from colData"
-    )
+  )
   assertthat::assert_that(
-    species %in% c("human", "mouse")
+    species %in%
+      c("human", "mouse", EWCE::list_species(verbose = FALSE)$id),
+    msg = "species not supported for EWCE mapping"
+  )
+  if (!is.null(ctd_species)) {
+    assertthat::assert_that(
+      all(ctd_species %in%
+        c("human", "mouse", EWCE::list_species(verbose = FALSE)$id)),
+      msg = "ctd_species not supported for EWCE mapping"
+    )
+  } else {
+    ctd_species <- species
+  }
+  assertthat::assert_that(
+    num_markers >= 4,
+    msg = "EWCE requires a minumum of 4 markers
+           per cluster to indentify cell types"
+  )
+
+  assertthat::assert_that(
+    if (class(annotation_level) == "list") {
+      !is.null(names(annotation_level))
+    } else if (class(annotation_level) == "numeric") {
+      length(annotation_level) == 1
+    } else {
+      FALSE
+    },
+    msg = "Annotation level must be an integer for
+           single CTD annotation or a named list for
+           multi-level/CTD annotation"
   )
 
   l_ctd <- .read_rds_files_to_list(ctd_folder)
 
-  if(dim(sce)[[2]] > cells_to_sample) {
+  if (dim(sce)[[2]] > cells_to_sample) {
     message(sprintf("Subsetting %s cells", cells_to_sample))
     set.seed(42)
     sce_subset <- sce[, sample(dim(sce)[[2]], cells_to_sample)]
@@ -59,16 +95,25 @@ map_celltypes_sce <- function(sce,
 
   annotLevels <- list(level1class = sce_subset[[clusters_colname]])
   message("generating ctd with ewce")
-  ctd <- EWCE::generate_celltype_data(exp = mat,
-                                      annotLevels = annotLevels,
-                                      groupName = "ctd",
-                                      savePath=savePath)
+  ctd <- suppressMessages(EWCE::generate_celltype_data(
+    exp = mat,
+    annotLevels = annotLevels,
+    groupName = "ctd",
+    savePath = save_path
+  ), classes = "message")
   load(ctd[1])
 
   sce@metadata$ctd <- ctd
 
   message("mapping celltypes with ewce")
-  mappings <- .map_celltypes_with_ewce(ctd, l_ctd, inputSpecies = species)
+  mappings <- .map_celltypes_with_ewce(ctd,
+    l_ctd,
+    inputSpecies = species,
+    ctd_species = ctd_species,
+    annotation_level = annotation_level,
+    reps = reps,
+    num_markers = num_markers
+  )
 
   # generate lookup for merging into colData
   mappings_lookup <- mappings %>%
@@ -76,57 +121,48 @@ map_celltypes_sce <- function(sce,
     tidyr::spread(mapping, Mapped) %>%
     dplyr::arrange(Cluster)
 
-  # split long allan name into components
-  allan_split <- purrr::map_df(
-    as.character(mappings_lookup$Allan2019_ML2),
-    function(x) data.frame(t(unlist(strsplit(x, split = " "))))
-  )
-  colnames(allan_split) <- c("allan_celltype", "allan_layer",
-                             "allan_cluster_gene_1", "allan_cluster_gene_2")
-
-  mappings_lookup <- cbind(mappings_lookup, allan_split)
-
-  generate_ct_label <- plyr::adply(mappings_lookup, 1, function(x) {
-    if (x$Allan2019_ML1 == "Non-neuronal") {
-      paste(x$allan_celltype)
-    } else if (x$allan_celltype == "Exc") {
-      paste("EN", x$allan_layer, sep = "-")
-    } else if (x$allan_celltype == "Inh") {
-      paste("IN", x$allan_cluster_gene_1, sep = "-")
-    } else if (x$allan_celltype != "no") {
-      as.character(x$allan_celltype)
-    } else {
-      as.character(x$Zeisel2018_ML5)
-    }}, .expand = FALSE, .id = "Cluster")%>%
-    dplyr::rename(cluster_celltype = V1)
-
-  mappings_lookup <- merge(mappings_lookup, generate_ct_label, on = "Cluster")
   mappings_lookup$Cluster <- as.factor(mappings_lookup$Cluster)
 
   # rename Cluster column
   mappings_df <- mappings_lookup %>%
     dplyr::rename(!!clusters_colname := Cluster)
-
   mappings_df[] <- lapply(mappings_df, as.character)
 
   sce@metadata$mappings <- mappings_df
 
-  sce <- map_custom_celltypes(sce, mappings_df, cols = "cluster_celltype")
+  if (class(annotation_level) == "list") {
+    mapping_column <- paste0(
+      names(annotation_level)[1],
+      "_ML",
+      annotation_level[[1]][1]
+    )
+  } else {
+    mapping_column <- names(mappings_df)[2]
+  }
+  colnames(mappings_df)[colnames(mappings_df) == mapping_column] <- "cluster_celltype"
 
+  sce <- map_custom_celltypes(
+    sce,
+    mappings_df,
+    colnames(mappings_df)[2:ncol(mappings_df)]
+  )
   sce <- .append_celltype_plots_sce(sce)
 
   return(sce)
-
 }
 
 
 ################################################################################
 #' Map cluster celltypes with EWCE
 #'
-#' Works with Allan and Zeisel only
+#' Maps cluster celltypes using EWCE
 #'
 #' @param ctd ctd for current expt
-#' @param l_ctd a a list of reference ctd's
+#' @param l_ctd a list of reference ctd's
+#' @param inputSpecies species of ctd
+#' @param annotation_level level of annotation
+#' @param ctd_species species of l_ctd
+#' @param reps number pf repitions performed by EWCE boostrap
 #'
 #' @return sce a SingleCellExperiment object annotated with sample metadata
 #' @author Nathan Skene / Combiz Khozoie
@@ -135,42 +171,36 @@ map_celltypes_sce <- function(sce,
 #' @importFrom dplyr rename
 #' @importFrom magrittr %>%
 #' @keywords internal
-.map_celltypes_with_ewce <- function(ctd, l_ctd, inputSpecies = "human") {
-
-  # cortical types only
-  cortical_types <- c(
-    "ABC", "ACTE", "CHOR", "COP", "EPEN", "EPSC", "MFOL",
-    "MGL", "MOL", "NFOL", "OPC", "PER", "PVM", "TEGLU",
-    "TEINH", "VECA", "VECC", "VECV", "VEND", "VLMC",
-    "VSMC", "VSMCA"
-  )
-
-  cortical_types <- paste(cortical_types, collapse = "|")
-
-  idx <- grep(cortical_types, colnames(l_ctd$Zeisel2018[[5]]$specificity))
-  l_ctd$Zeisel2018[[5]]$specificity <- l_ctd$Zeisel2018[[5]]$specificity[, idx]
-
+.map_celltypes_with_ewce <- function(ctd,
+                                     l_ctd,
+                                     inputSpecies = "human",
+                                     annotation_level = 1,
+                                     ctd_species = "human",
+                                     reps = 1000,
+                                     num_markers = 50) {
   # set up the map_celltypes parameter combinations for pmap
   map_params <- list(
-    ctd = c(
-      "Zeisel2018", "Zeisel2018",
-      "Allan2019", "Allan2019"
-    ),
-    species = c("mouse", "mouse", "human", "human"),
-    mlevel = c(4, 5, 1, 2)
+    ctd = names(l_ctd),
+    ctd_species = ctd_species, # get species from ctd
+    mlevel = annotation_level
+    # need to include user specified annottion levels
   ) # mapping levels
 
-  l_mappings <- purrr::pmap(map_params, function(ctd_name, species, mlevel) {
+  l_mappings <- purrr::pmap(map_params, function(ctd_name,
+                                                 ctd_species,
+                                                 mlevel) {
+    message(ctd_name)
     mapped_dt <- .map_celltypes(
       ctdToMap = ctd,
       ctdToMapAgainst = l_ctd[[ctd_name]],
       inputSpecies = inputSpecies,
-      mapAgainstSpecies = species,
+      mapAgainstSpecies = ctd_species,
       annotLevel = 1,
-      numTopMarkers = 50,
-      mappingLevel = mlevel
+      numTopMarkers = num_markers,
+      mappingLevel = mlevel,
+      reps = reps
     )
-    mapped_dt$mapping <- sprintf("%s_ML%s", ctd_name, mlevel)
+    mapped_dt$mapping <- sprintf("%s_ML%s", ctd_name, mapped_dt$mappingLevel)
     mapped_dt <- mapped_dt %>%
       dplyr::rename(Cluster = Original)
     mapped_dt$Cluster <- as.numeric(as.character(mapped_dt$Cluster))
@@ -179,7 +209,6 @@ map_celltypes_sce <- function(sce,
 
   mappings <- Reduce(rbind, l_mappings)
   return(mappings)
-
 }
 
 ################################################################################
@@ -201,64 +230,108 @@ map_celltypes_sce <- function(sce,
 #' @importFrom dplyr rename
 #' @importFrom magrittr %>%
 #' @keywords internal
-.map_celltypes <- function(ctdToMap,
-                          ctdToMapAgainst = MAGMA.Celltyping::ctd_Tasic,
-                          inputSpecies = "human",
-                          mapAgainstSpecies = "mouse",
-                          annotLevel = 2,
-                          numTopMarkers = 500,
-                          mappingLevel = 2) {
 
+### Allow variation in annotation level
+
+.map_celltypes <- function(ctdToMap,
+                           ctdToMapAgainst = MAGMA.Celltyping::ctd_Tasic,
+                           inputSpecies = "human",
+                           mapAgainstSpecies = "mouse",
+                           annotLevel = 1,
+                           numTopMarkers = 50,
+                           mappingLevel = 2,
+                           reps = 1000) {
   ctd <- ctdToMapAgainst
   count <- 0
-  if (!is.null(names(ctdToMap))) {
-    numLevels <- sum(names(ctdToMap) == "")
-  } else {
-    numLevels <- length(ctdToMap)
-  }
 
-  for (ct in colnames(ctdToMap[[annotLevel]]$specificity)) {
+for (ml in mappingLevel) {
+    message(" Level ", ml)
+    for (ct in colnames(ctdToMap[[annotLevel]]$specificity)) {
+      mostSpecificGenes <- .get_x_most_specific_genes(
+        ct = ct,
+        annotLevel = annotLevel, # Annotation level
+        howMany = numTopMarkers,
+        ctd = ctdToMap,
+        exprPercentile = 0.9
+      )$x_most_specific
 
-    mostSpecificGenes <- .get_x_most_specific_genes(
-      ct = ct,
-      annotLevel = annotLevel,
-      howMany = numTopMarkers,
-      ctd = ctdToMap,
-      exprPercentile = 0.9)$x_most_specific
+      mostSpecificGenes <- mostSpecificGenes[!is.na(mostSpecificGenes)]
 
-    mostSpecificGenes <- mostSpecificGenes[!is.na(mostSpecificGenes)]
-    full_results <- EWCE::bootstrap_enrichment_test(
-      sct_data = ctd,
-      hits = mostSpecificGenes,
-      bg = rownames(ctdToMap[[1]]$specificity),
-      reps = 1000,
-      annotLevel = mappingLevel,
-      genelistSpecies = inputSpecies,
-      sctSpecies = mapAgainstSpecies
-    )
-    p <- full_results$results[order(
-      full_results$results$sd_from_mean, decreasing = TRUE), ][1, ]$p
-    z <- full_results$results[order(
-      full_results$results$sd_from_mean, decreasing = TRUE), ][1, ]$sd_from_mean
-    ctMapped <- data.frame(
-      Original = ct,
-      Mapped = as.character(
-        full_results$results[order(
-          full_results$results$sd_from_mean, decreasing = TRUE), ][1, ]$CellType),
-      annotLevel = annotLevel,
-      p = p,
-      z = z
-    )
-    count <- count + 1
-    if (count == 1) {
-      allMapped <- ctMapped
-    } else {
-      allMapped <- rbind(ctMapped, allMapped)
+      # Handle check_ewce_inputs errors
+      ewce_check <- tryCatch(
+        EWCE::check_ewce_genelist_inputs(
+          sct_data = ctd,
+          hits = mostSpecificGenes,
+          bg = rownames(ctdToMap[[1]]$specificity),
+          genelistSpecies = inputSpecies,
+          sctSpecies = mapAgainstSpecies,
+          verbose = FALSE
+        ),
+        error = function(e) {
+          message(paste(
+            "Cannot map cluster",
+            ct, "
+                        to any cell type in",
+            ctd_name
+          ))
+          message(paste("ERROR MESSAGE:", e))
+          return(e)
+        }
+      )
+      ewce_check <- !any(class(ewce_check) == "error")
+
+      if (!ewce_check) {
+        ctMapped <- data.frame(
+          Original = ct,
+          Mapped = "Not identified",
+          annotLevel = ml,
+          p = NA,
+          z = NA
+        )
+      } else {
+        full_results <- suppressMessages(EWCE::bootstrap_enrichment_test(
+          sct_data = ctd,
+          hits = mostSpecificGenes,
+          annotLevel = ml,
+          genelistSpecies = inputSpecies,
+          sctSpecies = mapAgainstSpecies,
+          verbose = FALSE
+        ), classes = "message")
+        p <- full_results$results[order(
+          full_results$results$sd_from_mean,
+          decreasing = TRUE
+        ), ][1, ]$p
+        z <- full_results$results[order(
+          full_results$results$sd_from_mean,
+          decreasing = TRUE
+        ), ][1, ]$sd_from_mean
+        ctMapped <- data.frame(
+          Original = ct,
+          Mapped = as.character(
+            full_results$results[order(
+              full_results$results$sd_from_mean,
+              decreasing = TRUE
+            ), ][1, ]$CellType
+          ),
+          mappingLevel = ml,
+          p = p,
+          z = z
+        )
+        cat(
+          paste(c("  Cluster", "="), ctMapped[, c("Original", "Mapped")]),
+          "\n"
+        )
+      }
+
+      count <- count + 1
+      if (count == 1) {
+        allMapped <- ctMapped
+      } else {
+        allMapped <- rbind(ctMapped, allMapped)
+      }
     }
   }
-
   return(allMapped)
-
 }
 
 ################################################################################
@@ -275,12 +348,14 @@ map_celltypes_sce <- function(sce,
 #' @family clustering and dimensionality reduction
 #' @importFrom stats quantile
 #' @keywords internal
-.get_x_most_specific_genes <- function(ct,
-                                   annotLevel = 5,
-                                   howMany = 20,
-                                   ctd,
-                                   exprPercentile = 0.9) {
 
+
+### Annotaiton level
+.get_x_most_specific_genes <- function(ct,
+                                       annotLevel = 5,
+                                       howMany = 20,
+                                       ctd,
+                                       exprPercentile = 0.9) {
   specificity_vector <- ctd[[annotLevel]]$specificity[, ct]
   expr <- ctd[[annotLevel]]$mean_exp[, ct]
   keep_genes <- expr > stats::quantile(expr, exprPercentile)
@@ -309,8 +384,7 @@ map_celltypes_sce <- function(sce,
 #' @importFrom purrr map
 #' @importFrom tools file_path_sans_ext
 #' @keywords internal
-.read_rds_files_to_list <- function(folder_path){
-
+.read_rds_files_to_list <- function(folder_path) {
   rds_l <- purrr::map(
     list.files(folder_path, full.names = TRUE),
     readRDS
@@ -335,7 +409,6 @@ map_celltypes_sce <- function(sce,
 #' @keywords internal
 .append_celltype_plots_sce <- function(sce,
                                        celltype_dim = "cluster_celltype") {
-
   # 2d
   sce@metadata$celltype_plots <- list()
   for (reddim in names(SingleCellExperiment::reducedDims(sce))) {
@@ -343,12 +416,12 @@ map_celltypes_sce <- function(sce,
       sce,
       feature_dim = celltype_dim,
       reduced_dim = reddim,
-      label_clusters = TRUE)
+      label_clusters = TRUE
+    )
   }
 
-  #3d
+  # 3d
   if ("UMAP3D" %in% names(SingleCellExperiment::reducedDims(sce))) {
-
     umap_res <- SingleCellExperiment::reducedDim(sce, "UMAP3D")
 
     pal <- leaflet::colorFactor(palette = "Accent", domain = sce[[celltype_dim]])
@@ -379,4 +452,3 @@ map_celltypes_sce <- function(sce,
 
   return(sce)
 }
-

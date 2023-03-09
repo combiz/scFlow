@@ -81,8 +81,11 @@ reduce_dims_sce <- function(sce,
   if ("Liger" %in% input_reduced_dim) {
     assertthat::assert_that(
       "Liger" %in% SingleCellExperiment::reducedDimNames(sce),
-      msg = paste0("Liger reducedDim not found. ",
-                   "To use Liger as an input first run integrate_sce()"))
+      msg = paste0(
+        "Liger reducedDim not found. ",
+        "To use Liger as an input first run integrate_sce()"
+      )
+    )
   }
 
   before_rd_names <- SingleCellExperiment::reducedDimNames(sce)
@@ -106,17 +109,18 @@ reduce_dims_sce <- function(sce,
   }
   cds <- monocle3::preprocess_cds(
     cds,
-    num_dim = pca_dims,
+    num_dim = pca_dims
+  )
+  cds <- monocle3::align_cds(
+    cds,
     residual_model_formula_str = res_mod_formula_str
   )
 
-
   SingleCellExperiment::reducedDim(sce, "PCA") <-
-    SingleCellExperiment::reducedDim(cds, "PCA")
+    SingleCellExperiment::reducedDim(cds, "Aligned")
   cli::cli_alert_success("{.strong PCA} was completed successfully")
 
   for (reddim_method in reduction_methods[!reduction_methods == "PCA"]) {
-
     header_msg <- dplyr::case_when(
       reddim_method == "tSNE" ~
         "Computing T-distributed Stochastic Neighbor Embedding (tSNE)",
@@ -128,18 +132,16 @@ reduce_dims_sce <- function(sce,
     cli::cli_h2(header_msg)
 
     for (input_rd in input_reduced_dim) {
-
       # Reduce dimensions with tSNE
       if (reddim_method == "tSNE") {
-
         mat <- as.matrix(SingleCellExperiment::reducedDim(cds, input_rd))
 
         tsne_args <- fargs[names(fargs) %in%
-                             names(as.list(args(Rtsne:::Rtsne.default)))]
+          names(as.list(args(Rtsne:::Rtsne.default)))]
 
         tsne_res <- do.call(
           Rtsne::Rtsne, c(list(X = mat, pca = FALSE), tsne_args)
-          )
+        )
 
         tsne_data <- tsne_res$Y[, 1:fargs$dims]
         row.names(tsne_data) <- colnames(tsne_data)
@@ -151,16 +153,16 @@ reduce_dims_sce <- function(sce,
 
         cli::cli_alert_success(c(
           "{.strong {reddim_method}} was computed successfully ",
-          "with {.strong {input_rd}} input"))
+          "with {.strong {input_rd}} input"
+        ))
       }
 
       # Reduce dimensions with UMAP
       if (reddim_method %in% c("UMAP", "UMAP3D")) {
-
         mat <- as.matrix(SingleCellExperiment::reducedDim(cds, input_rd))
 
         umap_args <- fargs[names(fargs) %in%
-                             names(as.list(args(uwot::umap)))]
+          names(as.list(args(uwot::umap)))]
 
         if (reddim_method == "UMAP3D") {
           umap_args$n_components <- 3
@@ -172,7 +174,8 @@ reduce_dims_sce <- function(sce,
 
         cli::cli_alert_success(c(
           "{.strong {reddim_method}} was computed successfully ",
-          "with {.strong {input_rd}} input"))
+          "with {.strong {input_rd}} input"
+        ))
 
         row.names(umap_res) <- colnames(cds)
         rd_name <- paste(reddim_method, input_rd, sep = "_")
@@ -209,11 +212,14 @@ reduce_dims_sce <- function(sce,
   new_reddims <- dplyr::setdiff(
     SingleCellExperiment::reducedDimNames(sce),
     before_rd_names
-    )
+  )
 
   cli::cli_alert_success(
-    c("Successfully added {.val {length(new_reddims)}} reducedDim ",
-      "slots: {.var {paste0(new_reddims, collapse = \", \")}}"))
+    c(
+      "Successfully added {.val {length(new_reddims)}} reducedDim ",
+      "slots: {.var {paste0(new_reddims, collapse = \", \")}}"
+    )
+  )
 
   return(sce)
 }

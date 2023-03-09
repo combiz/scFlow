@@ -93,7 +93,6 @@ Imports:
     gdtools,
     WebGestaltR,
     graphite,
-    uniftest,
     batchelor,
     DelayedMatrixStats,
     Matrix.utils,
@@ -136,5 +135,6 @@ Remotes:
     theislab/kBET,
     neurogenomics/scFlowExamples,
     neurogenomics/scFlowData,
-    jlmelville/uwot
+    jlmelville/uwot,
+    ropensci/bib2df
 VignetteBuilder: knitr
