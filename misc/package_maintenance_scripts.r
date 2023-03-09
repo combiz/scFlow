@@ -156,6 +156,7 @@ use_github_actions()
 usethis::use_github_action("test-coverage")
 usethis::use_github_action("lint")
 use_github_actions_badge(name = "R-CMD-check", repo_spec = NULL)
+usethis::use_github_action_check_standard()
 
 pkgdown::init_site() #create favicons from pkg logo
 
