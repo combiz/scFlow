@@ -18,7 +18,6 @@
 #'
 #' @family annotation functions
 #' @import cli
-#' @importFrom uniftest kolmogorov.unif.test
 #' @importFrom Matrix rowSums colSums
 #' @importFrom DropletUtils emptyDrops
 #'
@@ -53,10 +52,9 @@ find_cells <- function(sce,
     cli::cli_text(c(
       "Calculating retain parameter from top {.val {expect_cells}}",
       " UMI barcodes"
-      ))
+    ))
     retain <- .calculate_retain_parameter(sce, expect_cells = expect_cells)
     cli::cli_alert("Retaining all barcodes with \u2265 {.val {retain}} UMIs")
-
   }
 
   cli::cli_h2("Running Simulations")
@@ -190,13 +188,12 @@ find_cells <- function(sce,
 }
 
 #' helper fn - Kolmogorov-Smirnov Uniformity Test
-#' @importFrom uniftest kolmogorov.unif.test
 #' @importFrom cli cli_alert_warning rule
 #' @export
 #' @keywords internal
 .perform_ks_uniformity_test <- function(x, nrepl = 1000) {
   cat(cli::rule("Evaluating Distribution Uniformity", line = 1), "\r\n")
-  unif_test <- uniftest::kolmogorov.unif.test(x, nrepl = nrepl, k = 0)
+  unif_test <- .uniftest(x)
 
   if (unif_test$p.value <= 0.05) {
     cli::cli_alert_warning(c(
@@ -225,7 +222,8 @@ find_cells <- function(sce,
 
   p <- ggplot(data = dt) +
     geom_histogram(aes(x = pval),
-                   breaks = brx, fill = "grey80", colour = "black") +
+      breaks = brx, fill = "grey80", colour = "black"
+    ) +
     xlab("P-Value") +
     ylab("Frequency") +
     theme_bw() +

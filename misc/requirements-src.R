@@ -11,7 +11,6 @@ pkgs <- c(
 'bib2df',
 'paletteer',
 'WebGestaltR',
-'uniftest',
 'Matrix.utils',
 #'rliger',
 'qs',

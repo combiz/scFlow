@@ -40,7 +40,7 @@ Suggests:
     scFlowExamples,
     BiocStyle
 Language: en-US
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1
 biocViews:
 Imports: 
     purrr,
@@ -93,7 +93,6 @@ Imports:
     gdtools,
     WebGestaltR,
     graphite,
-    uniftest,
     batchelor,
     DelayedMatrixStats,
     Matrix.utils,
@@ -136,5 +135,6 @@ Remotes:
     theislab/kBET,
     neurogenomics/scFlowExamples,
     neurogenomics/scFlowData,
-    jlmelville/uwot
+    jlmelville/uwot,
+    ropensci/bib2df
 VignetteBuilder: knitr
