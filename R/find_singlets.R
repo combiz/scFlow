@@ -26,9 +26,10 @@ find_singlets <- function(sce,
     stop(cli::cli_alert_danger("A SingleCellExperiment is required."))
   }
 
-  if(sce@metadata$scflow_steps$singlets_annotated == 1) {
+  if (sce@metadata$scflow_steps$singlets_annotated == 1) {
     warning(cli::cli_alert_danger(
-      "find_singlets was previously run on this data. Re-running."))
+      "find_singlets was previously run on this data. Re-running."
+    ))
   }
 
   singlet_find_methods_l <- list()
@@ -38,8 +39,8 @@ find_singlets <- function(sce,
     valid_methods <- paste(names(singlet_find_methods_l), collapse = ", ")
     stop(cli::cli_alert_danger(c(
       "{'{singlet_find_method}'} is not a valid singlet finding method. ",
-      "Try: {'{valid_methods}'}."))
-    )
+      "Try: {'{valid_methods}'}."
+    )))
   }
 
   if (singlet_find_method == "doubletfinder") {
@@ -50,10 +51,10 @@ find_singlets <- function(sce,
       var_features = 2000,
       doublet_rate = 0,
       dpk = 8, # estimated doublets per thousand cells
-      num_cores = max(1, future::availableCores()-2)
+      num_cores = max(1, future::availableCores() - 2)
     )
     inargs <- list(...)
-    fargs[names(inargs)] <- inargs #override defaults if provided
+    fargs[names(inargs)] <- inargs # override defaults if provided
     sce <- run_doubletfinder(
       sce,
       pK = fargs$pK,
@@ -66,14 +67,13 @@ find_singlets <- function(sce,
     )
   }
   ## this approach results in a bug with ScaleData
-  #sce <- do.call(
+  # sce <- do.call(
   #  singlet_find_methods_l[[singlet_find_method]],
   #  c(list(sce = sce), fargs)
-  #)
+  # )
 
   sce@metadata$scflow_steps$singlets_annotated <- 1
   sce@metadata$scflow_steps$singlets_method <- singlet_find_method
 
   return(sce)
-
 }

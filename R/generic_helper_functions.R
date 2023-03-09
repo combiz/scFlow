@@ -7,7 +7,7 @@
 #' @family helper functions
 #'
 #' @keywords internal
-.with_env <- function(f, e=parent.frame()) {
+.with_env <- function(f, e = parent.frame()) {
   stopifnot(is.function(f))
   environment(f) <- e
   f
@@ -69,9 +69,9 @@
 #'
 #' @keywords internal
 .clean_quosure_env <- function(quo,
-                           drop_vars = c(
-                             "sce"
-                           )) {
+                               drop_vars = c(
+                                 "sce"
+                               )) {
   if ("quosure" %in% class(quo)) {
     quo_env <- rlang::quo_get_env(quo)
     drop_idx <- purrr::map_lgl(names(quo_env), ~ any(drop_vars %in% .))
@@ -94,19 +94,17 @@
 #'
 #' @keywords internal
 .clean_ggplot_quosures <- function(p, ...) {
-
   fargs <- list(...)
   if ("ggplot" %in% class(p)) {
-    # clean plot_env
-    #p$plot_env <- rlang::new_environment()
     # clean mapping quosures
     p$mapping <- lapply(p$mapping, .clean_quosure_env)
     # clean layer closures
     for (layer in seq_along(p$layers)) {
       p$layers[[layer]]$mapping <- lapply(
-        p$layers[[layer]]$mapping, function(x)
-        do.call(.clean_quosure_env, c(list(quo = x), fargs))
-        )
+        p$layers[[layer]]$mapping, function(x) {
+          do.call(.clean_quosure_env, c(list(quo = x), fargs))
+        }
+      )
     }
   }
   return(p)
@@ -146,17 +144,17 @@
   # turn in to character string in scientific notation
   l <- format(l, scientific = TRUE)
   # prevent 0 x xx
-  l <- gsub("0e\\+00","0",l)
+  l <- gsub("0e\\+00", "0", l)
   # quote the part before the exponent to keep all the digits
   l <- gsub("^(.*)e", "'\\1'e", l)
   # remove + after exponent, if exists. E.g.: (3x10^+2 -> 3x10^2)
-  l <- gsub("e\\+","e",l)
+  l <- gsub("e\\+", "e", l)
   # turn the 'e+' into plotmath format
   l <- gsub("e", "%*%10^", l)
   # convert 1x10^ or 1.000x10^ -> 10^
   l <- gsub("\\'1[\\.0]*\\'\\%\\*\\%", "", l)
   # return this as an expression
-  parse(text=l)
+  parse(text = l)
 }
 
 ################################################################################
@@ -165,43 +163,45 @@
 #' @family helper
 #'
 #' @keywords internal
-.uniftest <- function (x, nrepl = 2000, k = 0) {
+.uniftest <- function(x, nrepl = 2000, k = 0) {
   DNAME <- deparse(substitute(x))
   l <- 0
   n <- length(x)
   if (k == 1) {
-    d <- max(c(1:n)/(n + 1) - x)
+    d <- max(c(1:n) / (n + 1) - x)
     for (i in 1:nrepl) {
       z <- runif(n)
-      D <- max(c(1:n)/(n + 1) - z)
-      if (D > d)
-        l = l + 1
+      D <- max(c(1:n) / (n + 1) - z)
+      if (D > d) {
+        l <- l + 1
+      }
     }
   }
   if (k == 0) {
-    d <- max(abs(c(1:n)/(n + 1) - x))
+    d <- max(abs(c(1:n) / (n + 1) - x))
     for (i in 1:nrepl) {
       z <- runif(n)
-      D <- max(abs(c(1:n)/(n + 1) - z))
-      if (D > d)
-        l = l + 1
+      D <- max(abs(c(1:n) / (n + 1) - z))
+      if (D > d) {
+        l <- l + 1
+      }
     }
   }
   if (k == -1) {
-    d <- max(x - c(1:n)/(n + 1))
+    d <- max(x - c(1:n) / (n + 1))
     for (i in 1:nrepl) {
       z <- runif(n)
-      D <- max(z - c(1:n)/(n + 1))
-      if (D > d)
-        l = l + 1
+      D <- max(z - c(1:n) / (n + 1))
+      if (D > d) {
+        l <- l + 1
+      }
     }
   }
-  p.value <- l/nrepl
-  RVAL <- list(statistic = c(D = d), p.value = p.value, method = "Kolmogorov-Smirnov test for uniformity",
-               data.name = DNAME)
+  p.value <- l / nrepl
+  RVAL <- list(
+    statistic = c(D = d), p.value = p.value, method = "Kolmogorov-Smirnov test for uniformity",
+    data.name = DNAME
+  )
   class(RVAL) <- "htest"
   return(RVAL)
 }
-
-
-

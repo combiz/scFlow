@@ -52,10 +52,9 @@ find_cells <- function(sce,
     cli::cli_text(c(
       "Calculating retain parameter from top {.val {expect_cells}}",
       " UMI barcodes"
-      ))
+    ))
     retain <- .calculate_retain_parameter(sce, expect_cells = expect_cells)
     cli::cli_alert("Retaining all barcodes with \u2265 {.val {retain}} UMIs")
-
   }
 
   cli::cli_h2("Running Simulations")
@@ -223,7 +222,8 @@ find_cells <- function(sce,
 
   p <- ggplot(data = dt) +
     geom_histogram(aes(x = pval),
-                   breaks = brx, fill = "grey80", colour = "black") +
+      breaks = brx, fill = "grey80", colour = "black"
+    ) +
     xlab("P-Value") +
     ylab("Frequency") +
     theme_bw() +
