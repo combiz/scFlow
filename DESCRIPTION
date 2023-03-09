@@ -40,7 +40,7 @@ Suggests:
     scFlowExamples,
     BiocStyle
 Language: en-US
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.2
 biocViews:
 Imports: 
     purrr,

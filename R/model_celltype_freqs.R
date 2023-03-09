@@ -6,8 +6,8 @@
 #' @param celltype_var the colData variable specifying celltype or subtype
 #' @param dependent_var the name of the colData variable for contrasts
 #' @param ref_class the class of dependent_var used as reference
-#' @param var_order Optional re-ordering of subset_group factor levels. Default 
-#' NULL. 
+#' @param var_order Optional re-ordering of subset_group factor levels. Default
+#' NULL.
 #' @param ... Additional arguments
 #'
 #' @return results_l a list of results
@@ -49,7 +49,6 @@ model_celltype_freqs <- function(sce,
   df <- cbind(df, covariates)
 
   cli::cli_h2("Fitting Dirichlet Model")
-  #model_formula <- stats::as.formula(sprintf("counts ~ %s | 1", dependent_var))
   model_formula <- stats::as.formula(sprintf("counts ~ %s", dependent_var))
   cli::cli_alert(
     "Fitting model: {.var {scFlow:::.formula_to_char(model_formula)}}"

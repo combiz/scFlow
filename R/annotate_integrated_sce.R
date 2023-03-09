@@ -15,7 +15,6 @@
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom tools file_path_sans_ext
 #' @importFrom formattable formattable icontext
-#' @importFrom nVennR plotVenn
 #' @importFrom UpSetR upset fromList
 #' @importFrom kBET kBET
 #' @export
@@ -33,15 +32,6 @@ annotate_integrated_sce <- function(sce,
     ),
     "\r\n"
   )
-  cli::cli_text("Generating Venn diagram for selected variable genes...")
-  if (length(sce@metadata$dataset_integration$var.genes_per_dataset) < 11) {
-    venn_sets <- sce@metadata$dataset_integration$var.genes_per_dataset
-    my_nv <- nVennR::plotVenn(venn_sets)
-    my_nv <- nVennR::plotVenn(nVennObj = my_nv)
-    sce@metadata$dataset_integration$var.genes_plots$venn <- my_nv
-  } else {
-    print("The number of datasets is too high for a Venn diagram.")
-  }
 
   cli::cli_text("Generating Upset chart for selected variable genes...")
 
@@ -96,7 +86,7 @@ annotate_integrated_sce <- function(sce,
       replace = FALSE
     )
     batch_estimate_pca <- kBET::kBET(data[subset_id, ], batch[subset_id],
-                                     plot = FALSE
+                                     plot = FALSE, do.pca = FALSE
     )
     plot.data <- data.frame(
       class = rep(c("observed", "expected"),
@@ -135,7 +125,7 @@ annotate_integrated_sce <- function(sce,
       replace = FALSE
     )
     batch_estimate_liger <- kBET::kBET(data[subset_id, ], batch[subset_id],
-                                       plot = FALSE
+                                       plot = FALSE, do.pca = FALSE
     )
     plot.data <- data.frame(
       class = rep(c("observed", "expected"),

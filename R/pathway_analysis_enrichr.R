@@ -29,19 +29,15 @@
 #' @export
 pathway_analysis_enrichr <- function(gene_file = NULL,
                                      enrichment_database = c(
-                                       "GO_Molecular_Function_2018",
-                                       "GO_Cellular_Component_2018",
-                                       "GO_Biological_Process_2018",
-                                       "MGI_Mammalian_Phenotype_2017",
-                                       "ChEA_2016",
-                                       "KEGG_2019_Human",
-                                       "WikiPathways_2019_Human",
-                                       "Reactome_2016",
-                                       "Allen_Brain_Atlas_down",
-                                       "Allen_Brain_Atlas_up"
+                                       "GO_Molecular_Function_2021",
+                                       "GO_Cellular_Component_2021",
+                                       "GO_Biological_Process_2021",
+                                       "KEGG_2021_Human",
+                                       "WikiPathways_2021_Human",
+                                       "Reactome_2022"
                                      ),
                                      is_output = FALSE,
-                                     output_dir = ".") {
+                                     output_dir = getwd()) {
   assertthat::assert_that(
     !is.null(gene_file),
     msg = "No input gene list found!"
@@ -79,6 +75,16 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
     genes = as.character(interest_gene$gene),
     databases = enrichment_database
   )
+
+  res <- purrr::discard(res, function(x) {
+    dim(x)[1] == 0
+  })
+
+  enrichr_res <- lapply(names(res), function(x){
+    dt <- res[[x]] %>%
+    mutate(database = x)})
+
+  names(enrichr_res) <- names(res)
 
   enrichr_res <- purrr::map(
     res,
@@ -161,28 +167,23 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
 #' Format result table
 #' @keywords internal
 
-.format_res_table_enrichr <- function(res) {
-  res_table <- data.frame(
-    geneset = .get_geneset(res$Term),
-    description = gsub(" *\\(.*?\\) *", "", res$Term),
-    size = as.numeric(gsub(".*\\/", "", res$Overlap)),
-    overlap = as.numeric(gsub("\\/.*", "", res$Overlap)),
-    odds_ratio = round(res$Odds.Ratio, 2),
-    pct_overlap = NA,
-    pval = as.numeric(format(res$P.value, format = "e", digits = 2)),
-    FDR = as.numeric(format(res$Adjusted.P.value, format = "e", digits = 2))
-  )
 
-  res_table$pct_overlap <- round((res_table$overlap/res_table$size)*100, 2)
+.format_res_table_enrichr <- function(res) {
+  res_table <- res %>% as.data.frame() %>%
+    dplyr::transmute(
+      geneset = .get_geneset(Term),
+      description = gsub("\\(GO:.*|Homo sapiens.R-HSA.*|WP.*" , "", Term),
+      size = as.numeric(gsub(".*\\/", "", Overlap)),
+      overlap = as.numeric(gsub("\\/.*", "", Overlap)),
+      odds_ratio = round(Odds.Ratio, 2),
+      pval = as.numeric(format(P.value, format = "e", digits = 2)),
+      FDR = as.numeric(format(Adjusted.P.value, format = "e", digits = 2))
+    )
 
   res_table$geneset <- ifelse(is.na(res_table$geneset),
     res_table$description,
     res_table$geneset
   )
-
-  res_table <- res_table %>% dplyr::mutate("-Log10(FDR)" = as.numeric(
-    format(-log10(FDR), format = "e", digits = 2)
-  ))
 
   res_table$genes <- res$Genes
 
@@ -192,21 +193,22 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
 }
 
 .get_geneset <- function(term) {
-  geneset <- purrr::map_chr(
-    as.character(term),
-    ~ strsplit(., "(", fixed = TRUE)[[1]][2]
-  )
-  geneset <- gsub(")", "", geneset, fixed = TRUE)
+
+  geneset <- purrr::map_chr(as.character(term),
+                            ~ str_extract(. , "GO:.*|R-HSA.*|WP.*"))
+  geneset <- gsub("\\)|Homo sapiens", "", geneset)
+  geneset <- as.character(geneset)
   return(geneset)
 }
+
 
 #' dotplot for ORA. x axis perturbation, y axis description
 #' @importFrom stats reorder
 #' @keywords internal
 .dotplot_enrichr <- function(dt) {
-  dt <- na.omit(dt)
   dt <- dt %>%
-    dplyr::top_n(., 10, odds_ratio)
+    dplyr::filter(!is.na(FDR)) %>%
+    dplyr::top_n(., min(nrow(.), 10), -pval)
   dt$description <- stringr::str_wrap(dt$description, 40)
   p <- ggplot2::ggplot(dt, aes(
     x = odds_ratio,
@@ -229,11 +231,11 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
     cowplot::theme_cowplot() +
     cowplot::background_grid()
   if ( nrow(dt) < 4 ){
-    p <- p + scale_size(name = "size", range = c(3, 8)) 
+    p <- p + scale_size(name = "size", range = c(3, 8))
   } else {
-    p <- p + 
+    p <- p +
       scale_size_binned(name = "Geneset size", range = c(3, 8),
-                        n.breaks = 4, nice.breaks = TRUE) 
+                        n.breaks = 4, nice.breaks = TRUE)
   }
   return(p)
 }

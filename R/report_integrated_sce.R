@@ -27,16 +27,14 @@ report_integrated_sce <- function(sce,
     "Generating Report for Dataset Integration, Dimension Reduction, and Clustering",
     line = 2),
     "\r\n")
-  metadata_tmp_path <- file.path(tempdir(), "metadata.qs")
+  metadata_tmp_path <- file.path(report_folder_path, "metadata.qs")
   cli::cli_text("Writing temp files for report...")
   qs::qsave(
     sce@metadata,
     metadata_tmp_path
   )
-  krd <- file.path(tempdir(), "krdqc")
-  intd <- file.path(tempdir(), "idqc")
-  dir.create(krd, showWarnings = FALSE)
-  dir.create(intd, showWarnings = FALSE)
+
+
   cli::cli_text("Generating Dataset Integration, Dimension Reduction, and Clustering report...")
   rmarkdown::render(
     system.file(
@@ -48,13 +46,16 @@ report_integrated_sce <- function(sce,
     ),
     output_dir = report_folder_path,
     output_file = report_file,
-    knit_root_dir = krd,
-    intermediates_dir = intd,
+    knit_root_dir = report_folder_path,
+    intermediates_dir = report_folder_path,
     quiet = TRUE
   )
   cli::cli_text(c(
     "Report successfully generated: ",
     "{.file {file.path(report_folder_path, 'integrate_scFlow.html')}}")
   )
+
+  unlink(metadata_tmp_path)
+
   return(sce)
 }

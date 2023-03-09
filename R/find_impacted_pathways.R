@@ -13,7 +13,7 @@
 #' genes.
 #' @param organism Organism name. hsapiens for Homo sapiens,
 #' mmusculus for Mus musculus
-#' @param enrichment_tool Enrichment tool to use. WebGestaltR, ROntoTools and
+#' @param enrichment_tool Enrichment tool to use. WebGestaltR and
 #' enrichR is implemented. Use one or more of the tools.
 #' @param enrichment_database Name of the database for enrichment. User can
 #' specify one or more database names. Check [scFlow::list_databases()] for
@@ -31,7 +31,8 @@
 #'
 #' @importFrom WebGestaltR listGeneSet
 #' @importFrom enrichR listEnrichrDbs
-#' @importFrom dplyr %>% filter pull
+#' @importFrom dplyr filter pull
+#' @importFrom magrittr %>%
 #'
 #' @export
 find_impacted_pathways <- function(gene_file = NULL,
@@ -49,7 +50,7 @@ find_impacted_pathways <- function(gene_file = NULL,
                                      "Wikipathway"
                                    ),
                                    is_output = FALSE,
-                                   output_dir = ".",
+                                   output_dir = getwd(),
                                    ...) {
   fargs <- list()
   inargs <- list(...)
@@ -85,34 +86,6 @@ find_impacted_pathways <- function(gene_file = NULL,
       res$enrichR$metadata$result <- FALSE
     }
     cli::cli_alert_success("enrichR analysis completed")
-  }
-
-  if ("ROntoTools" %in% enrichment_tool) {
-    cli::cli_h2("Starting enrichment analysis by ROntoTools")
-    res[["ROntoTools"]] <- pathway_analysis_rontotools(
-      gene_file = gene_file,
-      reference_file = reference_file,
-      enrichment_database = temp_dbs$ROntoTools %>%
-        dplyr::filter(db_alias %in% enrichment_database) %>%
-        dplyr::pull(name) %>%
-        as.character(),
-      is_output = is_output,
-      output_dir = output_dir
-    )
-    res$ROntoTools$metadata$enrichment_database_link <- temp_dbs$ROntoTools %>%
-      dplyr::filter(db_alias %in% enrichment_database) %>%
-      dplyr::pull(link) %>%
-      as.character()
-    names(res$ROntoTools$metadata$enrichment_database_link) <- tolower(
-      temp_dbs$ROntoTools %>%
-        dplyr::filter(db_alias %in% enrichment_database) %>%
-        dplyr::pull(db_alias) %>%
-        as.character()
-    )
-    if (length(setdiff(names(res$ROntoTools), "metadata")) == 0) {
-      res$ROntoTools$metadata$result <- FALSE
-    }
-    cli::cli_alert_success("ROntoTools analysis completed")
   }
 
   if ("WebGestaltR" %in% enrichment_tool) {
@@ -164,6 +137,8 @@ find_impacted_pathways <- function(gene_file = NULL,
 #'
 #' @importFrom WebGestaltR listGeneSet
 #' @importFrom enrichR listEnrichrDbs
+#' @importFrom dplyr filter mutate
+#' @importFrom magrittr %>%
 #'
 #' @export
 
@@ -171,65 +146,48 @@ list_databases <- function() {
   temp_dbs <- list()
 
   temp_dbs[["WebGestaltR"]] <- WebGestaltR::listGeneSet()
-  temp_dbs$WebGestaltR <- temp_dbs$WebGestaltR[c(1, 3, 5, 7:10), ]
-  temp_dbs$WebGestaltR$db_alias <- c(
-    "GO_Biological_Process",
-    "GO_Cellular_Component",
-    "GO_Molecular_Function",
-    "KEGG",
-    "Panther",
-    "Reactome",
-    "Wikipathway"
-  )
-  temp_dbs$WebGestaltR$link <- c(
-    rep("http://amigo.geneontology.org/amigo/term/", 3),
-    "https://www.genome.jp/dbget-bin/www_bget?pathway:",
-    "http://www.pantherdb.org/pathway/pathwayDiagram.jsp?catAccession=",
-    "https://reactome.org/content/detail/",
-    "https://www.wikipathways.org/index.php/Pathway:"
-  )
+  temp_dbs$WebGestaltR <- temp_dbs$WebGestaltR %>%
+    dplyr::filter(name %in% c("geneontology_Biological_Process_noRedundant",
+                              "geneontology_Cellular_Component_noRedundant",
+                              "geneontology_Molecular_Function_noRedundant",
+                              "pathway_KEGG",
+                              "pathway_Reactome",
+                              "pathway_Wikipathway")) %>%
+    dplyr::mutate(db_alias = c("GO_Biological_Process",
+                               "GO_Cellular_Component",
+                               "GO_Molecular_Function",
+                               "KEGG",
+                               "Reactome",
+                               "Wikipathway"),
+                  link = c(
+                    rep("http://amigo.geneontology.org/amigo/term/", 3),
+                    "https://www.genome.jp/dbget-bin/www_bget?pathway:",
+                    "https://reactome.org/content/detail/",
+                    "https://www.wikipathways.org/index.php/Pathway:")
+                  )
 
   eval(parse(text = "enrichR:::.onAttach()")) # R CMD check workaround
 
   temp_dbs[["enrichR"]] <- enrichR::listEnrichrDbs()
-  temp_dbs$enrichR <- temp_dbs$enrichR[
-    c(130, 131, 132, 148, 102, 93, 145, 101, 104, 49, 53),
-  ]
-  temp_dbs$enrichR$db_alias <- c(
-    "GO_Biological_Process",
-    "GO_Cellular_Component",
-    "GO_Molecular_Function",
-    "KEGG",
-    "Panther",
-    "Reactome",
-    "Wikipathway",
-    "NCI",
-    "ChEA_2016",
-    "Allen_Brain_Atlas_up",
-    "Allen_Brain_Atlas_down"
-  )
-  temp_dbs$enrichR$link <- c(
-    rep("http://amigo.geneontology.org/amigo/term/", 3),
-    "https://www.genome.jp/dbget-bin/www_bget?pathway:",
-    "http://www.pantherdb.org/pathway/pathwayDiagram.jsp?catAccession=",
-    "https://reactome.org/content/detail/",
-    "https://www.wikipathways.org/index.php/Pathway:",
-    rep(NA, 4)
-  )
-
-  temp_dbs[["ROntoTools"]] <- .listdb()
-  temp_dbs$ROntoTools$db_alias <- c(
-    "KEGG",
-    "NCI",
-    "Panther",
-    "Reactome"
-  )
-  temp_dbs$ROntoTools$link <- c(
-    "https://www.genome.jp/dbget-bin/www_bget?pathway:",
-    NA,
-    "http://www.pantherdb.org/pathway/pathwayDiagram.jsp?catAccession=",
-    "https://reactome.org/content/detail/"
-  )
+  temp_dbs$enrichR <- temp_dbs$enrichR %>%
+    dplyr::filter(libraryName %in% c("GO_Biological_Process_2021",
+                                    "GO_Cellular_Component_2021",
+                                    "GO_Molecular_Function_2021",
+                                    "KEGG_2021_Human",
+                                    "Reactome_2022",
+                                    "WikiPathway_2021_Human")) %>%
+    dplyr::mutate(db_alias = c("KEGG",
+                               "Wikipathway",
+                               "GO_Biological_Process",
+                               "GO_Cellular_Component",
+                               "GO_Molecular_Function",
+                               "Reactome"),
+                  link = c(
+                    "https://www.genome.jp/dbget-bin/www_bget?pathway:",
+                    "https://www.wikipathways.org/index.php/Pathway:",
+                    rep("http://amigo.geneontology.org/amigo/term/", 3),
+                    "https://reactome.org/content/detail/")
+                  )
 
   return(temp_dbs)
 }

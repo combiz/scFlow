@@ -11,13 +11,13 @@
 #' as input for differential expression. Column name should be gene.
 #' If not provided the human protein-coding genome will be used as background
 #' genes.
-#' @param organism default is human. From WebGestaltR supports 12 organisms, 
-#' common choices are "hsapiens" or "mmusculus". Users can use the function  
-#' [WebGestaltR::listOrganism()] to check available organisms. Users can also 
-#' input others to perform the enrichment analysis for other organisms not 
-#' supported by WebGestaltR. For other organisms, users need to provide the 
-#' functional categories, interesting list and reference list (for ORA method). 
-#' Because WebGestaltR does not perform the ID mapping for the other organisms, 
+#' @param organism default is human. From WebGestaltR supports 12 organisms,
+#' common choices are "hsapiens" or "mmusculus". Users can use the function
+#' [WebGestaltR::listOrganism()] to check available organisms. Users can also
+#' input others to perform the enrichment analysis for other organisms not
+#' supported by WebGestaltR. For other organisms, users need to provide the
+#' functional categories, interesting list and reference list (for ORA method).
+#' Because WebGestaltR does not perform the ID mapping for the other organisms,
 #' the above data should have the same ID type.
 #' @param enrichment_method Method of enrichment analysis.
 #' Either over-representation analysis (ORA) or (Gene set enrichment analysis)
@@ -66,7 +66,7 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     !is.null(gene_file),
     msg = "No input gene list found!"
   )
-  
+
   #"human" to "hsapiens" and "mouse" to "mmusculus"
   if(organism %in% c("human","mouse")){
     if(organism=="human")
@@ -74,7 +74,7 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     else
       organism <- "mmusculus"
   }
-    
+
 
   if (is.data.frame(gene_file)) {
     interest_gene <- gene_file
@@ -278,8 +278,6 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     FDR = as.numeric(format(res$FDR, format = "e", digits = 2))
   )
 
-  res_table <- res_table %>% dplyr::mutate("-Log10(FDR)" = -log10(FDR))
-
   res_table$genes <- res$userId
 
   res_table <- res_table[res_table$FDR <= 0.05, ]
@@ -304,9 +302,9 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
 #' dotplot for ORA. x axis enrichment_ratio, y axis description
 #' @keywords internal
 .dotplot_ora <- function(dt) {
-  dt <- na.omit(dt)
   dt <- dt %>%
-    top_n(., 10, enrichment_ratio)
+    dplyr::filter(!is.na(FDR)) %>%
+    dplyr::top_n(., min(nrow(.), 10), -pval)
   dt$description <- stringr::str_wrap(dt$description, 40)
   p <- ggplot2::ggplot(dt, aes(
     x = enrichment_ratio,
@@ -328,11 +326,11 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     )) + cowplot::theme_cowplot() +
     cowplot::background_grid()
   if ( nrow(dt) < 4 ){
-    p <- p + scale_size(name = "size", range = c(3, 8)) 
+    p <- p + scale_size(name = "size", range = c(3, 8))
   } else {
-    p <- p + 
+    p <- p +
       scale_size_binned(name = "Geneset size", range = c(3, 8),
-                        n.breaks = 4, nice.breaks = TRUE) 
+                        n.breaks = 4, nice.breaks = TRUE)
   }
   return(p)
 }
@@ -344,10 +342,11 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
 
 .barplot_gsea <- function(dt) {
   dt <- rbind(
-    dplyr::filter(dt, normalised_enrichment_ratio > 0)[1:10, ],
-    dplyr::filter(dt, normalised_enrichment_ratio < 0)[1:10, ]
+    dt %>% dplyr::filter(normalised_enrichment_ratio > 0, !is.na(FDR)) %>%
+      dplyr::top_n(., min(nrow(.), 10), -pval),
+  dt %>% dplyr::filter(normalised_enrichment_ratio < 0, !is.na(FDR)) %>%
+      dplyr::top_n(., min(nrow(.), 10), -pval)
   )
-  dt <- na.omit(dt)
   dt$description <- stringr::str_wrap(dt$description, 40)
 
   ggplot2::ggplot(dt, aes(

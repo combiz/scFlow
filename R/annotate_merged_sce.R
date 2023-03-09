@@ -12,6 +12,7 @@
 #' @family annotation functions
 #' @import ggplot2
 #' @importFrom SummarizedExperiment rowData colData
+#' @importFrom SingleCellExperiment reducedDimNames reducedDim
 #' @importFrom rmarkdown render
 #' @importFrom purrr map_lgl
 #' @importFrom tools file_path_sans_ext
@@ -182,6 +183,7 @@ annotate_merged_sce <- function(sce,
   sce@metadata$merge_qc_params$plot_vars <- plot_vars
   sce@metadata$merge_qc_params$unique_id_var <- unique_id_var
   sce@metadata$merge_qc_params$facet_vars <- facet_vars
+  sce@metadata$total_n_cells <- dim(sce)[2]
 
   cli::cli_alert_success("Done! \r\n")
 
@@ -238,6 +240,7 @@ annotate_merged_sce <- function(sce,
 #' @importFrom ggdendro ggdendrogram
 #' @importFrom ggpubr ggarrange
 #' @importFrom stats dist
+#' @importFrom magrittr %>%
 #' @keywords internal
 .plot_heatmap_of_pbsce <- function(pbsce, binarize = TRUE, trim_name = TRUE) {
 

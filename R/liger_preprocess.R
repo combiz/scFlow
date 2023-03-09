@@ -4,7 +4,7 @@
 #' Split merged object into multiple sce objects and extract sparse matrices:
 #' @param sce SingleCellExperiment object or merged objects
 #' @param k Inner dimension of factorization (number of factors).
-#' @param unique_id_var the colData variable identifying unique samples. 
+#' @param unique_id_var the colData variable identifying unique samples.
 #' Default is "manifest".
 #'
 #' Make a Liger object:
@@ -29,18 +29,16 @@
 #'
 #' Remove cells/genes with no expression across any genes/cells:
 #' @param use_cols Treat each column as a cell (default TRUE)
-#' @param num_cores Number of cores used on user's machine to run function. 
-#' Default fouynd by `future::availableCores()`
+#' @param num_cores Number of cores used on user's machine to run function.
+#' Default is 1.
 #' @param ... Additional arguments.
 #'
 #' @return liger preprocessed object.
 #'
 #' @importFrom rliger createLiger normalize selectGenes
 #' @importFrom rliger scaleNotCenter removeMissingObs
-#' @importFrom parallel mclapply makeCluster stopCluster
+#' @importFrom parallel mclapply
 #' @importFrom cli cli_alert
-#' @importFrom doParallel registerDoParallel
-#' @importFrom foreach foreach %dopar%
 #'
 #' @export
 
@@ -49,11 +47,11 @@ liger_preprocess <- function(sce,
                              unique_id_var = "manifest",
                              take_gene_union = F,
                              remove.missing = T,
-                             num_genes = 3000,
+                             num_genes = 2000,
                              combine = "union",
                              capitalize = F,
                              use_cols = T,
-                             num_cores = future::availableCores(),
+                             num_cores = 1,
                              ...) {
   fargs <- as.list(environment())
   fargs <- fargs[fargs = c(
@@ -72,26 +70,18 @@ liger_preprocess <- function(sce,
   # Split merged sce object into multiple objects and extract sparse matrices
 
   cli::cli_alert("Extracting sparse matrices")
-  #mat_list <- sapply(
-  #  split(sce$barcode, sce[[unique_id_var]]),
-  #  function(cells) {
-  #    sce@assays@data$counts[, as.character(cells)]
-  #  }
-  #)
-  #names(mat_list) <- paste0("dataset_", names(mat_list))
 
   id <- as.character(unique(sce[[unique_id_var]]))
-  cl <- parallel::makeCluster(num_cores)
-  doParallel::registerDoParallel(cl)
-  mat_list <- foreach::foreach(
-    i = seq_len(length(id)), .packages = "SingleCellExperiment"
-  ) %dopar% {
-    sce@assays@data$counts[, sce[[unique_id_var]] == id[i]]
-  }
-  parallel::stopCluster(cl)
-  
+
+  mat_list <- list()
+
+  for(i in id){
+    tmp <- subset(sce, ,get(unique_id_var) == i)
+    mat_list[[i]] <- tmp@assays@data$counts
+    }
+
   names(mat_list) <- paste0("dataset_", id)
-  
+
   # Make a Liger object. Pass in the sparse matrix.
   cli::cli_alert("Creating LIGER object")
   ligerex <- rliger::createLiger(

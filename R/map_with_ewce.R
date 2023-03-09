@@ -16,7 +16,7 @@
 #' @family clustering and dimensionality reduction
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom Matrix Matrix
-#' @importFrom EWCE generate.celltype.data
+#' @importFrom EWCE generate_celltype_data
 #' @importFrom assertthat assert_that
 #' @importFrom dplyr rename inner_join
 #' @importFrom plyr adply
@@ -59,7 +59,7 @@ map_celltypes_sce <- function(sce,
 
   annotLevels <- list(level1class = sce_subset[[clusters_colname]])
   message("generating ctd with ewce")
-  ctd <- EWCE::generate.celltype.data(exp = mat,
+  ctd <- EWCE::generate_celltype_data(exp = mat,
                                       annotLevels = annotLevels,
                                       groupName = "ctd",
                                       savePath=savePath)
@@ -196,7 +196,7 @@ map_celltypes_sce <- function(sce,
 #' @return sce a SingleCellExperiment object annotated with sample metadata
 #' @author Nathan Skene / Combiz Khozoie
 #' @family clustering and dimensionality reduction
-#' @importFrom EWCE bootstrap.enrichment.test
+#' @importFrom EWCE bootstrap_enrichment_test
 #' @importFrom purrr pmap
 #' @importFrom dplyr rename
 #' @importFrom magrittr %>%
@@ -227,7 +227,7 @@ map_celltypes_sce <- function(sce,
       exprPercentile = 0.9)$x_most_specific
 
     mostSpecificGenes <- mostSpecificGenes[!is.na(mostSpecificGenes)]
-    full_results <- EWCE::bootstrap.enrichment.test(
+    full_results <- EWCE::bootstrap_enrichment_test(
       sct_data = ctd,
       hits = mostSpecificGenes,
       bg = rownames(ctdToMap[[1]]$specificity),
