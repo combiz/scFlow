@@ -189,7 +189,9 @@ NathanSkene/One2One \
 hhoeflin/hdf5r \
 mojaveazure/loomR \
 ropensci/bib2df \
-cvarrichio/Matrix.utils
+cvarrichio/Matrix.utils \
+neurogenomics/scFlowExamples \
+neurogenomics/scFlowData
 
 ## Install scFlow package
 # Copy description
