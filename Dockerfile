@@ -100,7 +100,7 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/*
 
 
-RUN install2.r -e -r http://cran.rstudio.com/ \
+RUN install2.r -e \
 argparse \
 assertthat \
 BiocManager \
