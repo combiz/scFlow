@@ -9,6 +9,9 @@ jobs:
   R-CMD-check:
     name: R-CMD-check
     runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GIT_TOKEN }}
+      RGL_USE_NULL: TRUE
     steps:
       - uses: actions/checkout@v2
       - name: Setup R
