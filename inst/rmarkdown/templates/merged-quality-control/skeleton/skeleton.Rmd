@@ -69,7 +69,7 @@ print(metadata$pseudobulk_plots$combined_heatmap)
 </div>
 
 ## Cell Numbers Plot
-The number of cells retained per sample ("_`r metadata$merge_qc_params$unique_id_var`_") after quality-control. Samples which contribute relatively few cells to the study may require quality-control parameter optimization. In some cases, it may be preferable to drop such problematic samples from the study entirely. A total of ("_`r metadata$total_n_cells`_") cells were retained in the merge `sce`. 
+The number of cells retained per sample ("_`r metadata$merge_qc_params$unique_id_var`_") after quality-control. Samples which contribute relatively few cells to the study may require quality-control parameter optimization. In some cases, it may be preferable to drop such problematic samples from the study entirely. A total of _`r metadata$total_n_cells`_ cells were retained in the merge `sce`. 
 
 <div class = "basicfig">
 ```{r results='asis', fig.align="center", fig.width=10, fig.height=9, fig.cap = "<b>Figure: Number of cells per sample post-QC.</b>.",  echo=FALSE}

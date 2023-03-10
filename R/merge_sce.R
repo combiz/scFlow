@@ -132,7 +132,7 @@ merge_sce <- function(sce_l, ensembl_mapping_file = NULL,
     )
     mat <- rbind(SingleCellExperiment::counts(sce), zeros_mat)
     mat <- mat[order(rownames(mat)), ]
-    mat <- as(mat, "dgTMatrix")
+    mat <- as(mat, "TsparseMatrix")
 
     newsce <- SingleCellExperiment::SingleCellExperiment(
       assays = list(counts = mat),
@@ -146,7 +146,7 @@ merge_sce <- function(sce_l, ensembl_mapping_file = NULL,
   } else {
     newsce <- sce
     SingleCellExperiment::counts(sce) <-
-      as(SingleCellExperiment::counts(sce), "dgTMatrix")
+      as(SingleCellExperiment::counts(sce), "TsparseMatrix")
   }
 
   SummarizedExperiment::rowData(newsce)$ensembl_gene_id <-

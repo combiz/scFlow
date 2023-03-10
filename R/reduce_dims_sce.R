@@ -104,20 +104,29 @@ reduce_dims_sce <- function(sce,
   cds <- .sce_to_cds(sce)
 
   cli::cli_h2("Computing Principal Component Analysis (PCA)")
-  if (!is.null(vars_to_regress_out)) {
-    message(sprintf("Regressing out: %s", res_mod_formula_str))
-  }
+
   cds <- monocle3::preprocess_cds(
     cds,
     num_dim = pca_dims
   )
-  cds <- monocle3::align_cds(
-    cds,
-    residual_model_formula_str = res_mod_formula_str
-  )
 
-  SingleCellExperiment::reducedDim(sce, "PCA") <-
-    SingleCellExperiment::reducedDim(cds, "Aligned")
+  if (!is.null(vars_to_regress_out)) {
+    message(sprintf("Regressing out: %s", res_mod_formula_str))
+
+    cds <- monocle3::align_cds(
+      cds,
+      residual_model_formula_str = res_mod_formula_str
+    )
+
+    SingleCellExperiment::reducedDim(sce, "PCA") <-
+      SingleCellExperiment::reducedDim(cds, "Aligned")
+
+  } else {
+
+    message("No variable to regress out!")
+  }
+
+
   cli::cli_alert_success("{.strong PCA} was completed successfully")
 
   for (reddim_method in reduction_methods[!reduction_methods == "PCA"]) {
