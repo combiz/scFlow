@@ -167,7 +167,7 @@ tidyverse \
 UpSetR \
 utils \
 vroom \
-WebGestaltR \
+WebGestaltR
 
 RUN R -e "require(devtools)"
 RUN R -e "install_version('roxygen2', version = '7.2.2', dependencies= T)"
