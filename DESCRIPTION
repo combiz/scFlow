@@ -115,8 +115,7 @@ Imports:
     UpSetR (>= 1.4.0),
     utils (>= 4.2.1),
     uwot (>= 0.1.14.9000),
-    WebGestaltR (>= 0.4.4),
-    XML
+    WebGestaltR (>= 0.4.4)
 Remotes:
     chris-mcginnis-ucsf/DoubletFinder,
     ropensci/plotly,
