@@ -12,6 +12,7 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GIT_TOKEN }}
       RGL_USE_NULL: TRUE
+
     steps:
       - uses: actions/checkout@v3
       - name: Setup R

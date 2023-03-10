@@ -2,7 +2,7 @@
 
 ## Use rstudio installs binaries from RStudio's RSPM service by default,
 ## Uses the latest stable ubuntu, R and Bioconductor versions. Created on unbuntu 20.04, R 4.0 and BiocManager 3.12
-FROM rocker/rstudio
+FROM rocker/rstudio:4.2
 
 
 ## Add packages dependencies
@@ -99,54 +99,78 @@ RUN apt-get update \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
-RUN install2.r -e \
-testthat \
-covr \
-knitr \
-purrr \
-stringr \
+
+RUN install2.r -e -r http://cran.rstudio.com/ \
+argparse \
+assertthat \
+BiocManager \
 cli \
-dplyr \
+covr \
+cowplot \
 data.table \
-R.utils \
-vroom \
-ggpubr \
-ggplot2 \
-rmarkdown \
-rlang \
+devtools \
+DirichletReg \
+dplyr \
+DT \
+english \
+enrichR \
+forcats \
+formattable \
 future \
 future.apply \
-plotly \
-threejs \
-plyr \
-assertthat \
-httr \
-prettydoc \
-leaflet \
 gdtools \
-formattable \
 ggdendro \
-ggridges \
-cowplot \
-forcats \
+ggplot2 \
+ggpubr \
 ggrepel \
+ggridges \
+Hmisc \
+httr \
+ids \
 igraph \
+knitr \
+leaflet \
+lme4 \
+magrittr \
+Matrix \
+paletteer \
+patchwork \
+plyr \
+prettydoc \
+purrr \
+qs \
+R.utils \
+RANN \
+rcmdcheck \
+Rcpp \
+RcppArmadillo \
+RcppEigen \
+RcppParallel \
+RcppProgress \
+remotes \
+rlang \
+rliger \
+rmarkdown \
+Rtsne \
+scales \
+sctransform \
+Seurat \
+snow \
+spelling \
+stringr \
+testthat \
+threejs \
 tibble \
 tidyr \
 tidyselect \
 tidyverse \
-ids \
-snow \
-remotes \
-rliger \
-argparse \
-Hmisc \
-rcmdcheck \
-devtools
+UpSetR \
+utils \
+vroom \
+WebGestaltR \
 
-## Install remaining packages from source
-COPY ./misc/requirements-src.R .
-RUN Rscript requirements-src.R
+RUN R -e "require(devtools)"
+RUN R -e "install_version('roxygen2', version = '7.2.2', dependencies= T)"
 
 ## Install Bioconductor packages
 COPY ./misc/requirements-bioc.R .
@@ -159,16 +183,16 @@ RUN Rscript -e 'requireNamespace("BiocManager"); BiocManager::install(ask=F);' \
 && Rscript requirements-bioc.R
 
 ## Install from GH the following
-RUN installGithub.r neurogenomics/EWCE \
-chris-mcginnis-ucsf/DoubletFinder \
+RUN installGithub.r chris-mcginnis-ucsf/DoubletFinder \
+ropensci/plotly \
+cole-trapnell-lab/monocle3 \
 theislab/kBET \
+jlmelville/uwot \
 NathanSkene/One2One \
 hhoeflin/hdf5r \
 mojaveazure/loomR \
-cole-trapnell-lab/monocle3 \
-neurogenomics/scFlowExamples \
-neurogenomics/scFlowData \
-ropensci/bib2df
+ropensci/bib2df \
+cvarrichio/Matrix.utils
 
 ## Install scFlow package
 # Copy description
