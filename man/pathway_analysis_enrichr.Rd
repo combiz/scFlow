@@ -6,12 +6,11 @@
 \usage{
 pathway_analysis_enrichr(
   gene_file = NULL,
-  enrichment_database = c("GO_Molecular_Function_2018", "GO_Cellular_Component_2018",
-    "GO_Biological_Process_2018", "MGI_Mammalian_Phenotype_2017", "ChEA_2016",
-    "KEGG_2019_Human", "WikiPathways_2019_Human", "Reactome_2016",
-    "Allen_Brain_Atlas_down", "Allen_Brain_Atlas_up"),
+  enrichment_database = c("GO_Molecular_Function_2021", "GO_Cellular_Component_2021",
+    "GO_Biological_Process_2021", "KEGG_2021_Human", "WikiPathways_2021_Human",
+    "Reactome_2022"),
   is_output = FALSE,
-  output_dir = "."
+  output_dir = getwd()
 )
 }
 \arguments{
@@ -36,15 +35,9 @@ Performs impacted pathway analysis with a list of genes.
 }
 \seealso{
 Other Impacted pathway analysis: 
-\code{\link{.dotplot_pe}()},
-\code{\link{.get_overlap_id}()},
-\code{\link{.listdb}()},
 \code{\link{find_impacted_pathways}()},
 \code{\link{list_databases}()},
-\code{\link{pathway_analysis_rontotools}()},
 \code{\link{pathway_analysis_webgestaltr}()},
-\code{\link{pathway_to_graph}()},
-\code{\link{plot_network}()},
 \code{\link{report_impacted_pathway}()}
 }
 \concept{Impacted pathway analysis}

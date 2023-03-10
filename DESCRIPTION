@@ -45,7 +45,7 @@ Suggests:
     scFlowExamples,
     BiocStyle
 Language: en-US
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3
 biocViews:
 Imports: 
     assertthat (>= 0.2.1),

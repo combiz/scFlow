@@ -63,6 +63,7 @@ use_r("reduce_dims_sce")
 use_r("cluster_sce")
 
 use_r("diffexp_models")
+use_r("volcano_plot")
 
 use_r("map_with_ewce")
 use_r("reduced_dimension_plots")

@@ -10,11 +10,11 @@ liger_preprocess(
   unique_id_var = "manifest",
   take_gene_union = F,
   remove.missing = T,
-  num_genes = 3000,
+  num_genes = 2000,
   combine = "union",
   capitalize = F,
   use_cols = T,
-  num_cores = future::availableCores(),
+  num_cores = 1,
   ...
 )
 }
@@ -56,7 +56,7 @@ Remove cells/genes with no expression across any genes/cells:}
 \item{use_cols}{Treat each column as a cell (default TRUE)}
 
 \item{num_cores}{Number of cores used on user's machine to run function.
-Default fouynd by \code{future::availableCores()}}
+Default is 1.}
 
 \item{...}{Additional arguments.}
 }
