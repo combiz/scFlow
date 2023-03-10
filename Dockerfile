@@ -162,7 +162,6 @@ RUN Rscript -e 'requireNamespace("BiocManager"); BiocManager::install(ask=F);' \
 RUN installGithub.r neurogenomics/EWCE \
 chris-mcginnis-ucsf/DoubletFinder \
 theislab/kBET \
-combiz/RANN.L1 \
 NathanSkene/One2One \
 hhoeflin/hdf5r \
 mojaveazure/loomR \
@@ -177,7 +176,7 @@ WORKDIR scFlow
 ADD . .
 
 # Run R CMD check - will fail with any errors or warnings
-Run Rscript -e 'devtools::check()'
+RUN Rscript -e "devtools::check()"
 # Install R package from source
 RUN Rscript -e "remotes::install_local()"
 RUN rm -rf *
