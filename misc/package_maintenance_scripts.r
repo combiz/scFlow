@@ -146,6 +146,7 @@ use_package("utils", min_version = "4.2.1")
 use_package("uwot", min_version = "0.1.14.9000")
 #use_package("vroom", min_version = "1.6.0")
 use_package("WebGestaltR", min_version = "0.4.4")
+use_package("XML")
 
 
 

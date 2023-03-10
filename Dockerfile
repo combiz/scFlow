@@ -1,6 +1,6 @@
 #LABEL maintainer="Combiz Khozoie, Ph.D. c.khozoie@imperial.ac.uk, Alan Murphy, a.murphy@imperial.ac.uk"
 
-## Use rstudio installs binaries from RStudio's RSPM service by default, 
+## Use rstudio installs binaries from RStudio's RSPM service by default,
 ## Uses the latest stable ubuntu, R and Bioconductor versions. Created on unbuntu 20.04, R 4.0 and BiocManager 3.12
 FROM rocker/rstudio
 
@@ -168,7 +168,8 @@ hhoeflin/hdf5r \
 mojaveazure/loomR \
 cole-trapnell-lab/monocle3 \
 neurogenomics/scFlowExamples \
-neurogenomics/scFlowData
+neurogenomics/scFlowData \
+ropensci/bib2df
 
 ## Install scFlow package
 # Copy description
