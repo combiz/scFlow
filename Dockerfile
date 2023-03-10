@@ -169,8 +169,8 @@ utils \
 vroom \
 WebGestaltR
 
-RUN R -e "require(devtools)"
-RUN R -e "install_version('roxygen2', version = '7.2.2', dependencies= T)"
+RUN Rscript -e "require(devtools)"
+RUN Rscript -e "install_version('roxygen2', version = '7.2.2', dependencies= T)"
 
 ## Install Bioconductor packages
 COPY ./misc/requirements-bioc.R .
