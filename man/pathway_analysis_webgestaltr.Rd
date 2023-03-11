@@ -17,9 +17,11 @@ pathway_analysis_webgestaltr(
 )
 }
 \arguments{
-\item{gene_file}{A data frame or the path of a .tsv file containing
-a list of genes, their fold-change, p-value and adjusted p-value. Column
-names should be gene, logFC, pval and padj respectively.}
+\item{gene_file}{For ORA, A data frame containing a list of significant genes
+with column name \code{gene} or a vector of significant genes. For GSEA a
+data frame containing a list of all genes in the analysis, their fold-change,
+p-value and adjusted p-value. Column names should be gene, logFC, pval and
+padj respectively.}
 
 \item{reference_file}{A data frame containing all the genes that were used
 as input for differential expression. Column name should be gene.

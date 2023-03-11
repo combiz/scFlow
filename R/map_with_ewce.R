@@ -7,10 +7,21 @@
 #' @param cells_to_sample total cells to consider for gene enrichment
 #' @param clusters_colname the name of the colData column with cluster number
 #' @param species specify species of analysis dataset
-#' @param savePath The directory where the generated ctd file produced by EWCE is saved. Default is a temp directory
-#' @param annotation_level The level(s) of annotation required. Integer for single CTD/level. For multi-CTD/level a named list, names are the CTD file names (without file extension) and elements are vectors of levels. Levels must present in the provided CTD(s). The first name and level will also be used as the primary annotation for automated reporting and will be returned in 'cluster_celltype' column data
-#' @param reps Number of bootstrap repetitions for EWCE. For publishable results set >=10000
-#' @param ctd_species Specify species used to build CTD if different from species. If multiple CTDs are used with differing species specify as a named list where names are the CTD file names (without file extension) and elements are the species. Must be 'human', 'mouse' or listed in EWCE::list_species()$id
+#' @param savePath The directory where the generated ctd file produced by EWCE
+#' is saved. Default is a temp directory
+#' @param annotation_level The level(s) of annotation required.
+#' Integer for single CTD/level. For multi-CTD/level a named list,
+#' names are the CTD file names (without file extension) and
+#' elements are vectors of levels. Levels must present in the provided CTD(s).
+#' The first name and level will also be used as the primary annotation for
+#' automated reporting and will be returned in 'cluster_celltype' column data.
+#' @param reps Number of bootstrap repetitions for EWCE.
+#' For publishable results set >=10000.
+#' @param ctd_species Specify species used to build CTD if different from
+#' species. If multiple CTDs are used with differing species specify as a
+#' named list where names are the CTD file names (without file extension) and
+#' elements are the species. Must be 'human', 'mouse' or listed in
+#' EWCE::list_species()$id.
 #' @param num_markers Number of cluster markers used to identify cell type
 #'
 #' @return sce a SingleCellExperiment object annotated with celltypes/metadata
@@ -386,7 +397,7 @@ for (ml in mappingLevel) {
 #' @keywords internal
 .read_rds_files_to_list <- function(folder_path) {
   rds_l <- purrr::map(
-    list.files(folder_path, full.names = TRUE),
+    list.files(folder_path, pattern = "ctd_", full.names = TRUE),
     readRDS
   )
   names(rds_l) <- tools::file_path_sans_ext(list.files(folder_path))

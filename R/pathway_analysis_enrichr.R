@@ -3,9 +3,8 @@
 #'
 #' Performs impacted pathway analysis with a list of genes.
 #'
-#' @param gene_file A data frame or the path of a .tsv file containing
-#' a list of genes, their fold-change, p-value and adjusted p-value.
-#' Column names should be gene, logFC, pval and padj respectively.
+#' @param gene_file A data frame containing a list of significant genes with
+#' column name gene or a vector of significant genes.
 #' @param enrichment_database Name of the database for enrichment. User can
 #' specify one or more database names from [enrichR::listEnrichrDbs()].
 #' @param is_output If TRUE a folder will be created and results of enrichment
@@ -44,22 +43,18 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
   )
 
   if (is.data.frame(gene_file)) {
-    interest_gene <- gene_file
-  } else {
-    assertthat::assert_that(file.exists(gene_file), msg = "File not found.")
-    cli::cli_text("Reading: {.file {gene_file}}")
-    interest_gene <- read.delim(gene_file, sep = "\t")
-  }
-
-  expected_cols <- c("gene")
-
-  assertthat::assert_that(
-    all(expected_cols %in% colnames(interest_gene)),
+    assertthat::assert_that(
+    all("gene" %in% colnames(gene_file)),
     msg = sprintf(
-      "One or more expected columns missing: %s",
-      paste0(expected_cols, collapse = ",")
+      "Expected column missing: %s",
+      paste0("gene", collapse = ",")
     )
   )
+    interest_gene <- gene_file$gene
+
+  } else if (is.vector(gene_file)) {
+    intereset_gene <- gene_file
+  }
 
   eval(parse(text = "enrichR:::.onAttach()")) # R CMD check workaround
 
@@ -70,9 +65,8 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
     msg = "Invalid databases specified. See enrichR::listEnrichrDbs()."
   )
 
-
   res <- enrichR::enrichr(
-    genes = as.character(interest_gene$gene),
+    genes = as.character(interest_gene),
     databases = enrichment_database
   )
 
@@ -87,7 +81,7 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
   names(enrichr_res) <- names(res)
 
   enrichr_res <- purrr::map(
-    res,
+    enrichr_res,
     ~ .format_res_table_enrichr(.)
   )
 
@@ -108,9 +102,6 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
 
     if (is.data.frame(gene_file)) {
       project_name <- paste(deparse(substitute(gene_file)), sep = "")
-    } else if (!is.data.frame(gene_file)) {
-      project_name <- gsub("\\.tsv$", "", basename(gene_file))
-      project_name <- gsub("-", "_", project_name)
     }
 
     output_dir <- output_dir
@@ -148,13 +139,8 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
       cli::cli_alert_info("Output is returned as a list!")
     }
 
-
     if (is.data.frame(gene_file)) {
       enrichr_res$metadata$gene_file <- deparse(substitute(gene_file))
-    } else if (!is.data.frame(gene_file)) {
-      enrichr_res$metadata$gene_file <- gsub(
-        "\\.tsv$", "", basename(gene_file)
-      )
     }
 
     enrichr_res$metadata$enrichment_database <- enrichment_database
@@ -191,6 +177,9 @@ pathway_analysis_enrichr <- function(gene_file = NULL,
 
   return(res_table)
 }
+
+
+#' @keywords internal
 
 .get_geneset <- function(term) {
 

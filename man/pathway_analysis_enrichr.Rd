@@ -14,9 +14,8 @@ pathway_analysis_enrichr(
 )
 }
 \arguments{
-\item{gene_file}{A data frame or the path of a .tsv file containing
-a list of genes, their fold-change, p-value and adjusted p-value.
-Column names should be gene, logFC, pval and padj respectively.}
+\item{gene_file}{A data frame containing a list of significant genes with
+column name gene or a vector of significant genes.}
 
 \item{enrichment_database}{Name of the database for enrichment. User can
 specify one or more database names from \code{\link[enrichR:listEnrichrDbs]{enrichR::listEnrichrDbs()}}.}

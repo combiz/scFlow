@@ -96,7 +96,6 @@ Call required packages for vignette:
 ```{r}
 #vignette packages
 library(scFlow)
-library(scFlowData)
 library(scFlowExamples)
 library(SingleCellExperiment)
 ```
@@ -124,8 +123,12 @@ matrix_fp <- paste0(outputDir,"/tmp_Zeisel2015_scflow","/individual_1")
 samplesheet_fp <- paste0(outputDir,"/tmp_Zeisel2015_scflow","/SampleSheet.tsv")
 manifest_fp <- paste0(outputDir,"/tmp_Zeisel2015_scflow","/Manifest.txt")
 #Also need mapping and ctd file which are in scFlowData
-ensembl_fp <- system.file("extdata","ensembl_mappings.tsv",package="scFlowData")
-ctd_fp <- system.file("extdata","ctd",package="scFlowData")
+#ensembl_fp <- system.file("extdata","ensembl_mappings.tsv",package="scFlowData")
+#ctd_fp <- system.file("extdata","ctd",package="scFlowData")
+ensembl_fp <- file.path(outputDir, "ensembl_mappings.tsv")
+ctd_fp <- file.path(outputDir, "ctd_allAIBS.rds")
+download.file(url = "https://raw.githubusercontent.com/combiz/scFlowData/master/inst/extdata/ensembl_mappings.tsv", destfile = ensembl_fp)
+download.file(url = "https://github.com/neurogenomics/MAGMA_Celltyping/releases/download/latest/ctd_allAIBS.rds", destfile = ctd_fp)
 ```
 
 To run scFlow, we first need to read in the data matrix:

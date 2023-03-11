@@ -4,9 +4,11 @@
 #' Performs gene ontology and impacted pathway enrichment analysis with a list
 #' of gene names and their fold-change.
 #'
-#' @param gene_file A data frame or the path of a .tsv file containing
-#' a list of genes, their fold-change, p-value and adjusted p-value. Column
-#' names should be gene, logFC, pval and padj respectively.
+#' @param gene_file For ORA, A data frame containing a list of significant genes
+#' with column name `gene` or a vector of significant genes. For GSEA a
+#' data frame containing a list of all genes in the analysis, their fold-change,
+#' p-value and adjusted p-value. Column names should be gene, logFC, pval and
+#' padj respectively.
 #' @param reference_file A data frame containing all the genes that were used
 #' as input for differential expression. Column name should be gene.
 #' If not provided the human protein-coding genome will be used as background
@@ -75,39 +77,34 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
       organism <- "mmusculus"
   }
 
+  if (enrichment_method == "ORA" & is.data.frame(gene_file)) {
 
-  if (is.data.frame(gene_file)) {
+    assertthat::assert_that(
+      all("gene" %in% colnames(gene_file)),
+      msg = sprintf(
+        "Expected column missing: %s",
+        paste0("gene", collapse = ",")
+      )
+    )
+    interest_gene <- gene_file$gene
+
+  } else if (enrichment_method == "ORA" & is.vector(gene_file)) {
+
     interest_gene <- gene_file
-  } else {
-    assertthat::assert_that(file.exists(gene_file), msg = "File not found.")
-    cli::cli_text("Reading: {.file {gene_file}}")
-    interest_gene <- read.delim(gene_file, sep = "\t")
-  }
 
-
-  if (enrichment_method == "ORA") {
-    expected_cols <- c("gene")
-
-    assertthat::assert_that(
-      all(expected_cols %in% colnames(interest_gene)),
-      msg = sprintf(
-        "One or more expected columns missing: %s",
-        paste0(expected_cols, collapse = ",")
-      )
-    )
-    interest_gene <- as.vector(interest_gene$gene)
   } else if (enrichment_method == "GSEA") {
-    expected_cols <- c("gene", "logFC")
 
     assertthat::assert_that(
-      all(expected_cols %in% colnames(interest_gene)),
+      all(c("gene", "logFC", "pval") %in% colnames(gene_file)),
       msg = sprintf(
         "One or more expected columns missing: %s",
         paste0(expected_cols, collapse = ",")
       )
     )
 
-    interest_gene <- interest_gene[, c("gene", "logFC")]
+    interest_gene <- gene_file %>%
+      dplyr::mutate(rank = sign(logFC)* -log10(pval)) %>%
+      dplyr::select(c(gene, rank))
   }
 
   if (is.null(reference_file)) {
@@ -117,8 +114,6 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     cli::cli_text("Using custom background gene list provided by the user")
     reference_gene <- as.vector(reference_file$gene)
   }
-
-  enrichment_database <- enrichment_database
 
   dbs <- WebGestaltR::listGeneSet()
 
@@ -136,9 +131,7 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     referenceGene = reference_gene,
     referenceGeneType = "genesymbol",
     referenceSet = "genome_protein-coding",
-    networkConstructionMethod = "Network_Retrieval_Prioritization",
     isOutput = FALSE,
-    outputDirectory = getwd(),
     projectName = NULL
   )
 
