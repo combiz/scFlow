@@ -105,9 +105,8 @@ tee -a /etc/apt/sources.list.d/google-cloud-sdk.list \
 tee /usr/share/keyrings/cloud.google.gpg && apt-get update -y \
 && apt-get install google-cloud-sdk -y
 
-RUN apt-get updaet \
-apt-get install -y --no-install-recommends\
-google-cloud-cli
+RUN apt-get update \
+apt-get install -y --no-install-recommends google-cloud-cli
 
 
 RUN install2.r -e \
