@@ -11,9 +11,7 @@ pathway_analysis_webgestaltr(
   enrichment_method = "ORA",
   enrichment_database = c("geneontology_Biological_Process",
     "geneontology_Cellular_Component", "geneontology_Molecular_Function", "pathway_KEGG",
-    "pathway_Panther", "pathway_Reactome", "pathway_Wikipathway"),
-  is_output = FALSE,
-  output_dir = "."
+    "pathway_Panther", "pathway_Reactome", "pathway_Wikipathway")
 )
 }
 \arguments{
@@ -44,12 +42,6 @@ GSEA.}
 \item{enrichment_database}{Name of the database for enrichment. If not
 provided then multiple databases will be used or user can specify one or more
 database names from \code{\link[WebGestaltR:listGeneSet]{WebGestaltR::listGeneSet()}}}
-
-\item{is_output}{If TRUE a folder will be created and results of enrichment
-analysis will be saved otherwise a R list will be returned. Default FALSE.}
-
-\item{output_dir}{Path for the output directory. Default is current
-directory.}
 }
 \value{
 enrichment_result a list of data.frames containing enrichment output

@@ -27,10 +27,6 @@
 #' @param enrichment_database Name of the database for enrichment. If not
 #' provided then multiple databases will be used or user can specify one or more
 #' database names from [WebGestaltR::listGeneSet()]
-#' @param is_output If TRUE a folder will be created and results of enrichment
-#' analysis will be saved otherwise a R list will be returned. Default FALSE.
-#' @param output_dir Path for the output directory. Default is current
-#' directory.
 #'
 #' @return enrichment_result a list of data.frames containing enrichment output
 #' and a list of plots of top 10 significant genesets.
@@ -61,9 +57,7 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
                                            "pathway_Panther",
                                            "pathway_Reactome",
                                            "pathway_Wikipathway"
-                                         ),
-                                         is_output = FALSE,
-                                         output_dir = ".") {
+                                         )) {
   assertthat::assert_that(
     !is.null(gene_file),
     msg = "No input gene list found!"
@@ -131,6 +125,8 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     referenceGene = reference_gene,
     referenceGeneType = "genesymbol",
     referenceSet = "genome_protein-coding",
+    minNum = 5,
+    maxNum = 300,
     isOutput = FALSE,
     projectName = NULL
   )
@@ -155,61 +151,9 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
       )
     }
 
-    if (is.data.frame(gene_file)) {
-      project_name <- paste(
-        deparse(substitute(gene_file)), enrichment_method,
-        sep = "_"
-      )
-    } else if (!is.data.frame(gene_file)) {
-      project_name <- paste(
-        gsub("\\.tsv$", "", basename(gene_file)), enrichment_method,
-        sep = "_"
-      )
-      project_name <- gsub("-", "_", project_name)
-    }
+    cli::cli_alert_info("Output is returned as a list!")
 
-    output_dir <- output_dir
-    sub_dir <- "webgestaltr_output"
-    output_dir_path <- file.path(output_dir, sub_dir)
-    project_dir <- file.path(output_dir_path, paste(project_name, sep = ""))
-
-    if (isTRUE(is_output)) {
-      dir.create(output_dir_path, showWarnings = FALSE)
-      dir.create(project_dir, showWarnings = FALSE)
-      lapply(
-        names(enrichment_result)[names(enrichment_result) != "plot"],
-        function(dt) {
-          write.table(enrichment_result[dt],
-            file = paste(project_dir, "/", dt, ".tsv", sep = ""),
-            row.names = FALSE,
-            col.names = gsub(
-              dt, "", colnames(enrichment_result[[dt]])
-            ), sep = "\t"
-          )
-        }
-      )
-
-      lapply(
-        names(enrichment_result$plot),
-        function(p) {
-          ggplot2::ggsave(paste(project_dir, "/", p, ".png", sep = ""),
-            enrichment_result$plot[[p]],
-            device = "png", height = 8,
-            width = 10, units = "in", dpi = 300
-          )
-        }
-      )
-    } else {
-      cli::cli_alert_info("Output is returned as a list!")
-    }
-
-    if (is.data.frame(gene_file)) {
-      enrichment_result$metadata$gene_file <- deparse(substitute(gene_file))
-    } else if (!is.data.frame(gene_file)) {
-      enrichment_result$metadata$gene_file <- gsub(
-        "\\.tsv$", "", basename(gene_file)
-      )
-    }
+    enrichment_result$metadata$gene_file <- deparse(substitute(gene_file))
     enrichment_result$metadata$enrichment_method <- enrichment_method
     enrichment_result$metadata$enrichment_database <- enrichment_database
   }

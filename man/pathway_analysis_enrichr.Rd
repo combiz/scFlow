@@ -8,9 +8,7 @@ pathway_analysis_enrichr(
   gene_file = NULL,
   enrichment_database = c("GO_Molecular_Function_2021", "GO_Cellular_Component_2021",
     "GO_Biological_Process_2021", "KEGG_2021_Human", "WikiPathways_2021_Human",
-    "Reactome_2022"),
-  is_output = FALSE,
-  output_dir = getwd()
+    "Reactome_2022")
 )
 }
 \arguments{
@@ -19,11 +17,6 @@ column name gene or a vector of significant genes.}
 
 \item{enrichment_database}{Name of the database for enrichment. User can
 specify one or more database names from \code{\link[enrichR:listEnrichrDbs]{enrichR::listEnrichrDbs()}}.}
-
-\item{is_output}{If TRUE a folder will be created and results of enrichment
-analysis will be saved otherwise a R list will be returned. Default FALSE}
-
-\item{output_dir}{Path for the output directory. Default is current dir.}
 }
 \value{
 enrichment_result a list of data.frames containing enrichment output

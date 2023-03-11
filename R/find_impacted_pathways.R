@@ -18,10 +18,6 @@
 #' @param enrichment_database Name of the database for enrichment. User can
 #' specify one or more database names. Check [scFlow::list_databases()] for
 #' available database alias.
-#' @param is_output If TRUE a folder will be created and results of enrichment
-#' analysis will be saved otherwise a R list will be returned. Default FALSE.
-#' @param output_dir Path for the output directory. Default is current
-#' directory.
 #' @param ... Additional arguments
 #'
 #' @return enrichment_result a list of list containing enrichment outputs from
@@ -49,8 +45,6 @@ find_impacted_pathways <- function(gene_file = NULL,
                                      "Reactome",
                                      "Wikipathway"
                                    ),
-                                   is_output = FALSE,
-                                   output_dir = getwd(),
                                    ...) {
   fargs <- list()
   inargs <- list(...)
@@ -63,14 +57,29 @@ find_impacted_pathways <- function(gene_file = NULL,
 
   if ("enrichR" %in% enrichment_tool) {
     cli::cli_h2("Starting enrichment analysis by enrichR")
+
+    if( "GSEA" %in% fargs$enrichment_method) {
+
+        assertthat::assert_that(
+          all(c("padj_threshold", "logFC_threshold") %in% names(fargs)),
+          msg = "Please provide values for padj_threshold and
+          logFC_threshold in function call"
+        )
+
+      cli::cli_h3("Filtering gene_file for significant genes for enrichR")
+
+      gene_file <- gene_file %>%
+        dplyr::filter(padj <= fargs$padj_threshold,
+                      abs(logFC) >= fargs$logFC_threshold)
+    }
+
+
     res[["enrichR"]] <- pathway_analysis_enrichr(
       gene_file = gene_file,
       enrichment_database = temp_dbs$enrichR %>%
         dplyr::filter(db_alias %in% enrichment_database) %>%
         dplyr::pull(libraryName) %>%
-        as.character(),
-      is_output = is_output,
-      output_dir = output_dir
+        as.character()
     )
     res$enrichR$metadata$enrichment_database_link <- temp_dbs$enrichR %>%
       dplyr::filter(db_alias %in% enrichment_database) %>%
@@ -105,11 +114,10 @@ find_impacted_pathways <- function(gene_file = NULL,
         enrichment_database = temp_dbs$WebGestaltR %>%
           dplyr::filter(db_alias %in% enrichment_database) %>%
           dplyr::pull(name) %>%
-          as.character(),
-        is_output = is_output,
-        output_dir = output_dir
+          as.character()
       )
-      res$WebGestaltR$metadata$enrichment_database_link <- temp_dbs$WebGestaltR %>%
+      res$WebGestaltR$metadata$enrichment_database_link <-
+        temp_dbs$WebGestaltR %>%
         dplyr::filter(db_alias %in% enrichment_database) %>%
         dplyr::pull(link) %>%
         as.character()
