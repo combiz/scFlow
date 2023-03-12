@@ -225,13 +225,13 @@ specifying a unique identifier (unique_key) in a specific column
 <span><span class="op">)</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Reading sample metadata</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">## Reading <span style="color: #00BB00;">/tmp/RtmpQ9KM4K/tmp_Zeisel2015_scflow/SampleSheet.tsv</span> <span style="color: #00BB00;"> </span></span></span>
+<span><span class="co">## Reading <span style="color: #00BB00;">/tmp/Rtmpd37aEa/tmp_Zeisel2015_scflow/SampleSheet.tsv</span> <span style="color: #00BB00;"> </span></span></span>
 <span><span class="co"><span style="color: #00BB00;">## </span></span></span>
-<span><span class="co">## <span style="color: #00BB00;">✔</span> Five metadata variables loaded for manifest='jadul'</span></span>
-<span><span class="co">## <span style="font-weight: bold;">manifest</span>: `jadul` <span style="font-style: italic;">(factor</span>)</span></span>
+<span><span class="co">## <span style="color: #00BB00;">✔</span> Five metadata variables loaded for manifest='tugag'</span></span>
+<span><span class="co">## <span style="font-weight: bold;">manifest</span>: `tugag` <span style="font-style: italic;">(factor</span>)</span></span>
 <span><span class="co">## <span style="font-weight: bold;">individual</span>: `1` <span style="font-style: italic;">(integer</span>)</span></span>
 <span><span class="co">## <span style="font-weight: bold;">diagnosis</span>: `Cases` <span style="font-style: italic;">(factor</span>)</span></span>
-<span><span class="co">## <span style="font-weight: bold;">sex</span>: `F` <span style="font-style: italic;">(factor</span>)</span></span>
+<span><span class="co">## <span style="font-weight: bold;">sex</span>: `M` <span style="font-style: italic;">(factor</span>)</span></span>
 <span><span class="co">## <span style="font-weight: bold;">age</span>: `18` <span style="font-style: italic;">(integer</span>)</span></span></code></pre></div>
 <p>For downstream analyses it’s important that the variable classes are
 correctly specified. Carefully inspect the metadata classes in brackets.
@@ -250,7 +250,7 @@ variable:-</p>
 <span>  samplesheet_path <span class="op">=</span> <span class="va">samplesheet_fp</span>,</span>
 <span>  col_classes <span class="op">=</span> <span class="va">var_classes</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">## Reading <span style="color: #00BB00;">/tmp/RtmpQ9KM4K/tmp_Zeisel2015_scflow/SampleSheet.tsv</span> <span style="color: #00BB00;"> </span></span></span>
+<span><span class="co">## Reading <span style="color: #00BB00;">/tmp/Rtmpd37aEa/tmp_Zeisel2015_scflow/SampleSheet.tsv</span> <span style="color: #00BB00;"> </span></span></span>
 <span><span class="co"><span style="color: #00BB00;">## </span></span></span></code></pre></div>
 <p>With the metadata imported with the correct variable classes, and the
 previously loaded sparse matrix, we can generate our
@@ -276,7 +276,7 @@ object to the <code>annotate_sce</code> function:-</p>
 <span><span class="op">)</span></span>
 <span><span class="co">## ══ Annotating SingleCellExperiment ═════════════════════════════════════════════ </span></span>
 <span><span class="co">## ══ Annotating SingleCellExperiment genes ═══════════════════════════════════════ </span></span>
-<span><span class="co">## Reading <span style="color: #00BB00;">/tmp/RtmpQ9KM4K/ensembl_mappings.tsv</span> <span style="color: #00BB00;"> </span></span></span>
+<span><span class="co">## Reading <span style="color: #00BB00;">/tmp/Rtmpd37aEa/ensembl_mappings.tsv</span> <span style="color: #00BB00;"> </span></span></span>
 <span><span class="co"><span style="color: #00BB00;">## </span>── Annotating SingleCellExperiment cells ─────────────────────────────────────── </span></span>
 <span><span class="co">## ══ Generating QC plots for SingleCellExperiment ════════════════════════════════ </span></span></code></pre></div>
 <p>A list of QC plots are available to browse in the
@@ -342,8 +342,8 @@ takes a few minutes): -</p>
 <span><span class="co">##   ENSG00000285441</span></span>
 <span><span class="co">## rowData names(13): ensembl_gene_id gene_biotype ...</span></span>
 <span><span class="co">##   qc_metric_is_expressive qc_metric_gene_passed</span></span>
-<span><span class="co">## colnames(219): jadul_1_TEINH_2 jadul_1_TEINH_3 ... jadul_1_MOL1_225</span></span>
-<span><span class="co">##   jadul_1_MOL1_226</span></span>
+<span><span class="co">## colnames(219): tugag_1_TEINH_2 tugag_1_TEINH_3 ... tugag_1_MOL1_225</span></span>
+<span><span class="co">##   tugag_1_MOL1_226</span></span>
 <span><span class="co">## colData names(18): barcode manifest ... qc_metric_max_features</span></span>
 <span><span class="co">##   is_singlet</span></span>
 <span><span class="co">## reducedDimNames(3): pca_by_individual tsne_by_individual</span></span>
@@ -373,12 +373,12 @@ individuals:</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">dir</a></span><span class="op">(</span>path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">outputDir</span>,<span class="st">"/tmp_Zeisel2015_scflow"</span><span class="op">)</span>, </span>
 <span>        pattern <span class="op">=</span> <span class="st">"individual_[0-9]$"</span>, full.names <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">dir_list</span></span>
-<span><span class="co">## [1] "/tmp/RtmpQ9KM4K/tmp_Zeisel2015_scflow/individual_1"</span></span>
-<span><span class="co">## [2] "/tmp/RtmpQ9KM4K/tmp_Zeisel2015_scflow/individual_2"</span></span>
-<span><span class="co">## [3] "/tmp/RtmpQ9KM4K/tmp_Zeisel2015_scflow/individual_3"</span></span>
-<span><span class="co">## [4] "/tmp/RtmpQ9KM4K/tmp_Zeisel2015_scflow/individual_4"</span></span>
-<span><span class="co">## [5] "/tmp/RtmpQ9KM4K/tmp_Zeisel2015_scflow/individual_5"</span></span>
-<span><span class="co">## [6] "/tmp/RtmpQ9KM4K/tmp_Zeisel2015_scflow/individual_6"</span></span></code></pre></div>
+<span><span class="co">## [1] "/tmp/Rtmpd37aEa/tmp_Zeisel2015_scflow/individual_1"</span></span>
+<span><span class="co">## [2] "/tmp/Rtmpd37aEa/tmp_Zeisel2015_scflow/individual_2"</span></span>
+<span><span class="co">## [3] "/tmp/Rtmpd37aEa/tmp_Zeisel2015_scflow/individual_3"</span></span>
+<span><span class="co">## [4] "/tmp/Rtmpd37aEa/tmp_Zeisel2015_scflow/individual_4"</span></span>
+<span><span class="co">## [5] "/tmp/Rtmpd37aEa/tmp_Zeisel2015_scflow/individual_5"</span></span>
+<span><span class="co">## [6] "/tmp/Rtmpd37aEa/tmp_Zeisel2015_scflow/individual_6"</span></span></code></pre></div>
 <p>Now loop through each, performing the analysis and finally merging
 the results:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">

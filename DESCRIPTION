@@ -103,6 +103,7 @@ Imports:
     S4Vectors (>= 0.36.0),
     scales,
     scater (>= 1.26.1),
+    sctransform,
     Seurat (>= 4.3.0),
     SingleCellExperiment (>= 1.20.0),
     stringr (>= 1.4.1),
