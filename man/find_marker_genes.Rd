@@ -34,7 +34,8 @@ results_l A list of results
 Find specific markers for groups of cells
 }
 \seealso{
-Other Further analyses: 
+Other Celltype annotation: 
+\code{\link{map_celltypes_sce}()},
 \code{\link{model_celltype_freqs}()}
 }
-\concept{Further analyses}
+\concept{Celltype annotation}

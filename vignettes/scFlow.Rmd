@@ -22,7 +22,9 @@ editor_options:
 ```{r style, echo=FALSE, results='asis', message=FALSE}
 BiocStyle::markdown()
 knitr::opts_chunk$set(tidy = FALSE,
-                        message = FALSE)
+                      message = FALSE, 
+                      warning = FALSE, 
+                      collapse = TRUE)
 options(knitr.duplicate.label = "allow")
 ```
 
@@ -46,17 +48,13 @@ The goal of scFlow is to provide tools in R to build a complete analysis workflo
 
 -   Celltype annotation with [EWCE](https://github.com/NathanSkene/EWCE) and [Liger](https://github.com/MacoskoLab/liger)
 
--   Cluster identity mapping against the [Allen Human Brain Atlas](https://www.brain-map.org) and Mouse Nervous System Data from [Zeisel 2018](https://doi.org/10.1016/j.cell.2018.06.021)
+-   Cluster identity mapping against the [Allen Human Brain Atlas](https://www.brain-map.org) 
 
 -   Differential gene expression implementations
 
 -   Zero-inflated regression model with [MAST](https://github.com/RGLab/MAST)
 
 -   Random effects model with [Limma](https://github.com/cran/limma)
-
--   Negative binomial distribution pseudobulking model with [DESeq2](https://github.com/mikelove/DESeq2)
-
--   Pseudobulk generalized likelihood ratio tests with [EdgeR](https://github.com/StoreyLab/edge)
 
 -   Pathway and functional category enrichment analysis
 
@@ -106,10 +104,9 @@ First we must get and format the data from `scFlowExamples` for the vignette:
 #create temp directory to store data
 outputDir <- tempdir()
 # write data, manifest and samplesheet to directory - 
-# use "indvExp" dataset from Zeisel 2015
-scFlowExamples::write_data(dataset="indvExp", output_dir=outputDir)
-scFlowExamples::write_scflow_manifest(dataset="indvExp", output_dir=outputDir)
-scFlowExamples::write_scflow_samplesheet(dataset="indvExp", 
+scFlowExamples::write_data(dataset="indvExp_ds_4K", output_dir=outputDir)
+scFlowExamples::write_scflow_manifest(dataset="indvExp_ds_4K", output_dir=outputDir)
+scFlowExamples::write_scflow_samplesheet(dataset="indvExp_ds_4K", 
                                           output_dir=outputDir)
 #stored inside tmp_Zeisel2015_scflow inside directory:
 list.files(paste0(outputDir,"/tmp_Zeisel2015_scflow"))
@@ -122,13 +119,11 @@ Now we can create file paths to each:
 matrix_fp <- paste0(outputDir,"/tmp_Zeisel2015_scflow","/individual_1")
 samplesheet_fp <- paste0(outputDir,"/tmp_Zeisel2015_scflow","/SampleSheet.tsv")
 manifest_fp <- paste0(outputDir,"/tmp_Zeisel2015_scflow","/Manifest.txt")
-#Also need mapping and ctd file which are in scFlowData
-#ensembl_fp <- system.file("extdata","ensembl_mappings.tsv",package="scFlowData")
-#ctd_fp <- system.file("extdata","ctd",package="scFlowData")
+#Also need mapping and ctd file which can be downloaded
 ensembl_fp <- file.path(outputDir, "ensembl_mappings.tsv")
-ctd_fp <- file.path(outputDir, "ctd_allAIBS.rds")
+ctd_fp <- outputDir
 download.file(url = "https://raw.githubusercontent.com/combiz/scFlowData/master/inst/extdata/ensembl_mappings.tsv", destfile = ensembl_fp)
-download.file(url = "https://github.com/neurogenomics/MAGMA_Celltyping/releases/download/latest/ctd_allAIBS.rds", destfile = ctd_fp)
+download.file(url = "https://github.com/neurogenomics/MAGMA_Celltyping/releases/download/latest/ctd_allAIBS.rds", destfile = file.path(ctd_fp, "ctd_allAIBS.rds"))
 ```
 
 To run scFlow, we first need to read in the data matrix:
@@ -139,7 +134,7 @@ mat <- read_sparse_matrix(matrix_fp)
 
 Next, we retrieve the metadata by pointing to a Sample Sheet and specifying a unique identifier (unique_key) in a specific column (key_colname):
 
-```{r eval=TRUE, message=TRUE}
+```{r eval=TRUE, message=TRUE, collapse=TRUE}
 #get name generated for first row in case changes
 first_sample <- read.table(file = samplesheet_fp, 
                            sep = '\t', header = TRUE)[1,1]
@@ -152,7 +147,7 @@ metadata <- read_metadata(
 
 For downstream analyses it's important that the variable classes are correctly specified. Carefully inspect the metadata classes in brackets. In the above example we see that the *individual* were imported as integer rather than factor variables. Let's correct this by reloading the metadata, this time specifying the correct variable classes for this variable:-
 
-```{r eval=TRUE}
+```{r eval=TRUE, message=FALSE}
 var_classes <- c(
   individual = "factor"
 )
@@ -194,7 +189,7 @@ After running `annotate_sce` we may examine the plots and assess whether the app
 
 The next step is to filter the SingleCellExperiment with `filter_sce`: -
 
-```{r eval=TRUE, message=TRUE}
+```{r eval=TRUE, message=TRUE, collapse=TRUE}
 sce <- filter_sce(sce)
 ```
 
@@ -202,7 +197,7 @@ sce <- filter_sce(sce)
 
 At this stage we may wish to identify singlets in the `SingleCellExperiment` and discard any multiplets. In `scFlow` we simply run `find_singlets` and specify our preferred multiplet identification algorithm. Here we will use `doubletfinder` (This will take a while depending on the cell numbers):-
 
-```{r eval=TRUE, results="hide"}
+```{r eval=TRUE, results="hide", message=FALSE}
 sce <- find_singlets(sce, "doubletfinder", pK = 0.005, vars_to_regress_out = c("nCount_RNA", "pc_mito"))
 ```
 
@@ -220,7 +215,7 @@ dim(sce)
 
 Finally we produce a report with `report_qc_sce` (this takes a few minutes): -
 
-```{r eval=TRUE}
+```{r eval=TRUE, message=FALSE, warning=FALSE}
 #Store results in same temp dir
 report_qc_sce(sce, report_file = "qc_report_scflow_individual_1",
               report_folder_path = paste0(outputDir,"/tmp_Zeisel2015_scflow/"))
@@ -249,7 +244,9 @@ dir_list
 
 Now loop through each, performing the analysis and finally merging the results:
 
-```{r,results="hide"}
+```{r,results="hide", message=FALSE}
+sce_list <- list()
+
 for(i in dir_list){
   mat <- read_sparse_matrix(i)
   metadata <- read_metadata(
@@ -272,7 +269,7 @@ for(i in dir_list){
     ensembl_mapping_file = ensembl_fp
   )
   sce <- filter_sce(sce)
-  sce <- find_singlets(sce, "doubletfinder", pK = NULL, 
+  sce <- find_singlets(sce, "doubletfinder", pK = 0.005, 
                         vars_to_regress_out = c("nCount_RNA", "pc_mito"), 
                         num.cores = 1)
   sce <- filter_sce(sce)
@@ -285,28 +282,11 @@ for(i in dir_list){
   report_qc_sce(sce, report_file = paste("qc_report_", basename(i), sep = ""),
                 report_folder_path = dir_report)
   
-  dir_sce <- file.path(outdir, "sce_individual")
-  dir.create(dir_sce, showWarnings = FALSE)
-  write_sce(sce = sce,
-            folder_path = file.path(dir_sce, paste("sce", basename(i), sep = "_")), 
-            overwrite = TRUE)
+  sce_list[[basename(i)]] <- sce
+  
 }
 
-sce_path <- dir(
-  path = dir_sce,
-  pattern = "sce_individual_",
-  full.names = TRUE
-)
-
-sce_pathlist <- list()
-
-for (i in sce_path) {
-  sce_pathlist[[i]] <- i
-}
-
-sce_list <- lapply(sce_pathlist, read_sce)
-
-sce_merged <- merge_sce(
+sce <- merge_sce(
   sce_list,
   ensembl_mapping_file = ensembl_fp
 )
@@ -318,8 +298,8 @@ After merging individual `sce` objects we can annotate and get an interactive ht
 final_sce <- file.path(outdir, "sce")
 dir.create(final_sce)
 #annotate and save sce
-annot_sce <- annotate_merged_sce(sce_merged)
-write_sce(sce = sce_merged,
+sce <- annotate_merged_sce(sce)
+write_sce(sce = sce,
           folder_path = final_sce, 
           overwrite = TRUE)
 ```
@@ -331,52 +311,47 @@ Once we merge all the samples into one `SingleCellExperiment` object we can move
 Once data integration is done, dimension reduction is performed using multiple methods by default i.e. "PCA", "tSNE", "UMAP", "UMAP3D". For tSNE and UMAP, dimension reduction is performed using either PCA or Liger values. Once the dimension reduction step is done the `SingleCellExperiment` object is ready for clustering.
 
 ```{r eval=TRUE, message=TRUE}
-dim(sce_merged)
+dim(sce)
 ```
 
-```{r eval=TRUE, results="hide"}
+```{r eval=TRUE, results="hide", message=FALSE, warning=FALSE}
 #sample genes and samples for speed
-ngenes <- 1000
-nsamples <- 2000
-#reproducibility
-set.seed(123)
-sce_merged_subset <- sce_merged[sample(seq_len(nrow(sce_merged)),ngenes,
-                                        replace=FALSE),
-                                sample(seq_len(ncol(sce_merged)),nsamples,
-                                        replace=FALSE)]
-sce <- integrate_sce(sce_merged_subset, method = "Liger", k = 20)
-sce <- reduce_dims_sce(sce, pca_dims = 5)
+sce <- integrate_sce(sce, method = "Liger", k = 20)
+sce <- reduce_dims_sce(sce, pca_dims = 5, reduction_methods = "UMAP")
 ```
 
 We can now plot UMAP generated using liger valuses using the following command:-
 
 ```{r eval=TRUE, message=TRUE}
-plot_reduced_dim(sce, feature_dim = "diagnosis", reduced_dim = "UMAP_Liger", alpha = 1)
+plot_reduced_dim(sce, feature_dim = "diagnosis", 
+                 reduced_dim = "UMAP_Liger", alpha = 1, size = 1)
 ```
 
 The next step is to cluster all the cells using `cluster_sce` command.
 
-```{r eval=TRUE}
+```{r eval=TRUE, message=FALSE, results='hide'}
 sce <- cluster_sce(sce, reduction_method = "UMAP_Liger", pca_dims = 5, k = 50)
 ```
 
 We can then plot the clusters:-
 
 ```{r eval=TRUE, message=TRUE}
-plot_reduced_dim(sce, feature_dim = "clusters", reduced_dim = "UMAP_Liger", alpha = 1)
+plot_reduced_dim(sce, feature_dim = "clusters", 
+                 reduced_dim = "UMAP_Liger", alpha = 1, size = 1)
 ```
 
 The next step is to annotate the celltypes for each cluster. Here, we will use the package [*ewce*](https://github.com/NathanSkene/EWCE). For this we use the following command (This may take a while):-
 
 ```{r,results="hide"}
 sce <- map_celltypes_sce(sce,
-                         ctd_folder = ctd_fp)
+                         ctd_folder = ctd_fp, annotation_level = 2)
 ```
 
 The celltypes for each cell can be found in `sce@colData$cluster_celltype` slot. We can also generate UMAP_Liger plot for each celltype.
 
 ```{r eval=TRUE, message=TRUE}
-plot_reduced_dim(sce, feature_dim = "cluster_celltype", reduced_dim = "UMAP_Liger", alpha = 1)
+plot_reduced_dim(sce, feature_dim = "cluster_celltype",
+                 reduced_dim = "UMAP_Liger", alpha = 1, size = 1)
 ```
 
 Our pipeline generates multiple reports. `report_integrated_sce` generates an interactive report on integration whereas `report_celltype_metrics` generates detailed metrics on celltype distribution.
@@ -386,18 +361,20 @@ Our pipeline generates multiple reports. `report_integrated_sce` generates an in
 We need to subset the merged `SingleCellExperiment` object to perform differential expression analysis. Here we are using `MASTZLM` for differential expression analysis. For example, we are interested in performing DE analysis in the `Oligo` cell cluster. So, we first subset the `Oligo` cluster.
 
 ```{r}
-sce_subset <- sce[, sce$cluster_celltype == "Oligo"]
+sce_subset <- sce[, sce$clusters == 1]
 ```
 
 We need to specify the colData column name as dependent_var as the variable of interest for DE analysis. For example here we want to perform DE analysis between Case and Controls which is found in `diagnosis` column. ref_class is the reference group for DE analysis. If there are any confounding variables those colData names can be passed through confounding_vars argument.
 
-```{r}
+```{r, eval=TRUE, results='hide', message=FALSE, warning=FALSE, collapse=TRUE}
 result_de <- perform_de(
   sce_subset,
   mast_method = "glmer",
+  min_counts = 1,
+  min_cells_pc = 0.01,
   dependent_var = "diagnosis",
   ref_class = "Controls",
-  confounding_vars = c("cngeneson", "age"),
+  confounding_vars = c("cngeneson"),
   random_effects_var = "individual",
   ensembl_mapping_file = ensembl_fp,
   nAGQ = 0)
@@ -417,7 +394,7 @@ DT::datatable(result_de$Controls_vs_diagnosisCases,
 
 We have implemented both topology based and non-topology based pathway enrichment analysis. Here we will use WebGestaltR.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 enrichment_result <- pathway_analysis_webgestaltr(result_de$Controls_vs_diagnosisCases,
                                                   enrichment_method = "ORA")
 ```

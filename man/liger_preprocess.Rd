@@ -66,3 +66,10 @@ liger preprocessed object.
 \description{
 Split merged object into multiple sce objects and extract sparse matrices:
 }
+\seealso{
+Other Data integration: 
+\code{\link{integrate_sce}()},
+\code{\link{liger_reduce_dims}()},
+\code{\link{report_integrated_sce}()}
+}
+\concept{Data integration}

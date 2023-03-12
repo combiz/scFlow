@@ -1,3 +1,9 @@
+# scFlow 0.7.2
+
+* QC bug fixes.
+* Update in the `reduce_dims_sce()` function to use the latest `monocle3` version and to be able to pass `residual_mod_formula_str` to regress out variables.
+* Update in the `map_celltypes_sce()` function to generalise the celltype annotation. 
+
 # scFlow 0.7.0
 
 # scFlow 0.6.2

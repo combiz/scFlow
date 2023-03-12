@@ -9,7 +9,7 @@
 #'
 #' @return sce annotated SingleCellExperiment object
 #'
-#' @family integration, dimension reduction, and clustering
+#' @family annotation functions
 #'
 #' @import ggplot2
 #' @importFrom SummarizedExperiment rowData colData

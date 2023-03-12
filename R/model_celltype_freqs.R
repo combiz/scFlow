@@ -12,7 +12,7 @@
 #'
 #' @return results_l a list of results
 #'
-#' @family Further analyses
+#' @family Celltype annotation
 #'
 #' @importFrom cli cli_h1 cli_alert
 #' @importFrom DirichletReg DR_data DirichReg

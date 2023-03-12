@@ -37,7 +37,8 @@ results_l a list of results
 Model Changes in Celltype Frequencies with Dirichlet Multinomial Regression
 }
 \seealso{
-Other Further analyses: 
-\code{\link{find_marker_genes}()}
+Other Celltype annotation: 
+\code{\link{find_marker_genes}()},
+\code{\link{map_celltypes_sce}()}
 }
-\concept{Further analyses}
+\concept{Celltype annotation}

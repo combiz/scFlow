@@ -26,7 +26,7 @@
 #'
 #' @return sce a SingleCellExperiment object annotated with celltypes/metadata
 #' @author Nathan Skene / Combiz Khozoie
-#' @family clustering and dimensionality reduction
+#' @family Celltype annotation
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom Matrix Matrix
 #' @importFrom EWCE generate_celltype_data
@@ -400,7 +400,7 @@ for (ml in mappingLevel) {
     list.files(folder_path, pattern = "ctd_", full.names = TRUE),
     readRDS
   )
-  names(rds_l) <- tools::file_path_sans_ext(list.files(folder_path))
+  names(rds_l) <- tools::file_path_sans_ext(list.files(folder_path, pattern = "ctd_"))
 
   return(rds_l)
 }

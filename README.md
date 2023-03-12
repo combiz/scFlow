@@ -82,8 +82,7 @@ Overview of scFlow features
     -   Automated cell-type annotation with
         [EWCE](https://github.com/NathanSkene/EWCE)
     -   Cluster identity mapping against the [Allen Human Brain
-        Atlas](https://www.brain-map.org) and Mouse Nervous System Data
-        from [Zeisel 2018](https://doi.org/10.1016/j.cell.2018.06.021)
+        Atlas](https://www.brain-map.org)
 -   Differential gene expression implementations
     -   Flexible pre-processing including gene expressivity filtering,
         and options for numeric covariate scaling/centering, matrix
@@ -97,8 +96,6 @@ Overview of scFlow features
         [EnrichR](https://github.com/cran/enrichR)
     -   Interface to the WebGestalt tool with
         [WebGestaltR](http://www.webgestalt.org/)
-    -   Interface to the Onto Tools suite with
-        [ROntoTools](https://www.bioconductor.org/packages/release/bioc/html/ROntoTools.html)
 -   Cell-type composition analysis
     -   Dirichlet modeling of differential cell-type composition using
         [DirichletReg](https://cran.r-project.org/web/packages/DirichletReg/index.html)
@@ -116,15 +113,6 @@ You can install the development version of scFlow from GitHub with: -
 ``` r
 # install.packages("devtools")
 devtools::install_github("combiz/scFlow")
-```
-
-An additional data package, `scFlowData`, will be needed which contains
-supplementary data required for gene annotation, cell type annotation,
-and pathway analysis. Install that with: -
-
-``` r
-# install.packages("devtools")
-devtools::install_github("combiz/scFlowData")
 ```
 
 ## Support

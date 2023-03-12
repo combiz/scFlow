@@ -7,7 +7,7 @@
 #' @param categorical_covariates list of categorical variables
 #' @return sce SingleCellExperiment object annotated with reducedDims
 #'
-#' @family integration, dimension reduction, and clustering
+#' @family Data integration
 #' @import ggplot2
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom rmarkdown render

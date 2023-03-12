@@ -26,6 +26,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -38,18 +40,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">scFlow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.2</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="articles/scFlow.html">Get started</a>
 </li>
@@ -62,7 +58,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/combiz/scFlow/">
+  <a href="https://github.com/combiz/scFlow/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -81,97 +77,118 @@
   <div class="contents col-md-9">
 
 <p><img src="reference/figures/logo.png" width="200" style="align:left;"></p>
-<div id="scflow---single-cell-workflow" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#scflow---single-cell-workflow" class="anchor"></a>scFlow - Single-Cell Workflow</h1></div>
+<div class="section level1">
+<div class="page-header"><h1 id="scflow---single-cell-workflow">scFlow - Single-Cell Workflow<a class="anchor" aria-label="anchor" href="#scflow---single-cell-workflow"></a>
+</h1></div>
 <!-- badges: start -->
-<p><a href="https://github.com/combiz/scFlow/actions/workflows/r_package.yaml"><img src="https://github.com/combiz/scFlow/actions/workflows/r_package.yaml/badge.svg" alt="R GitHub Actions"></a> <a href="https://github.com/combiz/scFlow/actions/workflows/r_package2.yaml"><img src="https://github.com/combiz/scFlow/actions/workflows/r_package2.yaml/badge.svg" alt="R GitHub Actions Dev"></a> <a href="https://combiz.github.io/scFlow/"><img src="https://img.shields.io/badge/docs-passing-brightgreen.svg?style=flat" alt="Documentation"></a> <a href="https://combiz.github.io/scflow-manual/"><img src="https://img.shields.io/badge/manual-passing-brightgreen.svg?style=flat" alt="Manual"></a> <a href="https://github.com/combiz/scFlow/issues"><img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat" alt="contributions welcome"></a> <a href="https://www.gnu.org/licenses/gpl-3.0"><img src="https://img.shields.io/badge/License-GPLv3-green.svg" alt="License: GPL v3"></a> <!-- badges: end --></p>
-<p>The goal of scFlow is to provide tools in R to build a complete analysis workflow for single-cell/nuclei RNA sequencing data.</p>
+
+<p>The scFlow R package provides the analytical back-end to the <a href="https://nf-co.re/scflow" class="external-link">nf-core/scflow</a> Nextflow pipeline for the orchestration of automated, scalable, and reproducible single-cell RNA sequencing analyses.</p>
+<p>The scFlow R package is built to enable standardized workflows following best practices on top of popular single-cell R packages, including Seurat, Monocle, scater, emptyDrops, DoubletFinder, LIGER, and MAST (Hao 2021, Cao 2019, McCarthy 2017, Lun 2019, McGinnis 2019, Welch 2019). Common analytical tasks required by users that involve multiple tools can be performed in scFlow with a single command (i.e. a higher level of abstraction). Key plots, tables, and other analysis outputs are automatically generated, together with interactive HTML reports for each stage of the analysis. These reports provide informative summaries of analytical steps in ways that can highlight the impact of parameter choices and guide their revision when needed.</p>
+<p>The following example illustrates a complete sample quality-control with default parameters using the scFlow R package, including ambient RNA profiling, gene/cell annotation, thresholding, doublet/multiplet removal, and generation of an interactive HTML report with key plots: -</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>sce <span class="ot">&lt;-</span> <span class="fu">read_sparse_matrix</span>(matrix_path) <span class="sc">%&gt;%</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">generate_sce</span>(metadata) <span class="sc">%&gt;%</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">find_cells</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">annotate_sce</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">filter_sce</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">find_singlets</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">filter_sce</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">report_qc_sce</span>()</span></code></pre></div>
+<p>Overview of scFlow features</p>
 <ul>
 <li>Quality control of gene-cell matrices
 <ul>
-<li>Filtering of matrices by counts and features</li>
-<li>Filtering of mitochondrial genes and mitochondrial counts thresholding</li>
-<li>Doublet and multiplet identification and removal with <a href="https://github.com/chris-mcginnis-ucsf/DoubletFinder">DoubletFinder</a>
+<li>Profiling of ambient RNA with <a href="https://github.com/MarioniLab/DropletUtils" class="external-link">emptyDrops</a>
 </li>
-<li>Rich QC metrics annotation with <a href="https://github.com/davismcc/scater">scater</a>
+<li>Filtering of matrices by counts and features including optional adaptive filtering</li>
+<li>Filtering of mitochondrial and ribosomal genes and thresholding of counts</li>
+<li>Doublet and multiplet identification and removal with <a href="https://github.com/chris-mcginnis-ucsf/DoubletFinder" class="external-link">DoubletFinder</a>
+</li>
+<li>Rich QC metrics annotation with <a href="https://github.com/davismcc/scater" class="external-link">scater</a>
 </li>
 </ul>
 </li>
-<li>Dimensionality reduction and celltype identification
+<li>Integration
 <ul>
-<li>Louvain clustering, UMAP dimensionality reduction, and cluster marker gene identification with <a href="https://github.com/cole-trapnell-lab/monocle-release">monocle</a>
+<li>Calculation of latent-gene metafactors for integration <a href="https://github.com/MacoskoLab/rliger" class="external-link">Liger</a>
 </li>
-<li>Celltype annotation with <a href="https://github.com/NathanSkene/EWCE">EWCE</a> and <a href="https://github.com/MacoskoLab/liger">Liger</a>
+<li>Evaluation of integration performance across major sources of experimental variance with <a href="https://github.com/theislab/kBET" class="external-link">kBet</a>
 </li>
-<li>Cluster identity mapping against the <a href="https://www.brain-map.org">Allen Human Brain Atlas</a> and Mouse Nervous System Data from <a href="https://doi.org/10.1016/j.cell.2018.06.021">Zeisel 2018</a>
+<li>Latent factor contribution analysis with <a href="https://github.com/hms-dbmi/UpSetR/" class="external-link">UpSetR</a> plots</li>
+</ul>
+</li>
+<li>Dimensionality reduction and Clustering
+<ul>
+<li>Dimensionality reduction with tSNE and/or UMAP with/without integration</li>
+<li>Community detection with the Louvain or Leiden clustering algorithms using <a href="https://github.com/cole-trapnell-lab/monocle-release" class="external-link">monocle</a>
+</li>
+</ul>
+</li>
+<li>Cell-type identification
+<ul>
+<li>Cluster marker gene identification with <a href="https://github.com/cole-trapnell-lab/monocle-release" class="external-link">monocle</a>
+</li>
+<li>Automated cell-type annotation with <a href="https://github.com/NathanSkene/EWCE" class="external-link">EWCE</a>
+</li>
+<li>Cluster identity mapping against the <a href="https://www.brain-map.org" class="external-link">Allen Human Brain Atlas</a>
 </li>
 </ul>
 </li>
 <li>Differential gene expression implementations
 <ul>
-<li>Zero-inflated regression model with <a href="https://github.com/RGLab/MAST">MAST</a>
+<li>Flexible pre-processing including gene expressivity filtering, and options for numeric covariate scaling/centering, matrix normalization, and pseudobulking</li>
+<li>Zero-inflated mixed-effect regression model with <a href="https://github.com/RGLab/MAST" class="external-link">MAST</a>
 </li>
-<li>Random effects model with <a href="https://github.com/cran/limma">Limma</a>
-</li>
-<li>Negative binomial distribution pseudobulking model with <a href="https://github.com/mikelove/DESeq2">DESeq2</a>
-</li>
-<li>Pseudobulk generalized likelihood ratio tests with <a href="https://github.com/StoreyLab/edge">EdgeR</a>
+<li>Random effects models with <a href="https://github.com/cran/limma" class="external-link">Limma</a>
 </li>
 </ul>
 </li>
 <li>Pathway and functional category enrichment analysis
 <ul>
-<li>Interface to the Enrichr database with <a href="https://github.com/cran/enrichR">EnrichR</a>
+<li>Interface to the Enrichr database with <a href="https://github.com/cran/enrichR" class="external-link">EnrichR</a>
 </li>
-<li>Interface to the WebGestalt tool with <a href="http://www.webgestalt.org/">WebGestaltR</a>
+<li>Interface to the WebGestalt tool with <a href="http://www.webgestalt.org/" class="external-link">WebGestaltR</a>
+</li>
+</ul>
+</li>
+<li>Cell-type composition analysis
+<ul>
+<li>Dirichlet modeling of differential cell-type composition using <a href="https://cran.r-project.org/web/packages/DirichletReg/index.html" class="external-link">DirichletReg</a>
 </li>
 </ul>
 </li>
 <li>Publication quality plots and analysis reports
 <ul>
-<li>QC plots and tabular metrics suitable for reports.</li>
-<li>UMAP plots for cell features and gene expression.</li>
-<li>Violin plots for gene expression.</li>
-<li>Pathway and gene enrichment plots</li>
+<li>Eight interactive HTML reports with key plots and algorithm performance metrics</li>
 </ul>
 </li>
 </ul>
-<p>The package functions are designed to interface neatly with <a href="https://www.nextflow.io/">NextFlow</a> for scalable and containerized pipelines deployed locally, on high-performance computing clusters, or in the cloud. See <a href="https://nf-co.re/scflow" class="uri">https://nf-co.re/scflow</a> for the accompanying NextFlow pipeline.</p>
-<div id="get-started-and-documentation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#get-started-and-documentation" class="anchor"></a>Get Started and Documentation</h2>
-<p>Our primary documentation is at <a href="https://combiz.github.io/scflow-manual/" class="uri">https://combiz.github.io/scflow-manual/</a>.</p>
-<p>You can install the development version of scFlow from GitHub with:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"combiz/scFlow"</span><span class="op">)</span></code></pre></div>
-<p>An additional data package <code>scFlowData</code> will be needed which contains supplimentary data required for gene annotaion, cell type annotation, pathway analysis. Install that with:</p>
+<div class="section level2">
+<h2 id="get-started-and-documentation">Get Started and Documentation<a class="anchor" aria-label="anchor" href="#get-started-and-documentation"></a>
+</h2>
+<p>Our primary documentation is at <a href="https://combiz.github.io/scflow-manual/" class="external-link uri">https://combiz.github.io/scflow-manual/</a>.</p>
+<p>You can install the development version of scFlow from GitHub with: -</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"combiz/scFlowData"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"combiz/scFlow"</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div id="support" class="section level2">
-<h2 class="hasAnchor">
-<a href="#support" class="anchor"></a>Support</h2>
+<div class="section level2">
+<h2 id="support">Support<a class="anchor" aria-label="anchor" href="#support"></a>
+</h2>
 <ul>
 <li>Ask a question on Stack Overflow with the scFlow tag, we monitor this for new questions.</li>
 <li>Discuss on the scFlow Slack team.</li>
 <li>Open bug reports and feature requests (not questions) on GitHub issues.</li>
 </ul>
 </div>
-<div id="how-to-contribute" class="section level2">
-<h2 class="hasAnchor">
-<a href="#how-to-contribute" class="anchor"></a>How to Contribute</h2>
-<p>Check the <a href="https://github.com/microsoft/scFlow/blob/master/CONTRIBUTING.md">CONTRIBUTING</a> page.</p>
-<p>You may need to install scFlow using a Personal Access Token (Github-&gt;Settings-&gt;Developer Settings): -</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"combiz/scFlow"</span>, auth_token <span class="op">=</span> <span class="st">"YOURTOKEN"</span><span class="op">)</span></code></pre></div>
+<div class="section level2">
+<h2 id="how-to-contribute">How to Contribute<a class="anchor" aria-label="anchor" href="#how-to-contribute"></a>
+</h2>
+<p>Check the <a href="https://github.com/scFlow/blob/master/CONTRIBUTING.md" class="external-link">CONTRIBUTING</a> page.</p>
 </div>
-<div id="reference-papers" class="section level2">
-<h2 class="hasAnchor">
-<a href="#reference-papers" class="anchor"></a>Reference Papers</h2>
+<div class="section level2">
+<h2 id="reference-papers">Reference Papers<a class="anchor" aria-label="anchor" href="#reference-papers"></a>
+</h2>
+<p>Combiz Khozoie, Nurun Fancy, Mahdi M. Marjaneh, Alan E. Murphy, Paul M. Matthews, Nathan Skene. “scFlow: A Scalable and Reproducible Analysis Pipeline for Single-Cell RNA Sequencing Data.” bioRxiv 2021 August 19. doi: 10.22541/au.162912533.38489960/v1.</p>
 <p>Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso &amp; Sven Nahnsen. “The nf-core framework for community-curated bioinformatics pipelines”. Nat Biotechnology (2020); doi: 10.1038/s41587-020-0439-x</p>
 <p>Note: If you use scFlow in your GitHub projects, please add scFlow in the requirements.txt.</p>
 </div>
@@ -181,28 +198,49 @@
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/combiz/scFlow/">https://​github.com/​combiz/​scFlow/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/combiz/scFlow/issues">https://​github.com/​combiz/​scFlow/​issues</a>
-</li>
+<li><a href="https://github.com/combiz/scFlow/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/combiz/scFlow/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a> | file <a href="LICENSE-text.html">LICENSE</a></small></li>
+<li><small><a href="https://www.r-project.org/Licenses/GPL-3" class="external-link">GPL-3</a> | file <a href="LICENSE-text.html">LICENSE</a></small></li>
 </ul>
 </div>
-<div class="developers">
-<h2>Developers</h2>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li>Combiz Khozoie <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-1634-5287" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Nurun Fancy <br><small class="roles"> Author </small> <a href="https://orcid.org/YOUR-ORCID-ID" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Mahdi Marjaneh <br><small class="roles"> Author </small> <a href="https://orcid.org/YOUR-ORCID-ID" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Nathan Skene <br><small class="roles"> Author </small> <a href="https://orcid.org/YOUR-ORCID-ID" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li><a href="authors.html#citation">Citing scFlow</a></li>
+</ul>
+</div>
+
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
+<ul class="list-unstyled">
+<li>Combiz Khozoie <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-1634-5287" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Nurun Fancy <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-6481-6266" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Mahdi Marjaneh <br><small class="roles"> Author </small> <a href="https://orcid.org/YOUR-ORCID-ID" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Michael Thomas <br><small class="roles"> Author </small> <a href="https://orcid.org/YOUR-ORCID-ID" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Nathan Skene <br><small class="roles"> Author </small> <a href="https://orcid.org/YOUR-ORCID-ID" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+</ul>
+</div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/combiz/scFlow/actions/workflows/r_package.yaml" class="external-link"><img src="https://github.com/combiz/scFlow/actions/workflows/r_package.yaml/badge.svg" alt="R GitHub Actions"></a></li>
+<li><a href="https://github.com/combiz/scFlow/actions/workflows/r_package2.yaml" class="external-link"><img src="https://github.com/combiz/scFlow/actions/workflows/r_package2.yaml/badge.svg" alt="R GitHub Actions Dev"></a></li>
+<li><a href="https://combiz.github.io/scFlow/" class="external-link"><img src="https://img.shields.io/badge/docs-passing-brightgreen.svg?style=flat" alt="Documentation"></a></li>
+<li><a href="https://combiz.github.io/scflow-manual/" class="external-link"><img src="https://img.shields.io/badge/manual-passing-brightgreen.svg?style=flat" alt="Manual"></a></li>
+<li><a href="https://github.com/combiz/scFlow/issues" class="external-link"><img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat" alt="contributions welcome"></a></li>
+<li><a href="https://www.gnu.org/licenses/gpl-3.0" class="external-link"><img src="https://img.shields.io/badge/License-GPLv3-green.svg" alt="License: GPL v3"></a></li>
 </ul>
 </div>
 
@@ -211,11 +249,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Combiz Khozoie, Nurun Fancy, Mahdi Marjaneh, Nathan Skene.</p>
+  <p></p>
+<p>Developed by Combiz Khozoie, Nurun Fancy, Mahdi Marjaneh, Michael Thomas, Nathan Skene.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
@@ -223,6 +263,8 @@
 
   
 
+
+  
 
   </body>
 </html>

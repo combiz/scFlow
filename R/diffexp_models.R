@@ -56,6 +56,12 @@ perform_de <- function(sce,
   # preprocess
   fargs$sce <- do.call(.preprocess_sce_for_de, fargs)
 
+  assertthat::assert_that(
+    dim(fargs$sce)[1] >= 100,
+    msg = "Less than 500 genes passed the min_counts and min_cells_pc threshold;
+    Consider decreasing both values!"
+  )
+
   # select method
   if (de_method == "MASTZLM") {
     cli::cli_h2("MAST Zero-inflated Linear Model")

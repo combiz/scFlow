@@ -41,7 +41,6 @@ Suggests:
     spelling,
     covr,
     knitr,
-    scFlowData,
     scFlowExamples,
     BiocStyle
 Language: en-US
@@ -122,7 +121,9 @@ Remotes:
     cole-trapnell-lab/monocle3,
     theislab/kBET,
     jlmelville/uwot,
+    NathanSkene/One2One,
+    hhoeflin/hdf5r,
+    mojaveazure/loomR,
     neurogenomics/scFlowExamples,
-    neurogenomics/scFlowData,
     ropensci/bib2df
 VignetteBuilder: knitr

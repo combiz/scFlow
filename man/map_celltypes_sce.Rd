@@ -56,15 +56,11 @@ sce a SingleCellExperiment object annotated with celltypes/metadata
 Map cluster celltypes with EWCE
 }
 \seealso{
-Other clustering and dimensionality reduction: 
-\code{\link{.get_x_most_specific_genes}()},
-\code{\link{.map_celltypes_with_ewce}()},
-\code{\link{.map_celltypes}()},
-\code{\link{cluster_sce}()},
-\code{\link{map_custom_celltypes}()},
-\code{\link{reduce_dims_sce}()}
+Other Celltype annotation: 
+\code{\link{find_marker_genes}()},
+\code{\link{model_celltype_freqs}()}
 }
 \author{
 Nathan Skene / Combiz Khozoie
 }
-\concept{clustering and dimensionality reduction}
+\concept{Celltype annotation}

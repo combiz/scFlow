@@ -35,6 +35,8 @@
 #'
 #' @return liger preprocessed object.
 #'
+#' @family Data integration
+#'
 #' @importFrom rliger createLiger normalize selectGenes
 #' @importFrom rliger scaleNotCenter removeMissingObs
 #' @importFrom parallel mclapply
