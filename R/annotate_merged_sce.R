@@ -269,13 +269,13 @@ annotate_merged_sce <- function(sce,
           axis.text.y = element_blank(),
           plot.margin = unit(c(0, 0, 0, 0), "lines"))
 
-  p2 <- ggplot(dt_long, aes(x = name, y = ensembl_gene_id)) +
-    geom_tile(aes(fill = !value)) +
-    scale_fill_viridis_d() +
-    xlab("Sample") +
-    ylab("") +
-    theme_bw() +
-    theme(legend.position = "none",
+  p2 <- ggplot2::ggplot(dt_long, ggplot2::aes(x = name, y = ensembl_gene_id)) +
+    ggplot2::geom_tile(aes(fill = !value)) +
+    ggplot2::scale_fill_viridis_d() +
+    ggplot2::xlab("Sample") +
+    ggplot2::ylab("") +
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position = "none",
           text = element_text(size = 16),
           axis.title = element_text(size = 18),
           axis.title.x = element_blank(),
@@ -313,6 +313,7 @@ annotate_merged_sce <- function(sce,
 #' @param facet_var the colData variable to facet/subset by
 #' @param plot_points if TRUE plot individual values for violin plots
 #'
+#' @import ggplot2
 #' @importFrom scales percent pretty_breaks
 #' @keywords internal
 .generate_merge_summary_plot <- function(sce,
@@ -389,6 +390,7 @@ annotate_merged_sce <- function(sce,
 #'
 #' @param sce a singlecellexperiment object
 #' @param unique_id_var the colData variable identifying unique samples
+#' @import ggplot2
 #' @keywords internal
 .plot_n_cells_by_unique_id_var <- function(sce, unique_id_var = "individual") {
 

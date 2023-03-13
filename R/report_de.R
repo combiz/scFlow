@@ -2,8 +2,8 @@
 #' Generate a report for differential expression analysis
 #'
 #' @param res Differential expression result table from perform_de() function.
-#' @param fc_threshold fold change up/down threshold.
-#' @param pval_cutoff the adjusted pvalue cutoff threshold.
+#' @param logFC_threshold fold change up/down threshold.
+#' @param padj_cutoff the adjusted pvalue cutoff threshold.
 #' @param n_label number of genes to be labelled in the volcano plot.
 #' @param report_folder_path folder path to save the report.
 #' @param report_file filename for report (without an extension).

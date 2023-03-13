@@ -16,15 +16,15 @@ report_de(
 \arguments{
 \item{res}{Differential expression result table from perform_de() function.}
 
+\item{logFC_threshold}{fold change up/down threshold.}
+
+\item{padj_cutoff}{the adjusted pvalue cutoff threshold.}
+
 \item{n_label}{number of genes to be labelled in the volcano plot.}
 
 \item{report_folder_path}{folder path to save the report.}
 
 \item{report_file}{filename for report (without an extension).}
-
-\item{fc_threshold}{fold change up/down threshold.}
-
-\item{pval_cutoff}{the adjusted pvalue cutoff threshold.}
 }
 \description{
 Generate a report for differential expression analysis

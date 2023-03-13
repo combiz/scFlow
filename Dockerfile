@@ -172,7 +172,8 @@ tidyverse \
 UpSetR \
 utils \
 vroom \
-WebGestaltR
+WebGestaltR \
+&& rm -rf /tmp/downloaded_packages
 
 ## Install Bioconductor packages
 COPY ./misc/requirements-bioc.R .

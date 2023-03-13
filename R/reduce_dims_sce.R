@@ -143,77 +143,18 @@ reduce_dims_sce <- function(sce,
     for (input_rd in input_reduced_dim) {
       # Reduce dimensions with tSNE
       if (reddim_method == "tSNE") {
-        mat <- as.matrix(SingleCellExperiment::reducedDim(cds, input_rd))
 
-        tsne_args <- fargs[names(fargs) %in%
-          names(as.list(args(Rtsne:::Rtsne.default)))]
+        sce <- .run_tsne(sce = sce, cds = cds, input_rd = input_rd,
+                         fargs = fargs, reddim_method = reddim_method)
 
-        tsne_res <- do.call(
-          Rtsne::Rtsne, c(list(X = mat, pca = FALSE), tsne_args)
-        )
-
-        tsne_data <- tsne_res$Y[, 1:fargs$dims]
-        row.names(tsne_data) <- colnames(tsne_data)
-
-        rd_name <- paste(reddim_method, input_rd, sep = "_")
-
-        SingleCellExperiment::reducedDim(sce, rd_name) <- tsne_data
-        sce@metadata$reduced_dim_params[[rd_name]] <- tsne_args
-
-        cli::cli_alert_success(c(
-          "{.strong {reddim_method}} was computed successfully ",
-          "with {.strong {input_rd}} input"
-        ))
       }
 
       # Reduce dimensions with UMAP
       if (reddim_method %in% c("UMAP", "UMAP3D")) {
-        mat <- as.matrix(SingleCellExperiment::reducedDim(cds, input_rd))
 
-        umap_args <- fargs[names(fargs) %in%
-          names(as.list(args(uwot::umap)))]
+        sce <- .run_umap(sce = sce, cds = cds, input_rd = input_rd,
+                         fargs = fargs, reddim_method = reddim_method)
 
-        if (reddim_method == "UMAP3D") {
-          umap_args$n_components <- 3
-        }
-
-        umap_res <- do.call(
-          uwot::umap, c(list(X = mat), umap_args)
-        )
-
-        cli::cli_alert_success(c(
-          "{.strong {reddim_method}} was computed successfully ",
-          "with {.strong {input_rd}} input"
-        ))
-
-        row.names(umap_res) <- colnames(cds)
-        rd_name <- paste(reddim_method, input_rd, sep = "_")
-        SingleCellExperiment::reducedDim(sce, rd_name) <- umap_res
-        sce@metadata$reduced_dim_params[[rd_name]] <- umap_args
-
-        if (reddim_method == "UMAP3D") {
-          sce@metadata$reduced_dim_plots$umap3d_plot_ly <-
-            plotly::plot_ly(
-              x = umap_res[, 1],
-              y = umap_res[, 2],
-              z = umap_res[, 3],
-              type = "scatter3d",
-              mode = "markers",
-              size = 0.1
-            )
-
-          sce@metadata$reduced_dim_plots$umap3d <-
-            threejs::scatterplot3js(
-              x = umap_res[, 1],
-              y = umap_res[, 2],
-              z = umap_res[, 3],
-              axis = FALSE,
-              num.ticks = NULL,
-              color = rep("#4682b4", dim(umap_res)[[1]]),
-              stroke = "#4682b4",
-              size = .01
-            )
-        }
       }
     }
   }
@@ -232,4 +173,87 @@ reduce_dims_sce <- function(sce,
 
   return(sce)
 }
+
+
+#' @keywords internal
+.run_tsne <- function(sce, cds, input_rd, fargs, reddim_method){
+  mat <- as.matrix(SingleCellExperiment::reducedDim(cds, input_rd))
+  tsne_args <- fargs[names(fargs) %in%
+                       names(as.list(args(Rtsne:::Rtsne.default)))]
+
+  tsne_res <- do.call(
+    Rtsne::Rtsne, c(list(X = mat, pca = FALSE), tsne_args)
+  )
+  tsne_data <- tsne_res$Y[, 1:fargs$dims]
+  row.names(tsne_data) <- colnames(tsne_data)
+
+  rd_name <- paste(reddim_method, input_rd, sep = "_")
+
+  SingleCellExperiment::reducedDim(sce, rd_name) <- tsne_data
+  sce@metadata$reduced_dim_params[[rd_name]] <- tsne_args
+
+  cli::cli_alert_success(c(
+    "{.strong {reddim_method}} was computed successfully ",
+    "with {.strong {input_rd}} input"
+  ))
+
+  return(sce)
+
+}
+
+#' @keywords internal
+.run_umap <- function(sce, cds, input_rd, fargs, reddim_method){
+  mat <- as.matrix(SingleCellExperiment::reducedDim(cds, input_rd))
+
+  umap_args <- fargs[names(fargs) %in%
+                       names(as.list(args(uwot::umap)))]
+
+  if (reddim_method == "UMAP3D") {
+    umap_args$n_components <- 3
+  }
+
+  umap_res <- do.call(
+    uwot::umap, c(list(X = mat), umap_args)
+  )
+
+  cli::cli_alert_success(c(
+    "{.strong {reddim_method}} was computed successfully ",
+    "with {.strong {input_rd}} input"
+  ))
+
+  row.names(umap_res) <- colnames(cds)
+  rd_name <- paste(reddim_method, input_rd, sep = "_")
+  SingleCellExperiment::reducedDim(sce, rd_name) <- umap_res
+  sce@metadata$reduced_dim_params[[rd_name]] <- umap_args
+
+  if (reddim_method == "UMAP3D") {
+    sce@metadata$reduced_dim_plots$umap3d_plot_ly <-
+      plotly::plot_ly(
+        x = umap_res[, 1],
+        y = umap_res[, 2],
+        z = umap_res[, 3],
+        type = "scatter3d",
+        mode = "markers",
+        size = 0.1
+      )
+
+    sce@metadata$reduced_dim_plots$umap3d <-
+      threejs::scatterplot3js(
+        x = umap_res[, 1],
+        y = umap_res[, 2],
+        z = umap_res[, 3],
+        axis = FALSE,
+        num.ticks = NULL,
+        color = rep("#4682b4", dim(umap_res)[[1]]),
+        stroke = "#4682b4",
+        size = .01
+      )
+  }
+
+  return(sce)
+
+}
+
+
+
 

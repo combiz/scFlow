@@ -96,6 +96,7 @@ Call required packages for vignette:
 library(scFlow)
 library(scFlowExamples)
 library(SingleCellExperiment)
+library(dplyr)
 ```
 
 First we must get and format the data from `scFlowExamples` for the vignette:
@@ -371,11 +372,11 @@ result_de <- perform_de(
   sce_subset,
   mast_method = "glmer",
   min_counts = 1,
-  min_cells_pc = 0.01,
+  min_cells_pc = 0.25,
   dependent_var = "diagnosis",
   ref_class = "Controls",
   confounding_vars = c("cngeneson"),
-  random_effects_var = "individual",
+  random_effects_var = "manifest",
   ensembl_mapping_file = ensembl_fp,
   nAGQ = 0)
 ```
@@ -392,15 +393,23 @@ DT::datatable(result_de$Controls_vs_diagnosisCases,
                              dom = 'Blfrtip'))
 ```
 
-We have implemented both topology based and non-topology based pathway enrichment analysis. Here we will use WebGestaltR.
+We have implemented two different functional enrichment tools enrichR and WebGestaltR. Users can call both tools using `find_impacted_pathway()` function. Here we will use WebGestaltR only.
 
 ```{r, message=FALSE, warning=FALSE}
-enrichment_result <- pathway_analysis_webgestaltr(result_de$Controls_vs_diagnosisCases,
+# Get the significant genes for impacted pathway analysis
+
+sig_de <- result_de$Controls_vs_diagnosisCases %>%
+  dplyr::filter(padj <= 0.05) %>%
+  dplyr::pull(gene) %>%
+  as.character()
+
+enrichment_result <- pathway_analysis_webgestaltr(sig_de,
                                                   enrichment_method = "ORA")
+
 ```
 
 ```{r eval=TRUE, message=FALSE, include=TRUE}
-DT::datatable(enrichment_result$geneontology_biological_process,
+DT::datatable(enrichment_result$geneontology_biological_process_noredundant,
               rownames = FALSE, 
               escape = FALSE,
               options = list(pageLength = 5, 

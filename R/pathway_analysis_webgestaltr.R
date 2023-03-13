@@ -50,11 +50,10 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
                                            default = "human"),
                                          enrichment_method = "ORA",
                                          enrichment_database = c(
-                                           "geneontology_Biological_Process",
-                                           "geneontology_Cellular_Component",
-                                           "geneontology_Molecular_Function",
+                                           "geneontology_Biological_Process_noRedundant",
+                                           "geneontology_Cellular_Component_noRedundant",
+                                           "geneontology_Molecular_Function_noRedundant",
                                            "pathway_KEGG",
-                                           "pathway_Panther",
                                            "pathway_Reactome",
                                            "pathway_Wikipathway"
                                          )) {
@@ -116,7 +115,7 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     msg = "Invalid databases specified. See WebGestaltR::listGeneSet()."
   )
 
-  res <- WebGestaltR::WebGestaltR(
+  res <- suppressWarnings(WebGestaltR::WebGestaltR(
     enrichMethod = enrichment_method,
     organism = organism,
     enrichDatabase = enrichment_database,
@@ -129,7 +128,7 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     maxNum = 300,
     isOutput = FALSE,
     projectName = NULL
-  )
+  ))
 
   if (is.null(res)) {
     cli::cli_text(
@@ -301,3 +300,4 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     cowplot::theme_cowplot() +
     cowplot::background_grid()
 }
+

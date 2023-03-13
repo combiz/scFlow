@@ -119,7 +119,7 @@ perform_de <- function(sce,
     cli::cli_alert("Normalizing with sctransform")
     #sce$log10_total_counts <- log10(sce$total_counts)
     vst_out <- sctransform::vst(
-      umi = as(SingleCellExperiment::counts(sce), "dgCMatrix"),
+      umi = as(SingleCellExperiment::counts(sce), "CsparseMatrix"),
       cell_attr = as.data.frame(SummarizedExperiment::colData(sce)),
       latent_var = c("log_umi"),#c("log10_total_counts"),
       batch_var = NULL,

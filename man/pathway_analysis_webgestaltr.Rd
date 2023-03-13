@@ -9,9 +9,10 @@ pathway_analysis_webgestaltr(
   reference_file = NULL,
   organism = getOption("scflow_species", default = "human"),
   enrichment_method = "ORA",
-  enrichment_database = c("geneontology_Biological_Process",
-    "geneontology_Cellular_Component", "geneontology_Molecular_Function", "pathway_KEGG",
-    "pathway_Panther", "pathway_Reactome", "pathway_Wikipathway")
+  enrichment_database = c("geneontology_Biological_Process_noRedundant",
+    "geneontology_Cellular_Component_noRedundant",
+    "geneontology_Molecular_Function_noRedundant", "pathway_KEGG", "pathway_Reactome",
+    "pathway_Wikipathway")
 )
 }
 \arguments{
