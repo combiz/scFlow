@@ -60,20 +60,9 @@ annotate_merged_sce <- function(sce,
       plot_points = TRUE) # no facets
 
     # generate plot data table for export
-    dt <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
-      dplyr::select(unique(c(pv, unique_id_var))) %>%
-      dplyr::group_by_at(unique_id_var) %>%
-      dplyr::summarize(
-        mean_avg =
-          round(mean(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-        stdev_mean =
-          round(stats::sd(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-        median_avg =
-          round(stats::median(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-        mad =
-          round(stats::mad(!!rlang::sym(pv), na.rm = TRUE), digits = 3)
-        ) %>%
-      dplyr::mutate(z = scale(mean_avg)[, 1])
+    dt <- .generate_pv_plot_dt_table(sce = sce,
+                                     pv = pv,
+                                     unique_id_var = unique_id_var)
 
     merged_plots_data_l[[pv]][[pv]] <- dt
 
@@ -90,20 +79,12 @@ annotate_merged_sce <- function(sce,
         plot_points = TRUE)
 
       # generate plot data table for export
-      dt <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
-        dplyr::select(unique(c(pv, unique_id_var, fv))) %>%
-        dplyr::group_by_at(fv) %>%
-        dplyr::summarize(
-          mean_avg = round(
-            mean(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-          stdev_mean = round(
-            sd(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-          median_avg = round(
-            median(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-          mad = round(
-            stats::mad(!!rlang::sym(pv), na.rm = TRUE), digits = 3)
-          ) %>%
-        mutate(z = scale(mean_avg)[, 1])
+
+      dt <- .generate_pv_fv_plot_dt_table(sce = sce,
+                                          pv = pv,
+                                          fv = fv,
+                                          unique_id_var = unique_id_var)
+
 
       merged_plots_data_l[[pv]][[plot_name]] <- dt
 
@@ -427,4 +408,47 @@ annotate_merged_sce <- function(sce,
   p <- .grobify_ggplot(p)
   return(p)
 
+}
+
+
+#' @keywords internal
+.generate_pv_plot_dt_table <- function(sce, pv, unique_id_var){
+  dt <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
+    dplyr::select(unique(c(pv, unique_id_var))) %>%
+    dplyr::group_by_at(unique_id_var) %>%
+    dplyr::summarize(
+      mean_avg =
+        round(mean(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+      stdev_mean =
+        round(stats::sd(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+      median_avg =
+        round(stats::median(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+      mad =
+        round(stats::mad(!!rlang::sym(pv), na.rm = TRUE), digits = 3)
+    ) %>%
+    dplyr::mutate(z = scale(mean_avg)[, 1])
+  return(dt)
+}
+
+
+#' @keywords internal
+
+.generate_pv_fv_plot_dt_table <- function(sce, pv, fv, unique_id_var){
+
+dt <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
+  dplyr::select(unique(c(pv, unique_id_var, fv))) %>%
+  dplyr::group_by_at(fv) %>%
+  dplyr::summarize(
+    mean_avg = round(
+      mean(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+    stdev_mean = round(
+      sd(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+    median_avg = round(
+      median(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+    mad = round(
+      stats::mad(!!rlang::sym(pv), na.rm = TRUE), digits = 3)
+  ) %>%
+  mutate(z = scale(mean_avg)[, 1])
+
+return(dt)
 }

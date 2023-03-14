@@ -2,7 +2,7 @@
 
 ## Use rstudio installs binaries from RStudio's RSPM service by default,
 ## Uses the latest stable ubuntu, R and Bioconductor versions. Created on unbuntu 20.04, R 4.0 and BiocManager 3.12
-FROM rocker/rstudio:4.2
+FROM rocker/rstudio:4.2.2
 
 
 ## Add packages dependencies
@@ -105,6 +105,12 @@ tee -a /etc/apt/sources.list.d/google-cloud-sdk.list \
 tee /usr/share/keyrings/cloud.google.gpg && apt-get update -y \
 && apt-get install google-cloud-sdk -y
 
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" \
+-o "awscliv2.zip"
+
+RUN unzip awscliv2.zip && ./aws/install \
+&& rm -rf awscliv2.zip
+
 RUN install2.r -e \
 argparse \
 assertthat \
@@ -183,7 +189,8 @@ RUN apt-get update \
    gcc && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 RUN Rscript -e 'requireNamespace("BiocManager"); BiocManager::install(ask=F);' \
-&& Rscript requirements-bioc.R
+&& Rscript requirements-bioc.R \
+&& rm -rf /tmp/downloaded_packages
 
 ## Install from GH the following
 RUN installGithub.r chris-mcginnis-ucsf/DoubletFinder \
@@ -196,7 +203,8 @@ hhoeflin/hdf5r \
 mojaveazure/loomR \
 ropensci/bib2df \
 cvarrichio/Matrix.utils \
-neurogenomics/scFlowExamples
+neurogenomics/scFlowExamples \
+&& rm -rf /tmp/downloaded_packages
 
 ## Install scFlow package
 # Copy description

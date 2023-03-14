@@ -115,7 +115,8 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     msg = "Invalid databases specified. See WebGestaltR::listGeneSet()."
   )
 
-  res <- suppressWarnings(WebGestaltR::WebGestaltR(
+
+  res <- WebGestaltR::WebGestaltR(
     enrichMethod = enrichment_method,
     organism = organism,
     enrichDatabase = enrichment_database,
@@ -128,7 +129,7 @@ pathway_analysis_webgestaltr <- function(gene_file = NULL,
     maxNum = 300,
     isOutput = FALSE,
     projectName = NULL
-  ))
+  )
 
   if (is.null(res)) {
     cli::cli_text(
