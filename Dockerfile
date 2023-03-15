@@ -178,7 +178,6 @@ tidyverse \
 UpSetR \
 utils \
 vroom \
-WebGestaltR \
 && rm -rf /tmp/downloaded_packages
 
 ## Install Bioconductor packages
@@ -204,6 +203,7 @@ mojaveazure/loomR \
 ropensci/bib2df \
 cvarrichio/Matrix.utils \
 neurogenomics/scFlowExamples \
+nfancy/WebGestaltR \
 && rm -rf /tmp/downloaded_packages
 
 ## Install scFlow package
