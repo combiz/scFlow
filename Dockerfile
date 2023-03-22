@@ -96,8 +96,11 @@ RUN apt-get update \
 	libsbml5-dev \
 	## qpdf needed to stop R CMD Check warning
 	qpdf \
+	gcc \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
+
+RUN pip install stratocumulus
 
 RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | \
 tee -a /etc/apt/sources.list.d/google-cloud-sdk.list \
@@ -106,9 +109,9 @@ tee /usr/share/keyrings/cloud.google.gpg && apt-get update -y \
 && apt-get install google-cloud-sdk -y
 
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" \
--o "awscliv2.zip"
-
-RUN unzip awscliv2.zip && ./aws/install \
+-o "awscliv2.zip" \
+&& unzip awscliv2.zip \
+&& ./aws/install \
 && rm -rf awscliv2.zip
 
 RUN install2.r -e \
@@ -182,11 +185,6 @@ vroom \
 
 ## Install Bioconductor packages
 COPY ./misc/requirements-bioc.R .
-RUN apt-get update \
- && apt-get install -y --no-install-recommends \
-   libfftw3-dev \
-   gcc && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
 RUN Rscript -e 'requireNamespace("BiocManager"); BiocManager::install(ask=F);' \
 && Rscript requirements-bioc.R \
 && rm -rf /tmp/downloaded_packages
