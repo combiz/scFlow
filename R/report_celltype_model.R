@@ -51,14 +51,12 @@ report_celltype_model <- function(results,
     quiet = TRUE
   )
 
-  file.remove(results_tmp_path)
+  unlink(results_tmp_path)
 
   cli::cli_text(c(
     "{cli::col_green(cli::symbol$tick)} Report succesfully generated: ",
     "{.file {file.path(report_folder_path, paste0(report_file, '.html'))}}")
   )
-
-  unlink(metadata_tmp_path)
 
   return(invisible(NULL))
 
