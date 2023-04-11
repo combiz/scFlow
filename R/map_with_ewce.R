@@ -139,8 +139,6 @@ map_celltypes_sce <- function(sce,
     dplyr::rename(!!clusters_colname := Cluster)
   mappings_df[] <- lapply(mappings_df, as.character)
 
-  sce@metadata$mappings <- mappings_df
-
   if (class(annotation_level) == "list") {
     mapping_column <- paste0(
       names(annotation_level)[1],
@@ -150,13 +148,17 @@ map_celltypes_sce <- function(sce,
   } else {
     mapping_column <- names(mappings_df)[2]
   }
-  colnames(mappings_df)[colnames(mappings_df) == mapping_column] <- "cluster_celltype"
+  mappings_df <- mappings_df %>%
+    dplyr::mutate(cluster_celltype = get(mapping_column),
+                  cluster_celltype = gsub("_", "-", cluster_celltype))
 
   sce <- map_custom_celltypes(
-    sce,
-    mappings_df,
-    colnames(mappings_df)[2:ncol(mappings_df)]
+    sce = sce,
+    mappings = mappings_df
   )
+
+  sce@metadata$mappings <- mappings_df
+
   sce <- .append_celltype_plots_sce(sce)
 
   return(sce)
@@ -190,6 +192,7 @@ map_celltypes_sce <- function(sce,
                                      reps = 1000,
                                      num_markers = 50) {
   # set up the map_celltypes parameter combinations for pmap
+
   map_params <- list(
     ctd = names(l_ctd),
     ctd_species = ctd_species, # get species from ctd
@@ -201,6 +204,9 @@ map_celltypes_sce <- function(sce,
                                                  ctd_species,
                                                  mlevel) {
     message(ctd_name)
+    mapped_dt_l <- list()
+
+    for(i in mlevel){
     mapped_dt <- .map_celltypes(
       ctdToMap = ctd,
       ctdToMapAgainst = l_ctd[[ctd_name]],
@@ -208,13 +214,16 @@ map_celltypes_sce <- function(sce,
       mapAgainstSpecies = ctd_species,
       annotLevel = 1,
       numTopMarkers = num_markers,
-      mappingLevel = mlevel,
+      mappingLevel = i,
       reps = reps
     )
     mapped_dt$mapping <- sprintf("%s_ML%s", ctd_name, mapped_dt$mappingLevel)
     mapped_dt <- mapped_dt %>%
       dplyr::rename(Cluster = Original)
     mapped_dt$Cluster <- as.numeric(as.character(mapped_dt$Cluster))
+    mapped_dt_l[[i]] <- mapped_dt
+    mapped_dt <- do.call(rbind, mapped_dt_l)
+    }
     return(mapped_dt)
   })
 
@@ -254,7 +263,7 @@ map_celltypes_sce <- function(sce,
                            reps = 1000) {
   ctd <- ctdToMapAgainst
   count <- 0
-
+set.seed(123)
 for (ml in mappingLevel) {
     message(" Level ", ml)
     for (ct in colnames(ctdToMap[[annotLevel]]$specificity)) {

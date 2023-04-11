@@ -179,6 +179,7 @@ tidyr \
 tidyselect \
 tidyverse \
 UpSetR \
+uwot \
 utils \
 vroom \
 && rm -rf /tmp/downloaded_packages
@@ -194,14 +195,13 @@ RUN installGithub.r chris-mcginnis-ucsf/DoubletFinder \
 ropensci/plotly \
 cole-trapnell-lab/monocle3 \
 theislab/kBET \
-jlmelville/uwot \
 NathanSkene/One2One \
 hhoeflin/hdf5r \
 mojaveazure/loomR \
 ropensci/bib2df \
 cvarrichio/Matrix.utils \
 neurogenomics/scFlowExamples \
-nfancy/WebGestaltR \
+bzhanglab/WebGestaltR \
 && rm -rf /tmp/downloaded_packages
 
 ## Install scFlow package

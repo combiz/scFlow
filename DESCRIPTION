@@ -116,5 +116,5 @@ Remotes:
     mojaveazure/loomR,
     neurogenomics/scFlowExamples,
     ropensci/bib2df,
-    nfancy/WebGestaltR 
+    bzhanglab/WebGestaltR 
 VignetteBuilder: knitr
