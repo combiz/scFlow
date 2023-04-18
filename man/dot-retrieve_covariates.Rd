@@ -4,7 +4,14 @@
 \alias{.retrieve_covariates}
 \title{Retrieve the covariates from a SCE colData}
 \usage{
-.retrieve_covariates(sce, unique_id_var, dependent_var, ref_class, ...)
+.retrieve_covariates(
+  sce,
+  unique_id_var,
+  dependent_var,
+  confounding_vars,
+  ref_class,
+  ...
+)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}

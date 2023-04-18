@@ -63,9 +63,10 @@ of gene names and their fold-change.</p>
 <span>  reference_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  organism <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"scflow_species"</span>, default <span class="op">=</span> <span class="st">"human"</span><span class="op">)</span>,</span>
 <span>  enrichment_method <span class="op">=</span> <span class="st">"ORA"</span>,</span>
-<span>  enrichment_database <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"geneontology_Biological_Process"</span>,</span>
-<span>    <span class="st">"geneontology_Cellular_Component"</span>, <span class="st">"geneontology_Molecular_Function"</span>, <span class="st">"pathway_KEGG"</span>,</span>
-<span>    <span class="st">"pathway_Panther"</span>, <span class="st">"pathway_Reactome"</span>, <span class="st">"pathway_Wikipathway"</span><span class="op">)</span></span>
+<span>  enrichment_database <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"geneontology_Biological_Process_noRedundant"</span>,</span>
+<span>    <span class="st">"geneontology_Cellular_Component_noRedundant"</span>,</span>
+<span>    <span class="st">"geneontology_Molecular_Function_noRedundant"</span>, <span class="st">"pathway_KEGG"</span>, <span class="st">"pathway_Reactome"</span>,</span>
+<span>    <span class="st">"pathway_Wikipathway"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -137,7 +138,7 @@ and a list of plots of top 10 significant genesets.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

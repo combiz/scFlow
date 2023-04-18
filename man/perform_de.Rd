@@ -7,6 +7,7 @@
 perform_de(
   sce,
   de_method = "MASTZLM",
+  mast_method = "glm",
   min_counts = 1,
   min_cells_pc = 0.1,
   rescale_numerics = TRUE,
@@ -26,6 +27,10 @@ perform_de(
 \item{sce}{a SingleCellExperiment object}
 
 \item{de_method}{The differential gene expression method.}
+
+\item{mast_method}{If \code{de_method} is "MASTZLM" then mast_method should be
+provided. Possible values are "glm", "glmer", "bayesglm". Default is "glm".
+For "glmer" and "random_effects_var" should be provided.}
 
 \item{min_counts}{minimum number of counts}
 

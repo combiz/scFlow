@@ -59,6 +59,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">perform_de</span><span class="op">(</span></span>
 <span>  <span class="va">sce</span>,</span>
 <span>  de_method <span class="op">=</span> <span class="st">"MASTZLM"</span>,</span>
+<span>  mast_method <span class="op">=</span> <span class="st">"glm"</span>,</span>
 <span>  min_counts <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  min_cells_pc <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>  rescale_numerics <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -83,6 +84,12 @@
 
 <dt>de_method</dt>
 <dd><p>The differential gene expression method.</p></dd>
+
+
+<dt>mast_method</dt>
+<dd><p>If <code>de_method</code> is "MASTZLM" then mast_method should be
+provided. Possible values are "glm", "glmer", "bayesglm". Default is "glm".
+For "glmer" and "random_effects_var" should be provided.</p></dd>
 
 
 <dt>min_counts</dt>
@@ -163,7 +170,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

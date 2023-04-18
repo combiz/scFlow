@@ -3,6 +3,9 @@
 #'
 #' @param sce a SingleCellExperiment object
 #' @param de_method The differential gene expression method.
+#' @param mast_method If `de_method` is "MASTZLM" then mast_method should be
+#' provided. Possible values are "glm", "glmer", "bayesglm". Default is "glm".
+#' For "glmer" and "random_effects_var" should be provided.
 #' @param min_counts minimum number of counts
 #' @param min_cells_pc percentage of cells with min_counts for gene selection
 #' @param rescale_numerics rescaling numerics may improve model
@@ -26,6 +29,7 @@
 #' @export
 perform_de <- function(sce,
                        de_method = "MASTZLM",
+                       mast_method = "glm",
                        min_counts = 1,
                        min_cells_pc = 0.10,
                        rescale_numerics = TRUE,

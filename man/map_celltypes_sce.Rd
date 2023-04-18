@@ -14,7 +14,8 @@ map_celltypes_sce(
   annotation_level = 1,
   reps = 1000,
   ctd_species = NULL,
-  num_markers = 50
+  num_markers = 50,
+  label_index = 1
 )
 }
 \arguments{
@@ -48,6 +49,9 @@ elements are the species. Must be 'human', 'mouse' or listed in
 EWCE::list_species()$id.}
 
 \item{num_markers}{Number of cluster markers used to identify cell type}
+
+\item{label_index}{The annotation_level index to use to name the
+cluster_celltype. Default is 1}
 }
 \value{
 sce a SingleCellExperiment object annotated with celltypes/metadata
@@ -61,6 +65,6 @@ Other Celltype annotation:
 \code{\link{model_celltype_freqs}()}
 }
 \author{
-Nathan Skene / Combiz Khozoie
+Nathan Skene / Combiz Khozoie / Michael Thomas
 }
 \concept{Celltype annotation}

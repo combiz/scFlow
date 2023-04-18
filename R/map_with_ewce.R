@@ -23,9 +23,11 @@
 #' elements are the species. Must be 'human', 'mouse' or listed in
 #' EWCE::list_species()$id.
 #' @param num_markers Number of cluster markers used to identify cell type
+#' @param label_index The annotation_level index to use to name the
+#' cluster_celltype. Default is 1
 #'
 #' @return sce a SingleCellExperiment object annotated with celltypes/metadata
-#' @author Nathan Skene / Combiz Khozoie
+#' @author Nathan Skene / Combiz Khozoie / Michael Thomas
 #' @family Celltype annotation
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom Matrix Matrix
@@ -50,7 +52,8 @@ map_celltypes_sce <- function(sce,
                               annotation_level = 1,
                               reps = 1000,
                               ctd_species = NULL,
-                              num_markers = 50) {
+                              num_markers = 50,
+                              label_index = 1) {
   assertthat::assert_that(dir.exists(ctd_folder))
   assertthat::assert_that(
     clusters_colname %in% names(SummarizedExperiment::colData(sce)),
@@ -143,7 +146,7 @@ map_celltypes_sce <- function(sce,
     mapping_column <- paste0(
       names(annotation_level)[1],
       "_ML",
-      annotation_level[[1]][1]
+      annotation_level[[1]][label_index]
     )
   } else {
     mapping_column <- names(mappings_df)[2]
@@ -197,16 +200,14 @@ map_celltypes_sce <- function(sce,
     ctd = names(l_ctd),
     ctd_species = ctd_species, # get species from ctd
     mlevel = annotation_level
-    # need to include user specified annottion levels
+    # need to include user specified annotaion levels
   ) # mapping levels
 
   l_mappings <- purrr::pmap(map_params, function(ctd_name,
                                                  ctd_species,
                                                  mlevel) {
     message(ctd_name)
-    mapped_dt_l <- list()
 
-    for(i in mlevel){
     mapped_dt <- .map_celltypes(
       ctdToMap = ctd,
       ctdToMapAgainst = l_ctd[[ctd_name]],
@@ -214,16 +215,14 @@ map_celltypes_sce <- function(sce,
       mapAgainstSpecies = ctd_species,
       annotLevel = 1,
       numTopMarkers = num_markers,
-      mappingLevel = i,
+      mappingLevel = mlevel,
       reps = reps
     )
     mapped_dt$mapping <- sprintf("%s_ML%s", ctd_name, mapped_dt$mappingLevel)
     mapped_dt <- mapped_dt %>%
       dplyr::rename(Cluster = Original)
     mapped_dt$Cluster <- as.numeric(as.character(mapped_dt$Cluster))
-    mapped_dt_l[[i]] <- mapped_dt
-    mapped_dt <- do.call(rbind, mapped_dt_l)
-    }
+
     return(mapped_dt)
   })
 

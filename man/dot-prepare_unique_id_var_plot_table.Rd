@@ -6,6 +6,7 @@
 \usage{
 .prepare_unique_id_var_plot_table(
   df,
+  celltypes,
   celltype_var,
   dependent_var,
   unique_id_var,

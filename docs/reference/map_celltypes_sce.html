@@ -66,7 +66,8 @@
 <span>  annotation_level <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  reps <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  ctd_species <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  num_markers <span class="op">=</span> <span class="fl">50</span></span>
+<span>  num_markers <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  label_index <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -90,6 +91,11 @@
 
 <dt>species</dt>
 <dd><p>specify species of analysis dataset</p></dd>
+
+
+<dt>save_path</dt>
+<dd><p>The directory where the generated ctd file produced by EWCE
+is saved. Default is a temp directory</p></dd>
 
 
 <dt>annotation_level</dt>
@@ -118,9 +124,9 @@ EWCE::list_species()$id.</p></dd>
 <dd><p>Number of cluster markers used to identify cell type</p></dd>
 
 
-<dt>savePath</dt>
-<dd><p>The directory where the generated ctd file produced by EWCE
-is saved. Default is a temp directory</p></dd>
+<dt>label_index</dt>
+<dd><p>The annotation_level index to use to name the
+cluster_celltype. Default is 1</p></dd>
 
 </dl></div>
     <div id="value">
@@ -137,7 +143,7 @@ is saved. Default is a temp directory</p></dd>
     </div>
     <div id="author">
     <h2>Author</h2>
-    <p>Nathan Skene / Combiz Khozoie</p>
+    <p>Nathan Skene / Combiz Khozoie / Michael Thomas</p>
     </div>
 
   </div>
@@ -152,7 +158,7 @@ is saved. Default is a temp directory</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
