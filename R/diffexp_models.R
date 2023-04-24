@@ -164,8 +164,6 @@ perform_de <- function(sce,
     min_cells_pc = fargs$min_cells_pc
   )
 
-  #sce@int_colData$size_factor <- scater::librarySizeFactors(sce)
-  #sce <- scater::normalize(sce)
 
   if (fargs$rescale_numerics == TRUE) {
     cli::cli_alert("Rescaling numeric variables")
@@ -240,7 +238,7 @@ perform_de <- function(sce,
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom methods as
 #' @importFrom magrittr %>%
-#' @importFrom MAST zlm summary
+#' @importFrom MAST zlm summary SceToSingleCellAssay
 #' @importFrom cli cli_text cli_alert_info cli_alert_danger cli_alert_success
 #'
 #' @keywords internal
@@ -260,9 +258,7 @@ perform_de <- function(sce,
   SingleCellExperiment::tpm(sce) <- scater::calculateTPM(sce, exprs_values = "counts")
   SingleCellExperiment::logcounts(sce) <- log2(SingleCellExperiment::tpm(sce) + 1)
 
-  #SingleCellExperiment::logcounts(sce) <- log2(SingleCellExperiment::counts(sce) + 1)
-
-  sca <- as(sce, "SingleCellAssay")
+  suppressMessages(sca <- MAST::SceToSingleCellAssay(sce))
 
   message("Generating model formula")
 
@@ -357,18 +353,10 @@ perform_de <- function(sce,
     # create data table of results
     summaryDt <- summaryCond$datatable
 
-    # primerid is numbered for H, so retrieve rowname (ensembl)
-    row_num2name <- seq_along(rownames(SingleCellExperiment::counts(sca)))
-    names(row_num2name) <- rownames(SingleCellExperiment::counts(sca))
-
     hurdle_pvals <- summaryDt %>%
       dplyr::filter(contrast == ctrast & component == "H") %>%
       dplyr::select(primerid, `Pr(>Chisq)`)
 
-    hurdle_pvals$primerid <- purrr::map_chr(
-      hurdle_pvals$primerid,
-      ~ names(row_num2name[as.numeric(.)])
-    )
 
     logFCcoefs <- summaryDt %>%
       dplyr::filter(contrast == ctrast & component == "logFC") %>%
