@@ -39,8 +39,7 @@ generate_sce <- function(mat, metadata) {
     stop(cli::cli_alert_danger("Matrix rowdata is missing."))
   }
 
-  barcode <- paste(metadata[[1]],
-                   metadata[[2]],
+  barcode <- paste(metadata[["manifest"]],
                    colnames(mat),
                    sep = "_") # unique barcode
 
@@ -71,7 +70,7 @@ generate_sce <- function(mat, metadata) {
   cli::cli_text(c(
     dim(sce)[[1]], " gene x ", dim(sce)[[2]],
     " cells, annotated with ",
-    dim(colData(sce))[[2]], " metadata variables (incl. barcode).")
+    dim(SummarizedExperiment::colData(sce))[[2]], " metadata variables (incl. barcode).")
   )
 
   sce@metadata$metadata <- metadata
