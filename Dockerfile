@@ -100,15 +100,14 @@ RUN apt-get update \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
-RUN pip install stratocumulus
-
-RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | \
+RUN pip install stratocumulus \
+&& apt-get install apt-transport-https ca-certificates gnupg \
+&& echo "deb https://packages.cloud.google.com/apt cloud-sdk main" | \
 tee -a /etc/apt/sources.list.d/google-cloud-sdk.list \
-&& curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
-tee /usr/share/keyrings/cloud.google.gpg && apt-get update -y \
-&& apt-get install google-cloud-sdk -y
-
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" \
+&& curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
+tee /usr/share/keyrings/cloud.google.gpg \
+&& apt-get update -y && apt-get install google-cloud-cli -y \
+&& curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" \
 -o "awscliv2.zip" \
 && unzip awscliv2.zip \
 && ./aws/install \
