@@ -101,7 +101,7 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/*
 
 RUN pip install stratocumulus \
-&& apt-get install apt-transport-https ca-certificates gnupg \
+&& apt-get install apt-transport-https ca-certificates \
 && echo "deb https://packages.cloud.google.com/apt cloud-sdk main" | \
 tee -a /etc/apt/sources.list.d/google-cloud-sdk.list \
 && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
