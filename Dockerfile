@@ -101,17 +101,19 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/*
 
 RUN pip install stratocumulus \
-&& apt-get install apt-transport-https ca-certificates \
-&& echo "deb https://packages.cloud.google.com/apt cloud-sdk main" | \
-tee -a /etc/apt/sources.list.d/google-cloud-sdk.list \
-&& curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
-tee /usr/share/keyrings/cloud.google.gpg \
+&& curl -fsSL https://apt.releases.hashicorp.com/gpg | \
+gpg --yes --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg \
+&& echo "deb [arch=$(dpkg --print-architecture) \
+signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+tee /etc/apt/sources.list.d/hashicorp.list > /dev/null \
 && apt-get update -y && apt-get install google-cloud-cli -y \
 && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" \
 -o "awscliv2.zip" \
 && unzip awscliv2.zip \
 && ./aws/install \
 && rm -rf awscliv2.zip
+
 
 RUN install2.r -e \
 argparse \
