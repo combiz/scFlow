@@ -101,7 +101,7 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/*
 
 RUN pip install stratocumulus \
-&& apt-get install -y  gnupg dirmngr\
+&& apt-get install -y  gnupg dirmngr \
 && curl -fsSL https://apt.releases.hashicorp.com/gpg | \
 gpg --yes --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg \
 && echo "deb [arch=$(dpkg --print-architecture) \
