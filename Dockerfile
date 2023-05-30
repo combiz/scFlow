@@ -103,6 +103,7 @@ RUN apt-get update \
 RUN pip install stratocumulus \
 && curl -fsSL https://apt.releases.hashicorp.com/gpg | \
 tee /usr/share/keyrings/hashicorp-archive-keyring.gpg \
+&& chmod 644 /usr/share/keyrings/hashicorp-archive-keyring.gpg \
 && echo "deb [arch=$(dpkg --print-architecture) \
 signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
 https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
