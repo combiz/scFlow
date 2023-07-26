@@ -28,15 +28,10 @@ report_celltype_model <- function(results,
 
   cli::cli_h1("Generating Report of Cell-type Frequency Model")
 
-  results_tmp_path <- file.path(tempdir(), "results.qs")
+  results_tmp_path <- file.path(report_folder_path, "results.qs")
 
   cli::cli_text("Writing temp files for report...")
   qs::qsave(results, results_tmp_path)
-
-  krd <- file.path(tempdir(), "krdqc")
-  intd <- file.path(tempdir(), "idqc")
-  dir.create(krd, showWarnings = FALSE)
-  dir.create(intd, showWarnings = FALSE)
 
   cli::cli_text("Generating report...")
   rmarkdown::render(
@@ -51,12 +46,12 @@ report_celltype_model <- function(results,
     ),
     output_dir = report_folder_path,
     output_file = report_file,
-    knit_root_dir = krd,
-    intermediates_dir = intd,
+    knit_root_dir = report_folder_path,
+    intermediates_dir = report_folder_path,
     quiet = TRUE
   )
 
-  file.remove(results_tmp_path)
+  unlink(results_tmp_path)
 
   cli::cli_text(c(
     "{cli::col_green(cli::symbol$tick)} Report succesfully generated: ",

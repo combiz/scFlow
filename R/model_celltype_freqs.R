@@ -6,13 +6,14 @@
 #' @param celltype_var the colData variable specifying celltype or subtype
 #' @param dependent_var the name of the colData variable for contrasts
 #' @param ref_class the class of dependent_var used as reference
-#' @param var_order Optional re-ordering of subset_group factor levels. Default 
-#' NULL. 
+#' @param var_order Optional re-ordering of subset_group factor levels. Default
+#' NULL.
+#' @param confounding_vars Additional confounding variables from colData.
 #' @param ... Additional arguments
 #'
 #' @return results_l a list of results
 #'
-#' @family Further analyses
+#' @family Celltype annotation
 #'
 #' @importFrom cli cli_h1 cli_alert
 #' @importFrom DirichletReg DR_data DirichReg
@@ -25,6 +26,7 @@ model_celltype_freqs <- function(sce,
                                  dependent_var = "group",
                                  ref_class = "Control",
                                  var_order = NULL,
+                                 confounding_vars = NULL,
                                  ...) {
 
   if (is.null(var_order)){ var_order <- levels(as.factor(sce[[dependent_var]]))}
@@ -44,16 +46,30 @@ model_celltype_freqs <- function(sce,
 
   prop_mat <- prop.table(mat, margin = 1)
   df <- as.data.frame(prop_mat)
+  df <- df[order(rownames(df)), ]
   df$counts <- DirichletReg::DR_data(df)
-  df[[unique_id_var]] <- as.factor(rownames(df))
+  df[[unique_id_var]] <- rownames(df)
   df <- cbind(df, covariates)
 
   cli::cli_h2("Fitting Dirichlet Model")
-  #model_formula <- stats::as.formula(sprintf("counts ~ %s | 1", dependent_var))
+
+  if (!is.null(confounding_vars)){
+
+    model_formula <- stats::as.formula(sprintf("counts ~ %s + %s",
+                                               dependent_var,
+                                               paste(confounding_vars, collapse = " + ")))
+    cli::cli_alert(
+      "Fitting model: {.var {scFlow:::.formula_to_char(model_formula)}}"
+    )
+
+  } else {
+
   model_formula <- stats::as.formula(sprintf("counts ~ %s", dependent_var))
   cli::cli_alert(
     "Fitting model: {.var {scFlow:::.formula_to_char(model_formula)}}"
   )
+
+  }
   fit <- do.call(
     DirichletReg::DirichReg,
     #list(formula = model_formula, data = df, model = "alternative")
@@ -69,6 +85,7 @@ model_celltype_freqs <- function(sce,
     )
   )
 
+
   cli::cli_alert_success("Dirichlet Model fit successfully.")
 
   results <- list()
@@ -79,11 +96,15 @@ model_celltype_freqs <- function(sce,
   results$dirichlet_fit <- fit
   results$dirichlet_pvals <- pvals
 
+  pvals <- pvals %>%
+    dplyr::filter(get(dependent_var) %in%
+                    setdiff(unique(df[[dependent_var]]), ref_class))
+
   results$dirichlet_plot_table <- do.call(
     .prepare_dirichlet_plot_table,
     c(
       list(
-        df = df,
+        df = as.data.frame(df),
         celltypes = unique(sce[[celltype_var]]),
         pvals = pvals
       ),
@@ -142,7 +163,8 @@ model_celltype_freqs <- function(sce,
     .prepare_unique_id_var_plot_table,
     c(
       list(
-        df = results$DR_data_df
+        df = results$DR_data_df,
+        celltypes = unique(sce[[celltype_var]])
       ),
       fargs
     )
@@ -181,6 +203,7 @@ model_celltype_freqs <- function(sce,
 #'
 #' @keywords internal
 .prepare_unique_id_var_plot_table <- function(df,
+                                              celltypes,
                                               celltype_var,
                                               dependent_var,
                                               unique_id_var,
@@ -201,8 +224,9 @@ model_celltype_freqs <- function(sce,
   x <- x[order(x[[dependent_var]]), ]
   x[[unique_id_var]] <- factor(x[[unique_id_var]], levels = x[[unique_id_var]])
   x <- x %>% tidyr::pivot_longer(
-    cols = setdiff(colnames(x),
-                   c(dependent_var, unique_id_var)),
+    # cols = setdiff(colnames(x),
+    #                c(dependent_var, unique_id_var)),
+    cols = all_of(celltypes),
     names_to = celltype_var,
     values_to = "cells_pc"
   )
@@ -487,10 +511,11 @@ model_celltype_freqs <- function(sce,
 .retrieve_covariates <- function(sce,
                                  unique_id_var,
                                  dependent_var,
+                                 confounding_vars,
                                  ref_class,
                                  ...) {
   covariates <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
-    dplyr::select(!!unique_id_var, !!dependent_var) %>%
+    dplyr::select(!!unique_id_var, !!dependent_var, !!confounding_vars) %>%
     unique()
 
   rownames(covariates) <- covariates[[unique_id_var]]
@@ -536,12 +561,13 @@ model_celltype_freqs <- function(sce,
       values_to = "pval"
     ) %>%
     dplyr::mutate(
+      padj = p.adjust(pval, method = "bonferroni"),
       label = dplyr::case_when(
-        pval <= 0.001 ~ "***",
-        pval <= 0.01 ~ "**",
-        pval <= 0.05 ~ "*",
-        pval > 0.05 ~ "",
-        is.na(pval) ~ ""
+        padj <= 0.001 ~ "***",
+        padj <= 0.01 ~ "**",
+        padj <= 0.05 ~ "*",
+        padj > 0.05 ~ "",
+        is.na(padj) ~ ""
       )
     ) %>%
     as.data.frame()
@@ -591,15 +617,15 @@ model_celltype_freqs <- function(sce,
       df <- unique(rbind(df, contab_df))
     }
   }
-  df$pval <- stats::p.adjust(df$pval, method = "bonferroni")
+  df$padj <- stats::p.adjust(df$pval, method = "bonferroni")
   df <- df %>%
     dplyr::mutate(
       label = dplyr::case_when(
-        pval <= 0.001 ~ "***",
-        pval <= 0.01 ~ "**",
-        pval <= 0.05 ~ "*",
-        pval > 0.05 ~ "",
-        is.na(pval) ~ ""
+        padj <= 0.001 ~ "***",
+        padj <= 0.01 ~ "**",
+        padj <= 0.05 ~ "*",
+        padj > 0.05 ~ "",
+        is.na(padj) ~ ""
       )
     )
   rownames(df) <- NULL

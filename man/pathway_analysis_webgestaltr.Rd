@@ -9,17 +9,18 @@ pathway_analysis_webgestaltr(
   reference_file = NULL,
   organism = getOption("scflow_species", default = "human"),
   enrichment_method = "ORA",
-  enrichment_database = c("geneontology_Biological_Process",
-    "geneontology_Cellular_Component", "geneontology_Molecular_Function", "pathway_KEGG",
-    "pathway_Panther", "pathway_Reactome", "pathway_Wikipathway"),
-  is_output = FALSE,
-  output_dir = "."
+  enrichment_database = c("geneontology_Biological_Process_noRedundant",
+    "geneontology_Cellular_Component_noRedundant",
+    "geneontology_Molecular_Function_noRedundant", "pathway_KEGG", "pathway_Reactome",
+    "pathway_Wikipathway")
 )
 }
 \arguments{
-\item{gene_file}{A data frame or the path of a .tsv file containing
-a list of genes, their fold-change, p-value and adjusted p-value. Column
-names should be gene, logFC, pval and padj respectively.}
+\item{gene_file}{For ORA, A data frame containing a list of significant genes
+with column name \code{gene} or a vector of significant genes. For GSEA a
+data frame containing a list of all genes in the analysis, their fold-change,
+p-value and adjusted p-value. Column names should be gene, logFC, pval and
+padj respectively.}
 
 \item{reference_file}{A data frame containing all the genes that were used
 as input for differential expression. Column name should be gene.
@@ -42,12 +43,6 @@ GSEA.}
 \item{enrichment_database}{Name of the database for enrichment. If not
 provided then multiple databases will be used or user can specify one or more
 database names from \code{\link[WebGestaltR:listGeneSet]{WebGestaltR::listGeneSet()}}}
-
-\item{is_output}{If TRUE a folder will be created and results of enrichment
-analysis will be saved otherwise a R list will be returned. Default FALSE.}
-
-\item{output_dir}{Path for the output directory. Default is current
-directory.}
 }
 \value{
 enrichment_result a list of data.frames containing enrichment output
@@ -59,15 +54,9 @@ of gene names and their fold-change.
 }
 \seealso{
 Other Impacted pathway analysis: 
-\code{\link{.dotplot_pe}()},
-\code{\link{.get_overlap_id}()},
-\code{\link{.listdb}()},
 \code{\link{find_impacted_pathways}()},
 \code{\link{list_databases}()},
 \code{\link{pathway_analysis_enrichr}()},
-\code{\link{pathway_analysis_rontotools}()},
-\code{\link{pathway_to_graph}()},
-\code{\link{plot_network}()},
 \code{\link{report_impacted_pathway}()}
 }
 \concept{Impacted pathway analysis}

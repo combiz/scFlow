@@ -51,14 +51,6 @@ pseudobulk_sce <- function(sce,
     sep = "||"
   ))
 
-  # original working
-  #pb_matrix_l <- parallel::mclapply(
-  #  unique(sce$pseudobulk_id),
-  #  function(x) {Matrix::rowSums(SingleCellExperiment::counts(sce[, sce$pseudobulk_id == x]))},
-  #  mc.cores = future::availableCores())
-  #pb_matrix <- Reduce(cbind, pb_matrix_l)
-  #colnames(pb_matrix) <- unique(sce$pseudobulk_id)
-
   # fast matrix multiplication method
   mm <- model.matrix(~ 0 + sce$pseudobulk_id)
   pb_matrix <- SingleCellExperiment::counts(sce) %*% mm
@@ -70,8 +62,6 @@ pseudobulk_sce <- function(sce,
     pb_normcounts_matrix <- SingleCellExperiment::normcounts(sce) %*% mm
     colnames(pb_normcounts_matrix) <- levels(sce$pseudobulk_id)
   }
-
-  #rownames(pb_matrix) <- SummarizedExperiment::rowData(sce)$ensembl_gene_id
 
   # create lookup table for cellnumbers by individual/cluster
   n_lookup <- data.frame(SummarizedExperiment::colData(sce)) %>%
@@ -114,8 +104,7 @@ pseudobulk_sce <- function(sce,
   # append the rest of the sample information
   pb_cd <- dplyr::left_join(
     pb_cd, sce_cd,
-    by = sample_var,
-    all.x = TRUE, all.y = FALSE)
+    by = sample_var)
 
   # ensure the order of the coldata matches the matrix
   pb_cd <- pb_cd[match(colnames(pb_matrix), pb_cd$pseudobulk_id),]

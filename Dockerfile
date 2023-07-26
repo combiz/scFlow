@@ -1,8 +1,8 @@
 #LABEL maintainer="Combiz Khozoie, Ph.D. c.khozoie@imperial.ac.uk, Alan Murphy, a.murphy@imperial.ac.uk"
 
-## Use rstudio installs binaries from RStudio's RSPM service by default, 
+## Use rstudio installs binaries from RStudio's RSPM service by default,
 ## Uses the latest stable ubuntu, R and Bioconductor versions. Created on unbuntu 20.04, R 4.0 and BiocManager 3.12
-FROM rocker/rstudio
+FROM rocker/rstudio:4.2.2
 
 
 ## Add packages dependencies
@@ -96,79 +96,110 @@ RUN apt-get update \
 	libsbml5-dev \
 	## qpdf needed to stop R CMD Check warning
 	qpdf \
+	gcc \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
+RUN pip install stratocumulus \
+&& curl https://sdk.cloud.google.com > install.sh \
+&& bash install.sh --disable-prompts \
+&& curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" \
+-o "awscliv2.zip" \
+&& unzip awscliv2.zip \
+&& ./aws/install \
+&& rm -rf awscliv2.zip \
+&& rm -rf /tmp/*
+
+
 RUN install2.r -e \
-testthat \
-covr \
-knitr \
-purrr \
-stringr \
+argparse \
+assertthat \
+BiocManager \
 cli \
-dplyr \
+covr \
+cowplot \
 data.table \
-R.utils \
-vroom \
-ggpubr \
-ggplot2 \
-rmarkdown \
-rlang \
+devtools \
+DirichletReg \
+dplyr \
+DT \
+english \
+enrichR \
+forcats \
+formattable \
 future \
 future.apply \
-plotly \
-threejs \
-plyr \
-assertthat \
-httr \
-prettydoc \
-leaflet \
 gdtools \
-formattable \
 ggdendro \
-ggridges \
-cowplot \
-forcats \
+ggplot2 \
+ggpubr \
 ggrepel \
+ggridges \
+Hmisc \
+httr \
+ids \
 igraph \
+knitr \
+leaflet \
+lme4 \
+magrittr \
+Matrix \
+paletteer \
+patchwork \
+plyr \
+prettydoc \
+purrr \
+qs \
+R.utils \
+RANN \
+rcmdcheck \
+Rcpp \
+RcppArmadillo \
+RcppEigen \
+RcppParallel \
+RcppProgress \
+remotes \
+rlang \
+rliger \
+rmarkdown \
+Rtsne \
+scales \
+sctransform \
+Seurat \
+snow \
+spelling \
+stringr \
+testthat \
+threejs \
 tibble \
 tidyr \
 tidyselect \
 tidyverse \
-ids \
-snow \
-remotes \
-rliger \
-argparse \
-Hmisc \
-rcmdcheck \
-devtools
-
-## Install remaining packages from source
-COPY ./misc/requirements-src.R .
-RUN Rscript requirements-src.R
+UpSetR \
+utils \
+vroom \
+&& rm -rf /tmp/downloaded_packages
 
 ## Install Bioconductor packages
 COPY ./misc/requirements-bioc.R .
-RUN apt-get update \
- && apt-get install -y --no-install-recommends \
-   libfftw3-dev \
-   gcc && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
 RUN Rscript -e 'requireNamespace("BiocManager"); BiocManager::install(ask=F);' \
-&& Rscript requirements-bioc.R
+&& Rscript requirements-bioc.R \
+&& rm -rf /tmp/downloaded_packages
 
 ## Install from GH the following
-RUN installGithub.r neurogenomics/EWCE \
-chris-mcginnis-ucsf/DoubletFinder \
+RUN installGithub.r chris-mcginnis-ucsf/DoubletFinder \
+ropensci/plotly \
+cole-trapnell-lab/monocle3 \
 theislab/kBET \
-combiz/RANN.L1 \
+jlmelville/uwot \
 NathanSkene/One2One \
 hhoeflin/hdf5r \
 mojaveazure/loomR \
-cole-trapnell-lab/monocle3 \
+ropensci/bib2df \
+cvarrichio/Matrix.utils \
 neurogenomics/scFlowExamples \
-neurogenomics/scFlowData
+bzhanglab/WebGestaltR \
+&& rm -rf /tmp/downloaded_packages
 
 ## Install scFlow package
 # Copy description
@@ -176,7 +207,7 @@ WORKDIR scFlow
 ADD . .
 
 # Run R CMD check - will fail with any errors or warnings
-Run Rscript -e 'devtools::check()'
+RUN Rscript -e "devtools::check()"
 # Install R package from source
 RUN Rscript -e "remotes::install_local()"
 RUN rm -rf *

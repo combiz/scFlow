@@ -44,17 +44,8 @@ Datasets were integrated using the method **'Linked Inference of Genomic Experim
 
 - Total number of variable genes used for integration (the union across all individuals): **`r length(metadata$liger_var.genes)`**
 
-**Note**: The length of the union across datasets (individuals) varies. The Venn and UpSet plots below may reveal outlying dataset/s.
+**Note**: The length of the union across datasets (individuals) varies. The UpSet plots below may reveal outlying dataset/s.
 
-<div class = "row">
-<div class = "col-md-12">
-```{r, fig.align="center", fig.width=30, fig.height=20,  fig.cap = "<b>Venn diagram of selected variable genes</b>. The bar numbers indicate how many variable genes are common between datasets. The datasets are represented by the numbers in the parentheses.", eval=length(metadata$dataset_integration$var.genes_per_dataset) < 11}
-knitr::opts_chunk$set(echo = FALSE)
-my_nv <- metadata$dataset_integration$var.genes_plots$venn
-suppressWarnings(nVennR::showSVG(my_nv))
-```
-</div>
-</div>
 
 ```{r, fig.align="center", fig.width=10, fig.height=12, fig.cap = sprintf("**Upset chart of selected variable genes**: The first **%s** vertical bar charts show the sizes of isolated dataset participation to the total variable genes used for integration.", paste("<i>",length(metadata$dataset_integration$var.genes_per_dataset),"</i>", collapse = ", ")), eval = !is.null(metadata$dataset_integration$var.genes_per_dataset) }
 knitr::opts_chunk$set(echo = FALSE)

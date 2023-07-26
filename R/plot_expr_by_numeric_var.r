@@ -60,6 +60,30 @@ plot_expr_by_numeric_var <- function(sce,
 
   cli::cli_alert(c("Plotting gene {.strong {gene}} "))
 
+  df_l <- .prepare_plot_dt(sce = sce, numeric_var = numeric_var)
+
+  df <- df_l[["df"]]
+  limits <- df_l[["limits"]]
+
+  # Main scatter plot
+  p <- .scatter_plot(df = df, limits = limits, numeric_var = numeric_var,
+                     size = size, alpha = alpha, label_angle = label_angle,
+                     gene = gene)
+
+
+  zp <- .prepare_zero_prop_plot(df = df, numeric_var = numeric_var)
+
+  p <- p / zp + patchwork::plot_layout(heights = c(2.5, 1))
+
+  p$plot_env$sce <- NULL
+  return(p)
+
+}
+
+#' @keywords internal
+
+.prepare_plot_dt <- function(sce, numeric_var ){
+
   size_factors <- sce$total_counts/mean(sce$total_counts)
   expr <- as.numeric(
     log2(Matrix::t(
@@ -67,19 +91,24 @@ plot_expr_by_numeric_var <- function(sce,
 
   df <- data.frame(numeric_var = sce[[numeric_var]], expr = expr)
 
-  #if (is.null(palette)) {
-  #  if(n_groups <= 10) palette <- paletteer::paletteer_d("ggsci::default_aaas")
-  #  if(n_groups > 10) palette <- paletteer::paletteer_d("ggsci::default_igv")
-  #}
 
-  #pred <- predict(lm(expr ~ numeric_var, df),  ## ALL cells
   pred <- predict(lm(expr ~ numeric_var, df[df$expr > 0, ]), # only expressive cells
                   se.fit = TRUE, interval = "confidence")
   limits <- as.data.frame(pred$fit)
   limits$numeric_var <- df[df$expr > 0,]$numeric_var
 
-  # Main scatter plot
-  p <- ggplot(df, aes(x = numeric_var, y = expr)) +
+  df_l <- list("df" = df, "limits" = limits)
+
+  return(df_l)
+
+}
+
+
+#' @import ggplot2
+#' @keywords internal
+
+.scatter_plot <- function(df, limits, numeric_var, size, alpha, label_angle, gene){
+  ggplot(df, aes(x = numeric_var, y = expr)) +
     #geom_point() +
     geom_jitter(size = size, width = .03, alpha = alpha) +
     stat_summary(data = df[df$expr > 0,], fun = median,
@@ -107,6 +136,14 @@ plot_expr_by_numeric_var <- function(sce,
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           plot.margin = margin(5.5, 5.5, 0, 5.5))
+}
+
+
+#' @import ggplot2
+#' @keywords internal
+#'
+
+.prepare_zero_prop_plot <- function(df, numeric_var, size, alpha){
 
   # calculate zero counts proportion by x
   dt <- df %>%
@@ -123,6 +160,7 @@ plot_expr_by_numeric_var <- function(sce,
   limits <- as.data.frame(pred$fit)
   limits$numeric_var <- dt$numeric_var
 
+
   # lower plot of zero counts proportion
   zp <- ggplot(dt, aes(x = numeric_var, y = pc_expressive)) +
     geom_point(size = 2) +
@@ -133,7 +171,8 @@ plot_expr_by_numeric_var <- function(sce,
               linetype = 2, colour = "#366092") +
     xlab(numeric_var) +
     ylab("Non-zero (%)") +
-    scale_y_continuous(labels = scales::percent_format(accuracy = 1), breaks = scales::pretty_breaks(n = 4)) +
+    scale_y_continuous(labels = scales::percent_format(accuracy = 1),
+                       breaks = scales::pretty_breaks(n = 4)) +
     theme_bw()+
     theme(legend.position = "none",
           plot.title = element_text(hjust = 0.5, face = "italic", size = 20),
@@ -143,10 +182,5 @@ plot_expr_by_numeric_var <- function(sce,
           panel.grid.minor = element_blank(),
           plot.margin = margin(0, 5.5, 5.5, 5.5)
     )
-
-  p <- p / zp + patchwork::plot_layout(heights = c(2.5, 1))
-
-  p$plot_env$sce <- NULL
-  return(p)
-
+  return(zp)
 }

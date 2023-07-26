@@ -11,11 +11,12 @@
 #'
 #' @return results_l A list of results
 #'
-#' @family Further analyses
+#' @family Celltype annotation
 #'
 #' @importFrom cli cli_h1 cli_alert
 #' @importFrom monocle3 top_markers plot_genes_by_group
 #' @importFrom dplyr filter group_by top_n pull
+#' @importFrom magrittr %>%
 #'
 #' @export
 find_marker_genes <- function(sce,
@@ -57,7 +58,8 @@ find_marker_genes <- function(sce,
       top_specific_marker_ids,
       group_cells_by = by_var,
       ordering_type = "cluster_row_col",
-      max.size = max_point_size
+      max.size = max_point_size,
+      axis_order = "group_marker"
     )
 
     top_by_group <- unique(top_specific_markers$cell_group) %>%

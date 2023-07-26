@@ -11,6 +11,7 @@ model_celltype_freqs(
   dependent_var = "group",
   ref_class = "Control",
   var_order = NULL,
+  confounding_vars = NULL,
   ...
 )
 }
@@ -28,6 +29,8 @@ model_celltype_freqs(
 \item{var_order}{Optional re-ordering of subset_group factor levels. Default
 NULL.}
 
+\item{confounding_vars}{Additional confounding variables from colData.}
+
 \item{...}{Additional arguments}
 }
 \value{
@@ -37,7 +40,8 @@ results_l a list of results
 Model Changes in Celltype Frequencies with Dirichlet Multinomial Regression
 }
 \seealso{
-Other Further analyses: 
-\code{\link{find_marker_genes}()}
+Other Celltype annotation: 
+\code{\link{find_marker_genes}()},
+\code{\link{map_celltypes_sce}()}
 }
-\concept{Further analyses}
+\concept{Celltype annotation}

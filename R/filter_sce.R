@@ -63,6 +63,22 @@ filter_sce <- function(sce,
     sce <- sce[SummarizedExperiment::rowData(sce)$qc_metric_gene_passed, ]
     sce@metadata$scflow_steps$genes_filtered <- 1
 
+    #update total_counts and total_features_by_counts
+    sce$total_counts <- Matrix::colSums(SingleCellExperiment::counts(sce))
+    sce$total_features_by_counts <- Matrix::colSums(
+      SingleCellExperiment::counts(sce) > 0
+    )
+
+    sce$qc_metric_min_library_size <-
+      sce$total_counts >= sce@metadata$qc_params$min_library_size
+    sce$qc_metric_min_features <-
+      sce$total_features_by_counts >= sce@metadata$qc_params$min_features
+    sce$qc_metric_passed <- and_list_fn(
+      sce$qc_metric_passed,
+      sce$qc_metric_min_library_size,
+      sce$qc_metric_min_features
+    )
+
   }
 
   if (filter_cells == TRUE) {
@@ -116,6 +132,9 @@ filter_sce <- function(sce,
 
     sce@metadata$scflow_steps$cells_filtered <- 1
 
+    sce@metadata$qc_summary$qc_cells_n_cells_passed <- dim(sce)[[2]]
+
+
   } else {
 
     if (filter_genes == FALSE) {
@@ -133,3 +152,5 @@ filter_sce <- function(sce,
   return(sce)
 
 }
+
+and_list_fn <- function(...) Reduce("&", list(...))

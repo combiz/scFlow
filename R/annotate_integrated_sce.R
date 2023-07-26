@@ -9,13 +9,12 @@
 #'
 #' @return sce annotated SingleCellExperiment object
 #'
-#' @family integration, dimension reduction, and clustering
+#' @family annotation functions
 #'
 #' @import ggplot2
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom tools file_path_sans_ext
 #' @importFrom formattable formattable icontext
-#' @importFrom nVennR plotVenn
 #' @importFrom UpSetR upset fromList
 #' @importFrom kBET kBET
 #' @export
@@ -33,26 +32,10 @@ annotate_integrated_sce <- function(sce,
     ),
     "\r\n"
   )
-  cli::cli_text("Generating Venn diagram for selected variable genes...")
-  if (length(sce@metadata$dataset_integration$var.genes_per_dataset) < 11) {
-    venn_sets <- sce@metadata$dataset_integration$var.genes_per_dataset
-    my_nv <- nVennR::plotVenn(venn_sets)
-    my_nv <- nVennR::plotVenn(nVennObj = my_nv)
-    sce@metadata$dataset_integration$var.genes_plots$venn <- my_nv
-  } else {
-    print("The number of datasets is too high for a Venn diagram.")
-  }
 
   cli::cli_text("Generating Upset chart for selected variable genes...")
 
-  upset_sets <- sce@metadata$dataset_integration$var.genes_per_dataset
-  my_upset <- UpSetR::upset(
-    UpSetR::fromList(upset_sets),
-    nsets = length(upset_sets),
-    sets.x.label = "Variable genes per dataset",
-    text.scale = c(1.5, 1.5, 1.5, 1.5, 1.5, 1)
-  )
-  sce@metadata$dataset_integration$var.genes_plots$upset <- my_upset
+  sce <- .generate_upset_plot(sce)
 
   cat(
     cli::rule(
@@ -74,100 +57,54 @@ annotate_integrated_sce <- function(sce,
   for (variable in categorical_covariates) {
     cat(paste("* covariate:", variable, sep = " "), "\n")
     plot_pca <- plot_reduced_dim(sce,
-                                 feature_dim = variable,
-                                 reduced_dim = sprintf("%s_PCA",
-                                                       input_reduced_dim))
+      feature_dim = variable,
+      reduced_dim = sprintf(
+        "%s_PCA",
+        input_reduced_dim
+      )
+    )
 
     plot_pca <- .grobify_ggplot(plot_pca)
     pca_reducedDim_plots[[variable]] <- plot_pca
 
     plot_liger <- plot_reduced_dim(sce,
-                                   feature_dim = variable,
-                                   reduced_dim = sprintf("%s_Liger",
-                                                         input_reduced_dim))
+      feature_dim = variable,
+      reduced_dim = sprintf(
+        "%s_Liger",
+        input_reduced_dim
+      )
+    )
 
     plot_liger <- .grobify_ggplot(plot_liger)
     liger_reducedDim_plots[[variable]] <- plot_liger
 
-    data <- SingleCellExperiment::reducedDim(sce, "PCA")
+    # sub-sampling data
     batch <- SummarizedExperiment::colData(sce)[[variable]]
     subset_id <- sample.int(
       n = length(batch), size = floor(0.1 * length(batch)),
       replace = FALSE
     )
-    batch_estimate_pca <- kBET::kBET(data[subset_id, ], batch[subset_id],
-                                     plot = FALSE
+
+    # calculate kBET
+
+    data <- SingleCellExperiment::reducedDim(sce, "PCA")
+
+    pca_kbet_plots[[variable]] <- .generate_kbet_plot(
+      data = data,
+      batch = batch,
+      subset_id = subset_id,
+      integration_method = "PCA"
     )
-    plot.data <- data.frame(
-      class = rep(c("observed", "expected"),
-                  each = length(batch_estimate_pca$stats$kBET.observed)
-      ),
-      data = c(
-        batch_estimate_pca$stats$kBET.observed,
-        batch_estimate_pca$stats$kBET.expected
-      )
-    )
-    x_label <- sprintf(
-      "P-value = %s",
-      formatC(batch_estimate_pca$summary$kBET.signif[1], format = "e",
-              digits = 2)
-    )
-    kbet_pca <- ggplot(plot.data, aes(class, data)) +
-      geom_boxplot() +
-      labs(x = x_label, y = "Rejection rate") +
-      theme_bw() +
-      scale_y_continuous(limits = c(0, 1)) +
-      theme(
-        axis.text = element_text(size = 13),
-        axis.title = element_text(size = 13),
-        axis.line = element_line(colour = "black"),
-        panel.grid.minor = element_blank(), panel.background = element_blank()
-      ) +
-      ggtitle("kBET test results - PCA") +
-      theme(plot.title = element_text(hjust = 0.5, size = 15, face = "bold"))
-    kbet_pca <- .grobify_ggplot(kbet_pca)
-    pca_kbet_plots[[variable]] <- kbet_pca
+
 
     data <- SingleCellExperiment::reducedDim(sce, "Liger")
-    batch <- SummarizedExperiment::colData(sce)[[variable]]
-    subset_id <- sample.int(
-      n = length(batch), size = floor(0.1 * length(batch)),
-      replace = FALSE
+
+    liger_kbet_plots[[variable]] <- .generate_kbet_plot(
+      data = data,
+      batch = batch,
+      subset_id = subset_id,
+      integration_method = "LIGER"
     )
-    batch_estimate_liger <- kBET::kBET(data[subset_id, ], batch[subset_id],
-                                       plot = FALSE
-    )
-    plot.data <- data.frame(
-      class = rep(c("observed", "expected"),
-                  each = length(batch_estimate_liger$stats$kBET.observed)
-      ),
-      data = c(
-        batch_estimate_liger$stats$kBET.observed,
-        batch_estimate_liger$stats$kBET.expected
-      )
-    )
-    x_label <- sprintf(
-      "P-value = %s",
-      formatC(batch_estimate_liger$summary$kBET.signif[1],
-              format = "e",
-              digits = 2
-      )
-    )
-    kbet_liger <- ggplot(plot.data, aes(class, data)) +
-      geom_boxplot() +
-      labs(x = x_label, y = "Rejection rate") +
-      theme_bw() +
-      scale_y_continuous(limits = c(0, 1)) +
-      theme(
-        axis.text = element_text(size = 13),
-        axis.title = element_text(size = 13),
-        axis.line = element_line(colour = "black"),
-        panel.grid.minor = element_blank(), panel.background = element_blank()
-      ) +
-      ggtitle("kBET test results - LIGER") +
-      theme(plot.title = element_text(hjust = 0.5, size = 15, face = "bold"))
-    kbet_liger <- .grobify_ggplot(kbet_liger)
-    liger_kbet_plots[[variable]] <- kbet_liger
   }
 
   sce@metadata$dataset_integration$
@@ -188,30 +125,90 @@ annotate_integrated_sce <- function(sce,
   )
 
   cli::cli_text("Generating tSNE/UMAP plots for PCA and LIGER data...")
-  plot_pca <- plot_reduced_dim(sce,
-                               feature_dim = "clusters",
-                               reduced_dim = sprintf("%s_PCA",
-                                                     input_reduced_dim),
-                               label_clusters = TRUE
+  cluster_pca <- plot_reduced_dim(sce,
+    feature_dim = "clusters",
+    reduced_dim = sprintf(
+      "%s_PCA",
+      input_reduced_dim
+    ),
+    label_clusters = TRUE
   )
 
-  cluster_pca <- plot_pca
   cluster_pca <- .grobify_ggplot(cluster_pca)
   sce@metadata$dataset_integration$clustering_plots$cluster_pca <- cluster_pca
 
-  plot_liger <- plot_reduced_dim(sce,
-                                 feature_dim = "clusters",
-                                 reduced_dim = sprintf("%s_Liger",
-                                                       input_reduced_dim),
-                                 label_clusters = TRUE
+  cluster_liger <- plot_reduced_dim(sce,
+    feature_dim = "clusters",
+    reduced_dim = sprintf(
+      "%s_Liger",
+      input_reduced_dim
+    ),
+    label_clusters = TRUE
   )
 
-  cluster_liger <- plot_liger
   cluster_liger <- .grobify_ggplot(cluster_liger)
 
   sce@metadata$dataset_integration$clustering_plots$cluster_liger <-
     cluster_liger
 
   return(sce)
+}
 
+
+#' @importFrom UpSetR upset fromList
+#' @keywords internal
+.generate_upset_plot <- function(sce) {
+  upset_sets <- sce@metadata$dataset_integration$var.genes_per_dataset
+  my_upset <- UpSetR::upset(
+    UpSetR::fromList(upset_sets),
+    nsets = length(upset_sets),
+    sets.x.label = "Variable genes per dataset",
+    text.scale = c(1.5, 1.5, 1.5, 1.5, 1.5, 1)
+  )
+  sce@metadata$dataset_integration$var.genes_plots$upset <- my_upset
+  return(sce)
+}
+
+#' @importFrom ggplot2 ggplot aes geom_boxplot labs theme_bw scale_y_continuous
+#' @importFrom kBET kBET
+#' @keywords internal
+.generate_kbet_plot <- function(data, batch, subset_id, integration_method) {
+  batch_estimate <- kBET::kBET(data[subset_id, ], batch[subset_id],
+    plot = FALSE, do.pca = FALSE
+  )
+
+  plot.data <- data.frame(
+    class = rep(c("observed", "expected"),
+      each = length(batch_estimate$stats$kBET.observed)
+    ),
+    data = c(
+      batch_estimate$stats$kBET.observed,
+      batch_estimate$stats$kBET.expected
+    )
+  )
+  x_label <- sprintf(
+    "P-value = %s",
+    formatC(batch_estimate$summary$kBET.signif[1],
+      format = "e",
+      digits = 2
+    )
+  )
+  kbet_plot <- ggplot2::ggplot(plot.data, ggplot2::aes(class, data)) +
+    ggplot2::geom_boxplot() +
+    ggplot2::labs(x = x_label, y = "Rejection rate") +
+    ggplot2::theme_bw() +
+    ggplot2::scale_y_continuous(limits = c(0, 1)) +
+    ggplot2::theme(
+      axis.text = element_text(size = 13),
+      axis.title = element_text(size = 13),
+      axis.line = element_line(colour = "black"),
+      panel.grid.minor = element_blank(),
+      panel.background = element_blank(),
+      plot.title = element_text(hjust = 0.5, size = 15, face = "bold")
+    ) +
+    ggtitle(sprintf("kBET test results - %s", integration_method))
+
+  kbet_plot <- .grobify_ggplot(kbet_plot)
+
+  return(kbet_plot)
 }

@@ -12,13 +12,12 @@
 #' @importFrom monocle3 new_cell_data_set
 #' @keywords internal
 .sce_to_cds <- function(sce) {
-
-  phenoData = data.frame(
+  phenoData <- data.frame(
     SummarizedExperiment::colData(sce),
     stringsAsFactors = FALSE
-    )
+  )
 
-  featureData = data.frame(
+  featureData <- data.frame(
     gene_short_name = SummarizedExperiment::rowData(sce)$gene,
     ensembl_gene_id = SummarizedExperiment::rowData(sce)$ensembl_gene_id,
     stringsAsFactors = FALSE
@@ -36,5 +35,4 @@
     SingleCellExperiment::reducedDims(sce)
 
   return(cds)
-
 }

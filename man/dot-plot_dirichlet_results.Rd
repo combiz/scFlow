@@ -33,7 +33,8 @@ Other helper:
 \code{\link{.prepare_unique_id_var_plot_table}()},
 \code{\link{.process_dirichlet_fit}()},
 \code{\link{.retrieve_covariates}()},
-\code{\link{.tally_cells}()}
+\code{\link{.tally_cells}()},
+\code{\link{.uniftest}()}
 }
 \concept{helper}
 \keyword{internal}

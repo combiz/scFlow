@@ -11,8 +11,6 @@ find_impacted_pathways(
   enrichment_tool = c("WebGestaltR", "enrichR"),
   enrichment_database = c("GO_Biological_Process", "GO_Cellular_Component",
     "GO_Molecular_Function", "KEGG", "Reactome", "Wikipathway"),
-  is_output = FALSE,
-  output_dir = ".",
   ...
 )
 }
@@ -29,18 +27,12 @@ genes.}
 \item{organism}{Organism name. hsapiens for Homo sapiens,
 mmusculus for Mus musculus}
 
-\item{enrichment_tool}{Enrichment tool to use. WebGestaltR, ROntoTools and
+\item{enrichment_tool}{Enrichment tool to use. WebGestaltR and
 enrichR is implemented. Use one or more of the tools.}
 
 \item{enrichment_database}{Name of the database for enrichment. User can
 specify one or more database names. Check \code{\link[=list_databases]{list_databases()}} for
 available database alias.}
-
-\item{is_output}{If TRUE a folder will be created and results of enrichment
-analysis will be saved otherwise a R list will be returned. Default FALSE.}
-
-\item{output_dir}{Path for the output directory. Default is current
-directory.}
 
 \item{...}{Additional arguments}
 }
@@ -54,15 +46,9 @@ of gene names and their fold-change.
 }
 \seealso{
 Other Impacted pathway analysis: 
-\code{\link{.dotplot_pe}()},
-\code{\link{.get_overlap_id}()},
-\code{\link{.listdb}()},
 \code{\link{list_databases}()},
 \code{\link{pathway_analysis_enrichr}()},
-\code{\link{pathway_analysis_rontotools}()},
 \code{\link{pathway_analysis_webgestaltr}()},
-\code{\link{pathway_to_graph}()},
-\code{\link{plot_network}()},
 \code{\link{report_impacted_pathway}()}
 }
 \concept{Impacted pathway analysis}

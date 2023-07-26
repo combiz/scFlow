@@ -33,18 +33,13 @@ report_merged_sce <- function(sce,
     "Generating merged QC report for SingleCellExperiment", line = 2),
     "\r\n")
 
-  metadata_tmp_path <- file.path(tempdir(), "metadata.rds")
+  metadata_tmp_path <- file.path(report_folder_path, "metadata.rds")
 
   cli::cli_text("Writing temp files for report...")
   saveRDS(
     sce@metadata,
     metadata_tmp_path
   )
-
-  krd <- file.path(tempdir(), "krdqc")
-  intd <- file.path(tempdir(), "idqc")
-  dir.create(krd, showWarnings = FALSE)
-  dir.create(intd, showWarnings = FALSE)
 
   cli::cli_text("Generating merged QC report...")
   rmarkdown::render(
@@ -58,8 +53,8 @@ report_merged_sce <- function(sce,
     ),
     output_dir = report_folder_path,
     output_file = report_file,
-    knit_root_dir = krd,
-    intermediates_dir = intd,
+    knit_root_dir = report_folder_path,
+    intermediates_dir = report_folder_path,
     quiet = TRUE
   )
 
@@ -67,6 +62,8 @@ report_merged_sce <- function(sce,
     "{cli::col_green(symbol$tick)} Merged QC report succesfully generated: ",
     "{.file {file.path(report_folder_path, 'merged_qc_report_scflow.html')}}")
   )
+
+  unlink(metadata_tmp_path)
 
   return(sce)
 
