@@ -14,6 +14,7 @@
 #'
 #' @family annotation functions
 #'
+#' @import ggplot2
 #' @importFrom purrr map_lgl
 #' @importFrom assertthat assert_that
 #' @importFrom cli cli_alert_danger cli_alert_success rule cli_text
@@ -155,11 +156,6 @@ annotate_celltype_metrics <- function(sce,
           group_by_var = group_by_var
         )
       )
-      # sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[var]] <-
-      #  lapply(
-      #    sce@metadata$celltype_annotations$prop_plots[[group_by_var]][[var]],
-      #    .clean_ggplot_plot_env
-      #    )
     }
   }
 
@@ -177,11 +173,7 @@ annotate_celltype_metrics <- function(sce,
           metric_var = metric_var
         )
       )
-      # sce@metadata$celltype_annotations$metric_plots[[metric_var]][[var]] <-
-      #  lapply(
-      #    sce@metadata$celltype_annotations$metric_plots[[metric_var]][[var]],
-      #    .clean_ggplot_plot_env
-      #    )
+
     }
   }
 
@@ -196,10 +188,8 @@ annotate_celltype_metrics <- function(sce,
 #'
 #' @family helper
 #'
+#' @import ggplot2
 #' @importFrom dplyr group_by tally ungroup group_by mutate
-#' @importFrom ggplot2 scale_fill_manual ggplot aes geom_col scale_y_continuous
-#' @importFrom ggplot2 coord_flip theme_bw theme xlab ylab
-#' @importFrom ggplot2 element_blank element_text
 #' @importFrom magrittr %>%
 #' @importFrom SummarizedExperiment colData
 #'
@@ -298,11 +288,9 @@ annotate_celltype_metrics <- function(sce,
 #'
 #' @family helper
 #'
+#' @import ggplot2
 #' @importFrom dplyr group_by tally ungroup group_by mutate summarize
 #' @importFrom forcats fct_reorder
-#' @importFrom ggplot2 scale_fill_manual ggplot aes geom_col scale_y_continuous
-#' @importFrom ggplot2 coord_flip theme_bw theme xlab ylab geom_bar
-#' @importFrom ggplot2 geom_errorbar element_blank element_text
 #' @importFrom magrittr %>%
 #' @importFrom SummarizedExperiment colData
 #' @importFrom stats sd median

@@ -29,7 +29,6 @@ Other clustering and dimensionality reduction:
 \code{\link{.map_celltypes_with_ewce}()},
 \code{\link{.map_celltypes}()},
 \code{\link{cluster_sce}()},
-\code{\link{map_celltypes_sce}()},
 \code{\link{reduce_dims_sce}()}
 }
 \concept{clustering and dimensionality reduction}

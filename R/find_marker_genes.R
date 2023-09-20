@@ -11,11 +11,12 @@
 #'
 #' @return results_l A list of results
 #'
-#' @family Further analyses
+#' @family Celltype annotation
 #'
 #' @importFrom cli cli_h1 cli_alert
 #' @importFrom monocle3 top_markers plot_genes_by_group
 #' @importFrom dplyr filter group_by top_n pull
+#' @importFrom magrittr %>%
 #'
 #' @export
 find_marker_genes <- function(sce,

@@ -92,6 +92,8 @@ Dimensionality reduction using Liger factorization
 }
 \seealso{
 Other Data integration: 
-\code{\link{integrate_sce}()}
+\code{\link{integrate_sce}()},
+\code{\link{liger_preprocess}()},
+\code{\link{report_integrated_sce}()}
 }
 \concept{Data integration}

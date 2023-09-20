@@ -12,6 +12,7 @@
 #' @family annotation functions
 #' @import ggplot2
 #' @importFrom SummarizedExperiment rowData colData
+#' @importFrom SingleCellExperiment reducedDimNames reducedDim
 #' @importFrom rmarkdown render
 #' @importFrom purrr map_lgl
 #' @importFrom tools file_path_sans_ext
@@ -59,20 +60,9 @@ annotate_merged_sce <- function(sce,
       plot_points = TRUE) # no facets
 
     # generate plot data table for export
-    dt <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
-      dplyr::select(unique(c(pv, unique_id_var))) %>%
-      dplyr::group_by_at(unique_id_var) %>%
-      dplyr::summarize(
-        mean_avg =
-          round(mean(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-        stdev_mean =
-          round(stats::sd(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-        median_avg =
-          round(stats::median(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-        mad =
-          round(stats::mad(!!rlang::sym(pv), na.rm = TRUE), digits = 3)
-        ) %>%
-      dplyr::mutate(z = scale(mean_avg)[, 1])
+    dt <- .generate_pv_plot_dt_table(sce = sce,
+                                     pv = pv,
+                                     unique_id_var = unique_id_var)
 
     merged_plots_data_l[[pv]][[pv]] <- dt
 
@@ -89,20 +79,12 @@ annotate_merged_sce <- function(sce,
         plot_points = TRUE)
 
       # generate plot data table for export
-      dt <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
-        dplyr::select(unique(c(pv, unique_id_var, fv))) %>%
-        dplyr::group_by_at(fv) %>%
-        dplyr::summarize(
-          mean_avg = round(
-            mean(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-          stdev_mean = round(
-            sd(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-          median_avg = round(
-            median(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
-          mad = round(
-            stats::mad(!!rlang::sym(pv), na.rm = TRUE), digits = 3)
-          ) %>%
-        mutate(z = scale(mean_avg)[, 1])
+
+      dt <- .generate_pv_fv_plot_dt_table(sce = sce,
+                                          pv = pv,
+                                          fv = fv,
+                                          unique_id_var = unique_id_var)
+
 
       merged_plots_data_l[[pv]][[plot_name]] <- dt
 
@@ -182,6 +164,7 @@ annotate_merged_sce <- function(sce,
   sce@metadata$merge_qc_params$plot_vars <- plot_vars
   sce@metadata$merge_qc_params$unique_id_var <- unique_id_var
   sce@metadata$merge_qc_params$facet_vars <- facet_vars
+  sce@metadata$total_n_cells <- dim(sce)[2]
 
   cli::cli_alert_success("Done! \r\n")
 
@@ -238,6 +221,7 @@ annotate_merged_sce <- function(sce,
 #' @importFrom ggdendro ggdendrogram
 #' @importFrom ggpubr ggarrange
 #' @importFrom stats dist
+#' @importFrom magrittr %>%
 #' @keywords internal
 .plot_heatmap_of_pbsce <- function(pbsce, binarize = TRUE, trim_name = TRUE) {
 
@@ -266,13 +250,13 @@ annotate_merged_sce <- function(sce,
           axis.text.y = element_blank(),
           plot.margin = unit(c(0, 0, 0, 0), "lines"))
 
-  p2 <- ggplot(dt_long, aes(x = name, y = ensembl_gene_id)) +
-    geom_tile(aes(fill = !value)) +
-    scale_fill_viridis_d() +
-    xlab("Sample") +
-    ylab("") +
-    theme_bw() +
-    theme(legend.position = "none",
+  p2 <- ggplot2::ggplot(dt_long, ggplot2::aes(x = name, y = ensembl_gene_id)) +
+    ggplot2::geom_tile(aes(fill = !value)) +
+    ggplot2::scale_fill_viridis_d() +
+    ggplot2::xlab("Sample") +
+    ggplot2::ylab("") +
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position = "none",
           text = element_text(size = 16),
           axis.title = element_text(size = 18),
           axis.title.x = element_blank(),
@@ -310,6 +294,7 @@ annotate_merged_sce <- function(sce,
 #' @param facet_var the colData variable to facet/subset by
 #' @param plot_points if TRUE plot individual values for violin plots
 #'
+#' @import ggplot2
 #' @importFrom scales percent pretty_breaks
 #' @keywords internal
 .generate_merge_summary_plot <- function(sce,
@@ -386,6 +371,7 @@ annotate_merged_sce <- function(sce,
 #'
 #' @param sce a singlecellexperiment object
 #' @param unique_id_var the colData variable identifying unique samples
+#' @import ggplot2
 #' @keywords internal
 .plot_n_cells_by_unique_id_var <- function(sce, unique_id_var = "individual") {
 
@@ -422,4 +408,47 @@ annotate_merged_sce <- function(sce,
   p <- .grobify_ggplot(p)
   return(p)
 
+}
+
+
+#' @keywords internal
+.generate_pv_plot_dt_table <- function(sce, pv, unique_id_var){
+  dt <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
+    dplyr::select(unique(c(pv, unique_id_var))) %>%
+    dplyr::group_by_at(unique_id_var) %>%
+    dplyr::summarize(
+      mean_avg =
+        round(mean(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+      stdev_mean =
+        round(stats::sd(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+      median_avg =
+        round(stats::median(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+      mad =
+        round(stats::mad(!!rlang::sym(pv), na.rm = TRUE), digits = 3)
+    ) %>%
+    dplyr::mutate(z = scale(mean_avg)[, 1])
+  return(dt)
+}
+
+
+#' @keywords internal
+
+.generate_pv_fv_plot_dt_table <- function(sce, pv, fv, unique_id_var){
+
+dt <- as.data.frame(SummarizedExperiment::colData(sce)) %>%
+  dplyr::select(unique(c(pv, unique_id_var, fv))) %>%
+  dplyr::group_by_at(fv) %>%
+  dplyr::summarize(
+    mean_avg = round(
+      mean(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+    stdev_mean = round(
+      sd(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+    median_avg = round(
+      median(!!rlang::sym(pv), na.rm = TRUE), digits = 3),
+    mad = round(
+      stats::mad(!!rlang::sym(pv), na.rm = TRUE), digits = 3)
+  ) %>%
+  mutate(z = scale(mean_avg)[, 1])
+
+return(dt)
 }

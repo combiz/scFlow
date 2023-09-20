@@ -7,15 +7,28 @@
 #' @param cells_to_sample total cells to consider for gene enrichment
 #' @param clusters_colname the name of the colData column with cluster number
 #' @param species specify species of analysis dataset
-#' @param savePath The directory where the generated ctd file produced by EWCE is saved. Default is a temp directory
-#' @param annotation_level The level(s) of annotation required. Integer for single CTD/level. For multi-CTD/level a named list, names are the CTD file names (without file extension) and elements are vectors of levels. Levels must present in the provided CTD(s). The first name and level will also be used as the primary annotation for automated reporting and will be returned in 'cluster_celltype' column data
-#' @param reps Number of bootstrap repetitions for EWCE. For publishable results set >=10000
-#' @param ctd_species Specify species used to build CTD if different from species. If multiple CTDs are used with differing species specify as a named list where names are the CTD file names (without file extension) and elements are the species. Must be 'human', 'mouse' or listed in EWCE::list_species()$id
+#' @param save_path The directory where the generated ctd file produced by EWCE
+#' is saved. Default is a temp directory
+#' @param annotation_level The level(s) of annotation required.
+#' Integer for single CTD/level. For multi-CTD/level a named list,
+#' names are the CTD file names (without file extension) and
+#' elements are vectors of levels. Levels must present in the provided CTD(s).
+#' The first name and level will also be used as the primary annotation for
+#' automated reporting and will be returned in 'cluster_celltype' column data.
+#' @param reps Number of bootstrap repetitions for EWCE.
+#' For publishable results set >=10000.
+#' @param ctd_species Specify species used to build CTD if different from
+#' species. If multiple CTDs are used with differing species specify as a
+#' named list where names are the CTD file names (without file extension) and
+#' elements are the species. Must be 'human', 'mouse' or listed in
+#' EWCE::list_species()$id.
 #' @param num_markers Number of cluster markers used to identify cell type
+#' @param label_index The annotation_level index to use to name the
+#' cluster_celltype. Default is 1
 #'
 #' @return sce a SingleCellExperiment object annotated with celltypes/metadata
-#' @author Nathan Skene / Combiz Khozoie
-#' @family clustering and dimensionality reduction
+#' @author Nathan Skene / Combiz Khozoie / Michael Thomas
+#' @family Celltype annotation
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom Matrix Matrix
 #' @importFrom EWCE generate_celltype_data
@@ -39,7 +52,8 @@ map_celltypes_sce <- function(sce,
                               annotation_level = 1,
                               reps = 1000,
                               ctd_species = NULL,
-                              num_markers = 50) {
+                              num_markers = 50,
+                              label_index = 1) {
   assertthat::assert_that(dir.exists(ctd_folder))
   assertthat::assert_that(
     clusters_colname %in% names(SummarizedExperiment::colData(sce)),
@@ -128,24 +142,26 @@ map_celltypes_sce <- function(sce,
     dplyr::rename(!!clusters_colname := Cluster)
   mappings_df[] <- lapply(mappings_df, as.character)
 
-  sce@metadata$mappings <- mappings_df
-
   if (class(annotation_level) == "list") {
     mapping_column <- paste0(
       names(annotation_level)[1],
       "_ML",
-      annotation_level[[1]][1]
+      annotation_level[[1]][label_index]
     )
   } else {
     mapping_column <- names(mappings_df)[2]
   }
-  colnames(mappings_df)[colnames(mappings_df) == mapping_column] <- "cluster_celltype"
+  mappings_df <- mappings_df %>%
+    dplyr::mutate(cluster_celltype = get(mapping_column),
+                  cluster_celltype = gsub("_", "-", cluster_celltype))
 
   sce <- map_custom_celltypes(
-    sce,
-    mappings_df,
-    colnames(mappings_df)[2:ncol(mappings_df)]
+    sce = sce,
+    mappings = mappings_df
   )
+
+  sce@metadata$mappings <- mappings_df
+
   sce <- .append_celltype_plots_sce(sce)
 
   return(sce)
@@ -179,17 +195,19 @@ map_celltypes_sce <- function(sce,
                                      reps = 1000,
                                      num_markers = 50) {
   # set up the map_celltypes parameter combinations for pmap
+
   map_params <- list(
     ctd = names(l_ctd),
     ctd_species = ctd_species, # get species from ctd
     mlevel = annotation_level
-    # need to include user specified annottion levels
+    # need to include user specified annotaion levels
   ) # mapping levels
 
   l_mappings <- purrr::pmap(map_params, function(ctd_name,
                                                  ctd_species,
                                                  mlevel) {
     message(ctd_name)
+
     mapped_dt <- .map_celltypes(
       ctdToMap = ctd,
       ctdToMapAgainst = l_ctd[[ctd_name]],
@@ -204,6 +222,7 @@ map_celltypes_sce <- function(sce,
     mapped_dt <- mapped_dt %>%
       dplyr::rename(Cluster = Original)
     mapped_dt$Cluster <- as.numeric(as.character(mapped_dt$Cluster))
+
     return(mapped_dt)
   })
 
@@ -243,8 +262,8 @@ map_celltypes_sce <- function(sce,
                            reps = 1000) {
   ctd <- ctdToMapAgainst
   count <- 0
-
-  for (ml in mappingLevel) {
+set.seed(123)
+for (ml in mappingLevel) {
     message(" Level ", ml)
     for (ct in colnames(ctdToMap[[annotLevel]]$specificity)) {
       mostSpecificGenes <- .get_x_most_specific_genes(
@@ -386,10 +405,10 @@ map_celltypes_sce <- function(sce,
 #' @keywords internal
 .read_rds_files_to_list <- function(folder_path) {
   rds_l <- purrr::map(
-    list.files(folder_path, full.names = TRUE),
+    list.files(folder_path, pattern = "ctd_", full.names = TRUE),
     readRDS
   )
-  names(rds_l) <- tools::file_path_sans_ext(list.files(folder_path))
+  names(rds_l) <- tools::file_path_sans_ext(list.files(folder_path, pattern = "ctd_"))
 
   return(rds_l)
 }

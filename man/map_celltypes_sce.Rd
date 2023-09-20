@@ -14,7 +14,8 @@ map_celltypes_sce(
   annotation_level = 1,
   reps = 1000,
   ctd_species = NULL,
-  num_markers = 50
+  num_markers = 50,
+  label_index = 1
 )
 }
 \arguments{
@@ -28,15 +29,29 @@ map_celltypes_sce(
 
 \item{species}{specify species of analysis dataset}
 
-\item{annotation_level}{The level(s) of annotation required. Integer for single CTD/level. For multi-CTD/level a named list, names are the CTD file names (without file extension) and elements are vectors of levels. Levels must present in the provided CTD(s). The first name and level will also be used as the primary annotation for automated reporting and will be returned in 'cluster_celltype' column data}
+\item{save_path}{The directory where the generated ctd file produced by EWCE
+is saved. Default is a temp directory}
 
-\item{reps}{Number of bootstrap repetitions for EWCE. For publishable results set >=10000}
+\item{annotation_level}{The level(s) of annotation required.
+Integer for single CTD/level. For multi-CTD/level a named list,
+names are the CTD file names (without file extension) and
+elements are vectors of levels. Levels must present in the provided CTD(s).
+The first name and level will also be used as the primary annotation for
+automated reporting and will be returned in 'cluster_celltype' column data.}
 
-\item{ctd_species}{Specify species used to build CTD if different from species. If multiple CTDs are used with differing species specify as a named list where names are the CTD file names (without file extension) and elements are the species. Must be 'human', 'mouse' or listed in EWCE::list_species()$id}
+\item{reps}{Number of bootstrap repetitions for EWCE.
+For publishable results set >=10000.}
+
+\item{ctd_species}{Specify species used to build CTD if different from
+species. If multiple CTDs are used with differing species specify as a
+named list where names are the CTD file names (without file extension) and
+elements are the species. Must be 'human', 'mouse' or listed in
+EWCE::list_species()$id.}
 
 \item{num_markers}{Number of cluster markers used to identify cell type}
 
-\item{savePath}{The directory where the generated ctd file produced by EWCE is saved. Default is a temp directory}
+\item{label_index}{The annotation_level index to use to name the
+cluster_celltype. Default is 1}
 }
 \value{
 sce a SingleCellExperiment object annotated with celltypes/metadata
@@ -45,15 +60,11 @@ sce a SingleCellExperiment object annotated with celltypes/metadata
 Map cluster celltypes with EWCE
 }
 \seealso{
-Other clustering and dimensionality reduction: 
-\code{\link{.get_x_most_specific_genes}()},
-\code{\link{.map_celltypes_with_ewce}()},
-\code{\link{.map_celltypes}()},
-\code{\link{cluster_sce}()},
-\code{\link{map_custom_celltypes}()},
-\code{\link{reduce_dims_sce}()}
+Other Celltype annotation: 
+\code{\link{find_marker_genes}()},
+\code{\link{model_celltype_freqs}()}
 }
 \author{
-Nathan Skene / Combiz Khozoie
+Nathan Skene / Combiz Khozoie / Michael Thomas
 }
-\concept{clustering and dimensionality reduction}
+\concept{Celltype annotation}

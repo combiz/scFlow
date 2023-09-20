@@ -23,6 +23,8 @@ Produces a reducedDim slot representing common factors across datasets
 }
 \seealso{
 Other Data integration: 
-\code{\link{liger_reduce_dims}()}
+\code{\link{liger_preprocess}()},
+\code{\link{liger_reduce_dims}()},
+\code{\link{report_integrated_sce}()}
 }
 \concept{Data integration}

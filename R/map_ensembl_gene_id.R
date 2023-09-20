@@ -69,8 +69,10 @@ map_ensembl_gene_id <- function(ensembl_ids,
             "Mappings file is missing the requested mappings.")
           )
         } else { # mappings requested are present in the file
-          mapped_df <- ensembl_mappings[
-            ensembl_mappings$ensembl_gene_id %in% ensembl_ids, ]
+
+          idx <- match(ensembl_ids, ensembl_mappings$ensembl_gene_id)
+
+          mapped_df <- ensembl_mappings[idx, ]
         }
       }
   } else { # mappings file not provided, use biomaRt
