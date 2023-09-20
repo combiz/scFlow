@@ -112,7 +112,7 @@ You can install the development version of scFlow from GitHub with: -
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("neurogenomics/scFlow", ref = "dev-nf")
+devtools::install_github("neurogenomics/scFlow")
 ```
 
 ## Support
