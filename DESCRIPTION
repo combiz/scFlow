@@ -87,7 +87,6 @@ Imports:
     qs,
     R.utils,
     rlang (>= 1.0.6),
-    rliger (>= 1.0.0),
     rmarkdown (>= 2.18),
     Rtsne (>= 0.16),
     scales,
@@ -116,5 +115,7 @@ Remotes:
     mojaveazure/loomR,
     neurogenomics/scFlowExamples,
     ropensci/bib2df,
-    bzhanglab/WebGestaltR 
+    bzhanglab/WebGestaltR,
+    cran/riverplot,
+    welch-lab/liger
 VignetteBuilder: knitr
