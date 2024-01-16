@@ -32,7 +32,7 @@
 #' @importFrom SingleCellExperiment counts reducedDim
 #' @importFrom purrr map_int map_df
 #' @importFrom DoubletFinder paramSweep_v3 summarizeSweep find.pK
-#' @importFrom DoubletFinder modelHomotypic doubletFinder_v3
+#' @importFrom DoubletFinder modelHomotypic doubletFinder
 #' @importFrom magrittr %>%
 #' @importFrom Seurat FindVariableFeatures NormalizeData CreateSeuratObject
 #' @importFrom Seurat ScaleData RunPCA RunTSNE RunUMAP
@@ -177,13 +177,13 @@ run_doubletfinder <- function(sce,
 
   # Run DoubletFinder with varying classification stringencies -------------
   cli::cli_h3("Running DoubletFinder")
-  seu <- DoubletFinder::doubletFinder_v3(seu,
+  seu <- DoubletFinder::doubletFinder(seu,
     PCs = 1:pca_dims, pN = 0.25, pK = as.numeric(pK),
     nExp = n_exp_poi,
     reuse.pANN = FALSE
   )
 
-  seu <- DoubletFinder::doubletFinder_v3(seu,
+  seu <- DoubletFinder::doubletFinder(seu,
     pN = 0.25, pK = as.numeric(pK),
     nExp = doublet_vals$n_exp_poi_adj,
     reuse.pANN = pann_hi
