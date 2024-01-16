@@ -51,9 +51,7 @@ run_doubletfinder <- function(sce,
                               vars_to_regress_out = "nCount_RNA",
                               doublet_rate = 0,
                               dpk = 8,
-                              num_cores = max(1, future::availableCores()-2)
-                              ) {
-
+                              num_cores = max(1, future::availableCores() - 2)) {
   cli::cli_h2("Finding Singlets with DoubletFinder")
   cli::cli_h3("Pre-processing")
 
@@ -73,12 +71,13 @@ run_doubletfinder <- function(sce,
   )
 
   # calculate estimated doublet rate
-  if(doublet_rate == 0) {
+  if (doublet_rate == 0) {
     abs_dpk <- (dim(sce_ss)[[2]] / 1000) * dpk
-    doublet_rate <-  abs_dpk / 1000
+    doublet_rate <- abs_dpk / 1000
     cli::cli_text(
       "Estimating a doublet rate of {.val {doublet_rate}} ",
-      "based on a doublets-per-thousand (dpk) increment of {.val {dpk}}")
+      "based on a doublets-per-thousand (dpk) increment of {.val {dpk}}"
+    )
   } else {
     dpk <- NULL
   }
@@ -94,7 +93,8 @@ run_doubletfinder <- function(sce,
 
   cli::cli_alert(c(
     "Selected {.val {dim(sce_ss)[[2]]}} cells ",
-    "and {.val {dim(sce_ss)[[1]]}} genes"))
+    "and {.val {dim(sce_ss)[[1]]}} genes"
+  ))
 
   seu_metadata <- data.frame(sce_ss@colData) %>%
     droplevels()
@@ -208,7 +208,7 @@ run_doubletfinder <- function(sce,
     "Doublet_hi"
 
   # prepare data to return
-  #sce$is_singlet <- seu@meta.data$DF_hi.lo == "Singlet"
+  # sce$is_singlet <- seu@meta.data$DF_hi.lo == "Singlet"
   is_singlet <- rep(NA, dim(sce)[[2]])
   is_singlet[col_idx] <- seu@meta.data$DF_hi.lo == "Singlet"
   sce$is_singlet <- is_singlet
@@ -237,13 +237,14 @@ run_doubletfinder <- function(sce,
 
   doubletfinder_params <- sce@metadata$doubletfinder_params
   lidx <- which(purrr::map_int(doubletfinder_params, length) > 1)
-  for (idx in lidx){
+  for (idx in lidx) {
     doubletfinder_params[[idx]] <- paste(doubletfinder_params[[idx]], collapse = ";")
   }
 
   doubletfinder_params <- purrr::map_df(
-    unlist(doubletfinder_params), ~ .) %>%
-    dplyr::rename_all(~ paste0("doubletfinder_",.))
+    unlist(doubletfinder_params), ~.
+  ) %>%
+    dplyr::rename_all(~ paste0("doubletfinder_", .))
 
   sce@metadata$qc_summary <- cbind(
     sce@metadata$qc_summary,
@@ -255,7 +256,6 @@ run_doubletfinder <- function(sce,
   cli::cli_alert_success("DoubletFinder completed succesfully")
 
   return(sce)
-
 }
 
 ################################################################################
@@ -276,7 +276,6 @@ run_doubletfinder <- function(sce,
                                       vars_to_regress_out,
                                       pca_dims,
                                       var_features) {
-
   cat("\r\n")
   cat(cli::rule("Creating SeuratObject", line = 1), "\r\n")
 
@@ -287,7 +286,7 @@ run_doubletfinder <- function(sce,
     meta.data = seu_metadata
   )
   # doubletfinder not compatible yet, no slots error
-  #seu <- Seurat::SCTransform(
+  # seu <- Seurat::SCTransform(
   #  seu,
   #  vars.to.regress = vars_to_regress_out)
   cat(cli::rule("Normalizing data", line = 1), "\r\n")
@@ -295,7 +294,8 @@ run_doubletfinder <- function(sce,
   cat(cli::rule("Scaling data", line = 1), "\r\n")
   cat(sprintf(
     "Regressing out %s, this may take a while..",
-    vars_to_regress_out))
+    vars_to_regress_out
+  ))
   seu <- Seurat::ScaleData(
     seu,
     vars.to.regress = vars_to_regress_out
@@ -315,7 +315,6 @@ run_doubletfinder <- function(sce,
   seu <- Seurat::RunUMAP(seu, dims = 1:pca_dims)
 
   return(seu)
-
 }
 
 
@@ -323,9 +322,8 @@ run_doubletfinder <- function(sce,
 #' @export
 #' @keywords internal
 .doublet_finder_plot_dim_red <- function(sce,
-                                        reduced_dim = NULL) {
-
-  if (is.null(reduced_dim)){
+                                         reduced_dim = NULL) {
+  if (is.null(reduced_dim)) {
     stop("need a reduced dim slot, see reducedDims(sce).")
   }
 
@@ -336,12 +334,12 @@ run_doubletfinder <- function(sce,
   df$is_singlet <- sce$is_singlet
   df <- na.omit(df)
 
-  p <- ggplot2::ggplot(data = df)+
+  p <- ggplot2::ggplot(data = df) +
     geom_point(aes(
       x = dim_1,
       y = dim_2,
       colour = is_singlet
-      ), shape = 16, size = 1, alpha = .4) +
+    ), shape = 16, size = 1, alpha = .4) +
     scale_colour_manual(values = c("#E64B35", "#4DBBD5")) +
     theme_bw() +
     theme(
@@ -356,12 +354,11 @@ run_doubletfinder <- function(sce,
       plot.title = element_text(size = 18, hjust = 0.5)
     )
 
-  #p$plot_env <- rlang::new_environment()
+  # p$plot_env <- rlang::new_environment()
   p <- .grobify_ggplot(p)
   sce@metadata$qc_plots$doublet_finder[[reduced_dim]] <- p
 
   return(sce)
-
 }
 
 
@@ -369,31 +366,29 @@ run_doubletfinder <- function(sce,
 #' @export
 #' @keywords internal
 .doublet_finder_plot_param_sweep <- function(sce, bcmvn) {
-
-  p <- ggplot2::ggplot(data = bcmvn, aes(x = pK, y = BCmetric))+
+  p <- ggplot2::ggplot(data = bcmvn, aes(x = pK, y = BCmetric)) +
     geom_line() +
     geom_point(size = 4) +
     geom_point(
       data = bcmvn[bcmvn$pK == sce@metadata$doubletfinder_params$pK, ],
       size = 4,
-      colour = "red") +
+      colour = "red"
+    ) +
     theme_bw() +
     theme(
-      #panel.border = element_blank(),
+      # panel.border = element_blank(),
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank(),
       panel.background = element_blank(),
-      #line = element_blank(),
+      # line = element_blank(),
       text = element_text(size = 18, hjust = 0.5, colour = "black"),
-      #title = element_blank(),
+      # title = element_blank(),
       legend.position = "none",
-      plot.title = element_text(size = 18, hjust = 0.5))
+      plot.title = element_text(size = 18, hjust = 0.5)
+    )
 
   p <- .grobify_ggplot(p)
   sce@metadata$qc_plots$doublet_finder$param_sweep <- p
 
   return(sce)
-
 }
-
-

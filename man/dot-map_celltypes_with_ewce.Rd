@@ -4,25 +4,40 @@
 \alias{.map_celltypes_with_ewce}
 \title{Map cluster celltypes with EWCE}
 \usage{
-.map_celltypes_with_ewce(ctd, l_ctd, inputSpecies = "human")
+.map_celltypes_with_ewce(
+  ctd,
+  l_ctd,
+  inputSpecies = "human",
+  annotation_level = 1,
+  ctd_species = "human",
+  reps = 1000,
+  num_markers = 50
+)
 }
 \arguments{
 \item{ctd}{ctd for current expt}
 
-\item{l_ctd}{a a list of reference ctd's}
+\item{l_ctd}{a list of reference ctd's}
+
+\item{inputSpecies}{species of ctd}
+
+\item{annotation_level}{level of annotation}
+
+\item{ctd_species}{species of l_ctd}
+
+\item{reps}{number pf repitions performed by EWCE boostrap}
 }
 \value{
 sce a SingleCellExperiment object annotated with sample metadata
 }
 \description{
-Works with Allan and Zeisel only
+Maps cluster celltypes using EWCE
 }
 \seealso{
 Other clustering and dimensionality reduction: 
 \code{\link{.get_x_most_specific_genes}()},
 \code{\link{.map_celltypes}()},
 \code{\link{cluster_sce}()},
-\code{\link{map_celltypes_sce}()},
 \code{\link{map_custom_celltypes}()},
 \code{\link{reduce_dims_sce}()}
 }

@@ -35,7 +35,7 @@ report_celltype_metrics <- function(sce,
 
   cli::cli_h1("Generating Report for Cell-Type Metrics")
 
-  metadata_tmp_path <- file.path(tempdir(), "metadata.qs")
+  metadata_tmp_path <- file.path(report_folder_path, "metadata.qs")
 
   cli::cli_text("Writing temp files for report...")
   qs::qsave(
@@ -43,10 +43,6 @@ report_celltype_metrics <- function(sce,
     metadata_tmp_path
   )
 
-  krd <- file.path(tempdir(), "krdqc")
-  intd <- file.path(tempdir(), "idqc")
-  dir.create(krd, showWarnings = FALSE)
-  dir.create(intd, showWarnings = FALSE)
 
   cli::cli_text("Generating report...")
   rmarkdown::render(
@@ -60,8 +56,8 @@ report_celltype_metrics <- function(sce,
     ),
     output_dir = report_folder_path,
     output_file = report_file,
-    knit_root_dir = krd,
-    intermediates_dir = intd,
+    knit_root_dir = report_folder_path,
+    intermediates_dir = report_folder_path,
     quiet = TRUE
   )
 
@@ -71,6 +67,8 @@ report_celltype_metrics <- function(sce,
     "{cli::col_green(cli::symbol$tick)} Report succesfully generated: ",
     "{.file {file.path(report_folder_path, paste0(report_file, '.html'))}}")
   )
+
+  unlink(metadata_tmp_path)
 
   return(sce)
 

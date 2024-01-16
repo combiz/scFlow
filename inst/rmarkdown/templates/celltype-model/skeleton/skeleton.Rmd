@@ -39,14 +39,14 @@ knitr::knit_hooks$set(wrap = function(before, options, envir){
 
 ```{r load_data, results='hide', include=FALSE}
 results <- qs::qread(params$results_path)
-sig_celltypes <- results$dirichlet_pvals[[results$fargs$celltype_var]][results$dirichlet_pvals$pval <= 0.05]
+sig_celltypes <- results$dirichlet_pvals[[results$fargs$celltype_var]][results$dirichlet_pvals$padj <= 0.05]
 ```
 
 ## Analysis summary
 
 Relative differences in the proportions of `r length(results$unique_id_plots_by_celltype)` different cell-types (_`r results$fargs$celltype_var`_) across `r nrow(results$counts_mat)` samples (_`r results$fargs$unique_id_var`_) in `r length(unique(results$dirichlet_plot_table[[1]]))` experimental groups (_`r paste0(results$fargs$dependent_var, ":")`_ `r paste(unique(results$dirichlet_plot_table[, results$fargs$dependent_var]), collapse = ", ")`) were examined using a Dirichlet model.  This model allows differences in cell-type composition to be tested while accounting for the proportions of all of the other cell-types.
 
-`r if(nrow(results$dirichlet_pvals %>% dplyr::filter(pval <= 0.05)) > 0) {sprintf("Statistically significant differences in cell-type composition were observed in the following cell-types: %s", paste("<i>", sig_celltypes,"</i>", collapse = ", "))} else { print("No statistically significant differences in cell-type composition were observed.") }`
+`r if(nrow(results$dirichlet_pvals %>% dplyr::filter(padj <= 0.05)) > 0) {sprintf("Statistically significant differences in cell-type composition were observed in the following cell-types: %s", paste("<i>", sig_celltypes,"</i>", collapse = ", "))} else { print("No statistically significant differences in cell-type composition were observed.") }`
 
 ```{r, results='asis', include=FALSE, echo=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
@@ -56,7 +56,7 @@ show_plot <- function(plot_object) {
 }
 
 out <- NULL
-celltypes <- unique(results$dirichlet_pvals[order(results$dirichlet_pvals$pval),][[results$fargs$celltype_var]]) #ordered by pvalue
+celltypes <- unique(results$dirichlet_pvals[order(results$dirichlet_pvals$padj),][[results$fargs$celltype_var]]) #ordered by pvalue
 for(celltype in celltypes) {
     out <- c(out, suppressWarnings(knitr::knit_child("celltype_chunks.Rmd")))
 }

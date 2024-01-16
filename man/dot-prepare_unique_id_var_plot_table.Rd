@@ -6,6 +6,7 @@
 \usage{
 .prepare_unique_id_var_plot_table(
   df,
+  celltypes,
   celltype_var,
   dependent_var,
   unique_id_var,
@@ -33,7 +34,8 @@ Other helper:
 \code{\link{.prepare_fisher_counts_table}()},
 \code{\link{.process_dirichlet_fit}()},
 \code{\link{.retrieve_covariates}()},
-\code{\link{.tally_cells}()}
+\code{\link{.tally_cells}()},
+\code{\link{.uniftest}()}
 }
 \concept{helper}
 \keyword{internal}

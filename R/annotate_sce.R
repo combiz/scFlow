@@ -320,6 +320,7 @@ annotate_sce <- function(sce,
 #' x axis barcode rank, y axis total counts
 #' @importFrom DropletUtils barcodeRanks
 #' @importFrom grDevices rgb
+#' @importFrom magrittr %>%
 #' @keywords internal
 .qc_plot_count_depth_distribution <- function(sce) {
 

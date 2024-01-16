@@ -9,9 +9,10 @@
   ctdToMapAgainst = MAGMA.Celltyping::ctd_Tasic,
   inputSpecies = "human",
   mapAgainstSpecies = "mouse",
-  annotLevel = 2,
-  numTopMarkers = 500,
-  mappingLevel = 2
+  annotLevel = 1,
+  numTopMarkers = 50,
+  mappingLevel = 2,
+  reps = 1000
 )
 }
 \arguments{
@@ -40,7 +41,6 @@ Other clustering and dimensionality reduction:
 \code{\link{.get_x_most_specific_genes}()},
 \code{\link{.map_celltypes_with_ewce}()},
 \code{\link{cluster_sce}()},
-\code{\link{map_celltypes_sce}()},
 \code{\link{map_custom_celltypes}()},
 \code{\link{reduce_dims_sce}()}
 }

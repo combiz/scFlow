@@ -27,7 +27,9 @@ sce SingleCellExperiment object annotated with reducedDims
 Generate a report for dataset integration, dims reduction, and clustering
 }
 \seealso{
-Other integration, dimension reduction, and clustering: 
-\code{\link{annotate_integrated_sce}()}
+Other Data integration: 
+\code{\link{integrate_sce}()},
+\code{\link{liger_preprocess}()},
+\code{\link{liger_reduce_dims}()}
 }
-\concept{integration, dimension reduction, and clustering}
+\concept{Data integration}

@@ -21,6 +21,7 @@
 #' @family annotation functions
 #' @importFrom magrittr %>%
 #' @importFrom SummarizedExperiment rowData colData
+#' @importFrom dplyr left_join rename
 #'
 #' @export
 annotate_sce_genes <- function(sce,
@@ -54,11 +55,10 @@ annotate_sce_genes <- function(sce,
     mapping_results$ensembl_gene_id
   )
 
-  SummarizedExperiment::rowData(sce) <- dplyr::full_join(
+  SummarizedExperiment::rowData(sce) <- dplyr::left_join(
     data.frame(SummarizedExperiment::rowData(sce)),
     mapping_results,
     by = "ensembl_gene_id",
-    all = TRUE
     ) %>% dplyr::rename(gene = external_gene_name)
 
   if (!all(

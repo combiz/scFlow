@@ -44,5 +44,5 @@ print(results$dirichlet_plots_by_celltype[[celltype]])
 
 ### Table: Dirichlet model p-values for `r celltype` (vs `r results$fargs$ref_class`)
 ```{r, fig.align = "center"}
-DT::datatable(results$dirichlet_pvals[results$dirichlet_pvals[[results$fargs$celltype_var]] == celltype,], rownames = FALSE, options = list(dom = 't', pageLength = 10, scrollX=T, columnDefs = list(list(className = 'dt-left', targets = "_all"))), escape = FALSE ) %>% DT::formatRound(columns = "pval", digits = 5)
+DT::datatable(results$dirichlet_pvals[results$dirichlet_pvals[[results$fargs$celltype_var]] == celltype,], rownames = FALSE, options = list(dom = 't', pageLength = 10, scrollX=T, columnDefs = list(list(className = 'dt-left', targets = "_all"))), escape = FALSE ) %>% DT::formatRound(columns = "padj", digits = 5)
 ```

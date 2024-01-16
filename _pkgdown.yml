@@ -21,4 +21,8 @@ reference:
 - title: Data Integration
   contents:
     - has_concept("Data integration")
+- title: Celltype annotation
+  contents:
+    - has_concept("Celltype annotation")
+
 

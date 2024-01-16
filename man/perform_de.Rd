@@ -7,13 +7,14 @@
 perform_de(
   sce,
   de_method = "MASTZLM",
+  mast_method = "glm",
   min_counts = 1,
   min_cells_pc = 0.1,
   rescale_numerics = TRUE,
   dependent_var = "group",
   ref_class = "Control",
-  confounding_vars = c("individual", "cngeneson", "sex", "age", "PMI", "RIN",
-    "seqdate", "pc_mito"),
+  confounding_vars = c("individual", "cngeneson", "sex", "age", "PMI", "RIN", "seqdate",
+    "pc_mito"),
   random_effects_var = NULL,
   interaction_vars = NULL,
   unique_id_var = "individual",
@@ -26,6 +27,10 @@ perform_de(
 \item{sce}{a SingleCellExperiment object}
 
 \item{de_method}{The differential gene expression method.}
+
+\item{mast_method}{If \code{de_method} is "MASTZLM" then mast_method should be
+provided. Possible values are "glm", "glmer", "bayesglm". Default is "glm".
+For "glmer" and "random_effects_var" should be provided.}
 
 \item{min_counts}{minimum number of counts}
 
