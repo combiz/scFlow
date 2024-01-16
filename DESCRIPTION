@@ -87,6 +87,7 @@ Imports:
     qs,
     R.utils,
     rlang (>= 1.0.6),
+    rliger,
     rmarkdown (>= 2.18),
     Rtsne (>= 0.16),
     scales,
@@ -116,6 +117,5 @@ Remotes:
     neurogenomics/scFlowExamples,
     ropensci/bib2df,
     bzhanglab/WebGestaltR,
-    cran/riverplot,
-    welch-lab/liger
+    cran/riverplot
 VignetteBuilder: knitr
