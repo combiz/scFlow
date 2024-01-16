@@ -31,7 +31,7 @@
 #' @importFrom dplyr rename_all
 #' @importFrom SingleCellExperiment counts reducedDim
 #' @importFrom purrr map_int map_df
-#' @importFrom DoubletFinder paramSweep_v3 summarizeSweep find.pK
+#' @importFrom DoubletFinder paramSweep summarizeSweep find.pK
 #' @importFrom DoubletFinder modelHomotypic doubletFinder
 #' @importFrom magrittr %>%
 #' @importFrom Seurat FindVariableFeatures NormalizeData CreateSeuratObject
@@ -142,7 +142,7 @@ run_doubletfinder <- function(sce,
   # pK Identification -------------------------------------------------------
   if (is.null(pK)) { # if not specified, use sweep
     cli::cli_h3("Performing optimal pK parameter sweep")
-    sweep_res_list <- DoubletFinder::paramSweep_v3(
+    sweep_res_list <- DoubletFinder::paramSweep(
       seu,
       PCs = 1:pca_dims, sct = FALSE,
       num.cores = num_cores
