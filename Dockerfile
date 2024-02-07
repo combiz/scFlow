@@ -188,7 +188,7 @@ RUN Rscript -e 'requireNamespace("BiocManager"); BiocManager::install(ask=F);' \
 && rm -rf /tmp/downloaded_packages
 
 ## Install from GH the following
-RUN installGithub.r 
+RUN installGithub.r \
 NathanSkene/EWCE \
 chris-mcginnis-ucsf/DoubletFinder \
 ropensci/plotly \
