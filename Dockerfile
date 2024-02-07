@@ -1,8 +1,8 @@
 #LABEL maintainer="Combiz Khozoie, Ph.D. c.khozoie@imperial.ac.uk, Alan Murphy, a.murphy@imperial.ac.uk"
 
 ## Use rstudio installs binaries from RStudio's RSPM service by default,
-## Uses the latest stable ubuntu, R and Bioconductor versions. Created on unbuntu 20.04, R 4.0 and BiocManager 3.12
-FROM rocker/rstudio:4.2.2
+## Uses the latest stable ubuntu, R and Bioconductor versions. Created on unbuntu 20.04, R 4.3 and BiocManager 3.18
+FROM rocker/rstudio:4.3
 
 
 ## Add packages dependencies
@@ -141,9 +141,9 @@ ids \
 igraph \
 knitr \
 leaflet \
-lme4 \
 magrittr \
 Matrix \
+lme4 \
 paletteer \
 patchwork \
 plyr \
@@ -166,6 +166,7 @@ Rtsne \
 scales \
 sctransform \
 Seurat \
+SeuratObject \
 snow \
 spelling \
 stringr \
@@ -187,7 +188,9 @@ RUN Rscript -e 'requireNamespace("BiocManager"); BiocManager::install(ask=F);' \
 && rm -rf /tmp/downloaded_packages
 
 ## Install from GH the following
-RUN installGithub.r chris-mcginnis-ucsf/DoubletFinder \
+RUN installGithub.r 
+NathanSkene/EWCE \
+chris-mcginnis-ucsf/DoubletFinder \
 ropensci/plotly \
 cole-trapnell-lab/monocle3 \
 theislab/kBET \
