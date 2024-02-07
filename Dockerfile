@@ -138,12 +138,12 @@ ggridges \
 Hmisc \
 httr \
 ids \
-igraph \
 knitr \
 leaflet \
 magrittr \
 Matrix \
 lme4 \
+igraph \
 paletteer \
 patchwork \
 plyr \
