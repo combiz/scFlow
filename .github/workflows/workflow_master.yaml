@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - nfancy-patch-1
 
 jobs:
   R-CMD-check:
