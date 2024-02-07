@@ -41,7 +41,6 @@ Suggests:
     spelling,
     covr,
     knitr,
-    scFlowExamples,
     BiocStyle,
     DT (>= 0.26)
 Language: en-US
@@ -76,6 +75,7 @@ Imports:
     magrittr (>= 2.0.3),
     MAST (>= 1.24.0),
     Matrix,
+    lme4,
     methods,
     monocle3 (>= 1.3.1),
     paletteer (>= 1.5.0),
@@ -106,15 +106,13 @@ Imports:
     uwot,
     WebGestaltR
 Remotes:
+    NathanSkene/EWCE,
     chris-mcginnis-ucsf/DoubletFinder,
     ropensci/plotly,
     cole-trapnell-lab/monocle3,
     theislab/kBET,
     jlmelville/uwot,
-    NathanSkene/One2One,
     hhoeflin/hdf5r,
-    mojaveazure/loomR,
-    neurogenomics/scFlowExamples,
     ropensci/bib2df,
     bzhanglab/WebGestaltR,
     cran/riverplot
