@@ -5,6 +5,7 @@ pkgs <- c(
 'spelling',
 'english',
 'Seurat',
+'SeuratObject',
 'DT',
 'sctransform',
 'RcppParallel',
