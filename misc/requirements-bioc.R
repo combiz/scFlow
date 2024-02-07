@@ -7,7 +7,6 @@ bioc_pkgs<-c(
   'DelayedMatrixStats',
   'DropletUtils',
   'edgeR',
-  'EWCE',
   'GenomicRanges',
   'graph',
   'IRanges',
