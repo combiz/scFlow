@@ -1,3 +1,5 @@
+# scFlow 0.7.4
+
 # scFlow 0.7.2
 
 * QC bug fixes.
