@@ -81,7 +81,7 @@ The package functions are designed to interface neatly with [NextFlow](https://w
 First, install a few Bioconductor dependencies that aren't automatically installed:
 
 
-```
+```{r, eval=FALSE}
 if (!require("BiocManager")){install.packages("BiocManager")}
 
 install.packages("Matrix")
@@ -95,7 +95,7 @@ install.packages("lme4", type = "source")
 
 Now, install the latest version of scFlow.
 
-```
+```{r, eval=FALSE}
 remotes::install_github("neurogenomics/scFlow")
 ```
 
