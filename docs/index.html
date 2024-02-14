@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">scFlow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.4</span>
       </span>
     </div>
 
@@ -81,7 +81,6 @@
 <div class="page-header"><h1 id="scflow---single-cell-workflow">scFlow - Single-Cell Workflow<a class="anchor" aria-label="anchor" href="#scflow---single-cell-workflow"></a>
 </h1></div>
 <!-- badges: start -->
-
 <p>The scFlow R package provides the analytical back-end to the <a href="https://nf-co.re/scflow" class="external-link">nf-core/scflow</a> Nextflow pipeline for the orchestration of automated, scalable, and reproducible single-cell RNA sequencing analyses.</p>
 <p>The scFlow R package is built to enable standardized workflows following best practices on top of popular single-cell R packages, including Seurat, Monocle, scater, emptyDrops, DoubletFinder, LIGER, and MAST (Hao 2021, Cao 2019, McCarthy 2017, Lun 2019, McGinnis 2019, Welch 2019). Common analytical tasks required by users that involve multiple tools can be performed in scFlow with a single command (i.e. a higher level of abstraction). Key plots, tables, and other analysis outputs are automatically generated, together with interactive HTML reports for each stage of the analysis. These reports provide informative summaries of analytical steps in ways that can highlight the impact of parameter choices and guide their revision when needed.</p>
 <p>The following example illustrates a complete sample quality-control with default parameters using the scFlow R package, including ambient RNA profiling, gene/cell annotation, thresholding, doublet/multiplet removal, and generation of an interactive HTML report with key plots: -</p>
@@ -95,8 +94,7 @@
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">report_qc_sce</span>()</span></code></pre></div>
 <p>Overview of scFlow features</p>
 <ul>
-<li>Quality control of gene-cell matrices
-<ul>
+<li>Quality control of gene-cell matrices<ul>
 <li>Profiling of ambient RNA with <a href="https://github.com/MarioniLab/DropletUtils" class="external-link">emptyDrops</a>
 </li>
 <li>Filtering of matrices by counts and features including optional adaptive filtering</li>
@@ -107,8 +105,7 @@
 </li>
 </ul>
 </li>
-<li>Integration
-<ul>
+<li>Integration<ul>
 <li>Calculation of latent-gene metafactors for integration <a href="https://github.com/MacoskoLab/rliger" class="external-link">Liger</a>
 </li>
 <li>Evaluation of integration performance across major sources of experimental variance with <a href="https://github.com/theislab/kBET" class="external-link">kBet</a>
@@ -116,15 +113,13 @@
 <li>Latent factor contribution analysis with <a href="https://github.com/hms-dbmi/UpSetR/" class="external-link">UpSetR</a> plots</li>
 </ul>
 </li>
-<li>Dimensionality reduction and Clustering
-<ul>
+<li>Dimensionality reduction and Clustering<ul>
 <li>Dimensionality reduction with tSNE and/or UMAP with/without integration</li>
 <li>Community detection with the Louvain or Leiden clustering algorithms using <a href="https://github.com/cole-trapnell-lab/monocle-release" class="external-link">monocle</a>
 </li>
 </ul>
 </li>
-<li>Cell-type identification
-<ul>
+<li>Cell-type identification<ul>
 <li>Cluster marker gene identification with <a href="https://github.com/cole-trapnell-lab/monocle-release" class="external-link">monocle</a>
 </li>
 <li>Automated cell-type annotation with <a href="https://github.com/NathanSkene/EWCE" class="external-link">EWCE</a>
@@ -133,8 +128,7 @@
 </li>
 </ul>
 </li>
-<li>Differential gene expression implementations
-<ul>
+<li>Differential gene expression implementations<ul>
 <li>Flexible pre-processing including gene expressivity filtering, and options for numeric covariate scaling/centering, matrix normalization, and pseudobulking</li>
 <li>Zero-inflated mixed-effect regression model with <a href="https://github.com/RGLab/MAST" class="external-link">MAST</a>
 </li>
@@ -142,24 +136,17 @@
 </li>
 </ul>
 </li>
-<li>Pathway and functional category enrichment analysis
-<ul>
+<li>Pathway and functional category enrichment analysis<ul>
 <li>Interface to the Enrichr database with <a href="https://github.com/cran/enrichR" class="external-link">EnrichR</a>
 </li>
 <li>Interface to the WebGestalt tool with <a href="http://www.webgestalt.org/" class="external-link">WebGestaltR</a>
 </li>
 </ul>
 </li>
-<li>Cell-type composition analysis
-<ul>
-<li>Dirichlet modeling of differential cell-type composition using <a href="https://cran.r-project.org/web/packages/DirichletReg/index.html" class="external-link">DirichletReg</a>
+<li>Cell-type composition analysis<ul><li>Dirichlet modeling of differential cell-type composition using <a href="https://cran.r-project.org/web/packages/DirichletReg/index.html" class="external-link">DirichletReg</a>
+</li></ul>
 </li>
-</ul>
-</li>
-<li>Publication quality plots and analysis reports
-<ul>
-<li>Eight interactive HTML reports with key plots and algorithm performance metrics</li>
-</ul>
+<li>Publication quality plots and analysis reports<ul><li>Eight interactive HTML reports with key plots and algorithm performance metrics</li></ul>
 </li>
 </ul>
 <div class="section level2">
@@ -169,7 +156,7 @@
 <p>You can install the development version of scFlow from GitHub with: -</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"neurogenomics/scFlow"</span>, ref <span class="op">=</span> <span class="st">"dev-nf"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"neurogenomics/scFlow"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="support">Support<a class="anchor" aria-label="anchor" href="#support"></a>

@@ -68,8 +68,6 @@ use_r("volcano_plot")
 use_r("map_with_ewce")
 use_r("reduced_dimension_plots")
 
-?use_r
-
 use_test("function_name")
 
 # add to DESCRIPTION
@@ -150,10 +148,6 @@ use_package("uwot", min_version = "0.1.14.9000")
 #use_package("vroom", min_version = "1.6.0")
 use_package("WebGestaltR", min_version = "0.4.5")
 use_package("XML")
-
-
-
-use_vignette("basic-qc", title = "Guided tutorial for sample quality control")
 
 #use_vignette("How to do this cool analysis") # later
 use_github_actions()
