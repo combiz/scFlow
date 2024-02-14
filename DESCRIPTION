@@ -69,6 +69,7 @@ Imports:
     ggpubr (>= 0.5.0),
     ggrepel (>= 0.9.2),
     ggridges (>= 0.5.4),
+    igraph,
     kBET (>= 0.99.6),
     leaflet (>= 2.1.1),
     limma (>= 3.54.0),

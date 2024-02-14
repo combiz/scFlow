@@ -36,7 +36,6 @@ jobs:
           load: true
           file: ./Dockerfile
           tags: |
-            nfancy/scflow:${{ env.packageVersion }}
             nfancy/scflow:latest
 
 
@@ -48,5 +47,4 @@ jobs:
 
       - name: push service
         run: |
-          docker push nfancy/scflow:${{ env.packageVersion }}
           docker push nfancy/scflow:latest
