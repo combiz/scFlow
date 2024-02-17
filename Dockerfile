@@ -38,7 +38,7 @@ RUN apt-get update \
 	libcairo2-dev \
 	libtiff5-dev \
 	libreadline-dev \
-	libgsl0-dev \
+	libgsl-dev \
 	libgslcblas0 \
 	libgtk2.0-dev \
 	libgl1-mesa-dev \
@@ -111,7 +111,7 @@ RUN pip install stratocumulus \
 && rm -rf /tmp/*
 
 
-RUN install2.r -e \
+RUN install2.r -e -t source \
 argparse \
 assertthat \
 BiocManager \

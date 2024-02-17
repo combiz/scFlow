@@ -23,4 +23,4 @@ bioc_pkgs<-c(
 )
 
 requireNamespace("BiocManager")
-BiocManager::install(bioc_pkgs, ask=F)
+BiocManager::install(bioc_pkgs, ask=F, type = "source")
