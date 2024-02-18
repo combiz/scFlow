@@ -37,6 +37,7 @@ jobs:
           file: ./Dockerfile
           tags: |
             nfancy/scflow:latest
+            nfancy/scflow:${{ env.packageVersion }}
 
 
       - name: Login to DockerHub
@@ -48,3 +49,4 @@ jobs:
       - name: push service
         run: |
           docker push nfancy/scflow:latest
+          docker push nfancy/scflow:${{ env.packageVersion }}
