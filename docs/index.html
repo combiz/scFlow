@@ -159,6 +159,20 @@
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"neurogenomics/scFlow"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="running-rstudio-server-with-pre-installed-scflow-via-docker">Running RStudio Server with pre-installed scFlow via Docker<a class="anchor" aria-label="anchor" href="#running-rstudio-server-with-pre-installed-scflow-via-docker"></a>
+</h2>
+<p>If using linux system, open a cmd terminal and run the following commands:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>docker pull nfancy<span class="sc">/</span>scflow</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>docker run <span class="sc">--</span>rm <span class="sc">-</span>d \</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span>v <span class="sc">$</span>HOME<span class="sc">:</span><span class="er">/</span>home<span class="sc">/</span>rstudio<span class="sc">/</span>home \</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span>e ROOT<span class="ot">=</span>true \</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span>e PASSWORD<span class="ot">=</span>password \</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span>p <span class="dv">8950</span><span class="sc">:</span><span class="dv">8787</span> \</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>nfancy<span class="sc">/</span>scflow</span></code></pre></div>
+<p>Then access the RStudio Server on your browser at IP:8950. The default username is <code>rstudio</code> and password is <code>password</code>. To understand more on how to run docker Rstudio follow the link <a href="https://davetang.org/muse/2021/04/24/running-rstudio-server-with-docker/" class="external-link">here</a>.</p>
+</div>
+<div class="section level2">
 <h2 id="support">Support<a class="anchor" aria-label="anchor" href="#support"></a>
 </h2>
 <ul>

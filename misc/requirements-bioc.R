@@ -19,7 +19,6 @@ bioc_pkgs<-c(
   'scater',
   'SingleCellExperiment',
   'SummarizedExperiment'
-
 )
 
 requireNamespace("BiocManager")

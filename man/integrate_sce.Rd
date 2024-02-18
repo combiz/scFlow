@@ -9,10 +9,10 @@ integrate_sce(sce, method = "Liger", ...)
 \arguments{
 \item{sce}{a SingleCellExperiment object or merged sce objects}
 
-\item{method}{the integration method to use
-Set to k=30 as default.}
+\item{method}{the integration method to use. Set to liger as default.
+See \code{liger_preprocess} and \code{liger_reduce_dims} functions for parameter options.}
 
-\item{...}{Additional arguments. Such as k Inner dimension of factorization
+\item{...}{Additional arguments. Such as k, inner dimension of factorization
 (number of factors).}
 }
 \value{

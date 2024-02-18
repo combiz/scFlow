@@ -78,15 +78,17 @@ The package functions are designed to interface neatly with [NextFlow](https://w
 
 # Install the scFlow and dataset repository
 
-First, install a few Bioconductor dependencies that aren't automatically installed:
+First, install a few dependencies that aren't automatically installed:
 
 
 ```{r, eval=FALSE}
+options(repos = "https://cran.r-project.org/", pkgType = "source")
 install.packages("Matrix")
-install.packages("irlba", type = "source")
-install.packages("Seurat", type = "source")
-install.packages("SeuratObject", type = "source")
-install.packages("lme4", type = "source")
+install.packages("irlba")
+install.packages("Seurat")
+install.packages("SeuratObject")
+install.packages("lme4")
+install.packages("apcluster")
 remotes::install_github("NathanSkene/EWCE")
 remotes::install_github("chris-mcginnis-ucsf/DoubletFinder")
 ```
@@ -111,6 +113,7 @@ The basic `scFlow` workflow for sample QC begins with the import of the feature-
 Call required packages for vignette:
 ```{r}
 #vignette packages
+library(apcluster) #need to load before scFlow to avoid function clash
 library(scFlow)
 library(SingleCellExperiment)
 library(dplyr)
@@ -363,7 +366,7 @@ plot_reduced_dim(sce, feature_dim = "diagnosis",
 The next step is to cluster all the cells using `cluster_sce` command.
 
 ```{r eval=TRUE, message=FALSE, results='hide'}
-sce <- cluster_sce(sce, reduction_method = "UMAP_Liger", pca_dims = 5, k = 20,
+sce <- cluster_sce(sce, reduction_method = "UMAP_Liger", pca_dims = 5, k = 50,
                    resolution = NULL)
 ```
 
@@ -422,7 +425,7 @@ result_de <- perform_de(
 result_de returns a list of DE tables based on how many contrast is being done in one celltype.
 
 ```{r eval=TRUE, message=FALSE, include=TRUE}
-DT::datatable(result_de$Controls_vs_diagnosisCases,
+DT::datatable(result_de$diagnosisCases_vs_Controls,
               rownames = FALSE, 
               escape = FALSE,
               options = list(pageLength = 5, 
@@ -431,23 +434,25 @@ DT::datatable(result_de$Controls_vs_diagnosisCases,
                              dom = 'Blfrtip'))
 ```
 
-We have implemented two different functional enrichment tools enrichR and WebGestaltR. Users can call both tools using `find_impacted_pathway()` function. Here we will use WebGestaltR only.
+We have implemented two different functional enrichment tools enrichR and WebGestaltR. Users can call both tools using `find_impacted_pathway()` function. Here we will use enrichR only. A report can be generated on the output of the `find_impacted_pathway()` function using `report_impacted_pathway()`.
 
 ```{r, message=FALSE, warning=FALSE}
 # Get the significant genes for impacted pathway analysis
 
-sig_de <- result_de$Controls_vs_diagnosisCases %>%
-  dplyr::filter(padj <= 0.05) %>%
+sig_de <- result_de$diagnosisCases_vs_Controls %>%
+  dplyr::filter(padj <= 0.05, abs(logFC) >= 1.5) %>%
   dplyr::pull(gene) %>%
   as.character()
 
-enrichment_result <- pathway_analysis_webgestaltr(sig_de,
-                                                  enrichment_method = "ORA")
+enrichment_result <- pathway_analysis_enrichr(
+  sig_de,
+  enrichment_database = c("GO_Biological_Process_2021", 
+                          "KEGG_2021_Human"))
 
 ```
 
 ```{r eval=TRUE, message=FALSE, include=TRUE}
-DT::datatable(enrichment_result$geneontology_biological_process_noredundant,
+DT::datatable(enrichment_result$GO_Biological_Process_2021,
               rownames = FALSE, 
               escape = FALSE,
               options = list(pageLength = 5, 

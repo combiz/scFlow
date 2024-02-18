@@ -112,6 +112,7 @@ RUN pip install stratocumulus \
 
 
 RUN install2.r -e -t source \
+Matrix \
 argparse \
 assertthat \
 BiocManager \
@@ -141,7 +142,6 @@ ids \
 knitr \
 leaflet \
 magrittr \
-Matrix \
 lme4 \
 igraph \
 paletteer \
@@ -179,6 +179,8 @@ tidyverse \
 UpSetR \
 utils \
 vroom \
+WebGestaltR \
+apcluster \
 && rm -rf /tmp/downloaded_packages
 
 ## Install Bioconductor packages
@@ -194,13 +196,9 @@ ropensci/plotly \
 cole-trapnell-lab/monocle3 \
 theislab/kBET \
 jlmelville/uwot \
-NathanSkene/One2One \
 hhoeflin/hdf5r \
-mojaveazure/loomR \
 ropensci/bib2df \
 cvarrichio/Matrix.utils \
-neurogenomics/scFlowExamples \
-bzhanglab/WebGestaltR \
 && rm -rf /tmp/downloaded_packages
 
 ## Install scFlow package

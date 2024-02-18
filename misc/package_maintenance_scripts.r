@@ -168,6 +168,7 @@ pkgdown::init_site() #create favicons from pkg logo
 # knit the readme.Rmd <<--
 # update the site
 use_version()
+options(repos = "https://cran.r-project.org/", pkgType = "source")
 pkgdown::build_site()
 
 
