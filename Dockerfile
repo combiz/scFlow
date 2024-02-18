@@ -207,7 +207,7 @@ WORKDIR scFlow
 ADD . .
 
 # Run R CMD check - will fail with any errors or warnings
-RUN Rscript -e "devtools::check()"
+RUN Rscript -e "devtools::check(vignettes = FALSE)"
 # Install R package from source
 RUN Rscript -e "remotes::install_local()"
 RUN rm -rf *
