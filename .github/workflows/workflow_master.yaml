@@ -3,7 +3,8 @@ name: R GitHub Actions dev-nf
 on:
   push:
     branches:
-      - dev-nf
+      - master
+      - nfancy-patch-1
 
 jobs:
   R-CMD-check:
@@ -35,10 +36,7 @@ jobs:
           load: true
           file: ./Dockerfile
           tags: |
-            nfancy/scflow:${{ env.packageVersion }}
             nfancy/scflow:latest
-            nfancy/scflow:dev
-
 
 
       - name: Login to DockerHub
@@ -49,6 +47,4 @@ jobs:
 
       - name: push service
         run: |
-          docker push nfancy/scflow:${{ env.packageVersion }}
           docker push nfancy/scflow:latest
-          docker push nfancy/scflow:dev

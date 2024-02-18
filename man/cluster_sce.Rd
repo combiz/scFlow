@@ -4,13 +4,34 @@
 \alias{cluster_sce}
 \title{Cluster SingleCellExperiment with monocle3::cluster_cells}
 \usage{
-cluster_sce(sce, ...)
+cluster_sce(
+  sce,
+  cluster_method = "leiden",
+  reduction_method = "UMAP_Liger",
+  resolution = 1e-05,
+  k = 50,
+  louvain_iter = 1,
+  verbose = T,
+  ...
+)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}
 
-\item{...}{see uwot::umap for umap options. Includes reduction_methods one
-or more of "PCA", "tSNE", "UMAP", "UMAP3D"}
+\item{cluster_method}{Available methods include leiden and louvain.}
+
+\item{reduction_method}{Input slot for clustering. Available options are PCA,
+UMAP_Liger, tSNE_Liger.}
+
+\item{resolution}{Clustering resolution. If NULL, clustering method will be
+set to louvain.}
+
+\item{...}{see monocle3::cluster_cells for more clustering options.}
+
+\item{K}{Integer number of nearest neighbors to use when creating the k
+nearest neighbor graph for Louvain/Leiden clustering.
+k is related to the resolution of the clustering result, a bigger k will
+result in lower resolution and vice versa. Default is 50.}
 }
 \value{
 sce a SingleCellExperiment object annotated with reducedDims
@@ -21,8 +42,8 @@ Cluster SingleCellExperiment with monocle3::cluster_cells
 \seealso{
 Other clustering and dimensionality reduction: 
 \code{\link{.get_x_most_specific_genes}()},
-\code{\link{.map_celltypes_with_ewce}()},
 \code{\link{.map_celltypes}()},
+\code{\link{.map_celltypes_with_ewce}()},
 \code{\link{map_custom_celltypes}()},
 \code{\link{reduce_dims_sce}()}
 }

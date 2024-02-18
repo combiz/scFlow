@@ -7,7 +7,6 @@ bioc_pkgs<-c(
   'DelayedMatrixStats',
   'DropletUtils',
   'edgeR',
-  'EWCE',
   'GenomicRanges',
   'graph',
   'IRanges',
@@ -20,8 +19,7 @@ bioc_pkgs<-c(
   'scater',
   'SingleCellExperiment',
   'SummarizedExperiment'
-
 )
 
 requireNamespace("BiocManager")
-BiocManager::install(bioc_pkgs, ask=F)
+BiocManager::install(bioc_pkgs, ask=F, type = "source")

@@ -68,8 +68,6 @@ use_r("volcano_plot")
 use_r("map_with_ewce")
 use_r("reduced_dimension_plots")
 
-?use_r
-
 use_test("function_name")
 
 # add to DESCRIPTION
@@ -151,10 +149,6 @@ use_package("uwot", min_version = "0.1.14.9000")
 use_package("WebGestaltR", min_version = "0.4.5")
 use_package("XML")
 
-
-
-use_vignette("basic-qc", title = "Guided tutorial for sample quality control")
-
 #use_vignette("How to do this cool analysis") # later
 use_github_actions()
 usethis::use_github_action("check-standard")
@@ -174,6 +168,7 @@ pkgdown::init_site() #create favicons from pkg logo
 # knit the readme.Rmd <<--
 # update the site
 use_version()
+options(repos = "https://cran.r-project.org/", pkgType = "source")
 pkgdown::build_site()
 
 

@@ -1,6 +1,6 @@
 Package: scFlow
 Title: A Single-Cell/Nuclei Analysis Toolkit
-Version: 0.7.2
+Version: 0.7.4
 Authors@R: 
     c(
     person(given = "Combiz",
@@ -41,21 +41,21 @@ Suggests:
     spelling,
     covr,
     knitr,
-    scFlowExamples,
     BiocStyle,
     DT (>= 0.26)
 Language: en-US
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 biocViews:
 Imports: 
+    Matrix,
     assertthat (>= 0.2.1),
     bib2df,
     biomaRt (>= 2.54.0),
     cli (>= 3.4.1),
     cowplot (>= 1.1.1),
     DirichletReg (>= 0.7.1),
-    DoubletFinder (>= 2.0.3),
     dplyr (>= 1.1.0),
+    DoubletFinder (>= 2.0.3),
     DropletUtils (>= 1.18.1),
     edgeR (>= 3.40.0),
     english (>= 1.2.6),
@@ -75,7 +75,7 @@ Imports:
     limma (>= 3.54.0),
     magrittr (>= 2.0.3),
     MAST (>= 1.24.0),
-    Matrix,
+    lme4,
     methods,
     monocle3 (>= 1.3.1),
     paletteer (>= 1.5.0),
@@ -106,16 +106,11 @@ Imports:
     uwot,
     WebGestaltR
 Remotes:
+    NathanSkene/EWCE,
     chris-mcginnis-ucsf/DoubletFinder,
     ropensci/plotly,
     cole-trapnell-lab/monocle3,
     theislab/kBET,
     jlmelville/uwot,
-    NathanSkene/One2One,
-    hhoeflin/hdf5r,
-    mojaveazure/loomR,
-    neurogenomics/scFlowExamples,
-    ropensci/bib2df,
-    bzhanglab/WebGestaltR,
-    cran/riverplot
+    ropensci/bib2df
 VignetteBuilder: knitr

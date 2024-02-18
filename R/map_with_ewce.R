@@ -94,10 +94,20 @@ map_celltypes_sce <- function(sce,
 
   l_ctd <- .read_rds_files_to_list(ctd_folder)
 
-  if (dim(sce)[[2]] > cells_to_sample) {
+
+  if(!is.null(cells_to_sample)){
+  set.seed(123)
+  idx <- c()
+  for(i in as.character(unique(sce[[clusters_colname]]))){
+    idx_temp <- which( sce[[clusters_colname]] == i) %>%
+      sample(size = min(cells_to_sample, length(.)), replace = FALSE )
+    idx_temp <- idx_temp[order(idx_temp)]
+    idx <- c(idx, idx_temp)}
+
     message(sprintf("Subsetting %s cells", cells_to_sample))
-    set.seed(42)
-    sce_subset <- sce[, sample(dim(sce)[[2]], cells_to_sample)]
+
+    sce_subset <- sce[, idx]
+
   } else {
     sce_subset <- sce
   }

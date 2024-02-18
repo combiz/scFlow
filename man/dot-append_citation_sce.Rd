@@ -21,8 +21,8 @@ Append a citation to a SingleCellExperiment
 }
 \seealso{
 Other citation functions: 
-\code{\link{.print_citation_html}()},
-\code{\link{.print_citation}()}
+\code{\link{.print_citation}()},
+\code{\link{.print_citation_html}()}
 }
 \concept{citation functions}
 \keyword{internal}

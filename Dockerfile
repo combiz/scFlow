@@ -1,8 +1,8 @@
 #LABEL maintainer="Combiz Khozoie, Ph.D. c.khozoie@imperial.ac.uk, Alan Murphy, a.murphy@imperial.ac.uk"
 
 ## Use rstudio installs binaries from RStudio's RSPM service by default,
-## Uses the latest stable ubuntu, R and Bioconductor versions. Created on unbuntu 20.04, R 4.0 and BiocManager 3.12
-FROM rocker/rstudio:4.2.2
+## Uses the latest stable ubuntu, R and Bioconductor versions. Created on unbuntu 20.04, R 4.3 and BiocManager 3.18
+FROM rocker/rstudio:4.3
 
 
 ## Add packages dependencies
@@ -38,7 +38,7 @@ RUN apt-get update \
 	libcairo2-dev \
 	libtiff5-dev \
 	libreadline-dev \
-	libgsl0-dev \
+	libgsl-dev \
 	libgslcblas0 \
 	libgtk2.0-dev \
 	libgl1-mesa-dev \
@@ -111,7 +111,8 @@ RUN pip install stratocumulus \
 && rm -rf /tmp/*
 
 
-RUN install2.r -e \
+RUN install2.r -e -t source \
+Matrix \
 argparse \
 assertthat \
 BiocManager \
@@ -138,12 +139,11 @@ ggridges \
 Hmisc \
 httr \
 ids \
-igraph \
 knitr \
 leaflet \
-lme4 \
 magrittr \
-Matrix \
+lme4 \
+igraph \
 paletteer \
 patchwork \
 plyr \
@@ -166,6 +166,7 @@ Rtsne \
 scales \
 sctransform \
 Seurat \
+SeuratObject \
 snow \
 spelling \
 stringr \
@@ -178,6 +179,8 @@ tidyverse \
 UpSetR \
 utils \
 vroom \
+WebGestaltR \
+apcluster \
 && rm -rf /tmp/downloaded_packages
 
 ## Install Bioconductor packages
@@ -187,18 +190,15 @@ RUN Rscript -e 'requireNamespace("BiocManager"); BiocManager::install(ask=F);' \
 && rm -rf /tmp/downloaded_packages
 
 ## Install from GH the following
-RUN installGithub.r chris-mcginnis-ucsf/DoubletFinder \
+RUN installGithub.r NathanSkene/EWCE \
+chris-mcginnis-ucsf/DoubletFinder \
 ropensci/plotly \
 cole-trapnell-lab/monocle3 \
 theislab/kBET \
 jlmelville/uwot \
-NathanSkene/One2One \
 hhoeflin/hdf5r \
-mojaveazure/loomR \
 ropensci/bib2df \
 cvarrichio/Matrix.utils \
-neurogenomics/scFlowExamples \
-bzhanglab/WebGestaltR \
 && rm -rf /tmp/downloaded_packages
 
 ## Install scFlow package

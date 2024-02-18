@@ -1,3 +1,9 @@
+# scFlow 0.7.4
+
+* Updated DoubletFinder version compatibility.
+* Minor bug fixes in `map_celltypes_sce()`. The subsampling is now done per cluster to avoid smaller clusters being excluded.
+* Change the order of the contrast vs reference names in DEG table.
+
 # scFlow 0.7.2
 
 * QC bug fixes.

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scFlow</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.7.4</span>
       </span>
     </div>
 
@@ -56,7 +56,16 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cluster_sce</span><span class="op">(</span><span class="va">sce</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cluster_sce</span><span class="op">(</span></span>
+<span>  <span class="va">sce</span>,</span>
+<span>  cluster_method <span class="op">=</span> <span class="st">"leiden"</span>,</span>
+<span>  reduction_method <span class="op">=</span> <span class="st">"UMAP_Liger"</span>,</span>
+<span>  resolution <span class="op">=</span> <span class="fl">1e-05</span>,</span>
+<span>  k <span class="op">=</span> <span class="fl">50</span>,</span>
+<span>  louvain_iter <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -65,9 +74,29 @@
 <dd><p>a SingleCellExperiment object</p></dd>
 
 
+<dt>cluster_method</dt>
+<dd><p>Available methods include leiden and louvain.</p></dd>
+
+
+<dt>reduction_method</dt>
+<dd><p>Input slot for clustering. Available options are PCA,
+UMAP_Liger, tSNE_Liger.</p></dd>
+
+
+<dt>resolution</dt>
+<dd><p>Clustering resolution. If NULL, clustering method will be
+set to louvain.</p></dd>
+
+
 <dt>...</dt>
-<dd><p>see uwot::umap for umap options. Includes reduction_methods one
-or more of "PCA", "tSNE", "UMAP", "UMAP3D"</p></dd>
+<dd><p>see monocle3::cluster_cells for more clustering options.</p></dd>
+
+
+<dt>K</dt>
+<dd><p>Integer number of nearest neighbors to use when creating the k
+nearest neighbor graph for Louvain/Leiden clustering.
+k is related to the resolution of the clustering result, a bigger k will
+result in lower resolution and vice versa. Default is 50.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -80,8 +109,8 @@ or more of "PCA", "tSNE", "UMAP", "UMAP3D"</p></dd>
     <h2>See also</h2>
     <div class="dont-index"><p>Other clustering and dimensionality reduction: 
 <code><a href="dot-get_x_most_specific_genes.html">.get_x_most_specific_genes</a>()</code>,
-<code><a href="dot-map_celltypes_with_ewce.html">.map_celltypes_with_ewce</a>()</code>,
 <code><a href="dot-map_celltypes.html">.map_celltypes</a>()</code>,
+<code><a href="dot-map_celltypes_with_ewce.html">.map_celltypes_with_ewce</a>()</code>,
 <code><a href="map_custom_celltypes.html">map_custom_celltypes</a>()</code>,
 <code><a href="reduce_dims_sce.html">reduce_dims_sce</a>()</code></p></div>
     </div>
