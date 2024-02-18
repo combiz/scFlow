@@ -263,9 +263,9 @@ map_celltypes_sce <- function(sce,
 ### Allow variation in annotation level
 
 .map_celltypes <- function(ctdToMap,
-                           ctdToMapAgainst = MAGMA.Celltyping::ctd_Tasic,
+                           ctdToMapAgainst,
                            inputSpecies = "human",
-                           mapAgainstSpecies = "mouse",
+                           mapAgainstSpecies = "human",
                            annotLevel = 1,
                            numTopMarkers = 50,
                            mappingLevel = 2,
