@@ -6,9 +6,9 @@
 \usage{
 cluster_sce(
   sce,
-  cluster_method = "leiden",
+  cluster_method = "louvain",
   reduction_method = "UMAP_Liger",
-  resolution = 1e-05,
+  resolution = NULL,
   k = 50,
   louvain_iter = 1,
   verbose = T,
@@ -26,12 +26,21 @@ UMAP_Liger, tSNE_Liger.}
 \item{resolution}{Clustering resolution. If NULL, clustering method will be
 set to louvain.}
 
-\item{...}{see monocle3::cluster_cells for more clustering options.}
-
-\item{K}{Integer number of nearest neighbors to use when creating the k
+\item{k}{Integer number of nearest neighbors to use when creating the k
 nearest neighbor graph for Louvain/Leiden clustering.
 k is related to the resolution of the clustering result, a bigger k will
 result in lower resolution and vice versa. Default is 50.}
+
+\item{louvain_iter}{Integer number of iterations used for Louvain clustering.
+The clustering result giving the largest modularity score will be used
+as the final clustering result. Default is 1. Note that if num_iter
+is greater than 1, the random_seed argument will be ignored
+for the louvain method.}
+
+\item{verbose}{A logic flag to determine whether or not we should print
+the run details.}
+
+\item{...}{see monocle3::cluster_cells for more clustering options.}
 }
 \value{
 sce a SingleCellExperiment object annotated with reducedDims
