@@ -4,9 +4,9 @@
 #' Produces a reducedDim slot representing common factors across datasets
 #'
 #' @param sce a SingleCellExperiment object or merged sce objects
-#' @param method the integration method to use
-#'   Set to k=30 as default.
-#' @param ... Additional arguments. Such as k Inner dimension of factorization 
+#' @param method the integration method to use. Set to liger as default.
+#' See `liger_preprocess` and `liger_reduce_dims` functions for parameter options.
+#' @param ... Additional arguments. Such as k, inner dimension of factorization
 #' (number of factors).
 #'
 #' @return sce SingleCellExperiment object annotated with reducedDims

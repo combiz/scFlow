@@ -413,7 +413,7 @@ perform_de <- function(sce,
       by = "ensembl_gene_id")
     }
 
-    element_name <- paste(fargs$ref_class, ctrast, sep = "_vs_")
+    element_name <- paste(ctrast, fargs$ref_class, sep = "_vs_")
 
     de_params <- list(
       celltype = unique(fargs$sce$cluster_celltype),

@@ -6,9 +6,9 @@
 \usage{
 .map_celltypes(
   ctdToMap,
-  ctdToMapAgainst = MAGMA.Celltyping::ctd_Tasic,
+  ctdToMapAgainst,
   inputSpecies = "human",
-  mapAgainstSpecies = "mouse",
+  mapAgainstSpecies = "human",
   annotLevel = 1,
   numTopMarkers = 50,
   mappingLevel = 2,

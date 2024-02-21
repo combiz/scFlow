@@ -42,11 +42,13 @@ The goal of scFlow is to provide tools in R to build a complete analysis workflo
 
 -   Rich QC metrics annotation with [scater](https://github.com/davismcc/scater)
 
+-   Dataset integration with [Liger](https://github.com/MacoskoLab/liger)
+
 -   Dimensionality reduction and celltype identification
 
--   Louvain clustering, UMAP dimensionality reduction, and cluster marker gene identification with [monocle](https://github.com/cole-trapnell-lab/monocle-release)
+-   Louvain clustering, UMAP dimensionality reduction, and cluster marker gene identification with [monocle3](https://github.com/cole-trapnell-lab/monocle-release)
 
--   Celltype annotation with [EWCE](https://github.com/NathanSkene/EWCE) and [Liger](https://github.com/MacoskoLab/liger)
+-   Celltype annotation with [EWCE](https://github.com/NathanSkene/EWCE) 
 
 -   Cluster identity mapping against the [Allen Human Brain Atlas](https://www.brain-map.org) 
 
@@ -74,10 +76,28 @@ The goal of scFlow is to provide tools in R to build a complete analysis workflo
 
 The package functions are designed to interface neatly with [NextFlow](https://www.nextflow.io/) for scalable and containerized pipelines deployed locally, on high-performance computing clusters, or in the cloud. An accompanying NextFlow pipeline is in the works - TBA.
 
-# Install the dataset repository
+# Install the scFlow and dataset repository
 
+First, install a few dependencies that aren't automatically installed:
+
+
+```{r, eval=FALSE}
+options(repos = "https://cran.r-project.org/", pkgType = "source")
+install.packages("Matrix")
+install.packages("irlba")
+install.packages("Seurat")
+install.packages("SeuratObject")
+install.packages("lme4")
+install.packages("apcluster")
+remotes::install_github("NathanSkene/EWCE")
+remotes::install_github("chris-mcginnis-ucsf/DoubletFinder")
 ```
-devtools::install_github("neurogenomics/scFlowExamples")
+
+
+Now, install the latest version of scFlow.
+
+```{r, eval=FALSE}
+remotes::install_github("neurogenomics/scFlow")
 ```
 
 For a detailed explanation on how `scFlowExamples` dataset was generated, visit this [link](https://github.com/neurogenomics/scFlowExamples).
@@ -93,38 +113,41 @@ The basic `scFlow` workflow for sample QC begins with the import of the feature-
 Call required packages for vignette:
 ```{r}
 #vignette packages
+library(apcluster) #need to load before scFlow to avoid function clash
 library(scFlow)
-library(scFlowExamples)
 library(SingleCellExperiment)
 library(dplyr)
 ```
 
 First we must get and format the data from `scFlowExamples` for the vignette:
 
+
 ```{r}
 #create temp directory to store data
 outputDir <- tempdir()
-# write data, manifest and samplesheet to directory - 
-scFlowExamples::write_data(dataset="indvExp_ds_4K", output_dir=outputDir)
-scFlowExamples::write_scflow_manifest(dataset="indvExp_ds_4K", output_dir=outputDir)
-scFlowExamples::write_scflow_samplesheet(dataset="indvExp_ds_4K", 
-                                          output_dir=outputDir)
+
 #stored inside tmp_Zeisel2015_scflow inside directory:
-list.files(paste0(outputDir,"/tmp_Zeisel2015_scflow"))
+destpath <- file.path(outputDir, "tmp_Zeisel2015_scflow.zip")
+download.file(url = "https://github.com/neurogenomics/scFlow/releases/download/0.7.2/tmp_Zeisel2015_scflow.zip", destfile = destpath)
+unzip(destpath, exdir = outputDir)
+unlink(destpath)
+list.files(file.path(outputDir,"tmp_Zeisel2015_scflow"))
 ```
 
 Now we can create file paths to each:
 
 ```{r}
 #get locations to necessary files
-matrix_fp <- paste0(outputDir,"/tmp_Zeisel2015_scflow","/individual_1")
-samplesheet_fp <- paste0(outputDir,"/tmp_Zeisel2015_scflow","/SampleSheet.tsv")
-manifest_fp <- paste0(outputDir,"/tmp_Zeisel2015_scflow","/Manifest.txt")
+matrix_fp <- file.path(outputDir,"tmp_Zeisel2015_scflow","individual_1")
+samplesheet_fp <- file.path(outputDir,"tmp_Zeisel2015_scflow","SampleSheet.tsv")
+manifest_fp <- file.path(outputDir,"tmp_Zeisel2015_scflow","Manifest.txt")
 #Also need mapping and ctd file which can be downloaded
 ensembl_fp <- file.path(outputDir, "ensembl_mappings.tsv")
-ctd_fp <- outputDir
-download.file(url = "https://raw.githubusercontent.com/combiz/scFlowData/dev-nf/assets/ensembl_mappings_human.tsv", destfile = ensembl_fp)
-download.file(url = "https://raw.githubusercontent.com/combiz/scFlowData/dev-nf/ctd/ctd_allAIBS.rds", destfile = file.path(ctd_fp, "ctd_allAIBS.rds"))
+download.file(url = "https://github.com/neurogenomics/scFlow/releases/download/0.7.2/ensembl_mappings_human.tsv", destfile = ensembl_fp)
+
+ctd_fp <- file.path(outputDir, "ctd_folder")
+dir.create(ctd_fp)
+download.file(url = "https://github.com/neurogenomics/scFlow/releases/download/0.7.2/ctd_AIBS_v2.rds", destfile = file.path(ctd_fp, "ctd_AIBS_v2.rds"))
 ```
 
 To run scFlow, we first need to read in the data matrix:
@@ -169,7 +192,19 @@ sce <- generate_sce(mat, metadata)
 
 The SingleCellExperiment object was succesfully created and we can now proceed with annotation.
 
-# Step two -- Annotate the SingleCellExperiment
+# Step two -- Modelling ambient RNA profiling and annotating the SingleCellExperiment
+
+For snRNAseq data generated by 10X genomics, the initial mapping of the raw fastq files to the reference genome generates raw_feature_bc_matrix and filtered_feature_bc_matrix. Ambient RNA profiling is performed optionally on the raw_feature_bc_matrix using the EmptyDrops algorithm to flag and subsequently filter cellular barcodes which do not deviate from an ambient RNA expression profile representing cell-free transcripts. This step is optional and will only work when starting from raw_feature_bc_matrix files. We did not run this step.
+
+```{r eval=FALSE}
+#Optional
+sce <- find_cells(
+  sce,
+  lower  = 100,
+  retain = "auto",
+  niters = 10000
+)
+```
 
 In `scFlow` we specify all of our QC preferences and cutoffs with the `annotate_sce` command. This will also produce plots in the `sce@metadata` slot allowing rapid revision and optimization of QC parameters. Lets start with the default parameters by simply providing the `SingleCellExperiment` object to the `annotate_sce` function:-
 
@@ -219,15 +254,15 @@ Finally we produce a report with `report_qc_sce` (this takes a few minutes): -
 ```{r eval=TRUE, message=FALSE, warning=FALSE}
 #Store results in same temp dir
 report_qc_sce(sce, report_file = "qc_report_scflow_individual_1",
-              report_folder_path = paste0(outputDir,"/tmp_Zeisel2015_scflow/"))
+              report_folder_path = file.path(outputDir,"/tmp_Zeisel2015_scflow/"))
 ```
 
 And save our SingleCellExperiment: -
 
 ```{r eval=TRUE}
 #create dir to hold resulting sce
-dir.create(paste0(outputDir,"/sce_individual_1"))
-write_sce(sce, folder_path=paste0(outputDir,"/sce_individual_1"))
+dir.create(file.path(outputDir,"/sce_individual_1"))
+write_sce(sce, folder_path= file.path(outputDir,"/sce_individual_1"))
 ```
 
 # Step four -- Merging multiple datasets into one *SingleCellExperiment* object
@@ -238,7 +273,7 @@ Follow step one-three for all individual samples and save them using `write_sce`
 manifest <- read.delim(manifest_fp)
 samplesheet <- read.delim(samplesheet_fp)
 dir_list <- 
-  dir(path = paste0(outputDir,"/tmp_Zeisel2015_scflow"), 
+  dir(path = file.path(outputDir,"/tmp_Zeisel2015_scflow"), 
         pattern = "individual_[0-9]$", full.names = TRUE)
 dir_list
 ```
@@ -274,14 +309,14 @@ for(i in dir_list){
                         vars_to_regress_out = c("nCount_RNA", "pc_mito"), 
                         num.cores = 1)
   sce <- filter_sce(sce)
-  outdir <-paste0(outputDir,"/scflow_vignette_data")
+  outdir <- file.path(outputDir,"/scflow_vignette_data")
   dir.create(outdir, showWarnings = FALSE)
   
   dir_report <- file.path(outdir, "qc_report")
   dir.create(dir_report, showWarnings = FALSE)
   
-  report_qc_sce(sce, report_file = paste("qc_report_", basename(i), sep = ""),
-                report_folder_path = dir_report)
+  #report_qc_sce(sce, report_file = paste0("qc_report_", basename(i)),
+  #              report_folder_path = dir_report)
   
   sce_list[[basename(i)]] <- sce
   
@@ -328,10 +363,11 @@ plot_reduced_dim(sce, feature_dim = "diagnosis",
                  reduced_dim = "UMAP_Liger", alpha = 1, size = 1)
 ```
 
-The next step is to cluster all the cells using `cluster_sce` command.
+The next step is to cluster all the cells using `cluster_sce` command. Setting both k and resolution parameter will choose `leiden` clustering, setting resolution= NULL will run clustering based of `louvain` clustering.
 
 ```{r eval=TRUE, message=FALSE, results='hide'}
-sce <- cluster_sce(sce, reduction_method = "UMAP_Liger", pca_dims = 5, k = 50)
+sce <- cluster_sce(sce, reduction_method = "UMAP_Liger", pca_dims = 5, k = 50,
+                   resolution = 0.0001)
 ```
 
 We can then plot the clusters:-
@@ -346,8 +382,8 @@ The next step is to annotate the celltypes for each cluster. Here, we will use t
 ```{r,results="hide"}
 sce <- map_celltypes_sce(sce,
                          ctd_folder = ctd_fp, 
-                         annotation_level = list("ctd_allAIBS" = c(1,2)),
-                         label_index = 2)
+                         annotation_level = list("ctd_AIBS_v2" = c(1,2)),
+                         label_index = 1)
 ```
 
 The celltypes for each cell can be found in `sce@colData$cluster_celltype` slot. We can also generate UMAP_Liger plot for each celltype.
@@ -389,7 +425,7 @@ result_de <- perform_de(
 result_de returns a list of DE tables based on how many contrast is being done in one celltype.
 
 ```{r eval=TRUE, message=FALSE, include=TRUE}
-DT::datatable(result_de$Controls_vs_diagnosisCases,
+DT::datatable(result_de$diagnosisCases_vs_Controls,
               rownames = FALSE, 
               escape = FALSE,
               options = list(pageLength = 5, 
@@ -398,23 +434,25 @@ DT::datatable(result_de$Controls_vs_diagnosisCases,
                              dom = 'Blfrtip'))
 ```
 
-We have implemented two different functional enrichment tools enrichR and WebGestaltR. Users can call both tools using `find_impacted_pathway()` function. Here we will use WebGestaltR only.
+We have implemented two different functional enrichment tools enrichR and WebGestaltR. Users can call both tools using `find_impacted_pathway()` function. Here we will use enrichR only. A report can be generated on the output of the `find_impacted_pathway()` function using `report_impacted_pathway()`.
 
 ```{r, message=FALSE, warning=FALSE}
 # Get the significant genes for impacted pathway analysis
 
-sig_de <- result_de$Controls_vs_diagnosisCases %>%
-  dplyr::filter(padj <= 0.05) %>%
+sig_de <- result_de$diagnosisCases_vs_Controls %>%
+  dplyr::filter(padj <= 0.05, abs(logFC) >= 1.5) %>%
   dplyr::pull(gene) %>%
   as.character()
 
-enrichment_result <- pathway_analysis_webgestaltr(sig_de,
-                                                  enrichment_method = "ORA")
+enrichment_result <- pathway_analysis_enrichr(
+  sig_de,
+  enrichment_database = c("GO_Biological_Process_2021", 
+                          "KEGG_2021_Human"))
 
 ```
 
 ```{r eval=TRUE, message=FALSE, include=TRUE}
-DT::datatable(enrichment_result$geneontology_biological_process_noredundant,
+DT::datatable(enrichment_result$GO_Biological_Process_2021,
               rownames = FALSE, 
               escape = FALSE,
               options = list(pageLength = 5, 

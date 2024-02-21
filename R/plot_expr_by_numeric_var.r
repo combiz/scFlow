@@ -153,7 +153,8 @@ plot_expr_by_numeric_var <- function(sce,
     dplyr::tally() %>%
     tidyr::pivot_wider(names_from = c("is_zero"), values_from = "n") %>%
     dplyr::mutate(pc_zero = zero/(zero + non_zero),
-                  pc_expressive = non_zero/(zero + non_zero))
+                  pc_expressive = non_zero/(zero + non_zero)) %>%
+    dplyr::filter(!is.na(pc_expressive))
 
   pred <- predict(lm(pc_expressive ~ numeric_var, dt),
                   se.fit = TRUE, interval = "confidence")
