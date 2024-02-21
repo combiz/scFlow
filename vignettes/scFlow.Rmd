@@ -363,11 +363,11 @@ plot_reduced_dim(sce, feature_dim = "diagnosis",
                  reduced_dim = "UMAP_Liger", alpha = 1, size = 1)
 ```
 
-The next step is to cluster all the cells using `cluster_sce` command.
+The next step is to cluster all the cells using `cluster_sce` command. Setting both k and resolution parameter will choose `leiden` clustering, setting resolution= NULL will run clustering based of `louvain` clustering.
 
 ```{r eval=TRUE, message=FALSE, results='hide'}
 sce <- cluster_sce(sce, reduction_method = "UMAP_Liger", pca_dims = 5, k = 50,
-                   resolution = NULL)
+                   resolution = 0.0001)
 ```
 
 We can then plot the clusters:-
