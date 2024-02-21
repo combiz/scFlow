@@ -38,8 +38,8 @@ or merged SingleCellExperiment objects using tSNE, UMAP, UMAP3D
 \seealso{
 Other clustering and dimensionality reduction: 
 \code{\link{.get_x_most_specific_genes}()},
-\code{\link{.map_celltypes_with_ewce}()},
 \code{\link{.map_celltypes}()},
+\code{\link{.map_celltypes_with_ewce}()},
 \code{\link{cluster_sce}()},
 \code{\link{map_custom_celltypes}()}
 }

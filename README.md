@@ -112,8 +112,29 @@ You can install the development version of scFlow from GitHub with: -
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("neurogenomics/scFlow", ref = "dev-nf")
+devtools::install_github("neurogenomics/scFlow")
 ```
+
+## Running RStudio Server with pre-installed scFlow via Docker
+
+If using linux system, open a cmd terminal and run the following
+commands:
+
+``` r
+docker pull nfancy/scflow
+
+docker run --rm -d \
+-v $HOME:/home/rstudio/home \
+-e ROOT=true \
+-e PASSWORD=password \
+-p 8950:8787 \
+nfancy/scflow
+```
+
+Then access the RStudio Server on your browser at IP:8950. The default
+username is `rstudio` and password is `password`. To understand more on
+how to run docker Rstudio follow the link
+[here](https://davetang.org/muse/2021/04/24/running-rstudio-server-with-docker/).
 
 ## Support
 

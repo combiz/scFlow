@@ -45,8 +45,8 @@ Fits a linear model with confidence intervals for each plot.
 }
 \seealso{
 Other plotting functions: 
-\code{\link{plot_reduced_dim_gene}()},
 \code{\link{plot_reduced_dim}()},
+\code{\link{plot_reduced_dim_gene}()},
 \code{\link{plot_violin}()}
 }
 \concept{plotting functions}

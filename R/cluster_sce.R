@@ -2,8 +2,23 @@
 #' Cluster SingleCellExperiment with monocle3::cluster_cells
 #'
 #' @param sce a SingleCellExperiment object
-#' @param ... see uwot::umap for umap options. Includes reduction_methods one
-#' or more of "PCA", "tSNE", "UMAP", "UMAP3D"
+#' @param cluster_method Available methods include leiden and louvain.
+#' @param reduction_method Input slot for clustering. Available options are PCA,
+#' UMAP_Liger, tSNE_Liger.
+#' @param resolution Clustering resolution. If NULL, clustering method will be
+#' set to louvain.
+#' @param k Integer number of nearest neighbors to use when creating the k
+#' nearest neighbor graph for Louvain/Leiden clustering.
+#' k is related to the resolution of the clustering result, a bigger k will
+#' result in lower resolution and vice versa. Default is 50.
+#' @param louvain_iter Integer number of iterations used for Louvain clustering.
+#' The clustering result giving the largest modularity score will be used
+#' as the final clustering result. Default is 1. Note that if num_iter
+#' is greater than 1, the random_seed argument will be ignored
+#' for the louvain method.
+#' @param verbose A logic flag to determine whether or not we should print
+#' the run details.
+#' @param ... see monocle3::cluster_cells for more clustering options.
 #'
 #' @return sce a SingleCellExperiment object annotated with reducedDims
 #'
@@ -14,15 +29,22 @@
 #'
 #' @export
 
-cluster_sce <- function(sce, ...) {
+cluster_sce <- function(sce,
+                        cluster_method = "louvain",
+                        reduction_method = "UMAP_Liger",
+                        resolution = NULL,
+                        k = 50,
+                        louvain_iter = 1,
+                        verbose = T,
+                        ...) {
 
   fargs <- list(
-    cluster_method = "leiden",
-    reduction_method = "UMAP_Liger",
-    resolution = 1e-5,
-    k = 100,
-    louvain_iter = 1,
-    verbose = T
+    cluster_method = cluster_method,
+    reduction_method = reduction_method,
+    resolution = resolution,
+    k = k,
+    louvain_iter = louvain_iter,
+    verbose = verbose
   )
 
   inargs <- list(...)

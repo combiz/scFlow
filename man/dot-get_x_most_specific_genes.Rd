@@ -31,8 +31,8 @@ Find x most specific genes
 }
 \seealso{
 Other clustering and dimensionality reduction: 
-\code{\link{.map_celltypes_with_ewce}()},
 \code{\link{.map_celltypes}()},
+\code{\link{.map_celltypes_with_ewce}()},
 \code{\link{cluster_sce}()},
 \code{\link{map_custom_celltypes}()},
 \code{\link{reduce_dims_sce}()}
