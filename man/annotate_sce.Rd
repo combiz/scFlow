@@ -11,6 +11,7 @@ annotate_sce(
   min_features = 100,
   max_features = "adaptive",
   max_mito = "adaptive",
+  type_mito = "both",
   min_ribo = 0,
   max_ribo = 1,
   min_counts = 2,
@@ -39,6 +40,10 @@ number of genes with >0 counts)}
 
 \item{max_mito}{the maximum proportion of counts mapping to
 mitochondrial genes (0 - 1) or "adaptive"}
+
+\item{type_mito}{see \code{\link[scater:reexports]{scater::isOutlier()}}. By default, both ends of the
+distribution of mitochondrial content will be tested for outliers. If using
+single-nucleus RNA-sequencing data, consider setting this to "higher".}
 
 \item{min_ribo}{the minimum proportion of counts mapping to
 ribosomal genes (0 - 1)}

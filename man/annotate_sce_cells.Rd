@@ -16,6 +16,8 @@ min_features the minimum number of features per cell (i.e. the minimum
 number of genes with >0 counts)
 max_mito the maximum proportion of counts mapping to
 mitochondrial genes (0 - 1)
+type_mito choice indicating whether outliers in pc_mito should be looked for
+at both tails, or only at the lower/higher end
 min_ribo
 max_ribo the maximum proportion of counts mapping to
 ribosomal genes (0 - 1)

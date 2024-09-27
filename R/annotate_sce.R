@@ -44,6 +44,9 @@
 #' @param max_features the maximum number of features per cell or "adaptive"
 #' @param max_mito the maximum proportion of counts mapping to
 #'   mitochondrial genes (0 - 1) or "adaptive"
+#' @param type_mito see [scater::isOutlier()]. By default, both ends of the
+#'   distribution of mitochondrial content will be tested for outliers. If using
+#'   single-nucleus RNA-sequencing data, consider setting this to "higher".
 #' @param min_ribo the minimum proportion of counts mapping to
 #'   ribosomal genes (0 - 1)
 #' @param max_ribo the maximum proportion of counts mapping to
@@ -79,6 +82,7 @@ annotate_sce <- function(sce,
                          min_features = 100,
                          max_features = "adaptive",
                          max_mito = "adaptive",
+                         type_mito = "both",
                          min_ribo = 0.00,
                          max_ribo = 1.00,
                          min_counts = 2,
@@ -135,6 +139,7 @@ annotate_sce <- function(sce,
       min_features = min_features,
       max_features = max_features,
       max_mito = max_mito,
+      type_mito = type_mito,
       min_ribo = min_ribo,
       max_ribo = max_ribo,
       min_counts = min_counts,

@@ -13,6 +13,8 @@
 #'   number of genes with >0 counts)
 #' max_mito the maximum proportion of counts mapping to
 #'   mitochondrial genes (0 - 1)
+#' type_mito choice indicating whether outliers in pc_mito should be looked for
+#'   at both tails, or only at the lower/higher end
 #' min_ribo
 #' max_ribo the maximum proportion of counts mapping to
 #'   ribosomal genes (0 - 1)
@@ -86,7 +88,7 @@ annotate_sce_cells <- function(sce, ...) {
       sce$pc_mito,
       nmads = args$nmads,
       subset = sce$qc_metric_passed,
-      type = "both",
+      type = args$type_mito,
       log = FALSE)
     higher <-
       as.numeric(attributes(outliers)$thresholds["higher"]) #not int for pcmito
