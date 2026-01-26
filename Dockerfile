@@ -10,6 +10,14 @@ RUN apt-get update \
 	&& apt-get install -y --no-install-recommends apt-utils \
 	&& apt-get install -y --no-install-recommends \
 	## Basic deps
+	build-essential \
+	gfortran \
+	libcurl4-openssl-dev \
+    libssl-dev \
+    libzstd-dev \
+    libfreetype6-dev \
+    libharfbuzz-dev \
+    libfribidi-dev \
 	gdb \
 	libxml2-dev \
 	python3-pip \
@@ -181,7 +189,8 @@ utils \
 vroom \
 WebGestaltR \
 apcluster \
-&& rm -rf /tmp/downloaded_packages
+|| cat /tmp/downloaded_packages/*.log
+##&& rm -rf /tmp/downloaded_packages
 
 ## Install Bioconductor packages
 COPY ./misc/requirements-bioc.R .
