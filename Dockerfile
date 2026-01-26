@@ -151,7 +151,6 @@ RcppParallel \
 RcppProgress \
 remotes \
 rlang \
-rliger \
 rmarkdown \
 Rtsne \
 scales \
@@ -190,6 +189,7 @@ jlmelville/uwot \
 hhoeflin/hdf5r \
 ropensci/bib2df \
 cvarrichio/Matrix.utils \
+welch-lab/liger \
 && rm -rf /tmp/downloaded_packages
 
 ## Install scFlow package
