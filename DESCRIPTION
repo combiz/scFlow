@@ -60,7 +60,7 @@ Imports:
     edgeR (>= 3.40.0),
     english (>= 1.2.6),
     enrichR (>= 3.1),
-    EWCE (>= 1.6.0),
+    EWCE,
     forcats (>= 0.5.2),
     formattable (>= 0.2.1),
     future (>= 1.29.0),
@@ -111,5 +111,6 @@ Remotes:
     cole-trapnell-lab/monocle3,
     theislab/kBET,
     jlmelville/uwot,
-    ropensci/bib2df
+    ropensci/bib2df,
+    welch-lab/liger
 VignetteBuilder: knitr
