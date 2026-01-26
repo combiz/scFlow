@@ -28,16 +28,10 @@ RUN apt-get update \
 	libgit2-dev \
 	## sys deps from bioc_full
 	pkg-config \
-	fortran77-compiler \
-	byacc \
-	automake \
 	curl \
 	## This section installs libraries
 	libpcre2-dev \
-	libnetcdf-dev \
-	libhdf5-serial-dev \
 	libfftw3-dev \
-	libopenbabel-dev \
 	libopenmpi-dev \
 	libxt-dev \
 	libudunits2-dev \
@@ -47,23 +41,11 @@ RUN apt-get update \
 	libtiff5-dev \
 	libreadline-dev \
 	libgsl-dev \
-	libgslcblas0 \
-	libgtk2.0-dev \
 	libgl1-mesa-dev \
 	libglu1-mesa-dev \
-	libgmp3-dev \
 	libhdf5-dev \
 	libncurses-dev \
-	libbz2-dev \
-	libxpm-dev \
 	liblapack-dev \
-	libv8-dev \
-	libgtkmm-2.4-dev \
-	libmpfr-dev \
-	libmodule-build-perl \
-	libapparmor-dev \
-	libprotoc-dev \
-	librdf0-dev \
 	libmagick++-dev \
 	libsasl2-dev \
 	libpoppler-cpp-dev \
@@ -85,9 +67,6 @@ RUN apt-get update \
 	## Databases and other software
 	sqlite \
 	openmpi-bin \
-	mpi-default-bin \
-	openmpi-common \
-	openmpi-doc \
 	tcl8.6-dev \
 	tk-dev \
 	default-jdk \
@@ -102,9 +81,11 @@ RUN apt-get update \
 	xfonts-75dpi \
 	biber \
 	libsbml5-dev \
+	gcc \
+	nodejs \
+	npm \
 	## qpdf needed to stop R CMD Check warning
 	qpdf \
-	gcc \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -118,8 +99,10 @@ RUN pip install stratocumulus \
 && rm -rf awscliv2.zip \
 && rm -rf /tmp/*
 
+ENV MAKEFLAGS="-j2"
+ENV OMP_NUM_THREADS=1
 
-RUN install2.r -e -t source \
+RUN install2.r -e source \
 Matrix \
 argparse \
 assertthat \
@@ -189,8 +172,7 @@ utils \
 vroom \
 WebGestaltR \
 apcluster \
-|| cat /tmp/downloaded_packages/*.log
-##&& rm -rf /tmp/downloaded_packages
+&& rm -rf /tmp/downloaded_packages
 
 ## Install Bioconductor packages
 COPY ./misc/requirements-bioc.R .
