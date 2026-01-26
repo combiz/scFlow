@@ -102,7 +102,7 @@ RUN pip install stratocumulus \
 ENV MAKEFLAGS="-j2"
 ENV OMP_NUM_THREADS=1
 
-RUN install2.r -e source \
+RUN install2.r -e -t source \
 Matrix \
 argparse \
 assertthat \
