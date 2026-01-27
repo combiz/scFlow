@@ -44,7 +44,7 @@ Suggests:
     BiocStyle,
     DT (>= 0.26)
 Language: en-US
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.3
 biocViews:
 Imports: 
     Matrix,

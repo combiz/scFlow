@@ -2,7 +2,7 @@
 
 ## Use rstudio installs binaries from RStudio's RSPM service by default,
 ## Uses the latest stable ubuntu, R and Bioconductor versions. Created on unbuntu 20.04, R 4.3 and BiocManager 3.18
-FROM rocker/rstudio:4.3
+FROM rocker/rstudio:4.5
 
 
 ## Add packages dependencies
@@ -65,14 +65,15 @@ RUN apt-get update \
 	## new libs
 	libglpk-dev \
 	## Databases and other software
-	sqlite \
+	sqlite3 \
+    libsqlite3-dev \
 	openmpi-bin \
 	tcl8.6-dev \
 	tk-dev \
 	default-jdk \
 	imagemagick \
 	tabix \
-	ggobi \
+	#ggobi \
 	graphviz \
 	protobuf-compiler \
 	jags \
@@ -89,7 +90,7 @@ RUN apt-get update \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
-RUN pip install stratocumulus \
+RUN pip install --break-system-packages stratocumulus \
 && curl https://sdk.cloud.google.com > install.sh \
 && bash install.sh --disable-prompts \
 && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" \
@@ -141,7 +142,6 @@ patchwork \
 plyr \
 prettydoc \
 purrr \
-qs \
 R.utils \
 RANN \
 rcmdcheck \
@@ -160,6 +160,7 @@ Seurat \
 SeuratObject \
 snow \
 spelling \
+speedglm \
 stringr \
 testthat \
 threejs \
@@ -180,10 +181,16 @@ RUN Rscript -e 'requireNamespace("BiocManager"); BiocManager::install(ask=F);' \
 && Rscript requirements-bioc.R \
 && rm -rf /tmp/downloaded_packages
 
+ARG GITHUB_PAT
+ENV GITHUB_PAT=${GITHUB_PAT}
+
 ## Install from GH the following
 RUN installGithub.r NathanSkene/EWCE \
+qsbase/qs \
 chris-mcginnis-ucsf/DoubletFinder \
 ropensci/plotly \
+cran/grr \
+bnprks/BPCells/r \
 cole-trapnell-lab/monocle3 \
 theislab/kBET \
 jlmelville/uwot \
@@ -200,6 +207,7 @@ WORKDIR /home/rstudio/scFlow
 ADD . .
 
 # Run R CMD check - will fail with any errors or warnings
+RUN Rscript -e "BiocManager::install('monocle3', update = FALSE, ask = FALSE)"
 RUN Rscript -e "devtools::check(vignettes = FALSE)"
 # Install R package from source
 RUN Rscript -e "remotes::install_local()"
