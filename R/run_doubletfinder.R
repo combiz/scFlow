@@ -180,8 +180,8 @@ run_doubletfinder <- function(sce,
   seu <- DoubletFinder::doubletFinder(seu,
     PCs = 1:pca_dims, pN = 0.25, pK = as.numeric(pK),
     nExp = n_exp_poi,
-    reuse.pANN = FALSE
-  )
+    reuse.pANN = NULL
+  ) 
 
   seu <- DoubletFinder::doubletFinder(seu,
     pN = 0.25, pK = as.numeric(pK),
