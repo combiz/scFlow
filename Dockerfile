@@ -190,6 +190,7 @@ hhoeflin/hdf5r \
 ropensci/bib2df \
 cvarrichio/Matrix.utils \
 welch-lab/RcppPlanc \
+hhoeflin/HighFive \
 welch-lab/liger \
 && rm -rf /tmp/downloaded_packages
 
