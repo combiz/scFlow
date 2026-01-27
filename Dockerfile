@@ -196,7 +196,7 @@ welch-lab/liger \
 
 ## Install scFlow package
 # Copy description
-WORKDIR scFlow
+WORKDIR /home/rstudio/scFlow
 ADD . .
 
 # Run R CMD check - will fail with any errors or warnings
