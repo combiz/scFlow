@@ -45,27 +45,24 @@
 #' @export
 
 liger_preprocess <- function(sce,
-                             k,
                              unique_id_var = "manifest",
-                             take_gene_union = F,
                              remove.missing = T,
                              num_genes = 2000,
                              combine = "union",
-                             capitalize = F,
-                             use_cols = T,
+                             #use_cols = T,
                              num_cores = 1,
+                             species = getOption(
+                                 "scflow_species",
+                                 default = "human"),
                              ...) {
   fargs <- as.list(environment())
   fargs <- fargs[fargs = c(
-    "k",
     "unique_id_var",
-    "take_gene_union",
     "remove.missing",
     "num_genes",
     "combine",
-    "capitalize",
-    "use_cols",
-    "num_cores"
+    "num_cores",
+    "species"
   )]
 
   do.call(.check_sce_for_liger, c(sce = sce, fargs))
@@ -73,25 +70,26 @@ liger_preprocess <- function(sce,
 
   cli::cli_alert("Extracting sparse matrices")
 
-  id <- as.character(unique(sce[[unique_id_var]]))
+  mat <- SingleCellExperiment::counts(sce)
+  rownames(mat) <- SingleCellExperiment::rowData(sce)$gene
+  grp <- as.character(SingleCellExperiment::colData(sce)[[unique_id_var]])
+  idx <- split(seq_len(ncol(mat)), grp)
 
-  mat_list <- list()
+  mat_list <- lapply(idx, function(i) {
+  mat[, i, drop = FALSE]
+  })
 
-  for(i in id){
-    tmp <- subset(sce, ,get(unique_id_var) == i)
-    mat_list[[i]] <- tmp@assays@data$counts
-    }
-
-  names(mat_list) <- paste0("dataset_", id)
+  names(mat_list) <- paste0("dataset_", names(mat_list))
 
   # Make a Liger object. Pass in the sparse matrix.
   cli::cli_alert("Creating LIGER object")
   ligerex <- rliger::createLiger(
-    raw.data = mat_list, take.gene.union = take_gene_union,
-    remove.missing = remove.missing
+    rawData = mat_list,
+    removeMissing = remove.missing,
+    organism = species 
   )
 
-  ligerex@parameters$liger_params$liger_preprocess <- fargs
+  ligerex@uns$liger_params$liger_preprocess <- fargs
   ### preprocessing steps
   # Normalize the data to control for different numbers of UMIs per cell
   cli::cli_alert("Normalizing data")
@@ -100,17 +98,14 @@ liger_preprocess <- function(sce,
   # Select variable (informative) genes
   cli::cli_alert("Selecting variable (informative) genes")
   ligerex <- rliger::selectGenes(ligerex,
-    num.genes = num_genes,
-    combine = combine,
-    capitalize = capitalize
+    nGenes = num_genes,
+    combine = combine
   )
 
   # Scale the data by root-mean-square across cells
   cli::cli_alert("Scaling data")
-  ligerex <- rliger::scaleNotCenter(ligerex, remove.missing = remove.missing)
-  # Remove cells/genes with no expression across any genes/cells
-  cli::cli_alert("Removing non-expressed genes")
-  ligerex <- rliger::removeMissingObs(ligerex, use.cols = use_cols)
+  ligerex <- rliger::scaleNotCenter(ligerex)
+ 
   ########## Selecting and storing variable genes for each dataset ##########
   cli::cli_alert("Selecting and storing variable genes for each dataset")
 
@@ -120,20 +115,20 @@ liger_preprocess <- function(sce,
     function(mat) {
       single_mat <- mat
       single_ligerex <- rliger::createLiger(
-        raw.data = list(single_dataset = single_mat),
-        remove.missing = remove.missing
+        rawData = list(single_dataset = single_mat),
+        removeMissing = remove.missing,
+        organism = species 
       )
       single_ligerex <- rliger::normalize(single_ligerex)
       single_ligerex <- rliger::selectGenes(single_ligerex,
-        num.genes = num_genes,
-        combine = combine,
-        capitalize = capitalize
+        nGenes = num_genes,
+        combine = combine
       )
-      single_ligerex_var_genes <- single_ligerex@var.genes
+      single_ligerex_var_genes <- single_ligerex@varFeatures
     }
   )
 
-  ligerex@agg.data$var.genes_per_dataset <- var.genes_per_dataset
+  ligerex@uns$var.genes_per_dataset <- var.genes_per_dataset
 
   return(ligerex)
 }
@@ -159,7 +154,7 @@ liger_preprocess <- function(sce,
 
   min_cells_per_id <- 5
   assertthat::assert_that(
-    min(table(droplevels(as.factor(sce[[fargs$unique_id_var]])))) >= min_cells_per_id,
+    min(table(droplevels(as.factor(sce@colData[[fargs$unique_id_var]])))) >= min_cells_per_id,
     msg = sprintf("Need at least %s cells per id.", min_cells_per_id)
   )
 
