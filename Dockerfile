@@ -44,6 +44,8 @@ RUN apt-get update \
 	libgl1-mesa-dev \
 	libglu1-mesa-dev \
 	libhdf5-dev \
+	libhwloc-dev \
+	libopenblas-dev \
 	libncurses-dev \
 	liblapack-dev \
 	libmagick++-dev \
@@ -100,11 +102,10 @@ RUN pip install --break-system-packages stratocumulus \
 && rm -rf awscliv2.zip \
 && rm -rf /tmp/*
 
-ENV MAKEFLAGS="-j2"
+ENV MAKEFLAGS="-j1"
 ENV OMP_NUM_THREADS=1
 
-RUN install2.r -e -t source \
-Matrix \
+RUN install2.r -e \
 argparse \
 assertthat \
 BiocManager \
@@ -136,7 +137,6 @@ knitr \
 leaflet \
 magrittr \
 lme4 \
-igraph \
 paletteer \
 patchwork \
 plyr \
@@ -145,13 +145,6 @@ purrr \
 R.utils \
 RANN \
 rcmdcheck \
-Rcpp \
-RcppArmadillo \
-RcppEigen \
-RcppParallel \
-RcppProgress \
-remotes \
-rlang \
 rmarkdown \
 Rtsne \
 scales \
@@ -164,12 +157,9 @@ speedglm \
 stringr \
 testthat \
 threejs \
-tibble \
 tidyr \
-tidyselect \
 tidyverse \
 UpSetR \
-utils \
 vroom \
 WebGestaltR \
 apcluster \
@@ -184,6 +174,12 @@ RUN Rscript -e 'requireNamespace("BiocManager"); BiocManager::install(ask=F);' \
 ARG GITHUB_PAT
 ENV GITHUB_PAT=${GITHUB_PAT}
 
+RUN Rscript -e "install.packages('RcppPlanc', repos = c( \
+  linux = 'https://welch-lab.r-universe.dev/bin/linux/noble/4.5/', \
+  sources = 'https://welch-lab.r-universe.dev', \
+  cran = 'https://cloud.r-project.org' \
+))"
+
 ## Install from GH the following
 RUN installGithub.r NathanSkene/EWCE \
 qsbase/qs \
@@ -197,7 +193,6 @@ jlmelville/uwot \
 hhoeflin/hdf5r \
 ropensci/bib2df \
 cvarrichio/Matrix.utils \
-welch-lab/RcppPlanc \
 welch-lab/liger \
 && rm -rf /tmp/downloaded_packages
 
@@ -207,7 +202,6 @@ WORKDIR /home/rstudio/scFlow
 ADD . .
 
 # Run R CMD check - will fail with any errors or warnings
-RUN Rscript -e "BiocManager::install('monocle3', update = FALSE, ask = FALSE)"
 RUN Rscript -e "devtools::check(vignettes = FALSE)"
 # Install R package from source
 RUN Rscript -e "remotes::install_local()"
