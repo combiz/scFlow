@@ -43,6 +43,8 @@ jobs:
         with:
           push: true
           file: ./Dockerfile
+          build-args: |
+            GITHUB_PAT=${{ secrets.GITHUB_TOKEN }}
           tags: |
             nfancy/scflow:latest
             nfancy/scflow:${{ env.packageVersion }}
