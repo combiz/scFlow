@@ -15,13 +15,13 @@
 \arguments{
 \item{ct}{from colnames of ctdToMap specificity}
 
+\item{annotLevel}{annotation level}
+
 \item{howMany}{number of genes to return}
 
 \item{ctd}{the ctd to analyse}
 
 \item{exprPercentile}{must be expressed in at least this proportion}
-
-\item{annot_level}{annotation level}
 }
 \value{
 output the x most specific genes

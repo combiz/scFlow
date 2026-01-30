@@ -6,31 +6,22 @@
 \usage{
 liger_preprocess(
   sce,
-  k,
   unique_id_var = "manifest",
-  take_gene_union = F,
   remove.missing = T,
   num_genes = 2000,
   combine = "union",
-  capitalize = F,
-  use_cols = T,
   num_cores = 1,
+  species = getOption("scflow_species", default = "human"),
   ...
 )
 }
 \arguments{
 \item{sce}{SingleCellExperiment object or merged objects}
 
-\item{k}{Inner dimension of factorization (number of factors).}
-
 \item{unique_id_var}{the colData variable identifying unique samples.
 Default is "manifest".
 
 Make a Liger object:}
-
-\item{take_gene_union}{Whether to fill out raw.data matrices with union
-of genes across all datasets (filling in 0 for missing data)
-(requires make.sparse=T) (default FALSE).}
 
 \item{remove.missing}{Whether to remove cells not expressing any
 measured genes, and genes not
@@ -46,17 +37,10 @@ Set to 3000 as default.}
 Either "union" or "intersect".
 (default "union")}
 
-\item{capitalize}{Capitalize gene names to match homologous genes
-(ie. across species)
-(default FALSE)
-Scale genes by root-mean-square across cells:
-
-Remove cells/genes with no expression across any genes/cells:}
-
-\item{use_cols}{Treat each column as a cell (default TRUE)}
-
 \item{num_cores}{Number of cores used on user's machine to run function.
 Default is 1.}
+
+\item{species}{Species of origin of the data. Options are "human", "mouse".}
 
 \item{...}{Additional arguments.}
 }

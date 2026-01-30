@@ -16,18 +16,15 @@ Authors@R:
     person(given = "Mahdi",
            family = "Marjaneh",
            role = c("aut"),
-           email = "m.moradi@imperial.ac.uk",
-           comment = c(ORCID = "YOUR-ORCID-ID")),
+           email = "m.moradi@imperial.ac.uk"),
     person(given = "Michael",
            family = "Thomas",
            role = c("aut"),
-           email = "michael.thomas21@imperial.ac.uk",
-           comment = c(ORCID = "YOUR-ORCID-ID")),       
+           email = "michael.thomas21@imperial.ac.uk"),       
     person(given = "Nathan",
            family = "Skene",
            role = c("aut"),
-           email = "n.skene@imperial.ac.uk",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           email = "n.skene@imperial.ac.uk")
     )
 Description: Single-cell/nuclei RNA-seq analysis tools in R to build a complete analysis workflow.
 Roxygen: list(markdown = TRUE)
@@ -106,11 +103,16 @@ Imports:
     WebGestaltR
 Remotes:
     NathanSkene/EWCE,
+    qsbase/qs,
     chris-mcginnis-ucsf/DoubletFinder,
     ropensci/plotly,
+    cran/grr,
+    bnprks/BPCells/r,
     cole-trapnell-lab/monocle3,
     theislab/kBET,
     jlmelville/uwot,
+    hhoeflin/hdf5r,
     ropensci/bib2df,
+    cvarrichio/Matrix.utils,
     welch-lab/liger
 VignetteBuilder: knitr

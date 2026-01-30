@@ -1,4 +1,4 @@
-#LABEL maintainer="Combiz Khozoie, Ph.D. c.khozoie@imperial.ac.uk, Alan Murphy, a.murphy@imperial.ac.uk"
+#LABEL maintainer="Nurun Fancy, n.fancy@imperial.ac.uk Combiz Khozoie, Ph.D. c.khozoie@imperial.ac.uk, Alan Murphy, a.murphy@imperial.ac.uk"
 
 ## Use rstudio installs binaries from RStudio's RSPM service by default,
 ## Uses the latest stable ubuntu, R and Bioconductor versions. Created on unbuntu 20.04, R 4.3 and BiocManager 3.18
@@ -26,10 +26,8 @@ RUN apt-get update \
 	libbz2-dev \
 	libpng-dev \
 	libgit2-dev \
-	## sys deps from bioc_full
 	pkg-config \
 	curl \
-	## This section installs libraries
 	libpcre2-dev \
 	libfftw3-dev \
 	libopenmpi-dev \
@@ -54,7 +52,6 @@ RUN apt-get update \
 	libprotobuf-dev \
 	libpq-dev \
 	libperl-dev \
-	## software - perl extentions and modules
 	libarchive-extract-perl \
 	libfile-copy-recursive-perl \
 	libcgi-pm-perl \
@@ -64,9 +61,7 @@ RUN apt-get update \
 	libmysqlclient-dev \
 	default-libmysqlclient-dev \
 	libgdal-dev \
-	## new libs
 	libglpk-dev \
-	## Databases and other software
 	sqlite3 \
     libsqlite3-dev \
 	openmpi-bin \
@@ -75,11 +70,9 @@ RUN apt-get update \
 	default-jdk \
 	imagemagick \
 	tabix \
-	#ggobi \
 	graphviz \
 	protobuf-compiler \
 	jags \
-	## Additional resources
 	xfonts-100dpi \
 	xfonts-75dpi \
 	biber \
@@ -87,7 +80,6 @@ RUN apt-get update \
 	gcc \
 	nodejs \
 	npm \
-	## qpdf needed to stop R CMD Check warning
 	qpdf \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
@@ -104,6 +96,11 @@ RUN pip install --break-system-packages stratocumulus \
 
 ENV MAKEFLAGS="-j1"
 ENV OMP_NUM_THREADS=1
+ARG GITHUB_PAT
+ENV GITHUB_PAT=${GITHUB_PAT}
+
+## Install CRAN, Bioconductor and github packages 
+COPY ./misc/requirements-bioc.R .
 
 RUN install2.r -e \
 argparse \
@@ -163,25 +160,13 @@ UpSetR \
 vroom \
 WebGestaltR \
 apcluster \
-&& rm -rf /tmp/downloaded_packages
-
-## Install Bioconductor packages
-COPY ./misc/requirements-bioc.R .
-RUN Rscript -e 'requireNamespace("BiocManager"); BiocManager::install(ask=F);' \
-&& Rscript requirements-bioc.R \
-&& rm -rf /tmp/downloaded_packages
-
-ARG GITHUB_PAT
-ENV GITHUB_PAT=${GITHUB_PAT}
-
-RUN Rscript -e "install.packages('RcppPlanc', repos = c( \
+&& Rscript -e "install.packages('RcppPlanc', repos = c( \
   linux = 'https://welch-lab.r-universe.dev/bin/linux/noble/4.5/', \
   sources = 'https://welch-lab.r-universe.dev', \
   cran = 'https://cloud.r-project.org' \
-))"
-
-## Install from GH the following
-RUN installGithub.r NathanSkene/EWCE \
+))" \
+&& Rscript requirements-bioc.R \
+&& installGithub.r NathanSkene/EWCE \
 qsbase/qs \
 chris-mcginnis-ucsf/DoubletFinder \
 ropensci/plotly \
@@ -194,15 +179,17 @@ hhoeflin/hdf5r \
 ropensci/bib2df \
 cvarrichio/Matrix.utils \
 welch-lab/liger \
+&& rm -f requirements-bioc.R \
 && rm -rf /tmp/downloaded_packages
 
 ## Install scFlow package
-# Copy description
 WORKDIR /home/rstudio/scFlow
 ADD . .
 
 # Run R CMD check - will fail with any errors or warnings
-RUN Rscript -e "devtools::check(vignettes = FALSE)"
-# Install R package from source
-RUN Rscript -e "remotes::install_local()"
-RUN rm -rf *
+RUN Rscript -e "devtools::check(vignettes = FALSE)" \
+&& Rscript -e "remotes::install_local()" \
+&& apt-get purge -y build-essential gfortran gcc \
+&& apt-get autoremove -y \
+&& apt-get clean \
+&& rm -rf *
