@@ -31,7 +31,7 @@ run_doubletfinder(
 
 \item{dpk}{doublets per thousand cells increment if doublet_rate is 0.}
 
-\item{num.cores}{the number of CPU cores to use}
+\item{num_cores}{the number of CPU cores to use}
 }
 \value{
 sce a SingleCellExperiment object annotated for singlets

@@ -18,7 +18,8 @@ bioc_pkgs<-c(
   'S4Vectors',
   'scater',
   'SingleCellExperiment',
-  'SummarizedExperiment'
+  'SummarizedExperiment',
+  'ComplexHeatmap'
 )
 
 requireNamespace("BiocManager")

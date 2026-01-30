@@ -39,20 +39,24 @@ integrate_sce <- function(sce,
     cli::cli_h3("Pre-processing SingleCellExperiment for LIGER")
     ligerex <- do.call(liger_preprocess, c(list(sce = sce), fargs))
     sce@metadata$liger_params$liger_preprocess <-
-      ligerex@parameters$liger_params$liger_preprocess
+      ligerex@uns$liger_params$liger_preprocess
     sce@metadata$liger_var.genes <-
-      ligerex@var.genes
+      ligerex@varFeatures
     sce@metadata$dataset_integration$var.genes_per_dataset <-
-      ligerex@agg.data$var.genes_per_dataset
+      ligerex@uns$var.genes_per_dataset
     # Reduce dimensions with Liger
     cli::cli_h3("Computing integrated factors with LIGER")
     ligerex <- do.call(liger_reduce_dims, c(list(ligerex = ligerex), fargs))
     sce@metadata$liger_params$liger_reduce_dims <-
-      ligerex@parameters$liger_params$liger_reduce_dims
+      ligerex@uns$liger_params$liger_reduce_dims
 
     # Order ligerex@H.norm barcodes to match the orders of original sce
 
-    idx <- match(sce$barcode, rownames(ligerex@H.norm))
+    rownames(ligerex@H.norm) <- gsub(paste(paste0(
+      names(ligerex@datasets), "_"), collapse = "|"), "", 
+      rownames(ligerex@H.norm))
+
+    idx <- match(colnames(sce), rownames(ligerex@H.norm))
     ligerex@H.norm <- ligerex@H.norm[idx, ]
 
     SingleCellExperiment::reducedDim(sce, "Liger") <- ligerex@H.norm

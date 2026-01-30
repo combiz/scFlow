@@ -24,12 +24,11 @@
 #' @export
 pathway_analysis_enrichr <- function(gene_file = NULL,
                                      enrichment_database = c(
-                                       "GO_Molecular_Function_2021",
-                                       "GO_Cellular_Component_2021",
-                                       "GO_Biological_Process_2021",
+                                       "GO_Molecular_Function_2025",
+                                       "GO_Cellular_Component_2025",
+                                       "GO_Biological_Process_2025",
                                        "KEGG_2021_Human",
-                                       "WikiPathways_2021_Human",
-                                       "Reactome_2022")
+                                       "WikiPathways_2024_Human")
                                      ) {
   assertthat::assert_that(
     !is.null(gene_file),

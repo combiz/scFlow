@@ -72,7 +72,7 @@ annotate_sce_genes <- function(sce,
 
   # annotate rowdata with qc_metric_mitochondrial
   qc_metric_is_mito <- grepl(
-    "^mt|^MT", as.character(SummarizedExperiment::rowData(sce)$gene)
+    "^mt-|^MT-", as.character(SummarizedExperiment::rowData(sce)$gene)
     )
   #qc_metric_is_mito <- startsWith(
   #  as.character(SummarizedExperiment::rowData(sce)$gene), mito_prefix) + 0

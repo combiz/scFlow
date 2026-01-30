@@ -4,7 +4,7 @@
 \alias{.perform_de_with_mast}
 \title{Perform DE with MAST}
 \usage{
-.perform_de_with_mast(...)
+.perform_de_with_mast(sce, ...)
 }
 \arguments{
 \item{sce}{a SingleCellExperiment object}

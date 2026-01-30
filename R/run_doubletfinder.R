@@ -19,7 +19,7 @@
 #' @param vars_to_regress_out the variables to regress out
 #' @param doublet_rate either a fixed doublet rate (e.g. 0.075) or 0 to
 #' @param dpk doublets per thousand cells increment if doublet_rate is 0.
-#' @param num.cores the number of CPU cores to use
+#' @param num_cores the number of CPU cores to use
 #'
 #' @return sce a SingleCellExperiment object annotated for singlets
 #'
@@ -180,8 +180,8 @@ run_doubletfinder <- function(sce,
   seu <- DoubletFinder::doubletFinder(seu,
     PCs = 1:pca_dims, pN = 0.25, pK = as.numeric(pK),
     nExp = n_exp_poi,
-    reuse.pANN = FALSE
-  )
+    reuse.pANN = NULL
+  ) 
 
   seu <- DoubletFinder::doubletFinder(seu,
     pN = 0.25, pK = as.numeric(pK),
