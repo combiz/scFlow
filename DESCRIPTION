@@ -1,6 +1,6 @@
 Package: scFlow
 Title: A Single-Cell/Nuclei Analysis Toolkit
-Version: 0.7.4
+Version: 0.7.5
 Authors@R: 
     c(
     person(given = "Combiz",
@@ -16,18 +16,15 @@ Authors@R:
     person(given = "Mahdi",
            family = "Marjaneh",
            role = c("aut"),
-           email = "m.moradi@imperial.ac.uk",
-           comment = c(ORCID = "YOUR-ORCID-ID")),
+           email = "m.moradi@imperial.ac.uk"),
     person(given = "Michael",
            family = "Thomas",
            role = c("aut"),
-           email = "michael.thomas21@imperial.ac.uk",
-           comment = c(ORCID = "YOUR-ORCID-ID")),       
+           email = "michael.thomas21@imperial.ac.uk"),       
     person(given = "Nathan",
            family = "Skene",
            role = c("aut"),
-           email = "n.skene@imperial.ac.uk",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           email = "n.skene@imperial.ac.uk")
     )
 Description: Single-cell/nuclei RNA-seq analysis tools in R to build a complete analysis workflow.
 Roxygen: list(markdown = TRUE)
@@ -44,7 +41,7 @@ Suggests:
     BiocStyle,
     DT (>= 0.26)
 Language: en-US
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.3
 biocViews:
 Imports: 
     Matrix,
@@ -60,7 +57,7 @@ Imports:
     edgeR (>= 3.40.0),
     english (>= 1.2.6),
     enrichR (>= 3.1),
-    EWCE (>= 1.6.0),
+    EWCE,
     forcats (>= 0.5.2),
     formattable (>= 0.2.1),
     future (>= 1.29.0),
@@ -106,10 +103,16 @@ Imports:
     WebGestaltR
 Remotes:
     NathanSkene/EWCE,
+    qsbase/qs,
     chris-mcginnis-ucsf/DoubletFinder,
     ropensci/plotly,
+    cran/grr,
+    bnprks/BPCells/r,
     cole-trapnell-lab/monocle3,
     theislab/kBET,
     jlmelville/uwot,
-    ropensci/bib2df
+    hhoeflin/hdf5r,
+    ropensci/bib2df,
+    cvarrichio/Matrix.utils,
+    welch-lab/liger
 VignetteBuilder: knitr

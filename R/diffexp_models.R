@@ -242,8 +242,9 @@ perform_de <- function(sce,
 #' @importFrom cli cli_text cli_alert_info cli_alert_danger cli_alert_success
 #'
 #' @keywords internal
-.perform_de_with_mast <- function(...) {
+.perform_de_with_mast <- function(sce, ...) {
   fargs <- list(
+    sce,
     mast_method = "bayesglm",
     ebayes = FALSE,
     force_run = FALSE,

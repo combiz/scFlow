@@ -9,23 +9,14 @@
 #' @param lambda Regularization parameter. Larger values penalize
 #'   dataset-specific effects more strongly (ie. alignment should increase
 #'   as lambda increases). Set to lambda=5.0 as default.
-#' @param thresh Convergence threshold. Convergence occurs
-#'   when |obj0-obj|/(mean(obj0,obj)) < thresh (default 1e-4).
+#' @param method Method to use for factorization. Options are "iNMF",
+#'   "onlineINMF", and "UINMF". (default "iNMF").
 #' @param max_iters Maximum number of block coordinate descent iterations
 #'   to perform (default 100).
-#' @param nrep Number of restarts to perform (iNMF objective function
-#'   is non-convex, so taking the best objective from multiple successive
-#'   initializations is recommended). For easier reproducibility,
-#'   this increments the random seed by 1 for each consecutive restart,
-#'   so future factorizations of the same dataset can be run with
-#'   one rep if necessary. (default 1)
 #' @param h_init Initial values to use for H matrices. (default NULL)
 #' @param w_init Initial values to use for W matrix (default NULL)
 #' @param v_init Initial values to use for V matrices (default NULL)
 #' @param rand_seed Random seed to allow reproducible results (default 1).
-#' @param print_obj Print objective function values after convergence
-#'   (default FALSE).
-#'
 #' Quantile align (normalize) factor loadings:
 #' @param quantiles Number of quantiles to use for quantile normalization
 #'   (default 50).
@@ -38,8 +29,6 @@
 #'   (default 20).
 #' @param center Centers the data when scaling factors (useful for less
 #'   sparse modalities like methylation data). (default FALSE)
-#' @param resolution Controls the number of communities detected.
-#'   Higher resolution -> more communities. (default 1)
 #' @param ... Additional arguments.
 #'
 #' @return liger object with H, H.norm, W, and V slots sets.
@@ -54,68 +43,63 @@
 liger_reduce_dims <- function(ligerex,
                               k = 30,
                               lambda = 5.0,
-                              thresh = 1e-4,
-                              max_iters = 100,
-                              nrep = 1,
+                              method =  c("iNMF", "onlineINMF", "UINMF"),
+                              max_iters = 50,
                               h_init = NULL,
                               w_init = NULL,
                               v_init = NULL,
                               rand_seed = 1,
-                              print_obj = FALSE,
                               quantiles = 50,
                               ref_dataset = NULL,
-                              min_cells = 2,
+                              min_cells = 20,
                               knn_k = 20,
                               center = FALSE,
-                              resolution = 1,
                               ...) {
   fargs <- as.list(environment())
   fargs <- fargs[fargs = c(
     "k",
     "lambda",
-    "thresh",
+    "method",
     "max_iters",
-    "nrep",
     "h_init",
     "w_init",
     "v_init",
     "rand_seed",
-    "print_obj",
     "quantiles",
     "ref_dataset",
     "min_cells",
     "knn_k",
-    "center",
-    "resolution"
+    "center"
   )]
-  ligerex@parameters$liger_params$liger_reduce_dims <- fargs
+  ligerex@uns$liger_params$liger_reduce_dims <- fargs
   ### Factorization
   # Perform iNMF on scaled datasets
   cli::cli_alert(
     "Performing integrative non-negative matrix factorization (iNMF)")
-  ligerex <- rliger::optimizeALS(ligerex,
-    k = k, lambda = lambda, thresh = thresh,
-    max.iters = max_iters, nrep = nrep,
+
+  ligerex <- rliger::runIntegration(ligerex,
+    k = k, lambda = lambda, method = method,
+    nIteration = max_iters, 
     H.init = h_init, W.init = w_init,
-    V.init = v_init, rand.seed = rand_seed,
-    print.obj = print_obj
+    V.init = v_init, seed = rand_seed
   )
+
   ### Quantile Alignment/Normalization
 
   # Quantile align (normalize) factor loadings
   cli::cli_alert("Normalizing factor loadings")
-  ligerex <- rliger::quantile_norm(ligerex,
+  ligerex <- rliger::alignFactors(ligerex,
     quantiles = quantiles,
-    ref_dataset = ref_dataset,
-    min_cells = min_cells,
-    knn_k = knn_k,
-    dims.use = seq_len(ncol(ligerex@H[[1]])),
-    do.center = center,
-    max_sample = 1000,
+    reference = ref_dataset,
+    minCells = min_cells,
+    nNeighbors = knn_k,
+    useDims = NULL,
+    center = center,
+    maxSample = 1000,
     eps = 0.9,
-    refine.knn = TRUE,
-    rand.seed = rand_seed,
-    resolution = resolution
+    refineKnn = TRUE,
+    seed = rand_seed
   )
+  
   return(ligerex)
 }

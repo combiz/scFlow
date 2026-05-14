@@ -367,7 +367,7 @@ for (ml in mappingLevel) {
 #' Find x most specific genes
 #'
 #' @param ct from colnames of ctdToMap specificity
-#' @param annot_level annotation level
+#' @param annotLevel annotation level
 #' @param howMany number of genes to return
 #' @param ctd the ctd to analyse
 #' @param exprPercentile must be expressed in at least this proportion

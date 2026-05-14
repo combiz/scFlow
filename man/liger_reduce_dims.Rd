@@ -8,20 +8,17 @@ liger_reduce_dims(
   ligerex,
   k = 30,
   lambda = 5,
-  thresh = 1e-04,
-  max_iters = 100,
-  nrep = 1,
+  method = c("iNMF", "onlineINMF", "UINMF"),
+  max_iters = 50,
   h_init = NULL,
   w_init = NULL,
   v_init = NULL,
   rand_seed = 1,
-  print_obj = FALSE,
   quantiles = 50,
   ref_dataset = NULL,
-  min_cells = 2,
+  min_cells = 20,
   knn_k = 20,
   center = FALSE,
-  resolution = 1,
   ...
 )
 }
@@ -37,18 +34,11 @@ Set to k=30 as default.}
 dataset-specific effects more strongly (ie. alignment should increase
 as lambda increases). Set to lambda=5.0 as default.}
 
-\item{thresh}{Convergence threshold. Convergence occurs
-when |obj0-obj|/(mean(obj0,obj)) < thresh (default 1e-4).}
+\item{method}{Method to use for factorization. Options are "iNMF",
+"onlineINMF", and "UINMF". (default "iNMF").}
 
 \item{max_iters}{Maximum number of block coordinate descent iterations
 to perform (default 100).}
-
-\item{nrep}{Number of restarts to perform (iNMF objective function
-is non-convex, so taking the best objective from multiple successive
-initializations is recommended). For easier reproducibility,
-this increments the random seed by 1 for each consecutive restart,
-so future factorizations of the same dataset can be run with
-one rep if necessary. (default 1)}
 
 \item{h_init}{Initial values to use for H matrices. (default NULL)}
 
@@ -56,11 +46,7 @@ one rep if necessary. (default 1)}
 
 \item{v_init}{Initial values to use for V matrices (default NULL)}
 
-\item{rand_seed}{Random seed to allow reproducible results (default 1).}
-
-\item{print_obj}{Print objective function values after convergence
-(default FALSE).
-
+\item{rand_seed}{Random seed to allow reproducible results (default 1).
 Quantile align (normalize) factor loadings:}
 
 \item{quantiles}{Number of quantiles to use for quantile normalization
@@ -78,9 +64,6 @@ across datasets (default 2)}
 
 \item{center}{Centers the data when scaling factors (useful for less
 sparse modalities like methylation data). (default FALSE)}
-
-\item{resolution}{Controls the number of communities detected.
-Higher resolution -> more communities. (default 1)}
 
 \item{...}{Additional arguments.}
 }
